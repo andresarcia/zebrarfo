@@ -11,11 +11,23 @@
 
 		<div id="upload-measures"></div>
 
+		<script id="upload-template" type="text/x-handlebars-template"> 
+			<form>
+				<input id='upload-measures-name' type='text' name='zone_name'>
+				<br />
+				<input id='upload-measures-file' type='file' multiple='multiple' name='data'>
+				<br />
+				<button id='upload-measures-button'>Synchronize</button>
+			</form>
+		</script>
+
 		<!-- External library Includes -->
 		<script type="text/javascript" src="javascripts/vendor/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
 
+		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/app.js"></script>
 
