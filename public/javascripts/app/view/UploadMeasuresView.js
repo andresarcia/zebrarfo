@@ -14,11 +14,14 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 	el: '#upload-measures',
+	model: null,
 
 	options: {
 		supportHtml5: false,
 		fillName: false,
+		fillNameError: 'You must select a zone or enter a new zone',
 		fillFiles: false,
+		fillFilesError: 'You must select or drag at least one file'
 	},
 
 	place: {
@@ -35,12 +38,12 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	filesInfo: {
+		files: null,
 		sizeFiles: 0,
 		numFiles: 0,
 		numFilesParser: 0
 	},
 
-	files: null,
 	errorView: null,
 
 	events : {
@@ -58,16 +61,14 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
             this.options.supportHtml5 = true;
         else 
         	this.options.supportHtml5 = false;
-		this.render();
-		$('#upload-measures-button-delete').prop("disabled",true);
 
-		$("#upload-measures-file").filestyle({buttonBefore: true, buttonName: "btn-primary"});
+		this.render();
+		this.model = new com.apress.model.UploadMeasuresContainers();
 		
 		$(".ws-dragandrophandler").bind("dragenter", _.bind(this.dragEnterEvent, this));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(this.dragOverEvent, this));
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(this.dragLeaveEvent, this));
-		$(".ws-dragandrophandler").bind("drop", _.bind(this.dropEvent, this));
-		
+		$(".ws-dragandrophandler").bind("drop", _.bind(this.dropEvent, this));	
 	},
 
 	render: function(){
@@ -79,42 +80,30 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	checkName: function(evt){
-		var container = $(evt.target);
-		var containerParent = container.parent();
-		if(container.val() === '') {
+		if(this.model.getNameContainerVal() === '') {
 			this.options.fillName = false;
-			containerParent.addClass('has-error');
-			containerParent.removeClass('has-success');
-			containerParent.children().last().addClass('glyphicon-remove');
-			containerParent.children().last().removeClass('glyphicon-ok');
+			this.model.setBadNameContainer();
 		}
 		else {
 			this.options.fillName = true;
-			this.place.name = container.val();
-			containerParent.addClass('has-success');
-			containerParent.removeClass('has-error');
-			containerParent.children().last().addClass('glyphicon-ok');
-			containerParent.children().last().removeClass('glyphicon-remove');
+			this.place.name = this.model.getNameContainerVal();
+			this.model.setGoodNameContainer();
 		}
 	},
 
 	checkFiles: function(evt){
-		var container = $(evt.target);
-		
 		if(this.options.supportHtml5)
-			this.files = evt.target.files;
-
-        if($(evt.target).val() !== ''){
+			this.filesInfo.files = evt.target.files;
+			
+        if(this.model.getFilesContainerVal() !== ''){
 			this.options.fillFiles = true;
-			$("#upload-measures-file").filestyle('success');
-			$('.ws-dragandrophandler').css('border', '2px dashed #5CB85C');
-			$('#upload-measures-button-delete').prop("disabled",false);
-			this.fillFilesInfo();
+			this.model.setGoodFilesContainer();
         } else {
         	this.options.fillFiles = false;
-        	$("#upload-measures-file").filestyle('error');
-        	$('.ws-dragandrophandler').css('border', '2px dashed #D9534F');
+        	this.model.setBadFilesContainer();
         }
+
+        this.fillFilesInfo();
 	},
 
 	dragEnterEvent: function(evt){
@@ -125,35 +114,29 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	dragOverEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
-    	$('.ws-dragandrophandler').css('border', '2px solid #0B85A1');
+    	this.model.setDragFilesContainerOver();
 	},
 
 	dragLeaveEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
-    	$('.ws-dragandrophandler').css('border', '2px dashed #C3C5C7');
+    	this.model.setDragFilesContainerLeave();
 	},
 
 	dropEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
-    	$("#upload-measures-file").filestyle('clear');
-		$('.ws-dragandrophandler').css('border', '2px dashed #5CB85C');
-		$('#upload-measures-button-delete').prop("disabled",false);
-
-		if(this.options.supportHtml5){
-			this.files = evt.originalEvent.dataTransfer.files;
-			this.options.fillFiles = true;
-			$("#upload-measures-file").filestyle('success');
-			this.fillFilesInfo();
-		}
+    	this.filesInfo.files = evt.originalEvent.dataTransfer.files;
+    	this.options.fillFiles = true;
+    	this.model.setDragFilesContainerDrop();
+		this.fillFilesInfo();
 	},
 
 	fillFilesInfo: function(){
-		this.filesInfo.numFiles = this.files.length;
+		this.filesInfo.numFiles = this.filesInfo.files.length;
 		var sizeFiles = 0;
 		var filesBadType = [];
-		_.each(this.files, function(file){
+		_.each(this.filesInfo.files, function(file){
 			if (file.name.split('.')[file.name.split('.').length - 1].toLowerCase() != 'txt') 
         		filesBadType.push(file);
 			sizeFiles += file.size;
@@ -168,22 +151,17 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	renderFilesInfo: function(){
-		var container = $('#upload-measures-files-info');
-		container.children().first().children().text(this.filesInfo.numFiles);
-		container.children().last().children().text(this.filesInfo.sizeFiles);
+		this.model.renderFilesInfoContainer(this.filesInfo.numFiles,this.filesInfo.sizeFiles);
 	},
 
 	delateFiles: function(){
 		this.filesInfo.sizeFiles= 0;
 		this.filesInfo.numFiles= 0;
 		this.filesInfo.numFilesParser= 0;
-		this.files = [];
+		this.filesInfo.files = [];
 		this.renderFilesInfo();
-		$("#upload-measures-file").filestyle('clear');
-		$("#upload-measures-file").filestyle('primary');
-		$('.ws-dragandrophandler').css('border', '2px dashed #C3C5C7');
 		this.options.fillFiles = false;
-		$('#upload-measures-button-delete').prop("disabled",true);
+		this.model.setDeleteFilesContainerDefault();
 	},
 
 	uploadData: function(evt){
@@ -191,56 +169,39 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		var container = $(evt.target);
 
 		if(!this.options.fillFiles || !this.options.fillName){
-			this.errorView.render('hola');
+			var error = '';
+			if(!this.options.fillName){
+				error = error + this.options.fillNameError;
+				this.model.setBadNameContainer();
+			}
+
+			if(!this.options.fillFiles){
+				error = error + this.options.fillFilesError;
+				this.model.setBadFilesContainer();
+			}
+
+			this.errorView.render(error);
 		
 		} else {
-			$('#upload-measures-name').prop("disabled",true);
-			$("#upload-measures-file").filestyle('disabled', true);
-			$('#upload-measures-button-delete').prop("disabled",true);
+			this.model.disableNameContainer();
+			this.model.disableFilesContainer();
+			this.model.disableButtonDeleteContainer();
 			container.prop("disabled",true);
 
 			if(!this.options.supportHtml5){
 				console.log('no html5');
 				// enviar datos a procesar al servidor
 			}
-			else 
-				this.parseFiles(this.files);
+			else {
+				parserFiles(this.filesInfo.files,this.place,
+				function(numFilesProcessed){
+					console.log(numFilesProcessed);
+				}, function(place){
+					console.log(place);
+				});
+			}
 		}
 	},
-	/* ------------------------------------------------------------------------- */
-	parseFiles: function(files){
-		var self = this;
-
-		_.each(files, function(file){
-   			var fr = new FileReader();
-		    fr.onload = function(e) { 
-		        parser(self.place,fr.result);
-		        self.filesInfo.numFilesParser++;
-		        if (self.filesInfo.numFilesParser == self.filesInfo.numFiles) 
-					self.formatStatPlace();
-		    };
-		    fr.readAsText(file);
-		});
-	},
-
-	formatStatPlace: function(){
-		this.place.potencyAvg = this.place.potencyAvg / this.place.numberCoordinates;
-		this.place.potencyAvg = Number(this.place.potencyAvg.toFixed(5));
-		
-		if(this.place.numberCoordinates === 1)
-			this.place.sdPotencyAvg = 0;
-		else {
-			this.place.placePotencySD_X = Math.sqrt((this.place.placePotencySD_X - (this.place.placePotencySD_M*this.place.placePotencySD_M)/this.place.numberCoordinates)/(this.place.numberCoordinates - 1));
-			this.place.sdPotencyAvg = Number(this.place.placePotencySD_X.toFixed(5));
-		}
-		this.place.avgPotencySD = this.place.avgPotencySD / this.place.numberCoordinates;
-		this.place.avgPotencySD = Number(this.place.avgPotencySD.toFixed(5));
-
-		delete this.place.placePotencySD_X;
-		delete this.place.placePotencySD_M;
-
-		console.log(this.place);
-	}
-
+	
 
 });

@@ -1,6 +1,45 @@
 $(document).ready(function(){
 
-	parser = function(place,data){
+	parserFiles = function(files,place,callbackNumFilesProcessed,callback){
+		var numFilesParser = 0;
+		var numFiles = files.length;
+		var newPlace = null;
+
+		_.each(files, function(file){
+   			var fr = new FileReader();
+		    fr.onload = function(e) { 
+		        parser(place,fr.result);
+		        numFilesParser++;
+		        callbackNumFilesProcessed(numFilesParser);
+		        if (numFilesParser == numFiles) 
+		        	callback(formatStatPlace(place));
+		    };
+		    fr.readAsText(file);
+		});
+	};
+
+	/* ------------------------------------------------------------------------- */
+	var formatStatPlace = function(place){
+		place.potencyAvg = place.potencyAvg / place.numberCoordinates;
+		place.potencyAvg = Number(place.potencyAvg.toFixed(5));
+		
+		if(place.numberCoordinates === 1)
+			place.sdPotencyAvg = 0;
+		else {
+			place.placePotencySD_X = Math.sqrt((place.placePotencySD_X - (place.placePotencySD_M*place.placePotencySD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
+			place.sdPotencyAvg = Number(place.placePotencySD_X.toFixed(5));
+		}
+		place.avgPotencySD = place.avgPotencySD / place.numberCoordinates;
+		place.avgPotencySD = Number(place.avgPotencySD.toFixed(5));
+
+		delete place.placePotencySD_X;
+		delete place.placePotencySD_M;
+
+		return place;
+	};
+
+	/* ------------------------------------------------------------------------- */
+	var parser = function(place,data){
 		
 		arrayCoordinate = [];
 		arrayFrequencyPotency = [];
