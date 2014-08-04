@@ -168,7 +168,9 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	renderFilesInfo: function(){
-
+		var container = $('#upload-measures-files-info');
+		container.children().first().children().text(this.filesInfo.numFiles);
+		container.children().last().children().text(this.filesInfo.sizeFiles);
 	},
 
 	delateFiles: function(){
@@ -176,6 +178,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.filesInfo.numFiles= 0;
 		this.filesInfo.numFilesParser= 0;
 		this.files = [];
+		this.renderFilesInfo();
 		$("#upload-measures-file").filestyle('clear');
 		$("#upload-measures-file").filestyle('primary');
 		$('.ws-dragandrophandler').css('border', '2px dashed #C3C5C7');
