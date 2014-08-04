@@ -5,30 +5,74 @@
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>White Spaces Monitor</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	</head>
 	<body>
+		<div id="error"></div>
 
-		<div id="upload-measures"></div>
+		<div class="container">
+			<br />
+			<br /><br /><br />
+			<div id="upload-measures"></div>
+		</div>
+		
+
+		<script id="error-template" type="text/x-handlebars-template">
+			<div class="ws-error">
+				<div class="ws-error-message">
+					<div class="ws-error-glyphicon pull-left">
+						<span class="glyphicon glyphicon-2x glyphicon-warning-sign"></span>
+					</div>		
+					<p>Error - <em>{{ message }}</em></p>
+					<button id="error-button" type="button" class="btn ws-error-button">Got it</button>
+				</div>
+			</div>
+		</script>
 
 		<script id="upload-template" type="text/x-handlebars-template"> 
 			<form>
-				<input id='upload-measures-name' type='text' name='zone_name'>
-				<br />
-				<input id='upload-measures-file' type='file' multiple='multiple' name='data'>
-				<br />
-				<button id='upload-measures-button'>Synchronize</button>
+				<div class="input-group form-group has-feedback">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+					<label class="control-label sr-only" for="inputSuccess5">Hidden label</label>
+					<input id='upload-measures-name' type="text" class="form-control" placeholder="Zone name">	
+					<span class="feedback-icon-container glyphicon form-control-feedback"></span>
+				</div>
+
+				<div class="ws-dragandrophandler">
+					<h1>Drag files here</h1>
+					<div>Or, if you prefer...</div>
+					<br />
+					<input id='upload-measures-file' type="file" multiple='multiple' name='data'>
+				</div>
+
+				<ul class="list-group">
+					<li class="list-group-item list-group-item-info">
+				    	<span class="badge">0</span>
+				    	Files to upload
+				  	</li>
+				  	<li class="list-group-item list-group-item-info">
+				    	<span class="badge">0</span>
+				    	Weight of files to upload
+				  	</li>
+				</ul>
+
+				<button id='upload-measures-button-delete' type="button" class="btn btn-warning pull-left">Delete selected files</button>
+				<button id='upload-measures-button' type="button" class="btn btn-primary btn-lg pull-right">Synchronize</button>
 			</form>
 		</script>
 
 		<!-- External library Includes -->
 		<script type="text/javascript" src="javascripts/vendor/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/bootstrap-filestyle.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
 
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
+		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/app.js"></script>
 
 	</body>
