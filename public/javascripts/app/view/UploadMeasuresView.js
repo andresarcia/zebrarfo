@@ -155,7 +155,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	delateFiles: function(){
-		this.filesInfo.sizeFiles= 0;
+		this.filesInfo.sizeFiles= '0 Byte';
 		this.filesInfo.numFiles= 0;
 		this.filesInfo.numFilesParser= 0;
 		this.filesInfo.files = [];
@@ -169,14 +169,14 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		var container = $(evt.target);
 
 		if(!this.options.fillFiles || !this.options.fillName){
-			var error = '';
+			var error = [];
 			if(!this.options.fillName){
-				error = error + this.options.fillNameError;
+				error.push(this.options.fillNameError);
 				this.model.setBadNameContainer();
 			}
 
 			if(!this.options.fillFiles){
-				error = error + this.options.fillFilesError;
+				error.push(this.options.fillFilesError);
 				this.model.setBadFilesContainer();
 			}
 

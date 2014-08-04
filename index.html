@@ -23,9 +23,18 @@
 				<div class="ws-error-message">
 					<div class="ws-error-glyphicon pull-left">
 						<span class="glyphicon glyphicon-2x glyphicon-warning-sign"></span>
-					</div>		
-					<p>Error - <em>{{ message }}</em></p>
-					<button id="error-button" type="button" class="btn ws-error-button">Got it</button>
+					</div>
+					<ul class="list-inline">
+					  	<li><h3>{{title}}</h3></li>
+					  	<li>
+					  		<ul class="list-unstyled">
+							  	{{#each message}}
+							  		<li><em>{{ this }}</em></li>
+							  	{{/each}}
+							</ul>
+					  	</li>
+					</ul>
+					<button id="error-button" type="button" class="btn ws-error-button btn-lg">Got it</button>
 				</div>
 			</div>
 		</script>
@@ -52,7 +61,7 @@
 				    	Files to upload
 				  	</li>
 				  	<li class="list-group-item list-group-item-info">
-				    	<span class="badge">0</span>
+				    	<span class="badge">0 Byte</span>
 				    	Weight of files to upload
 				  	</li>
 				</ul>

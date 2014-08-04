@@ -17,11 +17,16 @@ com.spantons.view.ErrorView = Backbone.View.extend({
 
 	render: function(msg){
 		var self = this;
+		var errorTitle;
+		if (msg.length > 1) 
+			errorTitle = 'Errors:';
+		else
+			errorTitle = 'Error:';
 
 		this.message = msg;
 		var source = $('#error-template').html();
 		var template = Handlebars.compile(source);
-		var html = template({message: this.message});
+		var html = template({message: this.message, title: errorTitle});
 		this.$el.html(html);
 		this.$el.show();
 
