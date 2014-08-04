@@ -21,14 +21,6 @@
             this.$element.val('');
             this.$elementFilestyle.find(':text').val('');
         },
-
-        destroy: function () {
-            this.$element
-                .removeAttr('style')
-                .removeData('filestyle')
-                .val('');
-            this.$elementFilestyle.remove();
-        },
         
         disabled: function (value) {
         	if (value === true) {
@@ -70,138 +62,6 @@
             this.$elementFilestyle.find('label').addClass('label-danger');
             this.$elementFilestyle.find('label').css('border-color','#A94442');
         },
-        
-        buttonBefore: function (value) {
-        	if (value === true) {
-        		if (!this.options.buttonBefore) {
-	        		this.options.buttonBefore = true;
-	        		if (this.options.input) {
-	        			this.$elementFilestyle.remove();
-	        			this.constructor();
-	        			this.pushNameFiles();
-	        		}
-	        	}
-        	} else if (value === false) {
-        		if (this.options.buttonBefore) {
-		            this.options.buttonBefore = false;
-		            if (this.options.input) {
-	        			this.$elementFilestyle.remove();
-	        			this.constructor();
-	        			this.pushNameFiles();
-	        		}
-		        }
-            } else {
-                return this.options.buttonBefore;
-            }
-        },
-
-        icon: function (value) {
-            if (value === true) {
-                if (!this.options.icon) {
-                    this.options.icon = true;
-                    this.$elementFilestyle.find('label').prepend(this.htmlIcon());
-                }
-            } else if (value === false) {
-                if (this.options.icon) {
-                    this.options.icon = false;
-                    this.$elementFilestyle.find('.glyphicon').remove();
-                }
-            } else {
-                return this.options.icon;
-            }
-        },
-
-        input: function (value) {
-            if (value === true) {
-                if (!this.options.input) {
-                    this.options.input = true;
-                    
-                    if (this.options.buttonBefore) {
-                    	this.$elementFilestyle.append(this.htmlInput());
-                    } else {
-                    	this.$elementFilestyle.prepend(this.htmlInput());
-                    }
-                    
-                    this.$elementFilestyle.find('.badge').remove();
-
-                    var content = '',
-                        files = [];
-                    if (this.$element[0].files === undefined) {
-                        files[0] = {'name': this.$element[0].value};
-                    } else {
-                        files = this.$element[0].files;
-                    }
-
-                    for (var i = 0; i < files.length; i++) {
-                        content += files[i].name.split("\\").pop() + ', ';
-                    }
-                    if (content !== '') {
-                        this.$elementFilestyle.find(':text').val(content.replace(/\, $/g, ''));
-                    }
-                    
-                    this.$elementFilestyle.find('.group-span-filestyle').addClass('input-group-btn');
-                }
-            } else if (value === false) {
-                if (this.options.input) {
-                    this.options.input = false;
-                    this.$elementFilestyle.find(':text').remove();
-                    var files = [];
-	                if (this.$element[0].files === undefined) {
-	                    files[0] = {'name': this.$element[0].value};
-	                } else {
-	                    files = this.$element[0].files;
-	                }
-	                if (files.length > 0) {
-	                	this.$elementFilestyle.find('label').append(' <span class="badge">'+files.length+'</span>');
-	                }
-	                this.$elementFilestyle.find('.group-span-filestyle').removeClass('input-group-btn');
-                }
-            } else {
-                return this.options.input;
-            }
-        },
-        
-        size: function (value) {
-        	if (value !== undefined) {
-                var btn = this.$elementFilestyle.find('label'),
-                    input = this.$elementFilestyle.find('input');
-                    
-                btn.removeClass('btn-lg btn-sm');
-                input.removeClass('input-lg input-sm');
-                if (value != 'nr') {
-                	btn.addClass('btn-'+value);
-                	input.addClass('input-'+value);
-                }
-            } else {
-                return this.options.size;
-            }
-        },
-
-        buttonText: function (value) {
-            if (value !== undefined) {
-                this.options.buttonText = value;
-                this.$elementFilestyle.find('label span').html(this.options.buttonText);
-            } else {
-                return this.options.buttonText;
-            }
-        },
-
-        buttonName: function (value) {
-            if (value !== undefined) {
-                this.options.buttonName = value;
-                this.$elementFilestyle.find('label').attr({'class': 'btn '+this.options.buttonName});
-            } else {
-                return this.options.buttonName;
-            }
-        },
-
-        iconName: function (value) {
-            if (value !== undefined) {
-                this.$elementFilestyle.find('.glyphicon').attr({'class': '.glyphicon ' + this.options.iconName});
-            } else {
-                return this.options.iconName;
-            }
-        },
 
         htmlIcon: function () {
             if (this.options.icon) {
@@ -216,27 +76,6 @@
                 return '<input type="text" class="form-control '+(this.options.size=='nr'?'':'input-'+this.options.size)+'" disabled> ';
             } else {
                 return '';
-            }
-        },
-        
-        // puts the name of the input files
-        pushNameFiles: function () {
-        	var content = '',
-        	    files = [];
-            if (this.$element[0].files === undefined) {
-                files[0] = {'name': this.$element.value};
-            } else {
-                files = this.$element[0].files;
-            }
-            
-            for (var i = 0; i < files.length; i++) {
-                content += files[i].name.split("\\").pop() + ', ';
-            }
-
-            if (content !== '') {
-                this.$elementFilestyle.find(':text').val(content.replace(/\, $/g, ''));
-            } else {
-            	this.$elementFilestyle.find(':text').val('');
             }
         },
 
