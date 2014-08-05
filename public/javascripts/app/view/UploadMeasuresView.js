@@ -25,18 +25,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		fillFilesError: 'You must select or drag at least one file'
 	},
 
-	place: {
-		name: null,
-		numberCoordinates : 0,
-		potencyMin : null,
-		potencyMax : null,
-		potencyAvg : null,
-		sdPotencyAvg : null,
-		placePotencySD_X : null,
-		placePotencySD_M : null,
-		avgPotencySD : null,
-		coordinates : []
-	},
+	modelPlace: null,
 
 	filesInfo: {
 		files: null,
@@ -64,7 +53,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
         	this.options.supportHtml5 = false;
 
 		this.render();
-		this.model = new com.apress.model.UploadMeasuresContainers();
+		this.model = new com.spantons.model.UploadMeasuresContainers();
+		this.modelPlace = new com.spantons.model.Place();
 		
 		$(".ws-dragandrophandler").bind("dragenter", _.bind(this.dragEnterEvent, this));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(this.dragOverEvent, this));
@@ -85,7 +75,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		}
 		else {
 			this.options.fillName = true;
-			this.place.name = this.model.getNameContainerVal();
+			this.modelPlace.attributes.name = this.model.getNameContainerVal();
 			this.model.setGoodNameContainer();
 		}
 	},
@@ -188,7 +178,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			container.prop("disabled",true);
 
 			new com.spantons.view.ParsingMeasuresView({
-				model:this.place,
+				model:this.modelPlace,
 				files:this.filesInfo.files, 
 				html5:this.options.supportHtml5
 			});

@@ -1,8 +1,8 @@
 var com = com || {};
-com.apress = com.apress || {};
-com.apress.model = com.apress.model || {};
+com.spantons = com.spantons || {};
+com.spantons.model = com.spantons.model || {};
 
-com.apress.model.UploadMeasuresContainers = Backbone.Model.extend({
+com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	nameContainer: null,
 	filesContainer: null,

@@ -42,11 +42,11 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.status.initialize = true;
 		this.status.parsing = true;
 
-		parserFiles(this.files,this.model,
+		parserFiles(this.files,this.model.attributes,
 		function(numFilesProcessed){
 			self.setNumberFilesParser(numFilesProcessed);
 		}, function(place){
-			// console.log(place);
+			// console.log(self.model);
 		});
 	},
 
@@ -83,13 +83,13 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	showMeasuresData: function(){
 		var self = this;
 
-		$('#ws-modal-parsing-measures-data-table-name').text(this.model.name);
-		$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.numberCoordinates);
-		$('#ws-modal-parsing-measures-data-table-potencyMin').text(this.model.potencyMin);
-		$('#ws-modal-parsing-measures-data-table-potencyMax').text(this.model.potencyMax);
-		$('#ws-modal-parsing-measures-data-table-potencyAvg').text(this.model.potencyAvg);
-		$('#ws-modal-parsing-measures-data-table-sdPotencyAvg').text(this.model.sdPotencyAvg);
-		$('#ws-modal-parsing-measures-data-table-avgPotencySD').text(this.model.avgPotencySD);
+		$('#ws-modal-parsing-measures-data-table-name').text(this.model.attributes.name);
+		$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.attributes.numberCoordinates);
+		$('#ws-modal-parsing-measures-data-table-potencyMin').text(this.model.attributes.potencyMin);
+		$('#ws-modal-parsing-measures-data-table-potencyMax').text(this.model.attributes.potencyMax);
+		$('#ws-modal-parsing-measures-data-table-potencyAvg').text(this.model.attributes.potencyAvg);
+		$('#ws-modal-parsing-measures-data-table-sdPotencyAvg').text(this.model.attributes.sdPotencyAvg);
+		$('#ws-modal-parsing-measures-data-table-avgPotencySD').text(this.model.attributes.avgPotencySD);
 		
 		this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 		$('#ws-modal-parsing-measures-data-table').fadeIn(800);
