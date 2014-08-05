@@ -1,14 +1,42 @@
 var parserTxt = require('./utils/parser');
+var mongoose = require('mongoose');
+var Place = mongoose.model('Place');
 
 exports.create = function(req, res){
-	var place = req.body;
 	
-	if(place.json){
-		console.log('asdas');
-	}
-   	
-   	// response.send(place);
+	if(req.body.json)
+		saveInDB(req.body);
+	else	
+		parserFiles(req.body);
+};
 
+
+var saveInDB = function(place){
+	Place.findOrCreate({
+		name: place.name,
+		userId: '53d6948c4f231a5934ac71b3'
+	}, 
+	function(err, placeReturned, created) {
+		if (err)
+			res.send(err);
+
+		if (created) {
+			placeReturned.numberCoordinates = place.numberCoordinates;
+			placeReturned.potencyMin = place.potencyMin;
+			placeReturned.potencyMax = place.potencyMax;
+			placeReturned.potencyAvg = place.potencyAvg;
+			placeReturned.sdPotencyAvg = place.sdPotencyAvg;
+			placeReturned.avgPotencySD = place.avgPotencySD;
+			placeReturned.save();
+		} else {
+
+		}
+		
+		// res.json({ message : 'Nice place!' });
+  	});
+};
+
+var parserFiles = function(files){
 	// console.log(req.body);
 
 	// if (req.body.zone && req.files.data && req.files.data.length > 0) {
@@ -28,6 +56,5 @@ exports.create = function(req, res){
 	// 	// call errorHanldler
 	// 	console.log('Error occured incomplete data');
 	// 	res.send('ERROR');
-	// }	
-
+	// }
 };
