@@ -29,8 +29,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		if (options.files) 
 			this.files = options.files;
 
-		if (options.html5) 
-			this.html5 = options.html5;
+		this.html5 = this.model.attributes.json;
 
 		this.render();
 		this.modal = $('#modal-parsing-measures-modal');
@@ -42,12 +41,14 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.status.initialize = true;
 		this.status.parsing = true;
 
-		parserFiles(this.files,this.model.attributes,
-		function(numFilesProcessed){
-			self.setNumberFilesParser(numFilesProcessed);
-		}, function(place){
-			// console.log(self.model);
-		});
+		if(this.html5){
+			parserFiles(this.files,this.model.attributes,
+			function(numFilesProcessed){
+				self.setNumberFilesParser(numFilesProcessed);
+			}, function(place){
+				// console.log(self.model);
+			});
+		}
 	},
 
 	render: function(){
@@ -101,6 +102,18 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	uploadDataToServer: function(){
 		this.parentComponent.children().first().next().next().addClass('active');
+		
+		this.model.save(this.model.attributes,{
+       		success: function(model, response, options){
+            	console.log('Model saved');
+               	console.log('Id: ' + this.model.get('id'));
+       		},
+       		error: function(model, xhr, options){
+               console.log('Failed to save model');
+			} 
+		});
+
+
 	}
 
 });

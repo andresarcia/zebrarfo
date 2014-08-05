@@ -1,8 +1,15 @@
 var parserTxt = require('./utils/parser');
 
 exports.create = function(req, res){
+	var place = req.body;
+	
+	if(place.json){
+		console.log('asdas');
+	}
+   	
+   	// response.send(place);
 
-	console.log(req.body);
+	// console.log(req.body);
 
 	// if (req.body.zone && req.files.data && req.files.data.length > 0) {
 		

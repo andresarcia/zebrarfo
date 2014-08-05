@@ -47,14 +47,15 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		if (options.errorView) 
 			this.errorView = options.errorView;
 
-		if (window.File && window.FileReader && window.FileList && window.Blob)
-            this.options.supportHtml5 = true;
-        else 
-        	this.options.supportHtml5 = false;
-
 		this.render();
 		this.model = new com.spantons.model.UploadMeasuresContainers();
 		this.modelPlace = new com.spantons.model.Place();
+
+		if (window.File && window.FileReader && window.FileList && window.Blob){
+            this.options.supportHtml5 = true;
+            this.modelPlace.attributes.json = true;
+		} else 
+        	this.options.supportHtml5 = false;
 		
 		$(".ws-dragandrophandler").bind("dragenter", _.bind(this.dragEnterEvent, this));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(this.dragOverEvent, this));
@@ -179,8 +180,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 			new com.spantons.view.ParsingMeasuresView({
 				model:this.modelPlace,
-				files:this.filesInfo.files, 
-				html5:this.options.supportHtml5
+				files:this.filesInfo.files
 			});
 		}
 	},

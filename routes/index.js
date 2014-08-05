@@ -20,7 +20,7 @@ router.route('/upload')
 
 router.get('/', function(req, res) {
  	res.send({
-  		message: 'Wellcome',
+  		message: 'Wellcome to API',
 	});
 });
 

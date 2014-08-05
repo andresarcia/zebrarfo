@@ -16,6 +16,7 @@ com.spantons.model.Place = Backbone.Model.extend({
 		placePotencySD_X : null,
 		placePotencySD_M : null,
 		avgPotencySD : null,
-		coordinates : []
+		coordinates : [],
+		json: false
 	}
 });
