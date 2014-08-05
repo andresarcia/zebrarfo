@@ -21,6 +21,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		waitingForServer: false
 	},
 
+	errorView: null,
+
 	initialize: function(options){
 		var self = this;
 		if (options.model) 
@@ -28,6 +30,9 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 		if (options.files) 
 			this.files = options.files;
+
+		if (options.errorView) 
+			this.errorView = options.errorView;
 
 		this.html5 = this.model.attributes.json;
 
@@ -101,18 +106,19 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	uploadDataToServer: function(){
+		var self = this;
 		this.parentComponent.children().first().next().next().addClass('active');
 		
 		this.model.save(this.model.attributes,{
        		success: function(model, response, options){
             	console.log('Model saved');
-               	console.log('Id: ' + this.model.get('id'));
+            	console.log(model);
        		},
        		error: function(model, xhr, options){
-               console.log('Failed to save model');
+       			self.modal.modal('hide');
+               	self.errorView.render(['Failed procesing data in the server']);
 			} 
 		});
-
 
 	}
 

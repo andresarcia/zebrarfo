@@ -5,13 +5,16 @@ var Place = mongoose.model('Place');
 exports.create = function(req, res){
 	
 	if(req.body.json)
-		saveInDB(req.body);
+		saveInDB(req.body, function(place){
+			// res.send(place);
+			res.send(null);
+		});
 	else	
 		parserFiles(req.body);
 };
 
 
-var saveInDB = function(place){
+var saveInDB = function(place, callback){
 	Place.findOrCreate({
 		name: place.name,
 		userId: '53d6948c4f231a5934ac71b3'
@@ -29,10 +32,10 @@ var saveInDB = function(place){
 			placeReturned.avgPotencySD = place.avgPotencySD;
 			placeReturned.save();
 		} else {
-
+			console.log('ya creado este place');
 		}
 		
-		// res.json({ message : 'Nice place!' });
+		callback(placeReturned);
   	});
 };
 

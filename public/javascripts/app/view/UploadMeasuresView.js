@@ -180,7 +180,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 			new com.spantons.view.ParsingMeasuresView({
 				model:this.modelPlace,
-				files:this.filesInfo.files
+				files:this.filesInfo.files,
+				errorView:this.errorView
 			});
 		}
 	},
