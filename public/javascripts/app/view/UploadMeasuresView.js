@@ -14,6 +14,7 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 	el: '#upload-measures',
+	template: Handlebars.compile($("#upload-measures-template").html()),
 	model: null,
 
 	options: {
@@ -72,9 +73,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var source = $('#upload-template').html();
-        var template = Handlebars.compile(source);
-        this.$el.html(template);
+        this.$el.html(this.template);
 
 		return this;
 	},
@@ -188,20 +187,12 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			this.model.disableButtonDeleteContainer();
 			container.prop("disabled",true);
 
-			if(!this.options.supportHtml5){
-				console.log('no html5');
-				// enviar datos a procesar al servidor
-			}
-			else {
-				parserFiles(this.filesInfo.files,this.place,
-				function(numFilesProcessed){
-					console.log(numFilesProcessed);
-				}, function(place){
-					console.log(place);
-				});
-			}
+			new com.spantons.view.ParsingMeasuresView({
+				model:this.place,
+				files:this.filesInfo.files, 
+				html5:this.options.supportHtml5
+			});
 		}
 	},
 	
-
 });

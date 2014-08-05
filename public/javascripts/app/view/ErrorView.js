@@ -5,6 +5,7 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.ErrorView = Backbone.View.extend({
 
 	el: '#error',
+	template: Handlebars.compile($("#error-template").html()),
 	message: '',
 
 	events : {
@@ -24,9 +25,7 @@ com.spantons.view.ErrorView = Backbone.View.extend({
 			errorTitle = 'Error:';
 
 		this.message = msg;
-		var source = $('#error-template').html();
-		var template = Handlebars.compile(source);
-		var html = template({message: this.message, title: errorTitle});
+		var html = this.template({message: this.message, title: errorTitle});
 		this.$el.html(html);
 		this.$el.show();
 
