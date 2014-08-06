@@ -8,6 +8,7 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	filesContainer: null,
 	dragFilesContainer: null,
 	filesInfoContainer: null,
+	buttonSendDataContainer: null,
 	buttonDeleteContainer: null,
 
 	initialize: function(options){
@@ -15,6 +16,7 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 		this.filesContainer= $('#upload-measures-file');
 		this.dragFilesContainer = $('.ws-dragandrophandler');
 		this.filesInfoContainer = $('#upload-measures-files-info');
+		this.buttonSendDataContainer = $('#upload-measures-button');
 		this.buttonDeleteContainer = $('#upload-measures-button-delete');
 
 		this.filesContainer.filestyle({buttonBefore: true, buttonName: "btn-primary"});
@@ -45,6 +47,10 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 		this.nameContainer.prop("disabled",true);
 	},
 
+	enableNameContainer: function(){
+		this.nameContainer.prop("disabled",false);
+	},
+
 	/* ------------------------------------------------------------------------- */
 	
 	getFilesContainerVal: function(){
@@ -67,6 +73,10 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 		this.filesContainer.filestyle('disabled', true);
 	},
 
+	enableFilesContainer: function(){
+		this.filesContainer.filestyle('disabled', false);
+	},
+
 	/* ------------------------------------------------------------------------- */
 
 	setDragFilesContainerOver: function(){
@@ -87,6 +97,16 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	renderFilesInfoContainer: function(numFiles,sizeFiles){
 		this.filesInfoContainer.children().first().children().text(numFiles);
 		this.filesInfoContainer.children().last().children().text(sizeFiles);
+	},
+
+	/* ------------------------------------------------------------------------- */
+
+	enableButtonSendDataContainer: function(){
+		this.buttonSendDataContainer.prop("disabled",false);
+	},
+
+	disableButtonSendDataContainer: function(){
+		this.buttonSendDataContainer.prop("disabled",true);
 	},
 
 	/* ------------------------------------------------------------------------- */

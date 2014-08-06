@@ -61,6 +61,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		$(".ws-dragandrophandler").bind("dragover", _.bind(this.dragOverEvent, this));
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(this.dragLeaveEvent, this));
 		$(".ws-dragandrophandler").bind("drop", _.bind(this.dropEvent, this));	
+
+		Backbone.pubSub.on('event-server-error', this.enableForm, this);
 	},
 
 	render: function(){
@@ -154,6 +156,20 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.model.setDeleteFilesContainerDefault();
 	},
 
+	enableForm: function(){
+		this.model.enableNameContainer();
+		this.model.enableFilesContainer();
+		this.model.enableButtonDeleteContainer();
+		this.model.enableButtonSendDataContainer();
+	},
+
+	disableForm: function(){
+		this.model.disableNameContainer();
+		this.model.disableFilesContainer();
+		this.model.disableButtonDeleteContainer();
+		this.model.disableButtonSendDataContainer();
+	},
+
 	uploadData: function(evt){
 		evt.preventDefault();
 		var container = $(evt.target);
@@ -173,10 +189,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			this.errorView.render(error);
 		
 		} else {
-			this.model.disableNameContainer();
-			this.model.disableFilesContainer();
-			this.model.disableButtonDeleteContainer();
-			container.prop("disabled",true);
+			this.disableForm();
 
 			new com.spantons.view.ParsingMeasuresView({
 				model:this.modelPlace,

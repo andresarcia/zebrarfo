@@ -75,7 +75,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	setNumberFilesParser: function(numFilesProcessed){
 		var self = this;
-		setTimeout(function(){
+		window.setTimeout(function(){
 			self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
 			self.updateProgressBar(numFilesProcessed);
 
@@ -100,7 +100,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 		$('#ws-modal-parsing-measures-data-table').fadeIn(800);
 		
-		setTimeout(function(){
+		window.setTimeout(function(){
 			self.uploadDataToServer();
 		}, 500);
 	},
@@ -116,6 +116,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
        		},
        		error: function(model, xhr, options){
        			self.modal.modal('hide');
+       			Backbone.pubSub.trigger('event-server-error');
                	self.errorView.render(['Failed procesing data in the server']);
 			} 
 		});
