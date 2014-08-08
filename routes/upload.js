@@ -6,8 +6,7 @@ exports.create = function(req, res){
 	
 	if(req.body.json)
 		saveInDB(req.body, function(place){
-			// res.send(place);
-			res.send(null);
+			res.send(place);
 		});
 	else	
 		parserFiles(req.body);

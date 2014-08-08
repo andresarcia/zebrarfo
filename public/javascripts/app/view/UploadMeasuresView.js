@@ -71,7 +71,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		return this;
 	},
 
-	checkName: function(evt){
+	checkName: function(){
 		if(this.model.getNameContainerVal() === '') {
 			this.options.fillName = false;
 			this.model.setBadNameContainer();
@@ -172,7 +172,6 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 	uploadData: function(evt){
 		evt.preventDefault();
-		var container = $(evt.target);
 
 		if(!this.options.fillFiles || !this.options.fillName){
 			var error = [];

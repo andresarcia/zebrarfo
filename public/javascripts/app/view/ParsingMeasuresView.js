@@ -23,6 +23,9 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	errorView: null,
 
+	timeBase: 10,
+	timeToWait: 0,
+
 	initialize: function(options){
 		var self = this;
 		if (options.model) 
@@ -38,7 +41,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 		this.render();
 		this.modal = $('#modal-parsing-measures-modal');
-		this.modal.modal({keyboard: false,backdrop : 'static'});
+		this.modal.modal({keyboard: false, backdrop : 'static'});
 		this.parentComponent = $('.list-group');
 		this.progressBar = $('.progress-bar');
 
@@ -50,14 +53,13 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			parserFiles(this.files,this.model.attributes,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
-			}, function(place){
-				// console.log(self.model);
-			});
+			}, function(){});
 		}
 	},
 
 	render: function(){
-        this.$el.html(this.template);
+		var html = this.template({numFiles: this.files.length});
+        this.$el.html(html);
 
 		return this;
 	},
@@ -75,15 +77,16 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	setNumberFilesParser: function(numFilesProcessed){
 		var self = this;
-		window.setTimeout(function(){
+
+		this.timeToWait += this.timeBase;
+
+		setTimeout(function() {
 			self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
 			self.updateProgressBar(numFilesProcessed);
 
 			if(self.files.length == numFilesProcessed)
 				self.showMeasuresData();
-
-		}, 500);
-
+		}, this.timeToWait);
 	},
 
 	showMeasuresData: function(){
@@ -108,18 +111,21 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	uploadDataToServer: function(){
 		var self = this;
 		this.parentComponent.children().first().next().next().addClass('active');
+
+		this.model.on('progress', function(e) { console.log(e); });
+		this.model.save();
 		
-		this.model.save(this.model.attributes,{
-       		success: function(model, response, options){
-            	console.log('Model saved');
-            	console.log(model);
-       		},
-       		error: function(model, xhr, options){
-       			self.modal.modal('hide');
-       			Backbone.pubSub.trigger('event-server-error');
-               	self.errorView.render(['Failed procesing data in the server']);
-			} 
-		});
+		// this.model.save(this.model.attributes,{
+  //      		success: function(model, response, options){
+  //           	console.log('Model saved');
+  //           	console.log(model);
+  //      		},
+  //      		error: function(model, xhr, options){
+  //      			self.modal.modal('hide');
+  //      			Backbone.pubSub.trigger('event-server-error');
+  //              	self.errorView.render(['Failed procesing data in the server']);
+		// 	} 
+		// });
 
 	}
 
