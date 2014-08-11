@@ -52,6 +52,8 @@ var CoordinateSchema = new Schema({
 
     potencySd : Number,
 
+    createdDate : String,
+
 });
 
 CoordinateSchema.plugin(findOrCreate);

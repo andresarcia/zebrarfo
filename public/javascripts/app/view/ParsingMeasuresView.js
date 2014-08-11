@@ -134,8 +134,6 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
        		success: function(model, response, options){
             	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
             	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
-            	// console.log('Model saved');
-            	// console.log(model);
        		},
        		error: function(model, xhr, options){
        			self.modal.modal('hide');
