@@ -66,14 +66,19 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	updateProgressBar: function(val){
 		var total;
+		var percentLoaded;
 
 		if(!this.status.uploading)
-			total = this.files.length;
-
-		var percentLoaded = Math.round((val / total) * 40);
+			percentLoaded = Math.round((val / this.files.length) * 40);
+		else 
+			percentLoaded = Math.round(40 + val);
+			
 		this.progressBar.css('width',percentLoaded + '%');
 		this.progressBar.text(percentLoaded + '%');
-	},
+
+		if(percentLoaded >= 100)
+			this.progressBar.addClass('progress-bar-success');
+	},	
 
 	setNumberFilesParser: function(numFilesProcessed){
 		var self = this;
@@ -111,21 +116,33 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	uploadDataToServer: function(){
 		var self = this;
 		this.parentComponent.children().first().next().next().addClass('active');
+		this.status.uploading = true;
 
-		this.model.on('progress', function(e) { console.log(e); });
-		this.model.save();
+		this.model.on('progress', function(evt) { 
+			if (evt.lengthComputable) {
+		    	var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+		    	self.updateProgressBar(percentLoaded * 60 / 100);
+
+		    	if(percentLoaded >= 60){
+		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
+		    		self.parentComponent.children().eq(3).addClass('active');
+		    	}
+		    }
+		});
 		
-		// this.model.save(this.model.attributes,{
-  //      		success: function(model, response, options){
-  //           	console.log('Model saved');
-  //           	console.log(model);
-  //      		},
-  //      		error: function(model, xhr, options){
-  //      			self.modal.modal('hide');
-  //      			Backbone.pubSub.trigger('event-server-error');
-  //              	self.errorView.render(['Failed procesing data in the server']);
-		// 	} 
-		// });
+		this.model.save(this.model.attributes,{
+       		success: function(model, response, options){
+            	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
+            	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
+            	// console.log('Model saved');
+            	// console.log(model);
+       		},
+       		error: function(model, xhr, options){
+       			self.modal.modal('hide');
+       			Backbone.pubSub.trigger('event-server-error');
+               	self.errorView.render(['Failed procesing data in the server']);
+			} 
+		});
 
 	}
 
