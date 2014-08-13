@@ -17,11 +17,12 @@ exports.create = function(req, res){
 		parserFiles(req.body);
 };
 
+var userId = '53d6948c4f231a5934ac71b3';
 
 var saveInDB = function(place, callback){
 	Place.findOrCreate({
 		name: place.name,
-		userId: '53d6948c4f231a5934ac71b3'
+		userId: userId
 	}, 
 	function(err, placeReturned, created) {
 		if (err)
@@ -51,8 +52,14 @@ var saveInDB = function(place, callback){
 			saveCoordinates(place.coordinates,placeReturned.id, function(err){
 				if (err) 
   					callback(err);
-  				callback(null,placeReturned);
-  				// TOMAR ESTADISTICAS
+  				
+  				takeStatistics(placeReturned,place,function(err,placeWithStatistics){
+  					if (err) 
+  						callback(err);
+
+  					callback(null,placeWithStatistics);
+  				});
+
 			});
 		}
 
@@ -102,11 +109,39 @@ var saveCoordinates = function(coordiantes, placeId, firstCallback){
 };
 
 
+var takeStatistics = function(placeReturned, place, callback){
+	Coordinate.count({ placeId: placeReturned.id }, function (err, count) {
+		if(err)
+			callback(err);
 
+		if(count != placeReturned.numberCoordinates){
+			placeReturned.numberCoordinates = count;	
+			if(placeReturned.potencyMin > place.potencyMin)
+				placeReturned.potencyMin = place.potencyMin;
+			if(placeReturned.potencyMax < place.potencyMax)
+				placeReturned.potencyMax = place.potencyMax;
 
+			placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
+			placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
 
+			if(count > 1){
+				var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
+				var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
+				sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/count)/(count - 1));
+				placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
 
+			} else
+				placeReturned.sdPotencyAvg = 0;
 
+			placeReturned.save(function (err) {
+				if (err) 
+  					callback(err);
+
+  				callback(null,placeReturned);
+			});
+		}
+	});
+};
 
 
 var parserFiles = function(files){
