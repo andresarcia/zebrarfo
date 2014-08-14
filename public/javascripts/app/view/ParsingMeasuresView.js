@@ -23,7 +23,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	errorView: null,
 
-	timeBase: 10,
+	timeBase: 5,
 	timeToWait: 0,
 
 	initialize: function(options){
@@ -116,6 +116,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	uploadDataToServer: function(){
 		var self = this;
 		this.parentComponent.children().first().next().next().addClass('active');
+		this.parentComponent.children().first().next().next().find($('.glyphicon-refresh-animate')).show();
 		this.status.uploading = true;
 
 		this.model.on('progress', function(evt) { 
@@ -125,7 +126,9 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 		    	if(percentLoaded >= 60){
 		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
+		    		self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
 		    		self.parentComponent.children().eq(3).addClass('active');
+		    		self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).show();
 		    	}
 		    }
 		});
@@ -134,6 +137,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
        		success: function(model, response, options){
             	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
             	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
+            	self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
        		},
        		error: function(model, xhr, options){
        			self.modal.modal('hide');
