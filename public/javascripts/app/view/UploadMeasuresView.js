@@ -2,20 +2,12 @@ var com = com || {};
 com.spantons = com.spantons || {};
 com.spantons.view = com.spantons.view || {};
 
-// TODO: change to red bg of input name when this is empty and show a error msg and shake input effect (animate.css)
-//		 show a error msg when the input file has not file/files
-//  	 Actualizar el numero de archivos procesados cada vez que uno esta listo
-//		 Mostrar los datos obtenidos numero y peso cuando salga del input file
-//		 mostrar los datos obtenidos cuando se procesen todos los archivos
-//		 hacer que el choosefile cambie de color tambien
-//		 si le da directo al boton que se pongan en rojo los que no han sido seleccionados
-//		 validar el tipo de archivo
-
 com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 	el: '#upload-measures',
 	template: Handlebars.compile($("#upload-measures-template").html()),
-	model: null,
+	viewContainers: null,
+	places: null,
 
 	options: {
 		supportHtml5: false,
@@ -25,7 +17,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		fillFilesError: 'You must select or drag at least one file'
 	},
 
-	modelPlace: null,
+	placeName: null,
 
 	filesInfo: {
 		files: null,
@@ -47,14 +39,16 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		if (options.errorView) 
 			this.errorView = options.errorView;
 
-		this.render();
-		this.model = new com.spantons.model.UploadMeasuresContainers();
-		this.modelPlace = new com.spantons.model.Place();
+		this.places = new com.spantons.collection.Places();
+		this.places.fetch();
+		console.log(this.places);
 
-		if (window.File && window.FileReader && window.FileList && window.Blob){
+		this.render();
+		this.viewContainers = new com.spantons.model.UploadMeasuresContainers();
+
+		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;
-            this.modelPlace.attributes.json = true;
-		} else 
+		else 
         	this.options.supportHtml5 = false;
 		
 		$(".ws-dragandrophandler").bind("dragenter", _.bind(this.dragEnterEvent, this));
@@ -72,14 +66,14 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	checkName: function(){
-		if(this.model.getNameContainerVal() === '') {
+		if(this.viewContainers.getNameContainerVal() === '') {
 			this.options.fillName = false;
-			this.model.setBadNameContainer();
+			this.viewContainers.setBadNameContainer();
 		}
 		else {
 			this.options.fillName = true;
-			this.modelPlace.attributes.name = this.model.getNameContainerVal();
-			this.model.setGoodNameContainer();
+			this.placeName = this.viewContainers.getNameContainerVal();
+			this.viewContainers.setGoodNameContainer();
 		}
 	},
 
@@ -87,12 +81,12 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		if(this.options.supportHtml5)
 			this.filesInfo.files = evt.target.files;
 			
-        if(this.model.getFilesContainerVal() !== ''){
+        if(this.viewContainers.getFilesContainerVal() !== ''){
 			this.options.fillFiles = true;
-			this.model.setGoodFilesContainer();
+			this.viewContainers.setGoodFilesContainer();
         } else {
         	this.options.fillFiles = false;
-        	this.model.setBadFilesContainer();
+        	this.viewContainers.setBadFilesContainer();
         }
 
         this.fillFilesInfo();
@@ -106,13 +100,13 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	dragOverEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
-    	this.model.setDragFilesContainerOver();
+    	this.viewContainers.setDragFilesContainerOver();
 	},
 
 	dragLeaveEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
-    	this.model.setDragFilesContainerLeave();
+    	this.viewContainers.setDragFilesContainerLeave();
 	},
 
 	dropEvent: function(evt){
@@ -120,7 +114,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
     	evt.preventDefault();
     	this.filesInfo.files = evt.originalEvent.dataTransfer.files;
     	this.options.fillFiles = true;
-    	this.model.setDragFilesContainerDrop();
+    	this.viewContainers.setDragFilesContainerDrop();
 		this.fillFilesInfo();
 	},
 
@@ -143,7 +137,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	renderFilesInfo: function(){
-		this.model.renderFilesInfoContainer(this.filesInfo.numFiles,this.filesInfo.sizeFiles);
+		this.viewContainers.renderFilesInfoContainer(this.filesInfo.numFiles,this.filesInfo.sizeFiles);
 	},
 
 	delateFiles: function(){
@@ -153,21 +147,21 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.filesInfo.files = [];
 		this.renderFilesInfo();
 		this.options.fillFiles = false;
-		this.model.setDeleteFilesContainerDefault();
+		this.viewContainers.setDeleteFilesContainerDefault();
 	},
 
 	enableForm: function(){
-		this.model.enableNameContainer();
-		this.model.enableFilesContainer();
-		this.model.enableButtonDeleteContainer();
-		this.model.enableButtonSendDataContainer();
+		this.viewContainers.enableNameContainer();
+		this.viewContainers.enableFilesContainer();
+		this.viewContainers.enableButtonDeleteContainer();
+		this.viewContainers.enableButtonSendDataContainer();
 	},
 
 	disableForm: function(){
-		this.model.disableNameContainer();
-		this.model.disableFilesContainer();
-		this.model.disableButtonDeleteContainer();
-		this.model.disableButtonSendDataContainer();
+		this.viewContainers.disableNameContainer();
+		this.viewContainers.disableFilesContainer();
+		this.viewContainers.disableButtonDeleteContainer();
+		this.viewContainers.disableButtonSendDataContainer();
 	},
 
 	uploadData: function(evt){
@@ -177,12 +171,12 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			var error = [];
 			if(!this.options.fillName){
 				error.push(this.options.fillNameError);
-				this.model.setBadNameContainer();
+				this.viewContainers.setBadNameContainer();
 			}
 
 			if(!this.options.fillFiles){
 				error.push(this.options.fillFilesError);
-				this.model.setBadFilesContainer();
+				this.viewContainers.setBadFilesContainer();
 			}
 
 			this.errorView.render(error);
@@ -191,7 +185,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			this.disableForm();
 
 			new com.spantons.view.ParsingMeasuresView({
-				model:this.modelPlace,
+				placeName:this.placeName,
+				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,
 				errorView:this.errorView
 			});

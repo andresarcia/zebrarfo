@@ -10,7 +10,8 @@ router.route('/users')
 	.post(users.create);
 
 router.route('/places')
-	.post(places.create);
+	.post(places.create)
+	.get(places.list);
 
 router.route('/coordinates')
 	.post(coordinates.create);

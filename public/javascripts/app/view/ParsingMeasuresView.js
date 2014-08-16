@@ -28,16 +28,20 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
-		if (options.model) 
-			this.model = options.model;
 
+		if (options.placeName && options.supportHtml5){
+			this.model = new com.spantons.model.PlaceUpload({name:options.placeName,json:options.supportHtml5});
+			this.html5 = options.supportHtml5;
+		} else 
+			throw 'Place name and html5 support are not defined';
+		
 		if (options.files) 
 			this.files = options.files;
+		else 
+			throw 'Any selected file';
 
 		if (options.errorView) 
 			this.errorView = options.errorView;
-
-		this.html5 = this.model.attributes.json;
 
 		this.render();
 		this.modal = $('#modal-parsing-measures-modal');
@@ -115,8 +119,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	uploadDataToServer: function(){
 		var self = this;
-		this.parentComponent.children().first().next().next().addClass('active');
-		this.parentComponent.children().first().next().next().find($('.glyphicon-refresh-animate')).show();
+		this.parentComponent.children().eq(2).addClass('active');
+		this.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).show();
 		this.status.uploading = true;
 
 		this.model.on('progress', function(evt) { 
