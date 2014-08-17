@@ -1,10 +1,20 @@
 
-.ws-error {
+.ws-error, .ws-waiting {
 	width: 100%;
 	height: 100%;
-	background-color:rgba(0,0,0,0.5);
+	background-color:rgba(0,0,0,0.6);
 	position: fixed;
 	z-index: 100;
+}
+
+.ws-waiting-icon{
+  position: fixed;
+  width: 100%
+  top:50%;
+  bottom: 50%;
+  left: 50%;
+  right: 50%;
+  color: #239D56;
 }
 
 .ws-error-message {
@@ -64,10 +74,10 @@
 }
 
 .glyphicon-refresh-animate {
-  -webkit-animation: spin .6s infinite linear;
-  -moz-animation: spin .6s linear infinite;
-  -o-animation: spin .6s linear infinite;
-  -animation: spin .6s infinite linear;
+  -webkit-animation: spin .8s infinite linear;
+  -moz-animation: spin .8s linear infinite;
+  -o-animation: spin .8s linear infinite;
+  -animation: spin .8s infinite linear;
 
   cursor: progress;
   display: none;

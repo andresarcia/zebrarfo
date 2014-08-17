@@ -211,7 +211,6 @@
         return this;
     };
 
-    // Data attributes register
     $(function() {
         $('.filestyle').each(function () {
             var $this = $(this),

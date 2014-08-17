@@ -12,12 +12,15 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	buttonDeleteContainer: null,
 
 	initialize: function(options){
-		this.nameContainer= $('#upload-measures-name');
-		this.filesContainer= $('#upload-measures-file');
-		this.dragFilesContainer = $('.ws-dragandrophandler');
-		this.filesInfoContainer = $('#upload-measures-files-info');
-		this.buttonSendDataContainer = $('#upload-measures-button');
-		this.buttonDeleteContainer = $('#upload-measures-button-delete');
+		if(options.el)
+			this.el = options.el;
+
+		this.nameContainer= this.el.find($('#upload-measures-name'));
+		this.filesContainer= this.el.find($('#upload-measures-file'));
+		this.dragFilesContainer = this.el.find($('.ws-dragandrophandler'));
+		this.filesInfoContainer = this.el.find($('#upload-measures-files-info'));
+		this.buttonSendDataContainer = this.el.find($('#upload-measures-button'));
+		this.buttonDeleteContainer = this.el.find($('#upload-measures-button-delete'));
 
 		this.filesContainer.filestyle({buttonBefore: true, buttonName: "btn-primary"});
 		this.disableButtonDeleteContainer();
@@ -29,6 +32,9 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	setGoodNameContainer: function(){
 		var containerParent = this.nameContainer.parent();
+		containerParent.children().first().children().first().removeClass('btn-default');
+		containerParent.children().first().children().first().removeClass('btn-danger');
+		containerParent.children().first().children().first().addClass('btn-success');
 		containerParent.addClass('has-success');
 		containerParent.removeClass('has-error');
 		containerParent.children().last().addClass('glyphicon-ok');
@@ -37,6 +43,9 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	setBadNameContainer: function(){
 		var containerParent = this.nameContainer.parent();
+		containerParent.children().first().children().first().removeClass('btn-default');
+		containerParent.children().first().children().first().removeClass('btn-success');
+		containerParent.children().first().children().first().addClass('btn-danger');
 		containerParent.addClass('has-error');
 		containerParent.removeClass('has-success');
 		containerParent.children().last().addClass('glyphicon-remove');
@@ -45,10 +54,12 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	disableNameContainer: function(){
 		this.nameContainer.prop("disabled",true);
+		this.nameContainer.parent().children().first().children().first().prop("disabled",true);
 	},
 
 	enableNameContainer: function(){
 		this.nameContainer.prop("disabled",false);
+		this.nameContainer.parent().children().first().children().first().prop("disabled",false);
 	},
 
 	/* ------------------------------------------------------------------------- */

@@ -9,6 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	</head>
 	<body>
+		<div id="waiting"></div>
 		<div id="error"></div>
 
 		<div class="container">
@@ -18,6 +19,13 @@
 			<div id="upload-measures"></div>
 		</div>
 		
+		<script id="waiting-template" type="text/x-handlebars-template">
+			<div class="ws-waiting">
+				<div class="ws-waiting-icon">
+					<span class="glyphicon glyphicon-3x glyphicon-refresh glyphicon-refresh-animate"></span>
+				</div>
+			</div>
+		</script>
 
 		<script id="error-template" type="text/x-handlebars-template">
 			<div class="ws-error">
@@ -43,11 +51,18 @@
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
 			<form>
 				<div class="input-group form-group has-feedback">
-					<span class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></span>
+			      	<div class="input-group-btn">
+			        	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Pick a zone <span class="caret"></span></button>
+			        	<ul class="dropdown-menu" role="menu">
+			        		{{#each this.models}}
+							<li><a class="item-zone-name" href="#">{{attributes.name}}</a></li>
+							{{/each}}
+			        	</ul>
+			      	</div>
 					<label class="control-label sr-only" for="inputSuccess5">Hidden label</label>
-					<input id='upload-measures-name' type="text" class="form-control" placeholder="Zone name">	
+					<input id='upload-measures-name' type="text" class="form-control" placeholder="or type a zone name">	
 					<span class="feedback-icon-container glyphicon form-control-feedback"></span>
-				</div>
+			    </div>
 
 				<div class="ws-dragandrophandler">
 					<h1>Drag files here</h1>
@@ -115,10 +130,10 @@
 									</table>
 							  	</a>
 							  	<a href="#" class="list-group-item">Uploading data
-							  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right">
+							  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
 							  	</a>
 							  	<a href="#" class="list-group-item">Processing in the server
-							  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right">
+							  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
 							  	</a>
 							</div>
 
@@ -135,6 +150,7 @@
 		<!-- External library Includes -->
 		<script type="text/javascript" src="javascripts/vendor/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/bootstrap-filestyle.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/bootstrap-dropdown.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/bootstrap-modal.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
@@ -148,6 +164,7 @@
 		<script type="text/javascript" src="javascripts/app/collection/Places.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/app.js"></script>
 

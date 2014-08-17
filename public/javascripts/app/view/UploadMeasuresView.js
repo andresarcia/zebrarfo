@@ -27,42 +27,65 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	errorView: null,
+	waitingView: null,
 
 	events : {
 		'blur #upload-measures-name' : 'checkName',
+		'click .item-zone-name' : 'pickName',
 		'change #upload-measures-file' : 'checkFiles',
 		'click #upload-measures-button' : 'uploadData',
 		'click #upload-measures-button-delete' : 'delateFiles'
 	},
 	
 	initialize: function(options){
+		var self = this;
+
 		if (options.errorView) 
 			this.errorView = options.errorView;
 
-		this.places = new com.spantons.collection.Places();
-		this.places.fetch();
-		console.log(this.places);
+		if(options.waitingView)
+			this.waitingView = options.waitingView;
 
-		this.render();
-		this.viewContainers = new com.spantons.model.UploadMeasuresContainers();
+		this.waitingView.render();
+		
+		this.places = new com.spantons.collection.Places();
+		this.places.fetch({
+			success: function(e){                      
+		        self.waitingView.closeView();
+		        self.render();
+		        self.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
+		   	    $(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
+				$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
+				$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
+				$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
+
+				Backbone.pubSub.on('event-server-error', self.enableForm, self);
+		     },
+		     error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the places',e]);
+		     }
+		});
 
 		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;
 		else 
-        	this.options.supportHtml5 = false;
-		
-		$(".ws-dragandrophandler").bind("dragenter", _.bind(this.dragEnterEvent, this));
-		$(".ws-dragandrophandler").bind("dragover", _.bind(this.dragOverEvent, this));
-		$(".ws-dragandrophandler").bind("dragleave", _.bind(this.dragLeaveEvent, this));
-		$(".ws-dragandrophandler").bind("drop", _.bind(this.dropEvent, this));	
-
-		Backbone.pubSub.on('event-server-error', this.enableForm, this);
+        	this.options.supportHtml5 = false;	
 	},
 
 	render: function(){
-        this.$el.html(this.template);
+		
+		var html = this.template(this.places);
+    	this.$el.html(html);	
 
 		return this;
+	},
+
+	pickName: function(evt){
+		this.$el.find($('#upload-measures-name')).val($(evt.currentTarget).text());
+		this.viewContainers.setGoodNameContainer();
+		this.options.fillName = true;
+		this.placeName = this.viewContainers.getNameContainerVal();
 	},
 
 	checkName: function(){
