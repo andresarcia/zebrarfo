@@ -57,6 +57,10 @@
 			        		{{#each this.models}}
 							<li><a class="item-zone-name" href="#">{{attributes.name}}</a></li>
 							{{/each}}
+							{{#unless this.models}}
+								<li class="divider"></li>
+    							<li><a href="#">You have not uploaded any place</a></li>
+							{{/unless}}
 			        	</ul>
 			      	</div>
 					<label class="control-label sr-only" for="inputSuccess5">Hidden label</label>
