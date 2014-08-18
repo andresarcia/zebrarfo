@@ -22,9 +22,14 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	errorView: null,
+	stop: false,
 
 	timeBase: 5,
 	timeToWait: 0,
+
+	events: {
+		'click #ws-modal-parsing-measures-button' : 'cancelUpload'
+	},
 
 	initialize: function(options){
 		var self = this;
@@ -69,52 +74,58 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	updateProgressBar: function(val){
-		var total;
-		var percentLoaded;
+		if(!this.stop){
+			var total;
+			var percentLoaded;
 
-		if(!this.status.uploading)
-			percentLoaded = Math.round((val / this.files.length) * 40);
-		else 
-			percentLoaded = Math.round(40 + val);
-			
-		this.progressBar.css('width',percentLoaded + '%');
-		this.progressBar.text(percentLoaded + '%');
+			if(!this.status.uploading)
+				percentLoaded = Math.round((val / this.files.length) * 40);
+			else 
+				percentLoaded = Math.round(40 + val);
+				
+			this.progressBar.css('width',percentLoaded + '%');
+			this.progressBar.text(percentLoaded + '%');
 
-		if(percentLoaded >= 100)
-			this.progressBar.addClass('progress-bar-success');
+			if(percentLoaded >= 100)
+				this.progressBar.addClass('progress-bar-success');
+		}
 	},	
 
 	setNumberFilesParser: function(numFilesProcessed){
-		var self = this;
+		if(!this.stop){
+			var self = this;
 
-		this.timeToWait += this.timeBase;
+			this.timeToWait += this.timeBase;
 
-		setTimeout(function() {
-			self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
-			self.updateProgressBar(numFilesProcessed);
+			setTimeout(function() {
+				self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
+				self.updateProgressBar(numFilesProcessed);
 
-			if(self.files.length == numFilesProcessed)
-				self.showMeasuresData();
-		}, this.timeToWait);
+				if(self.files.length == numFilesProcessed)
+					self.showMeasuresData();
+			}, this.timeToWait);
+		}
 	},
 
 	showMeasuresData: function(){
-		var self = this;
+		if(!this.stop){
+			var self = this;
 
-		$('#ws-modal-parsing-measures-data-table-name').text(this.model.attributes.name);
-		$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.attributes.numberCoordinates);
-		$('#ws-modal-parsing-measures-data-table-potencyMin').text(this.model.attributes.potencyMin);
-		$('#ws-modal-parsing-measures-data-table-potencyMax').text(this.model.attributes.potencyMax);
-		$('#ws-modal-parsing-measures-data-table-potencyAvg').text(this.model.attributes.potencyAvg);
-		$('#ws-modal-parsing-measures-data-table-sdPotencyAvg').text(this.model.attributes.sdPotencyAvg);
-		$('#ws-modal-parsing-measures-data-table-avgPotencySD').text(this.model.attributes.avgPotencySD);
-		
-		this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
-		$('#ws-modal-parsing-measures-data-table').fadeIn(800);
-		
-		window.setTimeout(function(){
-			self.uploadDataToServer();
-		}, 500);
+			$('#ws-modal-parsing-measures-data-table-name').text(this.model.attributes.name);
+			$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.attributes.numberCoordinates);
+			$('#ws-modal-parsing-measures-data-table-potencyMin').text(this.model.attributes.potencyMin);
+			$('#ws-modal-parsing-measures-data-table-potencyMax').text(this.model.attributes.potencyMax);
+			$('#ws-modal-parsing-measures-data-table-potencyAvg').text(this.model.attributes.potencyAvg);
+			$('#ws-modal-parsing-measures-data-table-sdPotencyAvg').text(this.model.attributes.sdPotencyAvg);
+			$('#ws-modal-parsing-measures-data-table-avgPotencySD').text(this.model.attributes.avgPotencySD);
+			
+			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
+			$('#ws-modal-parsing-measures-data-table').fadeIn(800);
+			
+			window.setTimeout(function(){
+				self.uploadDataToServer();
+			}, 500);
+		}
 	},
 
 	uploadDataToServer: function(){
@@ -126,9 +137,11 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.model.on('progress', function(evt) { 
 			if (evt.lengthComputable) {
 		    	var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
-		    	self.updateProgressBar(percentLoaded * 60 / 100);
+		    	self.updateProgressBar(percentLoaded * 40 / 100);
 
-		    	if(percentLoaded >= 60){
+		    	if(percentLoaded >= 40){
+		    		$('.modal-footer').children().prop("disabled",true);
+		    		self.waitingForServer = true;
 		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
 		    		self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
 		    		self.parentComponent.children().eq(3).addClass('active');
@@ -136,20 +149,31 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		    	}
 		    }
 		});
-		
+
 		this.model.save(this.model.attributes,{
        		success: function(model, response, options){
+       			$('.modal-footer').children().prop("disabled",false);
+       			self.updateProgressBar(60);
             	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
             	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
             	self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
        		},
        		error: function(model, xhr, options){
+       			$('.modal-footer').children().prop("disabled",false);
        			self.modal.modal('hide');
        			Backbone.pubSub.trigger('event-server-error');
                	self.errorView.render(['Failed procesing data in the server']);
 			} 
 		});
 
+	},
+
+	cancelUpload: function(){
+		if (!this.waitingForServer) {
+			this.stop = true;
+			this.model.clear();
+			Backbone.pubSub.trigger('event-server-error');
+		}
 	}
 
 });

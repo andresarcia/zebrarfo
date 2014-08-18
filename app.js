@@ -15,7 +15,7 @@ app.set('view engine', 'jade');
 
 app.use(favicon());
 app.use(logger('dev'));
-app.use(bodyParser({limit: '10mb'}));
+app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());

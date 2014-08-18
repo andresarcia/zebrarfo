@@ -5,18 +5,22 @@ var Place = mongoose.model('Place');
 var Coordinate = mongoose.model('Coordinate');
 
 exports.create = function(req, res){
+	if(Object.keys(req.body).length === 0)
+		res.send({});
 	
-	if(req.body.json){
-		saveInDB(req.body, function(err,place){
+	else {
+		if(req.body.json){
+			saveInDB(req.body, function(err,place){
 
-			if(err)
-				res.send(err);
-					
-			res.send(place);
-		});
+				if(err)
+					res.send(err);
+						
+				res.send(place);
+			});
+		}
+		else	
+			parserFiles(req.body);
 	}
-	else	
-		parserFiles(req.body);
 };
 
 var userId = '53d6948c4f231a5934ac71b3';

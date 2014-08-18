@@ -63,7 +63,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		     },
 		     error: function(e){  
 		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the places',e]);
+		     	self.errorView.render(['Occurred an error retrieving the places']);
 		     }
 		});
 

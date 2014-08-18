@@ -4,6 +4,7 @@ $(document).ready(function(){
 		var numFilesParser = 0;
 		var numFiles = files.length;
 		var newPlace = null;
+		place.coordinates = [];
 
 		_.each(files, function(file){
    			var fr = new FileReader();
