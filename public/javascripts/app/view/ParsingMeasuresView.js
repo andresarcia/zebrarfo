@@ -24,7 +24,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	errorView: null,
 	stop: false,
 
-	timeBase: 5,
+	timeBase: 3,
 	timeToWait: 0,
 
 	events: {
