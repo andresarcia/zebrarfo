@@ -4,7 +4,7 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
-	el: '#upload-measures',
+	el: '.ws-containter',
 	template: Handlebars.compile($("#upload-measures-template").html()),
 	viewContainers: null,
 	places: null,

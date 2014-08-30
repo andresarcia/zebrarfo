@@ -5,11 +5,7 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.VerticalNavView = Backbone.View.extend({
 
 	el: '#vertical-nav',
-	template: Handlebars.compile($("#vertical-nav-template").html()),
-
-	events : {
-		'click a' : 'changeActiveClass'
-	},
+	template: Handlebars.compile($("#vertical-nav-template").html()),	
 	
 	initialize: function(options){
 		this.render();
@@ -20,9 +16,10 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		return this;
 	},
 
-	changeActiveClass: function(evt){
-		$(evt.target).siblings().removeClass('active');
-		$(evt.target).addClass('active');
+	changeActiveClass: function(index){
+		this.$el.find('.active').removeClass('active');
+		var item = this.$el.find('a').get(index);
+		$(item).addClass('active');
 	}
 
 });

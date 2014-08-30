@@ -9,9 +9,13 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		waitingView: null
 	},
 
+	navViews : {
+		verticalNav: null
+	},
+
 	initialize: function(options){
 
-		new com.spantons.view.VerticalNavView();
+		this.navViews.verticalNav = new com.spantons.view.VerticalNavView();
 
 		this.helperViews.errorView = new com.spantons.view.ErrorView();
 		this.helperViews.waitingView = new com.spantons.view.WaitingView();
@@ -23,7 +27,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showPlaces: function(){
-		
+		var placesView = new com.spantons.view.PlacesView();
+		this.navViews.verticalNav.changeActiveClass(0);
 	},
 
 	upload: function(){
@@ -31,6 +36,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
+		this.navViews.verticalNav.changeActiveClass(1);
 	}
 
 });

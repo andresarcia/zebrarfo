@@ -11,6 +11,7 @@
 	<body>
 		<div id="waiting"></div>
 		<div id="error"></div>
+		<div id="modal-parsing-measures"></div>
 
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
@@ -46,18 +47,12 @@
 			</div>
 		</nav>
 
-
 	  	<div class="col-md-2">
 	  		<div id="vertical-nav"></div>
 	  	</div>
 	  	<div class="col-md-10">
-	  		<div class="ws-containter">
-	  			<div id="modal-parsing-measures"></div>
-				<div id="upload-measures"></div>
-	  		</div>
+	  		<div class="ws-containter"></div>
 	  	</div>
-		
-
 
 		<script id="waiting-template" type="text/x-handlebars-template">
 			<div class="ws-waiting">
@@ -223,6 +218,7 @@
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>
