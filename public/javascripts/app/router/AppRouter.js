@@ -11,6 +11,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	initialize: function(options){
 
+		new com.spantons.view.VerticalNavView();
+
 		this.helperViews.errorView = new com.spantons.view.ErrorView();
 		this.helperViews.waitingView = new com.spantons.view.WaitingView();
 	},

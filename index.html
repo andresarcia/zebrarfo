@@ -48,18 +48,7 @@
 
 
 	  	<div class="col-md-2">
-	  		<div class="ws-vertical-navbar">
-	  			<div class="list-group">
-						<a href="#places" class="list-group-item active">
-							<span class="glyphicon glyphicon-globe"></span>
-							<span> Places</span>
-						</a>
-						<a href="#upload" class="list-group-item">
-							<span class="glyphicon glyphicon-floppy-open"></span>
-							<span> Upload place</span>
-						</a>
-				</div>
-	  		</div>
+	  		<div id="vertical-nav"></div>
 	  	</div>
 	  	<div class="col-md-10">
 	  		<div class="ws-containter">
@@ -69,7 +58,7 @@
 	  	</div>
 		
 
-		
+
 		<script id="waiting-template" type="text/x-handlebars-template">
 			<div class="ws-waiting">
 				<div class="ws-waiting-icon">
@@ -97,6 +86,21 @@
 					<button id="error-button" type="button" class="btn ws-error-button btn-lg">Got it</button>
 				</div>
 			</div>
+		</script>
+
+		<script id="vertical-nav-template" type="text/x-handlebars-template">
+			<div class="ws-vertical-navbar">
+	  			<div class="list-group">
+					<a href="#places" class="list-group-item active">
+						<span class="glyphicon glyphicon-globe"></span>
+						<span> Places</span>
+					</a>
+					<a href="#upload" class="list-group-item">
+						<span class="glyphicon glyphicon-floppy-open"></span>
+						<span> Upload place</span>
+					</a>
+				</div>
+	  		</div>
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
@@ -216,9 +220,10 @@
 		<script type="text/javascript" src="javascripts/app/model/Place.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/PlaceUpload.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Places.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>
 		<script type="text/javascript" src="javascripts/app/app.js"></script>
