@@ -5,19 +5,33 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.PlacesView = Backbone.View.extend({
 
 	el: '.ws-containter',
-	//template: Handlebars.compile($("#vertical-nav-template").html()),
-
-	// events : {
-	// 	'click a' : 'changeActiveClass'
-	// },
+	places: null,
+	template: Handlebars.compile($("#places-template").html()),
 	
 	initialize: function(options){
-		this.render();
+		var self = this;
+
+		this.errorView = options.errorView;
+		this.waitingView = options.waitingView;
+		this.waitingView.render();
+
+		this.places = new com.spantons.collection.Places();
+		this.places.fetch({
+			success: function(e){                      
+		        self.waitingView.closeView();
+		        self.render();
+		     },
+		     error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the places']);
+		     }
+		});
 	},
 
 	render: function(){
-		// this.$el.html(this.template);
-		this.$el.html('<h1>Places</h1>');
+		var html = this.template(this.places);
+    	this.$el.html(html);	
+
 		return this;
 	},
 

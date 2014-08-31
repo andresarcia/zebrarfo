@@ -27,7 +27,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showPlaces: function(){
-		var placesView = new com.spantons.view.PlacesView();
+		var placesView = new com.spantons.view.PlacesView({
+			waitingView: this.helperViews.waitingView,
+			errorView : this.helperViews.errorView
+		});
 		this.navViews.verticalNav.changeActiveClass(0);
 	},
 

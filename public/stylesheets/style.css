@@ -1,3 +1,6 @@
+.ws-body {
+  padding-top: 75px;
+}
 
 .ws-error, .ws-waiting {
 	width: 100%;

@@ -26,9 +26,6 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		numFilesParser: 0
 	},
 
-	errorView: null,
-	waitingView: null,
-
 	events : {
 		'blur #upload-measures-name' : 'checkName',
 		'click .item-zone-name' : 'pickName',
@@ -40,12 +37,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	initialize: function(options){
 		var self = this;
 
-		if (options.errorView) 
-			this.errorView = options.errorView;
-
-		if(options.waitingView)
-			this.waitingView = options.waitingView;
-
+		this.errorView = options.errorView;
+		this.waitingView = options.waitingView;
 		this.waitingView.render();
 		
 		this.places = new com.spantons.collection.Places();

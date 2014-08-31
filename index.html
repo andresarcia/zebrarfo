@@ -13,7 +13,7 @@
 		<div id="error"></div>
 		<div id="modal-parsing-measures"></div>
 
-		<nav class="navbar navbar-default" role="navigation">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
 			    
 			    <div class="navbar-header">
@@ -47,12 +47,15 @@
 			</div>
 		</nav>
 
-	  	<div class="col-md-2">
-	  		<div id="vertical-nav"></div>
-	  	</div>
-	  	<div class="col-md-10">
-	  		<div class="ws-containter"></div>
-	  	</div>
+		<div class="ws-body">
+			<div class="col-md-2">
+		  		<div id="vertical-nav"></div>
+		  	</div>
+		  	<div class="col-md-10">
+		  		<div class="ws-containter"></div>
+		  	</div>
+		</div>
+	  	
 
 		<script id="waiting-template" type="text/x-handlebars-template">
 			<div class="ws-waiting">
@@ -96,6 +99,44 @@
 					</a>
 				</div>
 	  		</div>
+		</script>
+
+		<script id="places-template" type="text/x-handlebars-template">
+			<ul class="list-group link-hard-content">
+				{{#each this.models}}
+  				<a href="#places/{{attributes._id}}" class="list-group-item">
+    				<div class="panel panel-default">
+					  	<div class="panel-heading"><strong>{{attributes.name}}</strong></div>
+				  		<table class="table">
+					    	<tr>
+						  		<td>Number of Coordinates</td>
+						  		<td>{{attributes.numberCoordinates}}</td>
+						  	</tr>
+						  	<tr>
+						  		<td>Potency Min</td>
+						  		<td>{{attributes.potencyMin}}</td>
+						  	</tr>
+						  	<tr>
+						  		<td>Potency Max</td>
+						  		<td>{{attributes.potencyMax}}</td>
+						  	</tr>
+						  	<tr>
+						  		<td>Potency Avg</td>
+						  		<td>{{attributes.potencyAvg}}</td>
+						  	</tr>
+						  	<tr>
+						  		<td>Standar Desviation of Potency</td>
+						  		<td>{{attributes.sdPotencyAvg}}</td>
+						  	</tr>
+						  	<tr>
+						  		<td>Average of Standar Desviation Potency</td>
+						  		<td>{{attributes.avgPotencySD}}</td>
+						  	</tr>
+					  	</table>
+					</div>
+  				</a>
+  				{{/each}}
+			</ul>
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
@@ -176,10 +217,10 @@
 									  		<td>Potency Avg</td><td id="ws-modal-parsing-measures-data-table-potencyAvg"></td>
 									  	</tr>
 									  	<tr>
-									  		<td>Standar Desviation of Potency Avf</td><td id="ws-modal-parsing-measures-data-table-sdPotencyAvg"></td>
+									  		<td>Standar Desviation of Potency</td><td id="ws-modal-parsing-measures-data-table-sdPotencyAvg"></td>
 									  	</tr>
 									  	<tr>
-									  		<td>Averge of Standar Desviation Potency</td><td id="ws-modal-parsing-measures-data-table-avgPotencySD"></td>
+									  		<td>Average of Standar Desviation Potency</td><td id="ws-modal-parsing-measures-data-table-avgPotencySD"></td>
 									  	</tr>
 									</table>
 							  	</a>
