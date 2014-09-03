@@ -139,6 +139,10 @@
 			</ul>
 		</script>
 
+		<script id="place-template" type="text/x-handlebars-template">
+			<h1>Hello Mundo</h1>
+		</script>
+
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
 			<form>
 				<div class="input-group form-group has-feedback">
@@ -146,7 +150,7 @@
 			        	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Pick a zone <span class="caret"></span></button>
 			        	<ul class="dropdown-menu" role="menu">
 			        		{{#each this.models}}
-							<li><a class="item-zone-name" href="#">{{attributes.name}}</a></li>
+							<li><a class="item-zone-name" href="#upload">{{attributes.name}}</a></li>
 							{{/each}}
 							{{#unless this.models}}
 								<li class="divider"></li>
@@ -260,6 +264,7 @@
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/PlaceView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>

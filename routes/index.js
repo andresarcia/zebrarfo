@@ -3,18 +3,16 @@ var router = express.Router();
 
 var users = require('./users');
 var places = require('./places');
-var coordinates = require('./coordinates');
 var upload = require('./upload');
 
 router.route('/users')
 	.post(users.create);
 
 router.route('/places')
-	.post(places.create)
 	.get(places.list);
 
-router.route('/coordinates')
-	.post(coordinates.create);
+router.route('/places/:id')
+	.get(places.get);
 
 router.route('/upload')
 	.post(upload.create);

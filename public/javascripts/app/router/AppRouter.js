@@ -23,6 +23,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	routes: {
 		'places': 'showPlaces',
+		'places/:id' : 'showPlace',
 		'upload': 'upload'
 	},
 
@@ -32,6 +33,14 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView
 		});
 		this.navViews.verticalNav.changeActiveClass(0);
+	},
+
+	showPlace: function(id){
+		var placeView = new com.spantons.view.PlaceView({
+			waitingView: this.helperViews.waitingView,
+			errorView : this.helperViews.errorView,
+			placeId: id
+		});
 	},
 
 	upload: function(){

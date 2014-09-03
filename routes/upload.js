@@ -6,15 +6,16 @@ var Coordinate = mongoose.model('Coordinate');
 
 exports.create = function(req, res){
 	if(Object.keys(req.body).length === 0)
-		res.send({});
+		res.status(500).send({ error: 'something blew up' });
 	
 	else {
 		if(req.body.json){
 			saveInDB(req.body, function(err,place){
-
-				if(err)
-					res.send(err);
-						
+				if(err) {
+					console.error(err);
+					res.status(500).send({ error: err });
+				}
+		
 				res.send(place);
 			});
 		}
@@ -31,7 +32,6 @@ var saveInDB = function(place, callback){
 		userId: userId
 	}, 
 	function(err, placeReturned, created) {
-
 		if (err)
 			res.send(err);
 
@@ -42,120 +42,156 @@ var saveInDB = function(place, callback){
 			placeReturned.potencyAvg = place.potencyAvg;
 			placeReturned.sdPotencyAvg = place.sdPotencyAvg;
 			placeReturned.avgPotencySD = place.avgPotencySD;
-			
-			placeReturned.save(function (err) {
+			placeReturned.save(function (err,doc) {
 				if (err) 
-  					callback(err);
-
-  				saveCoordinates(place.coordinates,placeReturned.id, function(err){
+					return callback(err,null);
+				
+				saveCoordinates(doc,place.coordinates,function(err,doc){
 					if (err) 
-	  					callback(err);
-	  				callback(null,placeReturned);
+						return callback(err,null);
+					
+					callback(null,doc);
 				});
-
 			});
 
 		} else {
-			saveCoordinates(place.coordinates,placeReturned.id, function(err){
-				if (err) 
-  					callback(err);
-  				
-  				takeStatistics(placeReturned,place,function(err,placeWithStatistics){
-  					if (err) 
-  						callback(err);
+			// var coordinatesPlaceNew = JSON.parse(JSON.stringify(place.coordinates));
+			// var coordinatesPlace = [];
+			// async.each(placeReturned.coordinates, function(doc, callback) {
+			// 	var coordinate = doc.toObject();
+			// 	delete coordinate.data;
+			// 	delete coordinate.potencyMin;
+			// 	delete coordinate.potencyMax;
+			// 	delete coordinate.potencyAvg;
+			// 	delete coordinate.potencySD;
+			// 	delete coordinate.createdDate;
+			// 	delete coordinate._id;
+			// 	delete coordinate.numberPotencyFrequency;
+			// 	coordinatesPlace.push(coordinate);
+		 //  		callback();
 
-  					callback(null,placeWithStatistics);
-  				});
+			// }, function(err){
+   //  			if(err)
+   //  				res.send(err);
 
-			});
+   //  			async.each(coordinatesPlaceNew, function(doc, callback) {
+			// 		delete doc.data;
+			// 		delete doc.potencyMin;
+			// 		delete doc.potencyMax;
+			// 		delete doc.potencyAvg;
+			// 		delete doc.potencySD;
+			// 		delete doc.createdDate;
+			// 		delete doc.numberPotencyFrequency;
+			//   		callback();
+
+			// 	}, function(err){
+	  //   			if(err)
+	  //   				res.send(err);
+
+	  //   			coordinatesPlace = coordinatesPlace.map(JSON.stringify);
+			// 		coordinatesPlaceNew = coordinatesPlaceNew.map(JSON.stringify);	
+
+			// 		coordinatesPlaceNew.forEach(function(value, index){
+			// 			if (coordinatesPlace.indexOf(value) == -1) 
+			// 	  			placeReturned.coordinates.push(place.coordinates[index]);
+			// 		});		
+
+			// 		placeReturned.save(function (err) {
+			// 			if (err) 
+		 //  					callback(err);
+
+		 // 				takeStatistics(placeReturned,place,function(err,placeWithStatistics){
+		 //  					if (err) 
+		 //  						callback(err);
+
+		 //  					callback(null,placeWithStatistics);
+		 //  				});
+			// 		});
+	    			
+			// 	});
+			// });
+
 		}
 
   	});
 };
 
 
-var saveCoordinates = function(coordiantes, placeId, firstCallback){
-	var numFilesProcessed = 0;
+var saveCoordinates = function(place, coordinates, mainCallback){
+	var step = 20;
+	var aux = step;
+	var missing = coordinates.length;
 
-	async.each(coordiantes, function(coordinate, callback) {
+	async.eachSeries(coordinates, function(coordinate, callback){
+		place.coordinates.push(
+			{
+				latitude: coordinate.latitude,
+				longitude: coordinate.longitude,
+				numberPotencyFrequency: coordinate.numberPotencyFrequency,
+				potencyMin: coordinate.potencyMin,
+				potencyMax: coordinate.potencyMax,
+				potencyAvg: coordinate.potencyAvg,
+				potencySD: coordinate.potencySD,
+				createdDate: coordinate.createdDate,
+				data: coordinate.data 
+	  		}
+	  	);
+	  	aux--;
+	  	
+	  	if(aux < 1 || missing < step) {
+	  		place.save(function (err) {
+				if(err)
+					return callback(err);
 
-		Coordinate.findOrCreate({
-			latitude: coordinate.latitude,
-			longitude: coordinate.longitude,
-			numberPotencyFrequency: coordinate.numberPotencyFrequency,
-			createdDate: coordinate.createdDate,
-			potencyMin: coordinate.potencyMin,
-			potencyMax: coordinate.potencyMax,
-			potencyAvg: coordinate.potencyAvg,
-			potencySd: coordinate.potencySD,
-			placeId: placeId
-		}, 
-		function(err, coord, created) {
+				aux = step;
+				missing -= step;
 
-			if (err)
-				firstCallback(err);
-
-			if (created) {
-				coord.data = coordinate.data;
-				coord.save(function (err) {
-					if (err) 
-	  					firstCallback(err);
-
-	  				numFilesProcessed++;
-	  				callback();
-				});
-
-			} else {
-				numFilesProcessed++;
 				callback();
-			}
-	  	});
-  
-	}, function(err){
-    	if(err)
-    		firstCallback(err);
+			});	
+	  	} else
+	  		callback();
 
-    	if(coordiantes.length == numFilesProcessed)
-    		firstCallback();  
+	}, function(err){
+		if (err) 
+  			return mainCallback(err,null);
+  		
+		mainCallback(null,place);		
 	});
 };
 
 
-var takeStatistics = function(placeReturned, place, callback){
-	
-	Coordinate.count({ placeId: placeReturned.id }, function (err, count) {
-		if(err)
-			callback(err);
+var takeStatistics = function(placeReturned, place, callback){	
 
-		if(count != placeReturned.numberCoordinates){
-			placeReturned.numberCoordinates = count;	
-			if(placeReturned.potencyMin > place.potencyMin)
-				placeReturned.potencyMin = place.potencyMin;
-			if(placeReturned.potencyMax < place.potencyMax)
-				placeReturned.potencyMax = place.potencyMax;
+	if(placeReturned.numberCoordinates != placeReturned.coordinates.length){
+		
+		placeReturned.numberCoordinates = placeReturned.coordinates.length;	
+		if(placeReturned.potencyMin > place.potencyMin)
+			placeReturned.potencyMin = place.potencyMin;
+		if(placeReturned.potencyMax < place.potencyMax)
+			placeReturned.potencyMax = place.potencyMax;
 
-			placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
-			placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
+		placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
+		placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
 
-			if(count > 1){
-				var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
-				var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
-				sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/count)/(count - 1));
-				placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
+		if(placeReturned.coordinates.length > 1){
+			var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
+			var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
+			sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/placeReturned.coordinates.length)/(placeReturned.coordinates.length - 1));
+			placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
 
-			} else
-				placeReturned.sdPotencyAvg = 0;
+		} else
+			placeReturned.sdPotencyAvg = 0;
 
-			placeReturned.save(function (err) {
-				if (err) 
-  					callback(err);
+		placeReturned.save(function (err) {
+			if (err) 
+				callback(err);
 
-  				callback(null,placeReturned);
-			});
-
-		} else 
 			callback(null,placeReturned);
-	});
+		});
+
+
+	} else
+		callback(null,placeReturned);
 };
 
 
