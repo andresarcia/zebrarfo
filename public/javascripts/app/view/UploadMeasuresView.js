@@ -42,8 +42,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.waitingView.render();
 		
 		this.places = new com.spantons.collection.Places();
-		// this.places.fetch({
-			// success: function(e){                      
+		this.places.fetch({
+			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.render();
 		        self.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
@@ -53,12 +53,12 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 				$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
 
 				Backbone.pubSub.on('event-server-error', self.enableForm, self);
-		     // },
-		     // error: function(e){  
-		     	// self.waitingView.closeView();
-		     	// self.errorView.render(['Occurred an error retrieving the places']);
-		     // }
-		// });
+		     },
+		     error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the places']);
+		     }
+		});
 
 		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;

@@ -2,6 +2,8 @@ var async = require('async');
 var parserTxt = require('./utils/parser');
 var db = require('../models');
 
+var UserIdentification = 1;
+
 exports.create = function(req, res){
 	if(Object.keys(req.body).length === 0)
 		res.status(500).send({ error: 'something blew up' });
@@ -24,7 +26,7 @@ exports.create = function(req, res){
 /*--------------------------------------------------------------------------------------------------------------*/
 var saveInDB = function(place, callback){
 	db.Place.findOrCreate({
-		UserId:1,
+		UserId:UserIdentification,
 		name: place.name, 
 
 	}).success(function(doc, created){
