@@ -1,5 +1,6 @@
 var async = require('async');
 var parserTxt = require('./utils/parser');
+var db = require('../models');
 
 exports.create = function(req, res){
 	if(Object.keys(req.body).length === 0)
@@ -12,7 +13,6 @@ exports.create = function(req, res){
 					console.error(err);
 					res.status(500).send({ error: err });
 				}
-		
 				res.send(place);
 			});
 		}
@@ -21,177 +21,165 @@ exports.create = function(req, res){
 	}
 };
 
-// var userId = '53d6948c4f231a5934ac71b3';
+/*--------------------------------------------------------------------------------------------------------------*/
+var saveInDB = function(place, callback){
+	db.Place.findOrCreate({
+		UserId:1,
+		name: place.name, 
 
-// var saveInDB = function(place, callback){
-// 	Place.findOrCreate({
-// 		name: place.name,
-// 		userId: userId
-// 	}, 
-// 	function(err, placeReturned, created) {
-// 		if (err)
-// 			res.send(err);
+	}).success(function(doc, created){
 
-// 		if (created) {
-// 			placeReturned.numberCoordinates = place.numberCoordinates;
-// 			placeReturned.potencyMin = place.potencyMin;
-// 			placeReturned.potencyMax = place.potencyMax;
-// 			placeReturned.potencyAvg = place.potencyAvg;
-// 			placeReturned.sdPotencyAvg = place.sdPotencyAvg;
-// 			placeReturned.avgPotencySD = place.avgPotencySD;
-// 			placeReturned.save(function (err,doc) {
-// 				if (err) 
-// 					return callback(err,null);
-				
-// 				saveCoordinates(doc,place.coordinates,function(err,doc){
-// 					if (err) 
-// 						return callback(err,null);
+		if(created) {
+			doc.numberCoordinates = place.numberCoordinates;
+			doc.potencyMin = place.potencyMin;
+			doc.potencyMax = place.potencyMax;
+			doc.potencyAvg = place.potencyAvg;
+			doc.sdPotencyAvg = place.sdPotencyAvg;
+			doc.avgPotencySD = place.avgPotencySD;
+
+			doc.save().success(function(){
+				insertCoordinates(place, doc, function(err){
+			    	if (err)
+						return callback(err,null);
 					
-// 					callback(null,doc);
-// 				});
-// 			});
+					callback(null,doc);
+			    });
+			})
+			.error(function(err){
+				callback(err,null);
+			});
+		}
 
-// 		} else {
-// 			var coordinatesPlaceNew = JSON.parse(JSON.stringify(place.coordinates));
-// 			var coordinatesPlace = [];
-// 			async.each(placeReturned.coordinates, function(doc, callback) {
-// 				var coordinate = doc.toObject();
-// 				delete coordinate.data;
-// 				delete coordinate.potencyMin;
-// 				delete coordinate.potencyMax;
-// 				delete coordinate.potencyAvg;
-// 				delete coordinate.potencySD;
-// 				delete coordinate.createdDate;
-// 				delete coordinate._id;
-// 				delete coordinate.numberPotencyFrequency;
-// 				coordinatesPlace.push(coordinate);
-// 		  		callback();
+		else {
+			insertCoordinates(place, doc, function(err){
+		    	if (err)
+					return callback(err,null);
 
-// 			}, function(err){
-//     			if(err)
-//     				res.send(err);
+				takeStatistics(doc,place,function(err,placeWithStatistics){
+					if (err)
+						return callback(err,null);
 
-//     			async.each(coordinatesPlaceNew, function(doc, callback) {
-// 					delete doc.data;
-// 					delete doc.potencyMin;
-// 					delete doc.potencyMax;
-// 					delete doc.potencyAvg;
-// 					delete doc.potencySD;
-// 					delete doc.createdDate;
-// 					delete doc.numberPotencyFrequency;
-// 			  		callback();
+					callback(null,placeWithStatistics);
+				});
+		    });
+		}
 
-// 				}, function(err){
-// 	    			if(err)
-// 	    				res.send(err);
+	})
+	.error(function(err){
+		callback(err,null);
+	});
+};
 
-// 	    			coordinatesPlace = coordinatesPlace.map(JSON.stringify);
-// 					coordinatesPlaceNew = coordinatesPlaceNew.map(JSON.stringify);	
+/*--------------------------------------------------------------------------------------------------------------*/
 
-// 					coordinatesPlaceNew.forEach(function(value, index){
-// 						if (coordinatesPlace.indexOf(value) == -1) 
-// 				  			placeReturned.coordinates.push(place.coordinates[index]);
-// 					});		
+function insertCoordinates(data,place,callback){
+	async.each(data.coordinates, function(coordinate, callback) {
+		insertCoordinate(coordinate,place.id,function(err){
+			if(err) 
+	    		return callback(err);
 
-// 					placeReturned.save(function (err) {
-// 						if (err) 
-// 		  					callback(err);
+	   		callback();
+	  	});
+	  
+	}, function(err){	    
+	    if(err) 
+	    	return callback(err);
+	    
+	    callback();
+	});
+}
 
-// 		 				takeStatistics(placeReturned,place,function(err,placeWithStatistics){
-// 		  					if (err) 
-// 		  						callback(err);
+/*--------------------------------------------------------------------------------------------------------------*/
+function insertCoordinate(data,placeId,callback){
 
-// 		  					callback(null,placeWithStatistics);
-// 		  				});
-// 					});
-	    			
-// 				});
-// 			});
+	db.Coordinate.findOrCreate({
+		latitude: data.latitude,
+		longitude: data.longitude,
+		numberPotencyFrequency: data.numberPotencyFrequency,
+		potencyMin: data.potencyMin,
+		potencyMax : data.potencyMax,
+		potencyAvg : data.potencyAvg,
+		potencySD : data.potencySD,
+		createdDate: data.createdDate,
+		PlaceId: placeId,
 
-// 		}
+	}).success(function(coordinate, created){
+		if(created){
+			insertPotencyFrequency(data.data,coordinate.id,function(err){
+				if (err)
+					return callback(err);
+				
+				callback();
+			});	
+		} else 
+			callback();
+	})
+	.error(function(err){
+		return callback(err);
+	});
+}
 
-//   	});
-// };
+/*--------------------------------------------------------------------------------------------------------------*/
+function insertPotencyFrequency(data,coordinateId,callback){	
+	async.each(data, function(unit, callback) {
+		unit.CoordinateId = coordinateId;
+	  	callback();
+	
+	}, function(err){	    
+	    if(err) 
+	    	return callback(err);
+	    
+    	db.PotencyFrequency.bulkCreate(data)
+		.success(function() { 
+			callback();
+		}).error(function(err){
+			return callback(err);
+		});
+	});
+}
 
+/*--------------------------------------------------------------------------------------------------------------*/
+var takeStatistics = function(placeReturned, place, callback){	
 
-// var saveCoordinates = function(place, coordinates, mainCallback){
-// 	var step = 20;
-// 	var aux = step;
-// 	var missing = coordinates.length;
+	db.Coordinate.count({ where: {PlaceId:placeReturned.id} })
+	.success(function(count){
+		if(count != placeReturned.numberCoordinates){
 
-// 	async.eachSeries(coordinates, function(coordinate, callback){
-// 		place.coordinates.push(
-// 			{
-// 				latitude: coordinate.latitude,
-// 				longitude: coordinate.longitude,
-// 				numberPotencyFrequency: coordinate.numberPotencyFrequency,
-// 				potencyMin: coordinate.potencyMin,
-// 				potencyMax: coordinate.potencyMax,
-// 				potencyAvg: coordinate.potencyAvg,
-// 				potencySD: coordinate.potencySD,
-// 				createdDate: coordinate.createdDate,
-// 				data: coordinate.data 
-// 	  		}
-// 	  	);
-// 	  	aux--;
-	  	
-// 	  	if(aux < 1 || missing < step) {
-// 	  		place.save(function (err) {
-// 				if(err)
-// 					return callback(err);
+	  		placeReturned.numberCoordinates = count;	
+			if(placeReturned.potencyMin > place.potencyMin)
+				placeReturned.potencyMin = place.potencyMin;
+			if(placeReturned.potencyMax < place.potencyMax)
+				placeReturned.potencyMax = place.potencyMax;
 
-// 				aux = step;
-// 				missing -= step;
+			placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
+			placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
 
-// 				callback();
-// 			});	
-// 	  	} else
-// 	  		callback();
+			if(count > 1){
+				var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
+				var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
+				sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/count)/(count - 1));
+				placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
 
-// 	}, function(err){
-// 		if (err) 
-//   			return mainCallback(err,null);
-  		
-// 		mainCallback(null,place);		
-// 	});
-// };
+			} else
+				placeReturned.sdPotencyAvg = 0;
 
+			placeReturned.save().success(function(){
+				callback(null,placeReturned);
+			})
+			.error(function(err){
+				return callback(err,null);
+			});
 
-// var takeStatistics = function(placeReturned, place, callback){	
+	  	} else
+	  		callback(null,placeReturned);
+	})
+	.error(function(err){
+		return callback(err,null);
+	});
 
-// 	if(placeReturned.numberCoordinates != placeReturned.coordinates.length){
-		
-// 		placeReturned.numberCoordinates = placeReturned.coordinates.length;	
-// 		if(placeReturned.potencyMin > place.potencyMin)
-// 			placeReturned.potencyMin = place.potencyMin;
-// 		if(placeReturned.potencyMax < place.potencyMax)
-// 			placeReturned.potencyMax = place.potencyMax;
+};
 
-// 		placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
-// 		placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
-
-// 		if(placeReturned.coordinates.length > 1){
-// 			var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
-// 			var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
-// 			sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/placeReturned.coordinates.length)/(placeReturned.coordinates.length - 1));
-// 			placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
-
-// 		} else
-// 			placeReturned.sdPotencyAvg = 0;
-
-// 		placeReturned.save(function (err) {
-// 			if (err) 
-// 				callback(err);
-
-// 			callback(null,placeReturned);
-// 		});
-
-
-// 	} else
-// 		callback(null,placeReturned);
-// };
-
-
+/*--------------------------------------------------------------------------------------------------------------*/
 var parserFiles = function(files){
 	// console.log(req.body);
 
