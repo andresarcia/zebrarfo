@@ -1,31 +1,22 @@
-// models/User.js
+// models/user.js
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+module.exports = function(sequelize, DataTypes) {
+  var User = sequelize.define('User', {
+    email: { 
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
 
-var UserSchema = new Schema({
-
-	email : { 
-		type: String,
-		required: true, 
-		index: { 
-			unique: true 
-		},
-		validate : [
-			function(){
-				var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-   				return emailRegex.test(this.email);
-			},
-
-			'Bad email address'
-		]
-	},
-
-	password : {
-		type : String,
-		required: true, 
-	}
-
-});
-
-module.exports = mongoose.model('User', UserSchema);
+    password: { type: DataTypes.STRING },
+  }, {
+      associate: function(models) {
+        User.hasMany(models.Place);      
+      }
+  });
+ 
+  return User;
+};

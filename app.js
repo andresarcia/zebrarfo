@@ -4,7 +4,6 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
 var fs = require('fs');
 
 var app = express();
@@ -20,12 +19,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// load all models files in models dir
-fs.readdirSync(__dirname + '/models').forEach(function(filename){
-    if(~filename.indexOf('.js'))
-        require(__dirname + '/models/' + filename);
-});
 
 app.get('/', function (req,res){
   res.sendfile(__dirname + '/index.html');
@@ -47,16 +40,6 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
 
-    // connect to db
-    mongoose.connect('mongodb://localhost/white-spaces');
-
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
 }
 
 // production error handler
@@ -68,6 +51,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
