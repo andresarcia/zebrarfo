@@ -30,7 +30,9 @@ exports.get = function(req,res){
 				PlaceId:place.id,
 			}).success(function(coordinates){
 				
-				console.log(coordinates);
+				var placeObject = place.dataValues;
+				placeObject.coordinates = JSON.parse(JSON.stringify(coordinates));
+				res.send(placeObject);
 
 			})
 			.error(function(err){
