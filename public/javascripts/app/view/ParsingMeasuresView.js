@@ -18,7 +18,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		initialize: false,
 		parsing: false,
 		uploading: false,
-		waitingForServer: false
+		waitingForServer: false,
+		done: false
 	},
 
 	errorView: null,
@@ -141,7 +142,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 		    	if(percentLoaded >= 40){
 		    		$('.modal-footer').children().prop("disabled",true);
-		    		self.waitingForServer = true;
+		    		self.status.waitingForServer = true;
 		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
 		    		self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
 		    		self.parentComponent.children().eq(3).addClass('active');
@@ -152,6 +153,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 		this.model.save(this.model.attributes,{
        		success: function(model, response, options){
+       			self.status.done = true;
        			$('.modal-footer').children().prop("disabled",false);
        			self.updateProgressBar(60);
             	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
@@ -169,11 +171,13 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	cancelUpload: function(){
-		if (!this.waitingForServer) {
+		if (!this.status.waitingForServer) {
 			this.stop = true;
 			this.model.clear();
 			Backbone.pubSub.trigger('event-server-error');
-		}
+		} 
+		else if (this.status.done) 
+			window.location.hash = '#places/'+this.model.id;
 	}
 
 });

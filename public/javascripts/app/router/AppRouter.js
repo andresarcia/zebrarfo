@@ -32,7 +32,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
-		this.navViews.verticalNav.changeActiveClass(0);
+		this.navViews.verticalNav.changeActiveClass(0,'Places');
 	},
 
 	showPlace: function(id){
@@ -41,6 +41,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
+		this.navViews.verticalNav.changeActiveClass(0,'Go back');
 	},
 
 	upload: function(){

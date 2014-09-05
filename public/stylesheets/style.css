@@ -1,3 +1,7 @@
+hr {  
+  margin: 6px 0 5px 0;
+}
+
 .ws-body {
   padding-top: 75px;
 }
@@ -55,6 +59,10 @@
   width: 92.5%;
   margin-right: auto;
   margin-left: auto;
+}
+
+.ws-dropdown-container {
+  display: none;
 }
 
 .ws-dragandrophandler {

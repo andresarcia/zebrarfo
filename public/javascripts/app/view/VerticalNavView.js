@@ -20,6 +20,8 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		this.$el.find('.active').removeClass('active');
 		var item = this.$el.find('a').get(index);
 		$(item).addClass('active');
-	}
+	},
+
+
 
 });

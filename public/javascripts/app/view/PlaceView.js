@@ -7,6 +7,10 @@ com.spantons.view.PlaceView = Backbone.View.extend({
 	el: '.ws-containter',
 	model: null,
 	template: Handlebars.compile($("#place-template").html()),
+
+	events: {
+		'click .dropdown-trigger' : 'toggleDropdown'
+	},
 	
 	initialize: function(options){
 		var self = this;
@@ -32,8 +36,12 @@ com.spantons.view.PlaceView = Backbone.View.extend({
 		});
 	},
 
+	toggleDropdown: function(evt){
+		$(evt.currentTarget).next().slideToggle();
+	},
+
 	render: function(){
-		var html = this.template(this.places);
+		var html = this.template(this.model);
     	this.$el.html(html);	
 
 		return this;

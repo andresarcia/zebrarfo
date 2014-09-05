@@ -102,6 +102,7 @@
 		</script>
 
 		<script id="places-template" type="text/x-handlebars-template">
+
 			<ul class="list-group link-hard-content">
 				{{#each this.models}}
   				<a href="#places/{{attributes.id}}" class="list-group-item">
@@ -140,7 +141,67 @@
 		</script>
 
 		<script id="place-template" type="text/x-handlebars-template">
-			<h1>Hello Mundo</h1>
+			<ol class="breadcrumb">
+  				<li><a href="#places">Places</a></li>
+  				<li class="active">Place</li>
+			</ol>
+
+			<div class="list-group">
+				{{#each this.attributes.coordinates}}
+  				<a href="#places/" class="list-group-item">
+  					<ul class="list-group">
+  						<li class="list-group-item">
+    						<span class="badge">{{numberPotencyFrequency}}</span>
+    						Number of potencies and frequencies
+  						</li>
+  						<li class="list-group-item">
+  							<div>
+  								<span class="pull-right">{{latitude}}</span>
+    							Latitude
+  							</div>
+  							<div>
+  								<span class="pull-right">{{longitude}}</span>
+    							Longitude
+  							</div>
+  							<hr>
+  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
+    						<br>
+  						</li>
+					</ul>
+
+					<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
+						Potency 
+						<span class="caret"></span>
+					</button>
+				  						
+					<ul class="ws-dropdown-container">
+						<table class="table">
+				   			<thead>
+				      			<tr>
+				        			<th>Potency</th>
+				         			<th>Value</th>
+				      			</tr>
+				   			</thead>
+						   	<tbody>
+						      	<tr>
+						      		<td>Minimum</td><td>{{potencyMin}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Maximum</td><td>{{potencyMax}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Average</td><td>{{potencyAvg}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Standard Deviation</td><td>{{potencySD}}</td>
+						      	</tr>
+						   	</tbody>
+						</table>
+					</ul>
+					
+  				</a>
+  				{{/each}}
+			</div>
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
