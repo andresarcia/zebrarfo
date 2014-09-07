@@ -13,12 +13,19 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		verticalNav: null
 	},
 
+	currentView: null,
+
 	initialize: function(options){
 
 		this.navViews.verticalNav = new com.spantons.view.VerticalNavView();
 
 		this.helperViews.errorView = new com.spantons.view.ErrorView();
 		this.helperViews.waitingView = new com.spantons.view.WaitingView();
+	},
+
+	clearViews: function(){
+		if(this.currentView) 
+			this.currentView.undelegateEvents();
 	},
 
 	routes: {
@@ -28,24 +35,27 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showPlaces: function(){
-		var placesView = new com.spantons.view.PlacesView({
+		this.clearViews();
+		this.currentView = new com.spantons.view.PlacesView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
-		this.navViews.verticalNav.changeActiveClass(0,'Places');
+		this.navViews.verticalNav.changeActiveClass(0);
 	},
 
 	showPlace: function(id){
-		var placeView = new com.spantons.view.PlaceView({
+		this.clearViews();
+		this.currentView = new com.spantons.view.PlaceView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
-		this.navViews.verticalNav.changeActiveClass(0,'Go back');
+		this.navViews.verticalNav.changeActiveClass(0);
 	},
 
 	upload: function(){
-		var uploadMeasuresView = new com.spantons.view.UploadMeasuresView({
+		this.clearViews();
+		this.currentView = new com.spantons.view.UploadMeasuresView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});

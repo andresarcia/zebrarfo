@@ -4,7 +4,7 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.PlaceView = Backbone.View.extend({
 
-	el: '.ws-containter',
+	el: '#ws-containter',
 	model: null,
 	template: Handlebars.compile($("#place-template").html()),
 

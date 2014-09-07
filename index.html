@@ -52,7 +52,7 @@
 		  		<div id="vertical-nav"></div>
 		  	</div>
 		  	<div class="col-md-10">
-		  		<div class="ws-containter"></div>
+		  		<div id="ws-containter"></div>
 		  	</div>
 		</div>
 	  	
@@ -148,7 +148,7 @@
 
 			<div class="list-group">
 				{{#each this.attributes.coordinates}}
-  				<a href="#places/" class="list-group-item">
+  				<a href="#places/{{../id}}/{{id}}" class="list-group-item">
   					<ul class="list-group">
   						<li class="list-group-item">
     						<span class="badge">{{numberPotencyFrequency}}</span>

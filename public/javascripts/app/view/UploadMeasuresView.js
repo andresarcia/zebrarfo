@@ -4,7 +4,7 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
-	el: '.ws-containter',
+	el: '#ws-containter',
 	template: Handlebars.compile($("#upload-measures-template").html()),
 	viewContainers: null,
 	places: null,
@@ -69,13 +69,13 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	render: function(){
 		
 		var html = this.template(this.places);
-    	this.$el.html(html);	
+    	this.$el.html(html);
 
 		return this;
 	},
 
 	pickName: function(evt){
-		this.$el.find($('#upload-measures-name')).val($(evt.currentTarget).text());
+		this.viewContainers.nameContainer.val($(evt.currentTarget).text());
 		this.viewContainers.setGoodNameContainer();
 		this.options.fillName = true;
 		this.placeName = this.viewContainers.getNameContainerVal();
@@ -181,6 +181,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	uploadData: function(evt){
+
 		evt.preventDefault();
 
 		if(!this.options.fillFiles || !this.options.fillName){
@@ -198,6 +199,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			this.errorView.render(error);
 		
 		} else {
+			
 			this.disableForm();
 
 			new com.spantons.view.ParsingMeasuresView({
