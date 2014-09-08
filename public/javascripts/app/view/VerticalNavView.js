@@ -8,7 +8,9 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 	template: Handlebars.compile($("#vertical-nav-template").html()),	
 	
 	initialize: function(options){
+		
 		this.render();
+		this.$el.scrollToFixed({ marginTop: 50 });
 	},
 
 	render: function(){

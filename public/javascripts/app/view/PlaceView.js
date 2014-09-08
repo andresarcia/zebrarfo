@@ -28,6 +28,7 @@ com.spantons.view.PlaceView = Backbone.View.extend({
 			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.render();
+		        // self.$el.find('.coordinate-info').scrollToFixed({ marginTop: 130 });
 		     },
 		     error: function(e){  
 		     	self.waitingView.closeView();

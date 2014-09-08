@@ -103,7 +103,7 @@
 
 		<script id="places-template" type="text/x-handlebars-template">
 
-			<ul class="list-group link-hard-content">
+			<ul class="list-group">
 				{{#each this.models}}
   				<a href="#places/{{attributes.id}}" class="list-group-item">
     				<div class="panel panel-default">
@@ -145,63 +145,105 @@
   				<li><a href="#places">Places</a></li>
   				<li class="active">Place</li>
 			</ol>
+			
+			<div class="row">
+				<div class="col-md-4 coordinate-info">
+					<div class="panel panel-default">
+  						<div class="panel-body">
+    						<h1 class="col-md-12">{{this.attributes.name}}</h1>
+					  		<table class="table table-striped">
+						    	<tr>
+							  		<td>Number of Coordinates</td>
+							  		<td>{{this.attributes.numberCoordinates}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Potency Min</td>
+							  		<td>{{this.attributes.potencyMin}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Potency Max</td>
+							  		<td>{{this.attributes.potencyMax}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Potency Avg</td>
+							  		<td>{{this.attributes.potencyAvg}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Standar Desviation of Potency</td>
+							  		<td>{{this.attributes.sdPotencyAvg}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Average of Standar Desviation Potency</td>
+							  		<td>{{this.attributes.avgPotencySD}}</td>
+							  	</tr>
+						  	</table>
+  						</div>
+  					<div class="panel-footer">
+  						<h5><small>last update {{this.attributes.updatedAt}}</small></h5> 
+  					</div>
+				</div>
 
-			<div class="list-group">
-				{{#each this.attributes.coordinates}}
-  				<a href="#places/{{../id}}/{{id}}" class="list-group-item">
-  					<ul class="list-group">
-  						<li class="list-group-item">
-    						<span class="badge">{{numberPotencyFrequency}}</span>
-    						Number of potencies and frequencies
-  						</li>
-  						<li class="list-group-item">
-  							<div>
-  								<span class="pull-right">{{latitude}}</span>
-    							Latitude
-  							</div>
-  							<div>
-  								<span class="pull-right">{{longitude}}</span>
-    							Longitude
-  							</div>
-  							<hr>
-  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
-    						<br>
-  						</li>
-					</ul>
 
-					<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
-						Potency 
-						<span class="caret"></span>
-					</button>
-				  						
-					<ul class="ws-dropdown-container">
-						<table class="table">
-				   			<thead>
-				      			<tr>
-				        			<th>Potency</th>
-				         			<th>Value</th>
-				      			</tr>
-				   			</thead>
-						   	<tbody>
-						      	<tr>
-						      		<td>Minimum</td><td>{{potencyMin}}</td>
-						      	</tr>
-						      	<tr>
-						      		<td>Maximum</td><td>{{potencyMax}}</td>
-						      	</tr>
-						      	<tr>
-						      		<td>Average</td><td>{{potencyAvg}}</td>
-						      	</tr>
-						      	<tr>
-						      		<td>Standard Deviation</td><td>{{potencySD}}</td>
-						      	</tr>
-						   	</tbody>
-						</table>
-					</ul>
-					
-  				</a>
-  				{{/each}}
-			</div>
+			  	</div>
+			  	<div class="col-md-8">
+			  		<div class="list-group">
+						{{#each this.attributes.coordinates}}
+		  				<a href="#places/{{../id}}/{{id}}" class="list-group-item">
+		  					<ul class="list-group">
+		  						<li class="list-group-item">
+		    						<span class="badge">{{numberPotencyFrequency}}</span>
+		    						Number of potencies and frequencies
+		  						</li>
+		  						<li class="list-group-item">
+		  							<div>
+		  								<span class="pull-right">{{latitude}}</span>
+		    							Latitude
+		  							</div>
+		  							<div>
+		  								<span class="pull-right">{{longitude}}</span>
+		    							Longitude
+		  							</div>
+		  							<hr>
+		  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
+		    						<br>
+		  						</li>
+							</ul>
+
+							<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
+								Potency 
+								<span class="caret"></span>
+							</button>
+						  						
+							<ul class="ws-dropdown-container">
+								<table class="table">
+						   			<thead>
+						      			<tr>
+						        			<th>Potency</th>
+						         			<th>Value</th>
+						      			</tr>
+						   			</thead>
+								   	<tbody>
+								      	<tr>
+								      		<td>Minimum</td><td>{{potencyMin}}</td>
+								      	</tr>
+								      	<tr>
+								      		<td>Maximum</td><td>{{potencyMax}}</td>
+								      	</tr>
+								      	<tr>
+								      		<td>Average</td><td>{{potencyAvg}}</td>
+								      	</tr>
+								      	<tr>
+								      		<td>Standard Deviation</td><td>{{potencySD}}</td>
+								      	</tr>
+								   	</tbody>
+								</table>
+							</ul>
+		  				</a>
+		  				{{/each}}
+					</div>
+			  	</div>
+		  	</div>
+
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
@@ -311,6 +353,7 @@
 		<script type="text/javascript" src="javascripts/vendor/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/bootstrap.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/bootstrap-filestyle.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/jquery-scrolltofixed-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
