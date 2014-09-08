@@ -22,12 +22,16 @@ exports.get = function(req,res){
 		id = sanitize(id).entityDecode();
 
 		db.Place.find({
-			UserId:UserIdentification,
-			id: id
+			where: {
+				UserId:UserIdentification,
+				id: id
+			}
 		}).success(function(place){
 			
 			db.Coordinate.findAll({
-				PlaceId:place.id,
+				where: {
+					PlaceId:place.id
+				}
 			}).success(function(coordinates){
 				
 				var placeObject = place.dataValues;
