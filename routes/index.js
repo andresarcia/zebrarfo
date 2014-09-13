@@ -11,7 +11,7 @@ router.route('/users')
 router.route('/places')
 	.get(places.list);
 
-router.route('/places/:id')
+router.route('/places/:id/coordinates')
 	.get(places.get);
 
 router.route('/upload')

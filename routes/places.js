@@ -28,19 +28,18 @@ exports.get = function(req,res){
 			}
 		}).success(function(place){
 			
-			db.Coordinate.findAll({
-				where: {
+  			db.Coordinate.findAndCountAll({
+     			where: {
 					PlaceId:place.id
-				}
-			}).success(function(coordinates){
-				
+				},
+     			offset: 1,
+     			limit: 5
+  			})
+			.success(function(result) {
 				var placeObject = place.dataValues;
-				placeObject.coordinates = JSON.parse(JSON.stringify(coordinates));
+				placeObject.total = result.count;
+				placeObject.coordinates = result.rows;
 				res.send(placeObject);
-
-			})
-			.error(function(err){
-				res.status(500).send({ error: err });
 			});
 
 		})

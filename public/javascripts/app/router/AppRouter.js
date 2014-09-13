@@ -30,7 +30,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	routes: {
 		'places': 'showPlaces',
-		'places/:id' : 'showPlace',
+		'places/:id/coordinates' : 'showCoordinates',
 		'upload': 'upload'
 	},
 
@@ -43,9 +43,9 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.navViews.verticalNav.changeActiveClass(0);
 	},
 
-	showPlace: function(id){
+	showCoordinates: function(id){
 		this.clearViews();
-		this.currentView = new com.spantons.view.PlaceView({
+		this.currentView = new com.spantons.view.CoordinatesView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id

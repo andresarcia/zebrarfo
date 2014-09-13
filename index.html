@@ -105,7 +105,7 @@
 
 			<ul class="list-group">
 				{{#each this.models}}
-  				<a href="#places/{{attributes.id}}" class="list-group-item">
+  				<a href="#places/{{attributes.id}}/coordinates" class="list-group-item">
     				<div class="panel panel-default">
 					  	<div class="panel-heading"><strong>{{attributes.name}}</strong></div>
 				  		<table class="table">
@@ -140,7 +140,7 @@
 			</ul>
 		</script>
 
-		<script id="place-template" type="text/x-handlebars-template">
+		<script id="coordinates-template" type="text/x-handlebars-template">
 			<ol class="breadcrumb">
   				<li><a href="#places">Places</a></li>
   				<li class="active">Place</li>
@@ -189,7 +189,7 @@
 			  	<div class="col-md-8">
 			  		<div class="list-group">
 						{{#each this.attributes.coordinates}}
-		  				<a href="#places/{{../id}}/{{id}}" class="list-group-item">
+		  				<a href="#places/{{../id}}/coordinates/{{id}}" class="list-group-item">
 		  					<ul class="list-group">
 		  						<li class="list-group-item">
 		    						<span class="badge">{{numberPotencyFrequency}}</span>
@@ -364,13 +364,15 @@
 		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/UploadMeasuresContainers.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Place.js"></script>
+		<script type="text/javascript" src="javascripts/app/model/Coordinate.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/PlaceUpload.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Places.js"></script>
+		<script type="text/javascript" src="javascripts/app/collection/Coordinates.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/PlaceView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>

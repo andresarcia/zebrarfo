@@ -2,11 +2,11 @@ var com = com || {};
 com.spantons = com.spantons || {};
 com.spantons.view = com.spantons.view || {};
 
-com.spantons.view.PlaceView = Backbone.View.extend({
+com.spantons.view.CoordinatesView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	model: null,
-	template: Handlebars.compile($("#place-template").html()),
+	coodinates: null,
+	template: Handlebars.compile($("#coordinates-template").html()),
 
 	events: {
 		'click .dropdown-trigger' : 'toggleDropdown'
@@ -20,11 +20,11 @@ com.spantons.view.PlaceView = Backbone.View.extend({
 		this.waitingView.render();
 
 		if(options.placeId)
-			this.model = new com.spantons.model.Place({id:options.placeId});
+			this.coodinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
 		else
 			throw 'Any place id';
 
-		this.model.fetch({
+		this.coodinates.fetch({
 			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.render();
@@ -41,7 +41,8 @@ com.spantons.view.PlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.model);
+		console.log(this.coodinates.models[0].attributes);
+		var html = this.template(this.coodinates.models[0]);
     	this.$el.html(html);	
 
 		return this;
