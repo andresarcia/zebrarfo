@@ -10,6 +10,7 @@ com.spantons.model.Coordinate = Backbone.Model.extend({
 		// model.updatedAt "2014-09-07 17:13:56"
 		var friendly = moment(model.updatedAt, "YYYY MM DD HH:mm:ss").fromNow();
 		model.friendlyDate = friendly;
+
 		return model;
 	}
 

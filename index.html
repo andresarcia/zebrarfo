@@ -143,7 +143,7 @@
 		<script id="coordinates-template" type="text/x-handlebars-template">
 			<ol class="breadcrumb">
   				<li><a href="#places">Places</a></li>
-  				<li class="active">Place</li>
+  				<li class="active">Coordinates</li>
 			</ol>
 			
 			<div class="row">
@@ -204,6 +204,9 @@
 		  								<span class="pull-right">{{longitude}}</span>
 		    							Longitude
 		  							</div>
+		  							<div>
+		    							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
+		  							</div>
 		  							<hr>
 		  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
 		    						<br>
@@ -243,8 +246,12 @@
 		  				{{/each}}
 					</div>
 			  	</div>
-		  	</div>
 
+			  	<div class="col-md-12 text-center">
+				  	<ul class="pagination"></ul>
+				</div>
+
+		  	</div>
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
@@ -371,6 +378,7 @@
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/PaginationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>

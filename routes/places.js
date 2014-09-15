@@ -17,9 +17,16 @@ exports.list = function(req,res){
 };
 
 exports.get = function(req,res){
-	if(req.params.id){
+
+	if(req.params.id && req.query.offset && req.query.limit){
 		var id = sanitize(req.params.id).xss();
 		id = sanitize(id).entityDecode();
+
+		var offset = sanitize(req.query.offset).xss();
+		offset = sanitize(offset).entityDecode();
+
+		var limit = sanitize(req.query.limit).xss();
+		limit = sanitize(limit).entityDecode();
 
 		db.Place.find({
 			where: {
@@ -32,12 +39,13 @@ exports.get = function(req,res){
      			where: {
 					PlaceId:place.id
 				},
-     			offset: 1,
-     			limit: 5
+     			offset: offset,
+     			limit: limit
   			})
 			.success(function(result) {
 				var placeObject = place.dataValues;
 				placeObject.total = result.count;
+				placeObject.currentPage = result.count;
 				placeObject.coordinates = result.rows;
 				res.send(placeObject);
 			});
