@@ -106,8 +106,10 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	/* ------------------------------------------------------------------------- */
 
 	renderFilesInfoContainer: function(numFiles,sizeFiles){
-		this.filesInfoContainer.children().first().children().text(numFiles);
-		this.filesInfoContainer.children().last().children().text(sizeFiles);
+		var containers = this.filesInfoContainer.find('span');
+
+		containers.first().text(numFiles);
+		containers.last().text(sizeFiles);
 	},
 
 	/* ------------------------------------------------------------------------- */

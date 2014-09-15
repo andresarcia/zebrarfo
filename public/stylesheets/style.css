@@ -1,3 +1,9 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+}
+
 hr {  
   margin: 6px 0 5px 0;
 }
@@ -11,7 +17,7 @@ hr {
 	height: 100%;
 	background-color:rgba(0,0,0,0.6);
 	position: fixed;
-	z-index: 100;
+	z-index: 1100;
 }
 
 .ws-waiting-icon{
@@ -53,6 +59,28 @@ hr {
 
 .ws-vertical-navbar {
   margin-left: -18px;
+}
+.ws-vertical-navbar .list-group-item {
+  background-color: #f8f8f8;
+}
+
+.ws-vertical-navbar .list-group-item:hover,
+.ws-vertical-navbar .list-group-item:focus {
+  color: #a6a6a6;
+}
+.ws-vertical-navbar .list-group-item.active,
+.ws-vertical-navbar .list-group-item.active:hover,
+.ws-vertical-navbar .list-group-item.active:focus {
+  z-index: 2;
+  color: #fff;
+  background-color: #666666;
+  border-color: #565656;
+}
+
+@media (max-width: 767px) {
+  .ws-vertical-navbar .list-group-item {
+    margin-right: -18px;
+  }
 }
 
 .ws-containter {
