@@ -11,7 +11,7 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		
 		this.render();
 		this.$el.scrollToFixed({ 
-			marginTop: 50,
+			marginTop: 55,
 		});
 	},
 
@@ -25,7 +25,5 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		var item = this.$el.find('a').get(index);
 		$(item).addClass('active');
 	},
-
-
 
 });
