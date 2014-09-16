@@ -11,16 +11,7 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		
 		this.render();
 		this.$el.scrollToFixed({ 
-			
 			marginTop: 50,
-
-			preFixed: function() { 
-				$(this).find('.list-group-item:first-child').css('border-top-right-radius','0');
-			},
-
-			postFixed: function() { 
-				$(this).find('.list-group-item:first-child').css('border-top-right-radius','4px');
-			}
 		});
 	},
 
