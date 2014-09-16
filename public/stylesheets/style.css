@@ -12,26 +12,42 @@ hr {
   padding-top: 75px;
 }
 
-.ws-error, .ws-waiting {
-	width: 100%;
-	height: 100%;
-	background-color:rgba(0,0,0,0.6);
-	position: fixed;
-	z-index: 1100;
+.ws-modal {
+  position: relative;
 }
-
-.ws-waiting-icon{
+.ws-error, .ws-waiting {
   position: fixed;
-  width: 100%
+  height: 100%;
+  margin-top: -24px;
+  margin-left: -15px;
+  background-color:rgba(0,0,0,0.433);
+  z-index: 1100;
+}
+@media (max-width: 767px) {
+  .ws-error, .ws-waiting {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .ws-error, .ws-waiting {
+    width: 75%;
+  }
+}
+@media (min-width: 992px) {
+  .ws-error, .ws-waiting {
+    width: 83.33333333%;
+  }
+}
+.ws-waiting-icon{
+  position: absolute;
   top:50%;
   bottom: 50%;
   left: 50%;
   right: 50%;
   color: #239D56;
 }
-
 .ws-error-message {
-	position: fixed;
+	position: absolute;
 	bottom: 30%;
 	width: 100%;
 	background-color:#DA5450;
@@ -42,15 +58,12 @@ hr {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
-
 .ws-error-glyphicon {
 	margin-left: 15px;
 }
-
 .ws-error-button {	
 	background-color: #C9302C;
 }
-
 .ws-error-button:hover {
 	background-color: #B92C29;
 	color: #ffffff;
