@@ -45,7 +45,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	showCoordinates: function(id){
 		this.clearViews();
-		this.currentView = new com.spantons.view.CoordinatesView({
+		this.currentView = new com.spantons.view.SinglePlaceView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id

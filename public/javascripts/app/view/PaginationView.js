@@ -57,7 +57,7 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 		this.$el.append('<li><a href="javascript:;" class="pagination-item next">&raquo;</a></li>');
 				
 		this.$el.children().eq(this.currentPage).addClass('active');
-
+		
 		return this;
 	},
 

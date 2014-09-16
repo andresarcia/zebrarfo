@@ -140,7 +140,7 @@
 			</ul>
 		</script>
 
-		<script id="coordinates-template" type="text/x-handlebars-template">
+		<script id="single-place-template" type="text/x-handlebars-template">
 			<ol class="breadcrumb">
   				<li><a href="#places">Places</a></li>
   				<li class="active">Coordinates</li>
@@ -178,73 +178,15 @@
 							  	</tr>
 						  	</table>
   						</div>
-  					<div class="panel-footer">
-  						<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
-  						<br>
-  					</div>
-				</div>
-
-
-			  	</div>
-			  	<div class="col-md-8">
-			  		<div class="list-group">
-						{{#each this.attributes.coordinates}}
-		  				<a href="javascript:;" class="list-group-item">
-		  					<ul class="list-group">
-		  						<li class="list-group-item">
-		    						<span class="badge">{{numberPotencyFrequency}}</span>
-		    						Number of potencies and frequencies
-		  						</li>
-		  						<li class="list-group-item">
-		  							<div>
-		  								<span class="pull-right">{{latitude}}</span>
-		    							Latitude
-		  							</div>
-		  							<div>
-		  								<span class="pull-right">{{longitude}}</span>
-		    							Longitude
-		  							</div>
-		  							<div>
-		    							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
-		  							</div>
-		  							<hr>
-		  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
-		    						<br>
-		  						</li>
-							</ul>
-
-							<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
-								Power 
-								<span class="caret"></span>
-							</button>
-						  						
-							<ul class="ws-dropdown-container">
-								<table class="table">
-						   			<thead>
-						      			<tr>
-						        			<th>Power</th>
-						         			<th>Value</th>
-						      			</tr>
-						   			</thead>
-								   	<tbody>
-								      	<tr>
-								      		<td>Minimum</td><td>{{potencyMin}}</td>
-								      	</tr>
-								      	<tr>
-								      		<td>Maximum</td><td>{{potencyMax}}</td>
-								      	</tr>
-								      	<tr>
-								      		<td>Average</td><td>{{potencyAvg}}</td>
-								      	</tr>
-								      	<tr>
-								      		<td>Standard deviation</td><td>{{potencySD}}</td>
-								      	</tr>
-								   	</tbody>
-								</table>
-							</ul>
-		  				</a>
-		  				{{/each}}
+	  					<div class="panel-footer">
+	  						<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
+	  						<br>
+	  					</div>
 					</div>
+			  	</div>
+			  	
+			  	<div class="col-md-8">
+			  		<div id="coordinates"></div>
 			  	</div>
 
 			  	<div class="col-md-12 text-center">
@@ -252,6 +194,67 @@
 				</div>
 
 		  	</div>
+		</script>
+
+		<script id="coordiantes-template" type="text/x-handlebars-template"> 
+			<div class="list-group">
+				{{#each this}}
+  				<a href="javascript:;" class="list-group-item">
+  					<ul class="list-group">
+  						<li class="list-group-item">
+    						<span class="badge">{{numberPotencyFrequency}}</span>
+    						Number of potencies and frequencies
+  						</li>
+  						<li class="list-group-item">
+  							<div>
+  								<span class="pull-right">{{latitude}}</span>
+    							Latitude
+  							</div>
+  							<div>
+  								<span class="pull-right">{{longitude}}</span>
+    							Longitude
+  							</div>
+  							<div>
+    							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
+  							</div>
+  							<hr>
+  							<button class="btn btn-success btn-xs pull-right" type="button">See on Google Maps</button>
+    						<br>
+  						</li>
+					</ul>
+
+					<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
+						Power 
+						<span class="caret"></span>
+					</button>
+				  						
+					<ul class="ws-dropdown-container">
+						<table class="table">
+				   			<thead>
+				      			<tr>
+				        			<th>Power</th>
+				         			<th>Value</th>
+				      			</tr>
+				   			</thead>
+						   	<tbody>
+						      	<tr>
+						      		<td>Minimum</td><td>{{potencyMin}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Maximum</td><td>{{potencyMax}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Average</td><td>{{potencyAvg}}</td>
+						      	</tr>
+						      	<tr>
+						      		<td>Standard deviation</td><td>{{potencySD}}</td>
+						      	</tr>
+						   	</tbody>
+						</table>
+					</ul>
+  				</a>
+  				{{/each}}
+			</div>
 		</script>
 
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
@@ -379,6 +382,7 @@
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PaginationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/SinglePlaceView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>

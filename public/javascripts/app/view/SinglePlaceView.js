@@ -2,11 +2,12 @@ var com = com || {};
 com.spantons = com.spantons || {};
 com.spantons.view = com.spantons.view || {};
 
-com.spantons.view.CoordinatesView = Backbone.View.extend({
+com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	coodinates: null,
-	template: Handlebars.compile($("#coordinates-template").html()),
+	coordinatesView: null,
+	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
 		'click .dropdown-trigger' : 'toggleDropdown'
@@ -24,12 +25,12 @@ com.spantons.view.CoordinatesView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.waitingView.render();
 
-		if(options.placeId)
+		if(options.placeId){
 			this.coodinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
-		else
+			this.coordinatesView = new com.spantons.view.CoordinatesView();
+		
+		} else
 			throw 'Any place id';
-
-		console.log();
 
 		this.coodinates.fetch({
 			data: { 
@@ -40,6 +41,7 @@ com.spantons.view.CoordinatesView = Backbone.View.extend({
 			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.render();
+		        self.renderCoordinates();
 		        self.renderPagination();
 		     },
 		     error: function(e){  
@@ -51,6 +53,10 @@ com.spantons.view.CoordinatesView = Backbone.View.extend({
 
 	toggleDropdown: function(evt){
 		$(evt.currentTarget).next().slideToggle();
+	},
+
+	renderCoordinates: function(){
+		this.$el.find('#coordinates').html(this.coordinatesView.render(this.coodinates.models[0].attributes.coordinates).el);
 	},
 
 	renderPagination:  function(index){
@@ -77,8 +83,7 @@ com.spantons.view.CoordinatesView = Backbone.View.extend({
 
 			success: function(e){                      
 		        self.waitingView.closeView();
-		        self.render();		        
-		        self.renderPagination(index);
+		        self.renderCoordinates();
 		     },
 		     error: function(e){  
 		     	self.waitingView.closeView();
