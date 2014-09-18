@@ -4,7 +4,7 @@ var db = require('../models');
 
 var UserIdentification = 1;
 
-exports.create = function(req, res){
+exports.createPlace = function(req, res){
 	if(Object.keys(req.body).length === 0)
 		res.status(500).send({ error: 'something blew up' });
 	

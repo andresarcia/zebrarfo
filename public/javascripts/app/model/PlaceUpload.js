@@ -4,7 +4,7 @@ com.spantons.model = com.spantons.model || {};
 
 com.spantons.model.PlaceUpload = Backbone.Model.extend({
 	
-	urlRoot: '/api/upload/',
+	urlRoot: '/api/places/upload/',
 
 	defaults: {
     	name: null,

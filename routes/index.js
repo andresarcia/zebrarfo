@@ -14,8 +14,8 @@ router.route('/places')
 router.route('/places/:id/coordinates')
 	.get(places.get);
 
-router.route('/upload')
-	.post(upload.create);
+router.route('/places/upload')
+	.post(upload.createPlace);
 
 router.get('/', function(req, res) {
  	res.send({
