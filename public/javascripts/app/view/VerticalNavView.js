@@ -21,13 +21,14 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 	},
 
 	appendTempChildItem: function(options){
-		
+		this.$el.find('.active').removeClass('active');
 		if(options.glyphicon)
 			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span class="glyphicon '+options.glyphicon+'"></span><span> '+options.name+'</span></a></li>').hide();
 		else
 			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span> '+options.name+'</span></a></li>').hide();
 
 		var parent = this.$el.find('.parent').get(options.indexParent);
+		$(parent).addClass('active-parent');
 
 		if($(parent).parent().find('.children').is(':visible')){
 			$(parent).parent().find('.children').append(item);
