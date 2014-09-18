@@ -31,7 +31,9 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	routes: {
 		'places': 'showPlaces',
 		'places/:id/coordinates' : 'showCoordinates',
-		'upload': 'upload'
+		'places/upload': 'uploadPlace',
+		'hotspots': 'showHotspots',
+		'hotspots/upload': 'uploadHotspots'
 	},
 
 	showPlaces: function(){
@@ -40,7 +42,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
-		this.navViews.verticalNav.changeActiveClass(0);
+		this.navViews.verticalNav.changeActiveClass({
+			index: 0,
+			child: false
+		});
 	},
 
 	showCoordinates: function(id){
@@ -50,16 +55,34 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
-		this.navViews.verticalNav.changeActiveClass(0);
 	},
 
-	upload: function(){
+	uploadPlace: function(){
 		this.clearViews();
 		this.currentView = new com.spantons.view.UploadMeasuresView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
-		this.navViews.verticalNav.changeActiveClass(1);
+		this.navViews.verticalNav.changeActiveClass({
+			index: 0,
+			indexParent: 0,
+			child: true
+		});
+	},
+
+	showHotspots: function(){
+		this.navViews.verticalNav.changeActiveClass({
+			index: 1,
+			child: false
+		});
+	},
+
+	uploadHotspots: function(){
+		this.navViews.verticalNav.changeActiveClass({
+			index: 0,
+			indexParent: 1,
+			child: true
+		});
 	}
 
 });

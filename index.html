@@ -88,16 +88,41 @@
 
 		<script id="vertical-nav-template" type="text/x-handlebars-template">
 			<div class="ws-vertical-navbar">
-	  			<div class="list-group">
-					<a href="#places" class="list-group-item active">
-						<span class="glyphicon glyphicon-globe"></span>
-						<span> Places</span>
-					</a>
-					<a href="#upload" class="list-group-item">
-						<span class="glyphicon glyphicon-floppy-open"></span>
-						<span> Upload place</span>
-					</a>
-				</div>
+	  			<ul class="list-group">
+	  				<li class="list-group-item">
+	  					<a href="#places" class="parent item active">
+							<span class="glyphicon glyphicon-globe"></span>
+							<span> Places</span>
+						</a>
+
+						<ul class="list-group children">
+			  				<li class="list-group-item">
+			  					<a href="#places/upload" class="child item">
+									<span class="glyphicon glyphicon-floppy-open"></span>
+									<span> Upload place</span>
+								</a>
+			  				</li>
+						</ul>
+
+	  				</li>
+
+	  				<li class="list-group-item">
+	  					<a href="#hotspots" class="parent item">
+							<span class="glyphicon glyphicon-fire"></span>
+							<span> Hotspots</span>
+						</a>
+
+						<ul class="list-group children">
+							<li class="list-group-item">
+			  					<a href="#hotspots/upload" class="child item">
+									<span class="glyphicon glyphicon-floppy-open"></span>
+									<span> Upload hotspot</span>
+								</a>
+			  				</li>
+						</ul>
+
+	  				</li>
+				</ul>
 	  		</div>
 		</script>
 
