@@ -55,6 +55,13 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
+
+		this.navViews.verticalNav.appendTempChildItem({
+			indexParent: 0,
+			url: 'places/'+id+'/coordinates',
+			glyphicon: 'glyphicon-map-marker',
+			name: 'Coordinates'
+		});
 	},
 
 	uploadPlace: function(){

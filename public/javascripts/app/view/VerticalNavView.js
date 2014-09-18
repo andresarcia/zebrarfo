@@ -20,12 +20,34 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		return this;
 	},
 
+	appendTempChildItem: function(options){
+		
+		if(options.glyphicon)
+			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span class="glyphicon '+options.glyphicon+'"></span><span> '+options.name+'</span></a></li>').hide();
+		else
+			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span> '+options.name+'</span></a></li>').hide();
+
+		var parent = this.$el.find('.parent').get(options.indexParent);
+
+		if($(parent).parent().find('.children').is(':visible')){
+			$(parent).parent().find('.children').append(item);
+			item.slideDown(350);
+		} else {
+			$(parent).parent().find('.children').append(item);
+			item.show();
+			$(parent).parent().find('.children').slideDown(350);
+		}
+	},
+
 	changeActiveClass: function(options){
 		var item;
 
 		this.$el.find('.active-parent').removeClass('active-parent');
 		this.$el.find('.active-childrens').removeClass('active-childrens');
 		this.$el.find('.active').removeClass('active');
+		this.$el.find('.temp').parent().slideUp(250, function(){
+			$(this).remove();
+		});
 
 		if(!options.child){
 			item = this.$el.find('.parent').get(options.index);
