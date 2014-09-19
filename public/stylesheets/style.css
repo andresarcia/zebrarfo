@@ -120,6 +120,12 @@ hr {
   margin-left: auto;
 }
 
+#basic-markers-map {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 10px;
+}
+
 .ws-dropdown-container {
   display: none;
 }

@@ -7,6 +7,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	el: '#ws-containter',
 	coodinates: null,
 	coordinatesView: null,
+	mapView: null,
 	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
@@ -28,7 +29,8 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		if(options.placeId){
 			this.coodinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
 			this.coordinatesView = new com.spantons.view.CoordinatesView();
-		
+			this.mapView = new com.spantons.view.GoogleMapBasicMarkersView();
+
 		} else
 			throw 'Any place id';
 
@@ -41,6 +43,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.render();
+		        self.renderMap();
 		        self.renderCoordinates();
 		        self.renderPagination();
 		     },
@@ -53,6 +56,10 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	toggleDropdown: function(evt){
 		$(evt.currentTarget).next().slideToggle();
+	},
+
+	renderMap: function(){
+		this.mapView.render(this.coodinates.models[0].attributes.coordinates);		
 	},
 
 	renderCoordinates: function(){
@@ -83,6 +90,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 			success: function(e){                      
 		        self.waitingView.closeView();
+		        self.renderMap();
 		        self.renderCoordinates();
 		     },
 		     error: function(e){  
