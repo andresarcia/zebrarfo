@@ -8,7 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.css">
 		<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	</head>
-	<body>
+	<body data-spy="scroll">
 		<div id="modal-parsing-measures"></div>
 
 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -225,7 +225,7 @@
 		<script id="coordiantes-template" type="text/x-handlebars-template"> 
 			<div class="list-group">
 				{{#each this}}
-  				<a href="javascript:;" class="list-group-item">
+  				<a href="javascript:;" id="coord-id-{{id}}" class="list-group-item">
   					<ul class="list-group">
   						<li class="list-group-item">
     						<span class="badge">{{numberPotencyFrequency}}</span>
@@ -394,7 +394,6 @@
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
-		<script src="https://maps.googleapis.com/maps/api/js"></script>
 
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>

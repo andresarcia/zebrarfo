@@ -59,7 +59,14 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	renderMap: function(){
-		this.mapView.render(this.coodinates.models[0].attributes.coordinates);		
+		var self = this;
+
+		if(this.mapView.ready)
+			this.mapView.render(this.coodinates.models[0].attributes.coordinates);		
+		else 
+			Backbone.pubSub.on('event-loaded-google-map-api', function(){
+				self.mapView.render(self.coodinates.models[0].attributes.coordinates);
+			});
 	},
 
 	renderCoordinates: function(){
