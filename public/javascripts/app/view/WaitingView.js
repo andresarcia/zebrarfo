@@ -12,13 +12,11 @@ com.spantons.view.WaitingView = Backbone.View.extend({
 
 	render: function(){
 		this.$el.html(this.template);
-		this.$el.find($('.glyphicon-refresh-animate')).show();
 		this.$el.show();
 		return this;
 	},
 
 	closeView: function(){
-		this.$el.find($('.glyphicon-refresh-animate')).hide();
 		this.$el.fadeOut(250);
 	}
 

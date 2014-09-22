@@ -5,9 +5,17 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 
 	initialize: function(options){
-		this.icon1 = "../../../images/marker_red.png";
-		this.icon2 = "../../../images/marker_green.png";
-		this.mapZoom = 15;
+		if(options.idContainer){
+			this.idContainer = options.idContainer;
+
+			this.icon1 = "../../../images/marker_red.png";
+			this.icon2 = "../../../images/marker_green.png";
+			this.mapZoom = 15;	
+
+			$('#'+this.idContainer).html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+
+		} else
+			throw 'No id container for map canvas';
 	},
 
 	markerClick: function(id){
@@ -18,7 +26,7 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 	render: function(data){
 		var self = this;
 
-    	var mapCanvas = document.getElementById('basic-markers-map');
+    	var mapCanvas = document.getElementById(this.idContainer);
     	var centerCoord = new google.maps.LatLng(data[0].latitude,data[0].longitude);
   		var mapOptions = {
     		zoom: this.mapZoom,

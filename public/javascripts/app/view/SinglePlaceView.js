@@ -29,7 +29,6 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		if(options.placeId){
 			this.coodinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
 			this.coordinatesView = new com.spantons.view.CoordinatesView();
-			this.mapView = new com.spantons.view.GoogleMapBasicMarkersView();
 
 		} else
 			throw 'Any place id';
@@ -40,9 +39,12 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 				limit: self.defaults.limit
 			},
 
-			success: function(e){                      
-		        self.waitingView.closeView();
+			success: function(e){          
+				self.waitingView.closeView();
 		        self.render();
+		        self.mapView = new com.spantons.view.GoogleMapBasicMarkersView({
+					idContainer: 'basic-markers-map'
+				});
 		        self.renderMap();
 		        self.renderCoordinates();
 		        self.renderPagination();
