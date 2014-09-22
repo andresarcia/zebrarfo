@@ -4,6 +4,9 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 
+	markers: null,
+	lastMarkerToggle: null,
+
 	initialize: function(options){
 		if(options.idContainer){
 			this.idContainer = options.idContainer;
@@ -23,8 +26,21 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		$('body').scrollspy({ target: targetId });
 	},
 
+	toggleMarker: function(id){
+		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle)
+			this.markers[this.lastMarkerToggle].setAnimation(null);
+
+		if (this.markers[id].getAnimation() !== null) 
+        	this.markers[id].setAnimation(null);
+      	else {
+        	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
+        	this.lastMarkerToggle = id;
+      	}
+	},
+
 	render: function(data){
 		var self = this;
+		this.markers = [];
 
     	var mapCanvas = document.getElementById(this.idContainer);
     	var centerCoord = new google.maps.LatLng(data[0].latitude,data[0].longitude);
@@ -46,6 +62,7 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 			    position: latLng,
 		      	map: map,
 		      	icon: self.icon1,
+		      	animation: null,
 		      	id: coordinate.id,
 		      	title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
 		  	});
@@ -60,9 +77,11 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		    	infowindow.close();
 			});
 
-			google.maps.event.addListener(marker, 'click', function(evt) {
+			google.maps.event.addListener(marker, 'click', function() {
 		    	self.markerClick(marker.id);
 			});
+
+			self.markers.push(marker);
   		});
 	}
 

@@ -11,7 +11,8 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
-		'click .dropdown-trigger' : 'toggleDropdown'
+		'click .dropdown-trigger' : 'toggleDropdown',
+		'click .see-on-map': 'seeOnMap'
 	},
 
 	defaults: {
@@ -54,6 +55,14 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		     	self.errorView.render(['Occurred an error retrieving the place']);
 		     }
 		});
+	},
+
+	seeOnMap: function(evt){
+		if(appRouter.googleMapApi){
+			var index = $(".see-on-map").index(evt.currentTarget);
+			this.mapView.toggleMarker(index);
+		} else
+			alert('lanzar modal');
 	},
 
 	toggleDropdown: function(evt){
