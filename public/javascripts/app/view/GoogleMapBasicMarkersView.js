@@ -4,18 +4,10 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 
-	ready: false,
-
 	initialize: function(options){
 		this.icon1 = "../../../images/marker_red.png";
 		this.icon2 = "../../../images/marker_green.png";
 		this.mapZoom = 15;
-
-		Backbone.pubSub.on('event-loaded-google-map-api', this.readyToRender, this);
-	},
-
-	readyToRender: function(){
-		this.ready = true;
 	},
 
 	markerClick: function(id){

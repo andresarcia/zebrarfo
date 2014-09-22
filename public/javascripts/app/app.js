@@ -1,7 +1,7 @@
 $(function(){
 	Backbone.pubSub = _.extend({}, Backbone.Events);
 	loadGoogleMapApi();
-	var appRouter = new com.spantons.router.AppRouter();
+	appRouter = new com.spantons.router.AppRouter();
 
 	Backbone.history.start();
 });
@@ -14,5 +14,6 @@ function loadGoogleMapApi() {
 }
 
 function initializeGoogleMaps(){
+	appRouter.googleMapApi = true;
 	Backbone.pubSub.trigger('event-loaded-google-map-api');
 }
