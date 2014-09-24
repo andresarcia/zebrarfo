@@ -153,6 +153,15 @@ hr {
   margin-bottom: 10px;
 }
 
+#coordinates .list-group-item.active,
+#coordinates .list-group-item.active:hover,
+#coordinates .list-group-item.active:focus {
+  z-index: 2;
+  color: inherit;
+  background-color: #DDDDDD;
+  border-color: #DDDDDD;
+}
+
 .ws-dropdown-container {
   display: none;
 }

@@ -23,10 +23,24 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 
 	markerClick: function(id){
 		var targetId = '#coord-id-'+id;
-		$('body').scrollspy({ target: targetId });
+		$('#coordinates .list-group-item').removeClass('active');
+		$(targetId).addClass('active');
+
+		if($(document).width() < 768){
+			$('html, body').stop().animate({  
+		        scrollTop: $(targetId).offset().top - ($('#vertical-nav').height() + $('.navbar-fixed-top').height() + 5)  
+		    }, 1000);
+		
+		} else {
+			$('html, body').stop().animate({  
+		        scrollTop: $(targetId).offset().top - ($('.navbar-fixed-top').height() + 10)
+		    }, 1000);
+		}
 	},
 
 	toggleMarker: function(id){
+		var self = this;
+
 		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle)
 			this.markers[this.lastMarkerToggle].setAnimation(null);
 
@@ -35,6 +49,21 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
       	else {
         	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
         	this.lastMarkerToggle = id;
+
+        	if($(document).width() < 768){
+				$('html, body').stop().animate({  
+			        scrollTop: $('#'+self.idContainer).offset().top - ($('#vertical-nav').height() + $('.navbar-fixed-top').height() + 5)  
+			    }, 1000);
+			
+			} else {
+				$('html, body').stop().animate({  
+			        scrollTop: $('#'+self.idContainer).offset().top - ($('.navbar-fixed-top').height() + 10)
+			    }, 1000);
+			}
+
+	    	$('#coordinates .list-group-item').removeClass('active');
+	    	var targetId = '#coord-id-'+this.markers[id].id;
+			$(targetId).addClass('active');
       	}
 	},
 
@@ -46,6 +75,7 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
     	var centerCoord = new google.maps.LatLng(data[0].latitude,data[0].longitude);
   		var mapOptions = {
     		zoom: this.mapZoom,
+    		scrollwheel: false,
     		center: centerCoord,
     		mapTypeId: google.maps.MapTypeId.ROADMAP
   		};
