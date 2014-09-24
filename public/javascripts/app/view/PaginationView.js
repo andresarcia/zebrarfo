@@ -47,6 +47,10 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 			currentContainer.removeClass('active');
 			this.$el.children().eq($(evt.currentTarget).text()).addClass('active');
 		}
+		
+		$('html, body').stop().animate({  
+	        scrollTop: $('.ws-body').offset().top  
+	    }, 600);
 	},
 
 	render: function(){
