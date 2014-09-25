@@ -62,7 +62,9 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			var index = $(".see-on-map").index(evt.currentTarget);
 			this.mapView.toggleMarker(index);
 		} else
-			alert('lanzar modal');
+			bootbox.alert('Still loading map', function() {
+			  // callback luego de cargar el mapa
+			});
 	},
 
 	toggleDropdown: function(evt){
