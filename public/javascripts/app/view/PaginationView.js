@@ -7,6 +7,7 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 	el: '.pagination',
 	numberOfPages: null,
 	currentPage: 1,
+	maxOfPages: 5,
 	mainView: null,
 
 	events: {
@@ -24,28 +25,33 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 
 	calculatePagination: function(evt){
 		var currentContainer = this.$el.find('.active');
-		var currentIndex = Number(currentContainer.children().text());
+		
+		if($(evt.currentTarget).hasClass('disabled'))
+			return;
 
 		if($(evt.currentTarget).hasClass('prev')){
-			if(currentIndex <= 1)
+			if(this.currentPage <= 1)
 				return;
 
-			this.mainView.fetchData(currentIndex - 1);
+			this.mainView.fetchData(this.currentPage - 1);
 			currentContainer.removeClass('active');
-			this.$el.children().eq(currentIndex - 1).addClass('active');
+			this.currentPage = this.currentPage - 1;
+			this.render();
 
 		} else if($(evt.currentTarget).hasClass('next')){
-			if(currentIndex >= this.numberOfPages)
+			if(this.currentPage >= this.numberOfPages)
 				return;
 
-			this.mainView.fetchData(currentIndex + 1);
+			this.mainView.fetchData(this.currentPage + 1);
 			currentContainer.removeClass('active');
-			this.$el.children().eq(currentIndex + 1).addClass('active');
+			this.currentPage = this.currentPage + 1;
+			this.render();
 
 		} else {
-			this.mainView.fetchData(Number($(evt.currentTarget).text()));
 			currentContainer.removeClass('active');
-			this.$el.children().eq($(evt.currentTarget).text()).addClass('active');
+			this.mainView.fetchData(Number($(evt.currentTarget).text()));
+			this.currentPage = Number($(evt.currentTarget).text());
+			this.render();
 		}
 		
 		$('html, body').stop().animate({  
@@ -54,13 +60,41 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 	},
 
 	render: function(){
-		this.$el.append('<li><a href="javascript:;" class="pagination-item prev">&laquo;</a></li>');
-		for (var i = 1; i < this.numberOfPages + 1; i++) 
-			this.$el.append('<li><a href="javascript:;" class="pagination-item">'+i+'</a></li>');
+		this.$el.html('');
+		this.$el.append('<li><a href="javascript:;" class="pagination-item prev">←</a></li>');
+		var i;
+		
+		if(this.numberOfPages > this.maxOfPages){
+			if(this.currentPage < this.maxOfPages){
+				for (i = 1; i < this.maxOfPages + 1; i++)
+					this.$el.append('<li><a href="javascript:;" class="pagination-item">'+i+'</a></li>');
+			
+				this.$el.append('<li class="disabled"><a href="javascript:;" class="pagination-item disabled">...</a></li>');
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+this.numberOfPages+'</a></li>');
+			
+			} else if (this.currentPage >= this.numberOfPages - this.maxOfPages + 1){
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">1</a></li>');
+				this.$el.append('<li class="disabled"><a href="javascript:;" class="pagination-item disabled">...</a></li>');
+				for (i = this.numberOfPages - this.maxOfPages + 1; i < this.numberOfPages + 1; i++)
+					this.$el.append('<li><a href="javascript:;" class="pagination-item">'+i+'</a></li>');
+					
+			} else {
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">1</a></li>');
+				this.$el.append('<li class="disabled"><a href="javascript:;" class="pagination-item disabled">...</a></li>');
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+(this.currentPage - 1)+'</a></li>');
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+this.currentPage+'</a></li>');
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+(this.currentPage + 1) +'</a></li>');
+				this.$el.append('<li class="disabled"><a href="javascript:;" class="pagination-item disabled">...</a></li>');
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+this.numberOfPages+'</a></li>');
+			}
 
-		this.$el.append('<li><a href="javascript:;" class="pagination-item next">&raquo;</a></li>');
-				
-		this.$el.children().eq(this.currentPage).addClass('active');
+		} else {
+			for (i = 1; i < this.numberOfPages + 1; i++) 
+				this.$el.append('<li><a href="javascript:;" class="pagination-item">'+i+'</a></li>');
+		}
+
+		this.$el.append('<li><a href="javascript:;" class="pagination-item next">→</a></li>');
+		this.$el.children().find('a:contains('+this.currentPage+')').first().parent().addClass('active');
 		
 		return this;
 	},
