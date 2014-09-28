@@ -34,22 +34,23 @@ exports.get = function(req,res){
 				id: id
 			}
 		}).success(function(place){
-			
-  			db.Coordinate.findAndCountAll({
-     			where: {
-					PlaceId:place.id
-				},
-     			offset: offset,
-     			limit: limit
-  			})
-			.success(function(result) {
-				var placeObject = place.dataValues;
-				placeObject.total = result.count;
-				placeObject.currentPage = result.count;
-				placeObject.coordinates = result.rows;
-				res.send(placeObject);
-			});
-
+			if(place)
+	  			db.Coordinate.findAndCountAll({
+	     			where: {
+						PlaceId:place.id
+					},
+	     			offset: offset,
+	     			limit: limit
+	  			})
+				.success(function(result) {
+					var placeObject = place.dataValues;
+					placeObject.total = result.count;
+					placeObject.currentPage = result.count;
+					placeObject.coordinates = result.rows;
+					res.send(placeObject);
+				});
+			else
+				res.status(404).send('Sorry, we cannot find that!');
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });

@@ -52,7 +52,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		     },
 		     error: function(e){  
 		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the place']);
+		     	self.errorView.render(['Sorry, we cannot find that!']);
 		     }
 		});
 	},
