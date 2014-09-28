@@ -79,7 +79,7 @@ $(document).ready(function(){
         coordinate = {};
         coordinate.latitude = Number(arrayCoordinate[0]);
 		coordinate.longitude = Number(arrayCoordinate[1]);
-		if(Number.isNaN(coordinate.latitude) || Number.isNaN(coordinate.longitude))
+		if(isNaN(coordinate.latitude) || isNaN(coordinate.longitude))
 			return;
 
 		coordinate.numberPotencyFrequency = numberPotencyFrequency;
