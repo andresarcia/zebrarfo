@@ -24,7 +24,6 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 
 		this.errorView = options.errorView;
-		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 		this.waitingView.render();
 

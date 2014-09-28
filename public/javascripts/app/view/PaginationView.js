@@ -64,7 +64,7 @@ com.spantons.view.PaginationView = Backbone.View.extend({
 		this.$el.append('<li><a href="javascript:;" class="pagination-item prev">←</a></li>');
 		var i;
 		
-		if(this.numberOfPages > this.maxOfPages){
+		if(this.numberOfPages > 7){
 			if(this.currentPage < this.maxOfPages){
 				for (i = 1; i < this.maxOfPages + 1; i++)
 					this.$el.append('<li><a href="javascript:;" class="pagination-item">'+i+'</a></li>');
