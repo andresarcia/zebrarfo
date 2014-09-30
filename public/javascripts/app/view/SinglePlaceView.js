@@ -12,7 +12,8 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	events: {
 		'click .dropdown-trigger' : 'toggleDropdown',
-		'click .see-on-map': 'seeOnMap'
+		'click .see-on-map': 'seeOnMap',
+		'click #complete-map': 'launchCompleteMap'
 	},
 
 	defaults: {
@@ -111,12 +112,12 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			success: function(e){                      
 		        self.waitingView.closeView();
 		        self.renderMap();
-		        self.renderCoordinates();
-		     },
-		     error: function(e){  
+		    	self.renderCoordinates();
+		    },
+		    error: function(e){  
 		     	self.waitingView.closeView();
 		     	self.errorView.render(['Occurred an error retrieving the place']);
-		     }
+		    }
 		});
 	},
 
@@ -126,5 +127,26 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 		return this;
 	},
+
+	launchCompleteMap: function(){
+		var self = this;
+
+		this.waitingView.render();
+		var coodinates = new com.spantons.collection.Coordinates({ idPlace: this.coodinates.id });
+		coodinates.fetch({
+			success: function(e){                      
+		        self.waitingView.closeView();
+		        self.$el.fadeOut(function(){
+		        	self.$el.html('');
+		        });
+		        
+		        console.log(e.models[0].attributes.coordinates);
+		    },
+		    error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
+		    }
+		});
+	}
 
 });

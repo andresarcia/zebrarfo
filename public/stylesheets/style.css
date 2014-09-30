@@ -13,6 +13,10 @@ hr {
   padding-top: 75px;
 }
 
+.btn-without-corners {
+  border-radius: 0;
+}
+
 .ws-modal {
   position: relative;
 }
