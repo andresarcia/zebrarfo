@@ -1,5 +1,8 @@
-var sanitize = require('validator').sanitize;
 var db = require('../models');
+
+var isNumber = function(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
 
 var UserIdentification = 1;
 
@@ -18,30 +21,23 @@ exports.list = function(req,res){
 
 exports.get = function(req,res){
 
-	if(req.params.id && req.query.offset && req.query.limit){
-		var id = sanitize(req.params.id).xss();
-		id = sanitize(id).entityDecode();
-
-		var offset = sanitize(req.query.offset).xss();
-		offset = sanitize(offset).entityDecode();
-
-		var limit = sanitize(req.query.limit).xss();
-		limit = sanitize(limit).entityDecode();
-
+	if(isNumber(req.params.id)){
+		
 		db.Place.find({
 			where: {
 				UserId:UserIdentification,
-				id: id
+				id: req.params.id
 			}
 		}).success(function(place){
-			if(place)
-	  			db.Coordinate.findAndCountAll({
-	     			where: {
-						PlaceId:place.id
-					},
-	     			offset: offset,
-	     			limit: limit
-	  			})
+			if(place){
+				var options;
+
+				if(isNumber(req.query.offset) && isNumber(req.query.limit))
+					options = { where: { PlaceId:place.id }, offset: req.query.offset, limit: req.query.limit };
+				else
+					options = { where: { PlaceId:place.id }};
+
+	  			db.Coordinate.findAndCountAll(options)
 				.success(function(result) {
 					var placeObject = place.dataValues;
 					placeObject.total = result.count;
@@ -49,7 +45,8 @@ exports.get = function(req,res){
 					placeObject.coordinates = result.rows;
 					res.send(placeObject);
 				});
-			else
+
+			} else
 				res.status(404).send('Sorry, we cannot find that!');
 		})
 		.error(function(err){
