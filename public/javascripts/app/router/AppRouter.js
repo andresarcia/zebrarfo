@@ -16,7 +16,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	currentView: null,
 
 	initialize: function(options){
-
+		var self = this;
+		
 		this.navViews.verticalNav = new com.spantons.view.VerticalNavView();
 
 		this.helperViews.errorView = new com.spantons.view.ErrorView();
@@ -31,6 +32,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	routes: {
 		'places': 'showPlaces',
 		'places/:id/coordinates' : 'showCoordinates',
+		'places/:id/coordinates/maps' : 'showCoordinatesMaps',
 		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
@@ -61,6 +63,21 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			url: 'places/'+id+'/coordinates',
 			glyphicon: 'glyphicon-map-marker',
 			name: 'Coordinates'
+		});
+	},
+
+	showCoordinatesMaps: function(id){
+		this.clearViews();
+		this.currentView = new com.spantons.view.GoogleMapCompleteView({
+			waitingView: this.helperViews.waitingView,
+			errorView : this.helperViews.errorView,
+			placeId: id
+		});
+		this.navViews.verticalNav.appendTempChildItem({
+			indexParent: 0,
+			url: 'places/'+id+'/coordinates/maps',
+			glyphicon: 'glyphicon-road',
+			name: 'Maps'
 		});
 	},
 

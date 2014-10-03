@@ -124,29 +124,12 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	render: function(){
 		var html = this.template(this.coodinates.models[0]);
     	this.$el.html(html);	
-
+    
 		return this;
 	},
 
 	launchCompleteMap: function(){
-		var self = this;
-
-		this.waitingView.render();
-		var coodinates = new com.spantons.collection.Coordinates({ idPlace: this.coodinates.id });
-		coodinates.fetch({
-			success: function(e){                      
-		        self.waitingView.closeView();
-		        self.$el.fadeOut(function(){
-		        	self.$el.html('');
-		        });
-		        
-		        console.log(e.models[0].attributes.coordinates);
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
+		window.location.hash = '#places/'+this.coodinates.id+'/coordinates/maps';
 	}
 
 });
