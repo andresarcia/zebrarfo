@@ -289,6 +289,64 @@
 			</div>
 		</script>
 
+		<script id="complete-map-template" type="text/x-handlebars-template"> 
+			<div class="row">
+				<div class="col-md-8">
+					<div id="map_canvas" style="width:100%; height:500px;"></div>
+				</div>
+				<div class="col-md-4">
+					<div id="select-complete-map-info">
+						<h3>Click on the marker will get a info of the coordinate</h3>
+					</div>
+				</div>
+			</div>
+		</script>	
+
+		<script id="complete-map-coordinate-template" type="text/x-handlebars-template">
+			<ul class="list-group">
+				<li class="list-group-item">
+					<span class="badge">{{numberPotencyFrequency}}</span>
+					Number of potencies and frequencies
+				</li>
+				<li class="list-group-item">
+					<div>
+						<span class="pull-right">{{latitude}}</span>
+						Latitude
+					</div>
+					<div>
+						<span class="pull-right">{{longitude}}</span>
+						Longitude
+					</div>
+					<div>
+						<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
+					</div>
+					<hr>
+					<table class="table">
+			   			<thead>
+			      			<tr>
+			        			<th>Power</th>
+			         			<th>Value</th>
+			      			</tr>
+			   			</thead>
+					   	<tbody>
+					      	<tr>
+					      		<td>Minimum</td><td>{{potencyMin}}</td>
+					      	</tr>
+					      	<tr>
+					      		<td>Maximum</td><td>{{potencyMax}}</td>
+					      	</tr>
+					      	<tr>
+					      		<td>Average</td><td>{{potencyAvg}}</td>
+					      	</tr>
+					      	<tr>
+					      		<td>Standard deviation</td><td>{{potencySD}}</td>
+					      	</tr>
+					   	</tbody>
+					</table>
+				</li>
+			</ul>		
+		</script>
+
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
 			<form>
 				<div class="input-group form-group has-feedback">

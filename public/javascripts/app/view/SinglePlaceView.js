@@ -5,7 +5,7 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	coodinates: null,
+	coordinates: null,
 	coordinatesView: null,
 	mapView: null,
 	template: Handlebars.compile($("#single-place-template").html()),
@@ -29,13 +29,13 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		this.waitingView.render();
 
 		if(options.placeId){
-			this.coodinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
+			this.coordinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
 			this.coordinatesView = new com.spantons.view.CoordinatesView();
 
 		} else
 			throw 'Any place id';
 
-		this.coodinates.fetch({
+		this.coordinates.fetch({
 			data: { 
 				offset: self.defaults.offset,
 				limit: self.defaults.limit
@@ -76,21 +76,21 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 
 		if(appRouter.googleMapApi)
-			this.mapView.render(this.coodinates.models[0].attributes.coordinates);		
+			this.mapView.render(this.coordinates.models[0].attributes.coordinates);		
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.mapView.render(self.coodinates.models[0].attributes.coordinates);
+				self.mapView.render(self.coordinates.models[0].attributes.coordinates);
 			});
 	},
 
 	renderCoordinates: function(){
-		this.$el.find('#coordinates').html(this.coordinatesView.render(this.coodinates.models[0].attributes.coordinates).el);
+		this.$el.find('#coordinates').html(this.coordinatesView.render(this.coordinates.models[0].attributes.coordinates).el);
 	},
 
 	renderPagination:  function(index){
 		var self = this;
 		var container = this.$el.find('.pagination');
-		var total = this.coodinates.models[0].attributes.total;
+		var total = this.coordinates.models[0].attributes.total;
 		
 		new com.spantons.view.PaginationView({ 
 			numberOfPages: Math.ceil(total/self.defaults.limit),
@@ -103,7 +103,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 
 		this.waitingView.render();
-		this.coodinates.fetch({
+		this.coordinates.fetch({
 			data: { 
 				offset: (index - 1) * self.defaults.limit,
 				limit: self.defaults.limit				
@@ -122,14 +122,14 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.coodinates.models[0]);
+		var html = this.template(this.coordinates.models[0]);
     	this.$el.html(html);	
     
 		return this;
 	},
 
 	launchCompleteMap: function(){
-		window.location.hash = '#places/'+this.coodinates.id+'/coordinates/maps';
+		window.location.hash = '#places/'+this.coordinates.id+'/coordinates/maps';
 	}
 
 });
