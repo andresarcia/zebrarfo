@@ -10,6 +10,7 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 	initialize: function(options){
 		
 		this.render();
+		this.$el.find('.active').next().slideDown(350);
 		this.$el.scrollToFixed({ 
 			marginTop: 55,
 		});
@@ -21,52 +22,59 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 	},
 
 	appendTempChildItem: function(options){
-		this.$el.find('.active').removeClass('active');
-		if(options.glyphicon)
-			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span class="glyphicon '+options.glyphicon+'"></span><span> '+options.name+'</span></a></li>').hide();
-		else
-			item = $('<li class="list-group-item"><a href="#'+options.url+'" class="child item active temp"><span> '+options.name+'</span></a></li>').hide();
+		var parent = this.$el.find('.parent').eq(options.indexParent);
 
-		var parent = this.$el.find('.parent').get(options.indexParent);
-		$(parent).addClass('active-parent');
+		if(parent.next().find('.temp').length > 0)
+			return;
 
-		if($(parent).parent().find('.children').is(':visible')){
-			$(parent).parent().find('.children').append(item);
-			item.slideDown(350);
-		} else {
-			$(parent).parent().find('.children').append(item);
-			item.show();
-			$(parent).parent().find('.children').slideDown(350);
-		}
+		_.each(options.items,function(item){
+			if(item.glyphicon)
+				item = $('<li class="list-group-item"><a href="#'+item.url+'" class="child item temp"><span class="glyphicon '+item.glyphicon+'"></span><span> '+item.name+'</span></a></li>').hide();
+			else
+				item = $('<li class="list-group-item"><a href="#'+item.url+'" class="child item temp"><span> '+item.name+'</span></a></li>').hide();
+
+			parent.next().append(item);
+			item.slideDown(700);
+		});
 	},
 
 	changeActiveClass: function(options){
-		var item;
+		if (options.index){
 
-		this.$el.find('.active-parent').removeClass('active-parent');
-		this.$el.find('.active-childrens').removeClass('active-childrens');
-		this.$el.find('.active').removeClass('active');
-		this.$el.find('.temp').parent().slideUp(250, function(){
-			$(this).remove();
-		});
+			if(options.index.length < 2){
+				var brothers = this.$el.find('.parent');
+				var item = brothers.eq(options.index[0]);
+				var childrensBlock = this.$el.find('.children');
+				var childrens = childrensBlock.find('.child');
+				
+				if(!item.hasClass('active')){
+					childrensBlock.find('.temp').parent().slideUp(300,function(){
+						this.remove();
+					});
+					childrens.removeClass('active');
+					brothers.removeClass('active');
+					brothers.removeClass('active-parent');
+					item.addClass('active');
+					if(!item.next().is(':visible')){
+						childrensBlock.slideUp(250);
+						item.next().slideDown(350);
+					}
+				}
+			} else {
+				var parent = this.$el.find('.parent').eq(options.index[0]);
+				var brothers = parent.next().find('.child');
+				var item = brothers.eq(options.index[1]);
 
-		if(!options.child){
-			item = this.$el.find('.parent').get(options.index);
-			
-			if(!$(item).parent().find('.children').is(':visible')){
-				this.$el.find('.children').slideUp(250);
-				$(item).parent().find('.children').slideDown(350);
-				$(item).parent().find('.children').addClass('active-childrens');
-			} 
-
-		} else if(options.child){
-			var parent = this.$el.find('.parent').get(options.indexParent);
-			$(parent).parent().find('.children').slideDown(350);
-			$(parent).addClass('active-parent');
-			item = $(parent).next().find('.child').get(options.index);
-		}
-
-		$(item).addClass('active');
-	},
+				if(!item.hasClass('active')){
+					parent.removeClass('active');
+					brothers.removeClass('active');
+					parent.addClass('active-parent');
+					item.addClass('active');
+				}
+			}
+		
+		} else 
+			throw 'Any index';
+	}
 
 });

@@ -44,9 +44,9 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView
 		});
+		
 		this.navViews.verticalNav.changeActiveClass({
-			index: 0,
-			child: false
+			index: [0],
 		});
 	},
 
@@ -60,9 +60,22 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 		this.navViews.verticalNav.appendTempChildItem({
 			indexParent: 0,
-			url: 'places/'+id+'/coordinates',
-			glyphicon: 'glyphicon-map-marker',
-			name: 'Coordinates'
+			items: [
+				{
+					url: 'places/'+id+'/coordinates',
+					glyphicon: 'glyphicon-map-marker',
+					name: 'Coordinates'
+				},
+				{
+					url: 'places/'+id+'/coordinates/maps',
+					glyphicon: 'glyphicon-road',
+					name: 'Maps'
+				}
+			]
+		});
+
+		this.navViews.verticalNav.changeActiveClass({
+			index: [0,1],
 		});
 	},
 
@@ -73,11 +86,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
-		this.navViews.verticalNav.appendTempChildItem({
-			indexParent: 0,
-			url: 'places/'+id+'/coordinates/maps',
-			glyphicon: 'glyphicon-road',
-			name: 'Maps'
+		this.navViews.verticalNav.changeActiveClass({
+			index: [0,2],
 		});
 	},
 
@@ -88,24 +98,19 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView
 		});
 		this.navViews.verticalNav.changeActiveClass({
-			index: 0,
-			indexParent: 0,
-			child: true
+			index: [0,0],
 		});
 	},
 
 	showHotspots: function(){
 		this.navViews.verticalNav.changeActiveClass({
-			index: 1,
-			child: false
+			index: [1]
 		});
 	},
 
 	uploadHotspots: function(){
 		this.navViews.verticalNav.changeActiveClass({
-			index: 0,
-			indexParent: 1,
-			child: true
+			index: [1,0]
 		});
 	}
 
