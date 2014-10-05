@@ -14,6 +14,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	currentView: null,
+	tempId: null,
 
 	initialize: function(options){
 		var self = this;
@@ -31,11 +32,34 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	routes: {
 		'places': 'showPlaces',
-		'places/:id/coordinates' : 'showCoordinates',
-		'places/:id/coordinates/maps' : 'showCoordinatesMaps',
+		'places/:id/coordinates' : 'showCoordinatesOfPlace',
+		'places/:id/coordinates/maps' : 'showCoordinatesMapsOfPlace',
 		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
+	},
+
+	tempObjPlaces: function(id){
+		return {
+			indexParent: 0,
+			items: [
+				{
+					url: 'places/'+id+'/coordinates',
+					glyphicon: 'glyphicon-map-marker',
+					name: 'Coordinates'
+				},
+				{
+					url: 'places/'+id+'/coordinates/maps',
+					glyphicon: 'glyphicon-road',
+					name: 'Maps'
+				},
+				{
+					url: 'places/'+id+'/coordinates/occupation',
+					glyphicon: 'glyphicon-stats',
+					name: 'Occupation'
+				}
+			]
+		};
 	},
 
 	showPlaces: function(){
@@ -50,7 +74,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showCoordinates: function(id){
+	showCoordinatesOfPlace: function(id){
 		this.clearViews();
 		this.currentView = new com.spantons.view.SinglePlaceView({
 			waitingView: this.helperViews.waitingView,
@@ -58,34 +82,21 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.appendTempChildItem({
-			indexParent: 0,
-			items: [
-				{
-					url: 'places/'+id+'/coordinates',
-					glyphicon: 'glyphicon-map-marker',
-					name: 'Coordinates'
-				},
-				{
-					url: 'places/'+id+'/coordinates/maps',
-					glyphicon: 'glyphicon-road',
-					name: 'Maps'
-				}
-			]
-		});
-
+		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
 		this.navViews.verticalNav.changeActiveClass({
 			index: [0,1],
 		});
 	},
 
-	showCoordinatesMaps: function(id){
+	showCoordinatesMapsOfPlace: function(id){
 		this.clearViews();
 		this.currentView = new com.spantons.view.GoogleMapCompleteView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id
 		});
+
+		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
 		this.navViews.verticalNav.changeActiveClass({
 			index: [0,2],
 		});
