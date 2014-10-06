@@ -289,30 +289,43 @@
 			</div>
 		</script>
 
-		<script id="complete-map-template" type="text/x-handlebars-template"> 
+		<script id="maps-template" type="text/x-handlebars-template"> 
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="active"><a href="#coordinates-tab" role="tab" data-toggle="tab">Coordinates</a></li>
 			  	<li><a href="#heatmap-tab" role="tab" data-toggle="tab">Heatmap</a></li>
 			</ul>
 			<div class="tab-content">
-  				<div class="tab-pane fade in active" id="coordinates-tab">
-  					<br>
-  					<div class="row">
-						<div class="col-md-8">
-							<div id="map_canvas_coordinates" style="width:100%; height:500px;"></div>
-						</div>
-						<div class="col-md-4">
-							<div id="select-complete-map-info">
-								<h3>Click on the marker will get a info of the coordinate</h3>
-							</div>
-						</div>
-					</div>
-  				</div>
-  				<div class="tab-pane fade" id="heatmap-tab">
-  					heatmap
-  				</div>
+  				<div class="tab-pane fade in active" id="coordinates-tab"></div>
+  				<div class="tab-pane fade" id="heatmap-tab"></div>
 			</div>
 		</script>	
+
+		<script id="coordinates-map-template" type="text/x-handlebars-template"> 
+			<br>
+			<div class="row">
+				<div class="col-md-8">
+					<div id="map_canvas_coordinates" style="width:100%; height:500px;"></div>
+				</div>
+				<div class="col-md-4">
+					<div id="select-complete-map-info">
+						<h3>Click on the marker will get a info of the coordinate</h3>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script id="heatmap-template" type="text/x-handlebars-template"> 
+			<br>
+			<div class="row">
+				<div class="col-md-8">
+					<div id="map_canvas_heatmap" style="width:100%; height:500px;"></div>
+				</div>
+				<div class="col-md-4">
+					configuracion del mapa
+				</div>
+			</div>
+		</script>
+
 
 		<script id="complete-map-coordinate-template" type="text/x-handlebars-template">
 			<ul class="list-group">
@@ -471,12 +484,15 @@
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/heatmap.js"></script>
 
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/UploadMeasuresContainers.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Place.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Coordinate.js"></script>
+		<script type="text/javascript" src="javascripts/app/model/Heatmap.js"></script>
+		<script type="text/javascript" src="javascripts/app/model/Occupation.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/PlaceUpload.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Places.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Coordinates.js"></script>
@@ -489,6 +505,9 @@
 		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapBasicMarkersView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapCompleteView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/MapsView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/OccupationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>

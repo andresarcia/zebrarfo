@@ -64,7 +64,7 @@ exports.getOccupation = function(req,res){
 			}
 		}).success(function(place){
 
-			var query = 'select frequency / 1000 as frequency, potency from (select coordinates.id from (select id from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id';
+			var query = 'select frequency / 1000 as frequency, potency from (select coordinates.id from (select id from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id order by frequency';
 			db.sequelize
 			.query(query).success(function(response) {
 				var aux = {};

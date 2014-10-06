@@ -33,7 +33,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	routes: {
 		'places': 'showPlaces',
 		'places/:id/coordinates' : 'showCoordinatesOfPlace',
-		'places/:id/coordinates/maps' : 'showCoordinatesMapsOfPlace',
+		'places/:id/coordinates/maps' : 'showMapsOfPlace',
+		'places/:id/occupation' : 'showOccupationOfPlace',
 		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
@@ -54,7 +55,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 					name: 'Maps'
 				},
 				{
-					url: 'places/'+id+'/coordinates/occupation',
+					url: 'places/'+id+'/occupation',
 					glyphicon: 'glyphicon-stats',
 					name: 'Occupation'
 				}
@@ -88,9 +89,9 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showCoordinatesMapsOfPlace: function(id){
+	showMapsOfPlace: function(id){
 		this.clearViews();
-		this.currentView = new com.spantons.view.GoogleMapCompleteView({
+		this.currentView = new com.spantons.view.MapsView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id
@@ -99,6 +100,20 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
 		this.navViews.verticalNav.changeActiveClass({
 			index: [0,2],
+		});
+	},
+
+	showOccupationOfPlace: function(id){
+		this.clearViews();
+		this.currentView = new com.spantons.view.OccupationView({
+			waitingView: this.helperViews.waitingView,
+			errorView : this.helperViews.errorView,
+			placeId: id
+		});
+
+		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
+		this.navViews.verticalNav.changeActiveClass({
+			index: [0,3],
 		});
 	},
 

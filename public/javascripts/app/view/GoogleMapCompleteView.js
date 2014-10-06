@@ -4,9 +4,7 @@ com.spantons.view = com.spantons.view || {};
 
 com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 
-	el: '#ws-containter',
-	template: Handlebars.compile($("#complete-map-template").html()),
-	coordinates: null,
+	template: Handlebars.compile($("#coordinates-map-template").html()),
 	lastMarkerToggle: null,
 
 	initialize: function(options){
@@ -14,30 +12,10 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
-		this.waitingView.render();
 
-		if(options.placeId)
-			this.coordinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
-	
-		this.coordinates.fetch({
-			success: function(e){                      
-				self.icon1 = "../../../images/marker_red.png";
-				self.icon2 = "../../../images/marker_green.png";
-				self.mapZoom = 15;	
-				self.render();
-
-				if(appRouter.googleMapApi)
-					self.renderMap();
-				else 
-					Backbone.pubSub.on('event-loaded-google-map-api', function(){
-						self.renderMap();
-					});
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
+		self.icon1 = "../../../images/marker_red.png";
+		self.icon2 = "../../../images/marker_green.png";
+		self.mapZoom = 15;	
 	},
 
 	markerClick: function(id){
@@ -63,10 +41,22 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		var html = this.template();
     	this.$el.html(html);	
 
-		return this;
+    	return this;
 	},
 
-	renderMap: function(){
+	renderMap: function(data){
+		var self = this;
+		this.coordinates = data;
+
+		if(appRouter.googleMapApi)
+			self.renderMap_();
+		else 
+			Backbone.pubSub.on('event-loaded-google-map-api', function(){
+				self.renderMap_();
+			});
+	},
+
+	renderMap_: function(){
 		var self = this;
 		this.markers = [];
 		this.waitingView.closeView();
