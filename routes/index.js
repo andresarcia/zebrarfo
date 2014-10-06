@@ -12,7 +12,10 @@ router.route('/places')
 	.get(places.list);
 
 router.route('/places/:id/coordinates')
-	.get(places.get);
+	.get(places.getCoordinates);
+
+router.route('/places/:id/occupation')
+	.get(places.getOccupation);
 
 router.route('/places/upload')
 	.post(upload.createPlace);

@@ -19,7 +19,7 @@ exports.list = function(req,res){
 	
 };
 
-exports.get = function(req,res){
+exports.getCoordinates = function(req,res){
 
 	if(isNumber(req.params.id)){
 		
@@ -48,6 +48,20 @@ exports.get = function(req,res){
 
 			} else
 				res.status(404).send('Sorry, we cannot find that!');
+		})
+		.error(function(err){
+			res.status(500).send({ error: err });
+		});
+	}
+};
+
+exports.getOccupation = function(req,res){
+	if(isNumber(req.params.id)){
+
+		var query = 'select frequency / 1000 as frequency, potency from (select coordinates.id from (select id, potencyAvg from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id';
+		db.sequelize
+		.query(query).success(function(response) {
+  			res.send(response);
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });

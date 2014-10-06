@@ -75,7 +75,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		var middleCoordinate = this.coordinates.models[0].attributes.coordinates[Math.round(coordinatesLength/2)];
 		var centerCoord = new google.maps.LatLng(middleCoordinate.latitude,middleCoordinate.longitude);
 
-    	var mapCanvas = document.getElementById('map_canvas');
+    	var mapCanvas = document.getElementById('map_canvas_coordinates');
   		var mapOptions = {
     		zoom: this.mapZoom,
     		center: centerCoord,
