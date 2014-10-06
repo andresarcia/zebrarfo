@@ -58,7 +58,21 @@ exports.getCoordinates = function(req,res){
 exports.getOccupation = function(req,res){
 	if(isNumber(req.params.id)){
 
-		var query = 'select frequency / 1000 as frequency, potency from (select coordinates.id from (select id, potencyAvg from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id';
+		var query = 'select frequency / 1000 as frequency, potency from (select coordinates.id from (select id from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id';
+		db.sequelize
+		.query(query).success(function(response) {
+  			res.send(response);
+		})
+		.error(function(err){
+			res.status(500).send({ error: err });
+		});
+	}
+};
+
+exports.getHeatmap = function(req,res){
+	if(isNumber(req.params.id)){
+
+		var query = 'select aux.latitude as latitude, aux.longitude as longitude, frequency / 1000 as frequency, potency from (select Coordinates.id, Coordinates.latitude, Coordinates.longitude from (select id from Places where UserId = '+UserIdentification+' AND id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where PotencyFrequencies.CoordinateId = aux.id';
 		db.sequelize
 		.query(query).success(function(response) {
   			res.send(response);

@@ -17,6 +17,9 @@ router.route('/places/:id/coordinates')
 router.route('/places/:id/occupation')
 	.get(places.getOccupation);
 
+router.route('/places/:id/heatmap')
+	.get(places.getHeatmap);
+
 router.route('/places/upload')
 	.post(upload.createPlace);
 
