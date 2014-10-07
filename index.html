@@ -372,6 +372,27 @@
 			</ul>		
 		</script>
 
+		<script id="charts-template" type="text/x-handlebars-template"> 
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a href="#occupation-tab" role="tab" data-toggle="tab">Occupation</a></li>
+			</ul>
+			<div class="tab-content">
+  				<div class="tab-pane fade in active" id="occupation-tab"></div>
+			</div>
+		</script>
+
+		<script id="occupation-template" type="text/x-handlebars-template"> 
+			<br>
+			<div class="row">
+				<div class="col-md-8">
+					<canvas id="chart_canvas_occupation" width="400" height="400"></canvas>
+				</div>
+				<div class="col-md-4">
+					configuracion del chart
+				</div>
+			</div>
+		</script>
+
 		<script id="upload-measures-template" type="text/x-handlebars-template"> 
 			<form>
 				<div class="input-group form-group has-feedback">
@@ -485,6 +506,7 @@
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/heatmap.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/Chart.min.js"></script>
 
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>
@@ -508,6 +530,7 @@
 		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/MapsView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/OccupationView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/ChartsView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>

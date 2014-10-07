@@ -34,7 +34,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		'places': 'showPlaces',
 		'places/:id/coordinates' : 'showCoordinatesOfPlace',
 		'places/:id/coordinates/maps' : 'showMapsOfPlace',
-		'places/:id/occupation' : 'showOccupationOfPlace',
+		'places/:id/charts' : 'showChartsOfPlace',
 		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
@@ -55,7 +55,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 					name: 'Maps'
 				},
 				{
-					url: 'places/'+id+'/occupation',
+					url: 'places/'+id+'/charts',
 					glyphicon: 'glyphicon-stats',
 					name: 'Occupation'
 				}
@@ -103,9 +103,9 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showOccupationOfPlace: function(id){
+	showChartsOfPlace: function(id){
 		this.clearViews();
-		this.currentView = new com.spantons.view.OccupationView({
+		this.currentView = new com.spantons.view.ChartsView({
 			waitingView: this.helperViews.waitingView,
 			errorView : this.helperViews.errorView,
 			placeId: id
