@@ -11,23 +11,23 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: 0,
     },
-    potencyMin: {
+    powerMin: {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    potencyMax : {
+    powerMax : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    potencyAvg : {
+    powerAvg : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    sdPotencyAvg : {
+    sdPowerAvg : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    avgPotencySD : {
+    avgPowerSD : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },

@@ -114,11 +114,11 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 			$('#ws-modal-parsing-measures-data-table-name').text(this.model.attributes.name);
 			$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.attributes.numberCoordinates);
-			$('#ws-modal-parsing-measures-data-table-potencyMin').text(this.model.attributes.potencyMin);
-			$('#ws-modal-parsing-measures-data-table-potencyMax').text(this.model.attributes.potencyMax);
-			$('#ws-modal-parsing-measures-data-table-potencyAvg').text(this.model.attributes.potencyAvg);
-			$('#ws-modal-parsing-measures-data-table-sdPotencyAvg').text(this.model.attributes.sdPotencyAvg);
-			$('#ws-modal-parsing-measures-data-table-avgPotencySD').text(this.model.attributes.avgPotencySD);
+			$('#ws-modal-parsing-measures-data-table-powerMin').text(this.model.attributes.powerMin);
+			$('#ws-modal-parsing-measures-data-table-powerMax').text(this.model.attributes.powerMax);
+			$('#ws-modal-parsing-measures-data-table-powerAvg').text(this.model.attributes.powerAvg);
+			$('#ws-modal-parsing-measures-data-table-sdPowerAvg').text(this.model.attributes.sdPowerAvg);
+			$('#ws-modal-parsing-measures-data-table-avgPowerSD').text(this.model.attributes.avgPowerSD);
 			
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 			$('#ws-modal-parsing-measures-data-table').fadeIn(800);

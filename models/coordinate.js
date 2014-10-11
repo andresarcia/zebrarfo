@@ -12,24 +12,24 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       validate: { min: -180, max: 180 }
     },
-    numberPotencyFrequency: {
+    numberPowerFrequency: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0,
     },
-    potencyMin: {
+    powerMin: {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    potencyMax : {
+    powerMax : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    potencyAvg : {
+    powerAvg : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    potencySD : {
+    powerSD : {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
@@ -42,7 +42,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Coordinate.belongsTo(models.Place);
-      Coordinate.hasMany(models.PotencyFrequency);            
+      Coordinate.hasMany(models.PowerFrequency);            
     },
 
     validate: {

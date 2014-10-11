@@ -21,20 +21,20 @@ $(document).ready(function(){
 
 	/* ------------------------------------------------------------------------- */
 	var formatStatPlace = function(place){
-		place.potencyAvg = place.potencyAvg / place.numberCoordinates;
-		place.potencyAvg = Number(place.potencyAvg.toFixed(5));
+		place.powerAvg = place.powerAvg / place.numberCoordinates;
+		place.powerAvg = Number(place.powerAvg.toFixed(5));
 		
 		if(place.numberCoordinates === 1)
-			place.sdPotencyAvg = 0;
+			place.sdPowerAvg = 0;
 		else {
-			place.placePotencySD_X = Math.sqrt((place.placePotencySD_X - (place.placePotencySD_M*place.placePotencySD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
-			place.sdPotencyAvg = Number(place.placePotencySD_X.toFixed(5));
+			place.placePowerSD_X = Math.sqrt((place.placePowerSD_X - (place.placePowerSD_M*place.placePowerSD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
+			place.sdPowerAvg = Number(place.placePowerSD_X.toFixed(5));
 		}
-		place.avgPotencySD = place.avgPotencySD / place.numberCoordinates;
-		place.avgPotencySD = Number(place.avgPotencySD.toFixed(5));
+		place.avgPowerSD = place.avgPowerSD / place.numberCoordinates;
+		place.avgPowerSD = Number(place.avgPowerSD.toFixed(5));
 
-		delete place.placePotencySD_X;
-		delete place.placePotencySD_M;
+		delete place.placePowerSD_X;
+		delete place.placePowerSD_M;
 
 		return place;
 	};
@@ -43,34 +43,34 @@ $(document).ready(function(){
 	var parser = function(place,data){
 		
 		arrayCoordinate = [];
-		arrayFrequencyPotency = [];
+		arrayFrequencyPower = [];
 		coordinate = {};
-		numberPotencyFrequency = 0;
-		potencyMin = null;
-		potencyMax = null;
-		potencyAvg = null;
-		potencySD_X = null;
-		potencySD_M = null;
+		numberPowerFrequency = 0;
+		powerMin = null;
+		powerMax = null;
+		powerAvg = null;
+		powerSD_X = null;
+		powerSD_M = null;
 
 		var lines = data.split("\n");
 		        
         _.each(lines, function(line){
         	lineSplit = line.split("\t");	
 			if(lineSplit.length == 2){
-				var newPotency = Number(lineSplit[1]);
-				if(potencyMin === null)
-					potencyMin = potencyMax = newPotency;
+				var newPower = Number(lineSplit[1]);
+				if(powerMin === null)
+					powerMin = powerMax = newPower;
 				else {
-					if (potencyMax < newPotency)
-						potencyMax = newPotency;
-					if (potencyMin > newPotency)
-						potencyMin = newPotency;
+					if (powerMax < newPower)
+						powerMax = newPower;
+					if (powerMin > newPower)
+						powerMin = newPower;
 				}
-				potencyAvg = potencyAvg + newPotency;
-				potencySD_M = potencySD_M + newPotency;
-				potencySD_X = potencySD_X + (newPotency * newPotency);
-				numberPotencyFrequency ++;
-				arrayFrequencyPotency.push({ frequency:Number(lineSplit[0]), potency:Number(lineSplit[1])});
+				powerAvg = powerAvg + newPower;
+				powerSD_M = powerSD_M + newPower;
+				powerSD_X = powerSD_X + (newPower * newPower);
+				numberPowerFrequency ++;
+				arrayFrequencyPower.push({ frequency:Number(lineSplit[0]), power:Number(lineSplit[1])});
 			}
 			else if(lineSplit.length == 1)
 				arrayCoordinate.push(lineSplit);
@@ -82,31 +82,31 @@ $(document).ready(function(){
 		if(isNaN(coordinate.latitude) || isNaN(coordinate.longitude))
 			return;
 
-		coordinate.numberPotencyFrequency = numberPotencyFrequency;
-		coordinate.potencyMin = Number(potencyMin.toFixed(5));
-		coordinate.potencyMax = Number(potencyMax.toFixed(5));
-		potencyAvg = potencyAvg / numberPotencyFrequency;
-		coordinate.potencyAvg = Number(potencyAvg.toFixed(5));
-		potencySD_X = Math.sqrt((potencySD_X - (potencySD_M*potencySD_M)/numberPotencyFrequency)/(numberPotencyFrequency - 1));
-		coordinate.potencySD = Number(potencySD_X.toFixed(5));
+		coordinate.numberPowerFrequency = numberPowerFrequency;
+		coordinate.powerMin = Number(powerMin.toFixed(5));
+		coordinate.powerMax = Number(powerMax.toFixed(5));
+		powerAvg = powerAvg / numberPowerFrequency;
+		coordinate.powerAvg = Number(powerAvg.toFixed(5));
+		powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/numberPowerFrequency)/(numberPowerFrequency - 1));
+		coordinate.powerSD = Number(powerSD_X.toFixed(5));
 		coordinate.createdDate = String(arrayCoordinate[2]);
-		coordinate.data = arrayFrequencyPotency;
+		coordinate.data = arrayFrequencyPower;
 
 		place.coordinates.push(coordinate);
 		place.numberCoordinates ++;
-		place.potencyAvg = place.potencyAvg + coordinate.potencyAvg;	
-		place.avgPotencySD = place.avgPotencySD + coordinate.potencySD;
-		place.placePotencySD_M = place.placePotencySD_M + coordinate.potencyAvg;
-		place.placePotencySD_X = place.placePotencySD_X + (coordinate.potencyAvg * coordinate.potencyAvg);
+		place.powerAvg = place.powerAvg + coordinate.powerAvg;	
+		place.avgPowerSD = place.avgPowerSD + coordinate.powerSD;
+		place.placePowerSD_M = place.placePowerSD_M + coordinate.powerAvg;
+		place.placePowerSD_X = place.placePowerSD_X + (coordinate.powerAvg * coordinate.powerAvg);
 
-		if(place.potencyMin === null)
-			place.potencyMin = coordinate.potencyMin;
-		if(place.potencyMax === null)
-			place.potencyMax = coordinate.potencyMax;
-		if (place.potencyMin > coordinate.potencyMin)
-			place.potencyMin = coordinate.potencyMin;
-		if (place.potencyMax < coordinate.potencyMax)
-			place.potencyMax = coordinate.potencyMax;
+		if(place.powerMin === null)
+			place.powerMin = coordinate.powerMin;
+		if(place.powerMax === null)
+			place.powerMax = coordinate.powerMax;
+		if (place.powerMin > coordinate.powerMin)
+			place.powerMin = coordinate.powerMin;
+		if (place.powerMax < coordinate.powerMax)
+			place.powerMax = coordinate.powerMax;
 	};
 
 });

@@ -1,21 +1,21 @@
-// models/potencyFrequency.js
+// models/PowerFrequency.js
 
 module.exports = function(sequelize, DataTypes) {
-  var PotencyFrequency = sequelize.define('PotencyFrequency', {
+  var PowerFrequency = sequelize.define('PowerFrequency', {
     frequency: { 
       type: DataTypes.DECIMAL(10,2),
       allowNull: false,
     },
-    potency: { 
+    power: { 
     	type: DataTypes.DECIMAL(20,15),
       allowNull: false,
     }
   }, {
   	associate: function(models) {
-    	PotencyFrequency.belongsTo(models.Coordinate);
+    	PowerFrequency.belongsTo(models.Coordinate);
   	}
 
   });
  
-  return PotencyFrequency;
+  return PowerFrequency;
 };

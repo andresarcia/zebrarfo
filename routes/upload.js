@@ -33,11 +33,11 @@ var saveInDB = function(place, callback){
 
 		if(created) {
 			doc.numberCoordinates = place.numberCoordinates;
-			doc.potencyMin = place.potencyMin;
-			doc.potencyMax = place.potencyMax;
-			doc.potencyAvg = place.potencyAvg;
-			doc.sdPotencyAvg = place.sdPotencyAvg;
-			doc.avgPotencySD = place.avgPotencySD;
+			doc.powerMin = place.powerMin;
+			doc.powerMax = place.powerMax;
+			doc.powerAvg = place.powerAvg;
+			doc.sdPowerAvg = place.sdPowerAvg;
+			doc.avgPowerSD = place.avgPowerSD;
 
 			doc.save().success(function(){
 				insertCoordinates(place, doc, function(err){
@@ -97,17 +97,17 @@ function insertCoordinate(data,placeId,callback){
 	db.Coordinate.findOrCreate({
 		latitude: data.latitude,
 		longitude: data.longitude,
-		numberPotencyFrequency: data.numberPotencyFrequency,
-		potencyMin: data.potencyMin,
-		potencyMax : data.potencyMax,
-		potencyAvg : data.potencyAvg,
-		potencySD : data.potencySD,
+		numberPowerFrequency: data.numberPowerFrequency,
+		powerMin: data.powerMin,
+		powerMax : data.powerMax,
+		powerAvg : data.powerAvg,
+		powerSD : data.powerSD,
 		createdDate: data.createdDate,
 		PlaceId: placeId,
 
 	}).success(function(coordinate, created){
 		if(created){
-			insertPotencyFrequency(data.data,coordinate.id,function(err){
+			insertPowerFrequency(data.data,coordinate.id,function(err){
 				if (err)
 					return callback(err);
 				
@@ -122,7 +122,7 @@ function insertCoordinate(data,placeId,callback){
 }
 
 /*--------------------------------------------------------------------------------------------------------------*/
-function insertPotencyFrequency(data,coordinateId,callback){	
+function insertPowerFrequency(data,coordinateId,callback){	
 	async.each(data, function(unit, callback) {
 		unit.CoordinateId = coordinateId;
 	  	callback();
@@ -131,7 +131,7 @@ function insertPotencyFrequency(data,coordinateId,callback){
 	    if(err) 
 	    	return callback(err);
 	    
-    	db.PotencyFrequency.bulkCreate(data)
+    	db.PowerFrequency.bulkCreate(data)
 		.success(function() { 
 			callback();
 		}).error(function(err){
@@ -148,22 +148,22 @@ var takeStatistics = function(placeReturned, place, callback){
 		if(count != placeReturned.numberCoordinates){
 
 	  		placeReturned.numberCoordinates = count;	
-			if(placeReturned.potencyMin > place.potencyMin)
-				placeReturned.potencyMin = place.potencyMin;
-			if(placeReturned.potencyMax < place.potencyMax)
-				placeReturned.potencyMax = place.potencyMax;
+			if(placeReturned.powerMin > place.powerMin)
+				placeReturned.powerMin = place.powerMin;
+			if(placeReturned.powerMax < place.powerMax)
+				placeReturned.powerMax = place.powerMax;
 
-			placeReturned.potencyAvg = (placeReturned.potencyAvg + place.potencyAvg)/2;
-			placeReturned.avgPotencySD = (placeReturned.avgPotencySD + place.avgPotencySD)/2;
+			placeReturned.powerAvg = (placeReturned.powerAvg + place.powerAvg)/2;
+			placeReturned.avgPowerSD = (placeReturned.avgPowerSD + place.avgPowerSD)/2;
 
 			if(count > 1){
-				var sdPotencyAvg_M = placeReturned.potencyAvg + place.potencyAvg;
-				var sdPotencyAvg_X = (placeReturned.potencyAvg * placeReturned.potencyAvg) + (place.potencyAvg * place.potencyAvg);
-				sdPotencyAvg_X = Math.sqrt((sdPotencyAvg_X - (sdPotencyAvg_M*sdPotencyAvg_M)/count)/(count - 1));
-				placeReturned.sdPotencyAvg = Number(sdPotencyAvg_X.toFixed(5));
+				var sdPowerAvg_M = placeReturned.powerAvg + place.powerAvg;
+				var sdPowerAvg_X = (placeReturned.powerAvg * placeReturned.powerAvg) + (place.powerAvg * place.powerAvg);
+				sdPowerAvg_X = Math.sqrt((sdPowerAvg_X - (sdPowerAvg_M*sdPowerAvg_M)/count)/(count - 1));
+				placeReturned.sdPowerAvg = Number(sdPowerAvg_X.toFixed(5));
 
 			} else
-				placeReturned.sdPotencyAvg = 0;
+				placeReturned.sdPowerAvg = 0;
 
 			placeReturned.save().success(function(){
 				callback(null,placeReturned);
