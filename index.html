@@ -138,7 +138,7 @@
 					  	<div class="panel-heading"><strong>{{attributes.name}}</strong></div>
 				  		<table class="table">
 					    	<tr>
-						  		<td>Number of Coordinates</td>
+						  		<td>Total number of samples</td>
 						  		<td>{{attributes.numberCoordinates}}</td>
 						  	</tr>
 						  	<tr>
@@ -181,7 +181,7 @@
     						<h1 class="col-md-12">{{this.attributes.name}}</h1>
 					  		<table class="table table-striped">
 						    	<tr>
-							  		<td>Number of Coordinates</td>
+							  		<td>Total number of samples</td>
 							  		<td>{{this.attributes.numberCoordinates}}</td>
 							  	</tr>
 							  	<tr>
@@ -384,11 +384,11 @@
 		<script id="occupation-template" type="text/x-handlebars-template"> 
 			<br>
 			<div class="row">
-				<div class="col-md-8">
-					<canvas id="chart_canvas_occupation" width="400" height="400"></canvas>
+				<div class="col-md-2">
+					<h3>Settings</h3>
 				</div>
-				<div class="col-md-4">
-					configuracion del chart
+				<div class="col-md-10">
+					<div id="chart_canvas_occupation" style="height:400px;width:95%; "></div> 
 				</div>
 			</div>
 		</script>
@@ -507,7 +507,7 @@
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/heatmap.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/Chart.min.js"></script>
-
+		
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/formatSizeUnits.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/UploadMeasuresContainers.js"></script>
