@@ -72,6 +72,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
     		mapTypeId: google.maps.MapTypeId.ROADMAP
   		};
   		var map = new google.maps.Map(mapCanvas, mapOptions);  
+  		var bounds = new google.maps.LatLngBounds();
 
   		_.each(this.coordinates.models[0].attributes.coordinates, function(coordinate){
   			var infowindow = new google.maps.InfoWindow({
@@ -103,7 +104,10 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 			});
 
 			self.markers.push(marker);
+			bounds.extend(marker.position);
   		});
+
+		map.fitBounds(bounds);
 	}
 
 });
