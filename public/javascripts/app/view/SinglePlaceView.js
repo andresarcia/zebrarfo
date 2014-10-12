@@ -69,6 +69,32 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	toggleDropdown: function(evt){
+		var isHidden = $(evt.currentTarget).next().is(":hidden");
+		var isEmpty = $(evt.currentTarget).parent().find('.chart_power_frequency').is(':empty');
+
+		if(isHidden && isEmpty){
+			var self = this;
+			var index = this.$el.find('.dropdown-trigger').index(evt.currentTarget);
+			var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
+			var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
+
+			var powerFrequenciesChart = new com.spantons.model.PowerFrequencies({
+				idPlace: idPlace,
+	    		idCoord: idCoord
+			});
+
+			powerFrequenciesChart.fetch({
+				success: function(e){                      
+			        var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({idCoord: idCoord});
+			        powerFrequenciesView.render(powerFrequenciesChart.attributes,self.coordinates.models[0].attributes.coordinates[index]);
+			    },
+			    error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the place']);
+			    }
+			});
+		}
+
 		$(evt.currentTarget).next().slideToggle();
 	},
 

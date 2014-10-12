@@ -261,7 +261,7 @@
 					</button>
 				  						
 					<ul class="ws-dropdown-container">
-						<table class="table">
+						<table class="table table-condensed">
 				   			<thead>
 				      			<tr>
 				        			<th>Power</th>
@@ -275,14 +275,9 @@
 						      	<tr>
 						      		<td>Maximum</td><td>{{powerMax}}</td>
 						      	</tr>
-						      	<tr>
-						      		<td>Average</td><td>{{powerAvg}}</td>
-						      	</tr>
-						      	<tr>
-						      		<td>Standard deviation</td><td>{{powerSD}}</td>
-						      	</tr>
 						   	</tbody>
-						</table>
+						</table>						
+						<div class="chart_power_frequency"></div>
 					</ul>
   				</a>
   				{{/each}}
@@ -505,6 +500,8 @@
 		<script type="text/javascript" src="javascripts/vendor/underscore-min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/handlebars.min.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/backbone-min.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/highcharts.js"></script>
+		<script type="text/javascript" src="javascripts/vendor/highcharts_exporting.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/heatmap.js"></script>
 		
 		<script type="text/javascript" src="javascripts/app/util/parser.js"></script>
@@ -512,6 +509,7 @@
 		<script type="text/javascript" src="javascripts/app/model/UploadMeasuresContainers.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Place.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Coordinate.js"></script>
+		<script type="text/javascript" src="javascripts/app/model/PowerFrequencies.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Heatmap.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Occupation.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/PlaceUpload.js"></script>
@@ -525,6 +523,7 @@
 		<script type="text/javascript" src="javascripts/app/view/SinglePlaceView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapBasicMarkersView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/PowerFrequenciesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapCompleteView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/MapsView.js"></script>
