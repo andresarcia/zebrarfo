@@ -9,6 +9,8 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			this.idCoord = options.idCoord;
 		else
 			throw 'any idCoord';
+
+		$('#coord-id-'+this.idCoord).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 	},
 
 	transformToX: function(){
