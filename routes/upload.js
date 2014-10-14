@@ -93,11 +93,12 @@ function insertCoordinates(data,place,callback){
 
 /*--------------------------------------------------------------------------------------------------------------*/
 function insertCoordinate(data,placeId,callback){
-
 	db.Coordinate.findOrCreate({
 		latitude: data.latitude,
 		longitude: data.longitude,
 		numberPowerFrequency: data.numberPowerFrequency,
+		frequencyMin: data.frequencyMin,
+		frequencyMax: data.frequencyMax,
 		powerMin: data.powerMin,
 		powerMax : data.powerMax,
 		powerAvg : data.powerAvg,

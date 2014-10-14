@@ -17,6 +17,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: 0,
     },
+    frequencyMin: {
+      type: DataTypes.DECIMAL(12,3),
+      allowNull: true,
+    },
+    frequencyMax: {
+      type: DataTypes.DECIMAL(12,3),
+      allowNull: true,
+    },
     powerMin: {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,

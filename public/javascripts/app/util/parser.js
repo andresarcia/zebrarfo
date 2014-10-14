@@ -46,6 +46,8 @@ $(document).ready(function(){
 		arrayFrequencyPower = [];
 		coordinate = {};
 		numberPowerFrequency = 0;
+		frequencyMin = null;
+		frequencyMax = null;
 		powerMin = null;
 		powerMax = null;
 		powerAvg = null;
@@ -57,10 +59,19 @@ $(document).ready(function(){
         _.each(lines, function(line){
         	lineSplit = line.split("\t");	
 			if(lineSplit.length == 2){
+				var newFrequency = Number(lineSplit[0]);
 				var newPower = Number(lineSplit[1]);
-				if(powerMin === null)
+
+				if(powerMin === null && frequencyMin === null){
 					powerMin = powerMax = newPower;
-				else {
+					frequencyMin = frequencyMax = newFrequency;
+				
+				} else {
+					if (frequencyMax < newFrequency)
+						frequencyMax = newFrequency;
+					if (frequencyMin > newFrequency)
+						frequencyMin = newFrequency;
+
 					if (powerMax < newPower)
 						powerMax = newPower;
 					if (powerMin > newPower)
@@ -70,7 +81,7 @@ $(document).ready(function(){
 				powerSD_M = powerSD_M + newPower;
 				powerSD_X = powerSD_X + (newPower * newPower);
 				numberPowerFrequency ++;
-				arrayFrequencyPower.push({ frequency:Number(lineSplit[0]), power:Number(lineSplit[1])});
+				arrayFrequencyPower.push({ frequency: newFrequency, power:newPower });
 			}
 			else if(lineSplit.length == 1)
 				arrayCoordinate.push(lineSplit);
@@ -83,6 +94,8 @@ $(document).ready(function(){
 			return;
 
 		coordinate.numberPowerFrequency = numberPowerFrequency;
+		coordinate.frequencyMin = Number(frequencyMin.toFixed(5));
+		coordinate.frequencyMax = Number(frequencyMax.toFixed(5));
 		coordinate.powerMin = Number(powerMin.toFixed(5));
 		coordinate.powerMax = Number(powerMax.toFixed(5));
 		powerAvg = powerAvg / numberPowerFrequency;

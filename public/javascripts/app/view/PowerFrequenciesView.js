@@ -53,12 +53,16 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	                from: 400,
 	                to: 405,
 	                color: 'rgba(68, 170, 213, 0.1)',
-	                label: {
-	                    text: 'Light air',
-	                    style: {
-	                        color: '#606060'
-	                    }
-	                }
+	            },
+	            { 
+	                from: 405,
+	                to: 410,
+	                color: 'rgba(0, 0, 0, 0)',
+	            },
+	            { 
+	                from: 410,
+	                to: 415,
+	                color: 'rgba(68, 170, 213, 0.1)',
 	            }],
 	        },
 	        yAxis: {
