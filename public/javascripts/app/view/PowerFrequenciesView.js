@@ -28,7 +28,8 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		$('#coord-id-'+this.idCoord).find('.chart_power_frequency').highcharts({
 	        chart: {
 	            type: 'line',
-	            backgroundColor: null
+	            backgroundColor: null,
+	            zoomType: 'x'
 	        },
 	        title: {
     			text: '',
@@ -37,11 +38,10 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
     			}
 			},
 			subtitle: {
-    			text: '',
-			    style: {
-			        display: 'none'
-			    }
-			},
+            	text: document.ontouchstart === undefined ?
+                    'Click and drag in the plot area to zoom in' :
+                    'Pinch the chart to zoom in'
+        	},
 			tooltip: {
     			formatter: function() {
         			return this.x + '</b> : <b>' + this.y;
