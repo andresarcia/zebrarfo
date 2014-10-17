@@ -19,7 +19,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 	render: function(data,coordData){
 		var dataPlot = [];
-		
+
 		_.each(data,function(item){
 			if(item.frequency)
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
@@ -51,21 +51,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	            title: {
 	                text: 'Frequencies (Mhz)'
 	            },
-	            plotBands: [{ 
-	                from: 400,
-	                to: 405,
-	                color: 'rgba(68, 170, 213, 0.1)',
-	            },
-	            { 
-	                from: 405,
-	                to: 410,
-	                color: 'rgba(0, 0, 0, 0)',
-	            },
-	            { 
-	                from: 410,
-	                to: 415,
-	                color: 'rgba(68, 170, 213, 0.1)',
-	            }],
+	            plotBands: americanChannels
 	        },
 	        yAxis: {
 	            title: {

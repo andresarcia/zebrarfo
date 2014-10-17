@@ -234,17 +234,21 @@
   				<a href="javascript:;" id="coord-id-{{id}}" class="list-group-item">
   					<ul class="list-group">
   						<li class="list-group-item">
-    						<span class="badge">{{numberPowerFrequency}}</span>
-    						Number of power and frequencies
-  						</li>
-  						<li class="list-group-item">
   							<div>
-  								<span class="pull-right">{{latitude}}</span>
     							Latitude
+    							<span class="pull-right">{{latitude}}</span>
   							</div>
   							<div>
-  								<span class="pull-right">{{longitude}}</span>
     							Longitude
+    							<span class="pull-right">{{longitude}}</span>
+  							</div>
+  							<div>
+    							Total number of frequencies 
+    							<span class="pull-right">{{numberPowerFrequency}}</span>
+  							</div>
+  							<div>
+    							Frequencies bandwidth 
+    							<span class="pull-right">[{{frequencyMin}} - {{frequencyMax}}] MHz</span>
   							</div>
   							<div>
     							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
@@ -261,6 +265,7 @@
 					</button>
 				  						
 					<ul class="ws-dropdown-container">
+						<br>
 						<table class="table table-condensed">
 				   			<thead>
 				      			<tr>
