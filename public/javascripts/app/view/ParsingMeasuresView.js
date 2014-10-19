@@ -60,10 +60,15 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.status.parsing = true;
 
 		if(this.html5){
-			parserFiles(this.files,this.model.attributes,
+			
+			var parser = new com.spantons.util.Parser();
+			parser.initialize(this.files,this.model.attributes,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
-			}, function(){});
+			}, function(){
+
+			});
+
 		}
 	},
 

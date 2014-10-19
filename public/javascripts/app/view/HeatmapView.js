@@ -17,7 +17,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 		var self = this;
 		this.data = data;
 
-		if(appRouter.googleMapApi)
+		if(window.appSettings.googleMapApi)
 			self.renderMap_();
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){

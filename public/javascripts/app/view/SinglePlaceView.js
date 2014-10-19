@@ -59,7 +59,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	seeOnMap: function(evt){
-		if(appRouter.googleMapApi){
+		if(window.appSettings.googleMapApi){
 			var index = $(".see-on-map").index(evt.currentTarget);
 			this.mapView.toggleMarker(index);
 		} else
@@ -102,7 +102,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	renderMap: function(){
 		var self = this;
 
-		if(appRouter.googleMapApi)
+		if(window.appSettings.googleMapApi)
 			this.mapView.render(this.coordinates.models[0].attributes.coordinates);		
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){

@@ -48,7 +48,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		var self = this;
 		this.coordinates = data;
 
-		if(appRouter.googleMapApi)
+		if(window.appSettings.googleMapApi)
 			self.renderMap_();
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){

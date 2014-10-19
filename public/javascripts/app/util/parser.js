@@ -1,47 +1,36 @@
-$(document).ready(function(){
+var com = com || {};
+com.spantons = com.spantons || {};
+com.spantons.util = com.spantons.util || {};
 
-	parserFiles = function(files,place,callbackNumFilesProcessed,callback){
-		var numFilesParser = 0;
-		var numFiles = files.length;
-		var newPlace = null;
-		place.coordinates = [];
+com.spantons.util.Parser = function(){};
+
+com.spantons.util.Parser.prototype = {
+	numFilesParser: 0,
+	numFiles: 0,
+	place: null,
+
+	initialize: function(files,place,callbackNumFilesProcessed,callback){
+		var self = this;
+
+		if(place)
+			this.place = place;
+
+		this.numFiles = files.length;
 
 		_.each(files, function(file){
    			var fr = new FileReader();
 		    fr.onload = function(e) { 
-		        parser(place,fr.result);
-		        numFilesParser++;
-		        callbackNumFilesProcessed(numFilesParser);
-		        if (numFilesParser == numFiles) 
-		        	callback(formatStatPlace(place));
+		    	self.parser(place,fr.result);
+		        self.numFilesParser++;
+		        callbackNumFilesProcessed(self.numFilesParser);
+		        if (self.numFilesParser == self.numFiles) 
+		        	callback(self.formatStatPlace(place));
 		    };
 		    fr.readAsText(file);
 		});
-	};
+	},
 
-	/* ------------------------------------------------------------------------- */
-	var formatStatPlace = function(place){
-		place.powerAvg = place.powerAvg / place.numberCoordinates;
-		place.powerAvg = Number(place.powerAvg.toFixed(5));
-		
-		if(place.numberCoordinates === 1)
-			place.sdPowerAvg = 0;
-		else {
-			place.placePowerSD_X = Math.sqrt((place.placePowerSD_X - (place.placePowerSD_M*place.placePowerSD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
-			place.sdPowerAvg = Number(place.placePowerSD_X.toFixed(5));
-		}
-		place.avgPowerSD = place.avgPowerSD / place.numberCoordinates;
-		place.avgPowerSD = Number(place.avgPowerSD.toFixed(5));
-
-		delete place.placePowerSD_X;
-		delete place.placePowerSD_M;
-
-		return place;
-	};
-
-	/* ------------------------------------------------------------------------- */
-	var parser = function(place,data){
-		
+	parser: function(place,data){
 		arrayCoordinate = [];
 		arrayFrequencyPower = [];
 		coordinate = {};
@@ -120,6 +109,24 @@ $(document).ready(function(){
 			place.powerMin = coordinate.powerMin;
 		if (place.powerMax < coordinate.powerMax)
 			place.powerMax = coordinate.powerMax;
-	};
+	},
 
-});
+	formatStatPlace: function(place){
+		place.powerAvg = place.powerAvg / place.numberCoordinates;
+		place.powerAvg = Number(place.powerAvg.toFixed(5));
+		
+		if(place.numberCoordinates === 1)
+			place.sdPowerAvg = 0;
+		else {
+			place.placePowerSD_X = Math.sqrt((place.placePowerSD_X - (place.placePowerSD_M*place.placePowerSD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
+			place.sdPowerAvg = Number(place.placePowerSD_X.toFixed(5));
+		}
+		place.avgPowerSD = place.avgPowerSD / place.numberCoordinates;
+		place.avgPowerSD = Number(place.avgPowerSD.toFixed(5));
+
+		delete place.placePowerSD_X;
+		delete place.placePowerSD_M;
+
+		return place;
+	}
+};

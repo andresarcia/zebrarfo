@@ -145,7 +145,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			sizeFiles += file.size;
 		});
 
-		this.filesInfo.sizeFiles = formatSizeUnits(sizeFiles);
+		this.filesInfo.sizeFiles = com.spantons.util.FormatSizeUnits(sizeFiles);
 		if(filesBadType.length > 0){
 			this.delateFiles();
 			this.errorView.render(['Only .txt files are allowed']);

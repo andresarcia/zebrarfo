@@ -16,14 +16,8 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 	appendChannels: function(chart){
 		var self = this;
-		var channels;
-
-		if(this.americanChannels)
-			channels = americanChannels;
-		else
-			channels = europeanChannels;
 			
-		_.each(channels, function(channel){
+		_.each(window.appSettings.channels[window.appSettings.currentChannelAllocation], function(channel){
 			channel.events = {
 				mouseover: function(e){
 					self.mouseOnBand(e,this);
