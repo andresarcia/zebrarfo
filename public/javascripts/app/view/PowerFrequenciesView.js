@@ -11,13 +11,60 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			throw 'any idCoord';
 
 		$('#coord-id-'+this.idCoord).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.americanChannels = true;
 	},
 
-	transformToX: function(){
+	appendChannels: function(chart){
+		var self = this;
+		var channels;
 
+		if(this.americanChannels)
+			channels = americanChannels;
+		else
+			channels = europeanChannels;
+			
+		_.each(channels, function(channel){
+			channel.events = {
+				mouseover: function(e){
+					self.mouseOnBand(e,this);
+					self.showTooltip(this.options.tooltipText,this.svgElem.d.split(' ')[1]);
+				},
+				mouseout: function(e){
+					self.mouseOnBand(e,this);
+					self.hideTooltip();
+				}
+			};
+			chart.xAxis[0].addPlotBand(channel);
+		});
+	},
+
+	mouseOnBand: function(e,self){
+		if (e.type == 'mouseover') {
+    		self.svgElem.attr({
+        		'stroke-width': 1,
+        		stroke: Highcharts.Color(self.options.color).setOpacity(5).get(),
+    		});
+		} else {
+    		self.svgElem.attr({
+        		'stroke-width': 1,
+        		stroke: 'transparent',
+    		});
+		}
+	},
+
+	showTooltip: function(txt,left){
+		var $tooltip = $('#coord-id-'+this.idCoord).find('.chart_tooltip');
+		$tooltip.children().text(txt);
+		$tooltip.css('left', parseInt(left) + 24 + 'px');
+		$tooltip.show();
+	},
+
+	hideTooltip: function(){
+		$('#coord-id-'+this.idCoord).find('.chart_tooltip').hide();
 	},
 
 	render: function(data,coordData){
+		var self = this;
 		var dataPlot = [];
 
 		_.each(data,function(item){
@@ -25,8 +72,9 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
 		});
 
-		$('#coord-id-'+this.idCoord).find('.chart_power_frequency').highcharts({
+		var chart = new Highcharts.Chart({	
 	        chart: {
+	        	renderTo: $('#coord-id-'+this.idCoord).find('.chart_power_frequency')[0],
 	            type: 'line',
 	            backgroundColor: null,
 	            zoomType: 'x'
@@ -51,7 +99,6 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	            title: {
 	                text: 'Frequencies (Mhz)'
 	            },
-	            plotBands: americanChannels
 	        },
 	        yAxis: {
 	            title: {
@@ -76,6 +123,8 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	        }]
 	    });
 
+		this.appendChannels(chart);
+		
 		return this;
 	},
 

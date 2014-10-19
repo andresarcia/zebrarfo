@@ -166,6 +166,18 @@ hr {
   border-color: #DDDDDD;
 }
 
+.chart_tooltip {
+  border: 1px solid #2f7ed8;
+  background-color: #fff;
+  opacity: 0.8500000000000001;
+  padding: 4px 12px;
+  border-radius: 3px;
+  position: absolute;
+  top:380px;
+  box-shadow: 1px 1px 3px #666;
+  display: none;
+}
+
 .ws-dropdown-container {
   display: none;
 }
