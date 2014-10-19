@@ -11,11 +11,16 @@ module.exports = function(sequelize, DataTypes) {
     power: { 
     	type: DataTypes.DECIMAL(20,15),
       allowNull: false,
+    },
+
+    CoordinateId: {
+      type: DataTypes.INTEGER,
+      references: "Coordinates",
+      referenceKey: "id",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+      allowNull: false
     }
-  }, {
-  	associate: function(models) {
-    	PowerFrequency.belongsTo(models.Coordinate);
-  	}
 
   });
  

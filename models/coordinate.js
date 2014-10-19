@@ -45,13 +45,18 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: null,
-    }
-  }, {
-
-    associate: function(models) {
-      Coordinate.belongsTo(models.Place);
-      Coordinate.hasMany(models.PowerFrequency);            
     },
+
+    PlaceId: {
+      type: DataTypes.INTEGER,
+      references: "Places",
+      referenceKey: "id",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+      allowNull: false
+    }
+
+  }, {
 
     validate: {
       bothCoordsOrNone: function() {

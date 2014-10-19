@@ -123,36 +123,36 @@ exports.getOccupation = function(req,res){
 	// } else
 	// 	res.status(200).send('Sorry, we cannot find that!');
 
-	// if(isNumber(req.params.id)){
-	// 	db.Place.find({
-	// 		where: {
-	// 			UserId:UserIdentification,
-	// 			id: req.params.id
-	// 		}
-	// 	}).success(function(place){
-	// 		if(place) {
-	// 			var query = 'select frequency, potency from (select Coordinates.id from (select id from Places where id = '+req.params.id+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where aux.id = PotencyFrequencies.CoordinateId';
+	if(isNumber(req.params.id)){
+		db.Place.find({
+			where: {
+				UserId:UserIdentification,
+				id: req.params.id
+			}
+		}).success(function(place){
+			if(place) {
+				var query = 'select frequency, potency from (select Coordinates.id from (select id from Places where id = '+req.params.id+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where aux.id = PotencyFrequencies.CoordinateId';
 			
-	// 			db.sequelize
-	// 			.query(query).success(function(response) {
-	// 				var aux = {};
-	// 				aux.place = place;
-	// 				aux.occupation = response;
- //  					res.send(aux);
-	// 			})
-	// 			.error(function(err){
-	// 				res.status(500).send({ error: err });
-	// 			});
+				db.sequelize
+				.query(query).success(function(response) {
+					var aux = {};
+					aux.place = place;
+					aux.occupation = response;
+  					res.send(aux);
+				})
+				.error(function(err){
+					res.status(500).send({ error: err });
+				});
 			
-	// 		} else
-	// 			res.status(200).send('Sorry, we cannot find that!');
-	// 	})
-	// 	.error(function(err){
-	// 		res.status(500).send({ error: err });
-	// 	});
+			} else
+				res.status(200).send('Sorry, we cannot find that!');
+		})
+		.error(function(err){
+			res.status(500).send({ error: err });
+		});
 	
-	// } else
-	// 	res.status(200).send('Sorry, we cannot find that!');	
+	} else
+		res.status(200).send('Sorry, we cannot find that!');	
 };
 
 exports.getHeatmap = function(req,res){

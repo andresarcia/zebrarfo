@@ -31,12 +31,15 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-  }, {
 
-    associate: function(models) {
-      Place.hasMany(models.Coordinate);
-      Place.belongsTo(models.User);
-    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      references: "Users",
+      referenceKey: "id",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+      allowNull: false
+    }
 
   });
  
