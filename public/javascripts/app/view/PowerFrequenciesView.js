@@ -5,12 +5,12 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 	initialize: function(options){
-		if (options.idCoord)
-			this.idCoord = options.idCoord;
+		if (options.selector)
+			this.selector = options.selector;
 		else
-			throw 'any idCoord';
+			throw 'any selector';
 
-		$('#coord-id-'+this.idCoord).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 		this.americanChannels = true;
 	},
 
@@ -47,14 +47,14 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	},
 
 	showTooltip: function(txt,left){
-		var $tooltip = $('#coord-id-'+this.idCoord).find('.chart_tooltip');
+		var $tooltip = $(this.selector).find('.chart_tooltip');
 		$tooltip.children().text(txt);
 		$tooltip.css('left', parseInt(left) + 24 + 'px');
 		$tooltip.show();
 	},
 
 	hideTooltip: function(){
-		$('#coord-id-'+this.idCoord).find('.chart_tooltip').hide();
+		$(this.selector).find('.chart_tooltip').hide();
 	},
 
 	render: function(data,coordData){
@@ -68,7 +68,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 		var chart = new Highcharts.Chart({	
 	        chart: {
-	        	renderTo: $('#coord-id-'+this.idCoord).find('.chart_power_frequency')[0],
+	        	renderTo: $(this.selector).find('.chart_power_frequency')[0],
 	            type: 'line',
 	            backgroundColor: null,
 	            zoomType: 'x'

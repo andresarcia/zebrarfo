@@ -9,6 +9,12 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
+
+		if(options.placeId)
+			this.placeId = options.placeId;
+		else
+			throw 'Any place id';
+
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -18,11 +24,33 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		self.mapZoom = 15;	
 	},
 
-	markerClick: function(id){
-		this.toggleMarker(id);
+	markerClick: function(index,idCoord){
+		var self = this;
+
+		this.toggleMarker(index);
 		var template = Handlebars.compile($("#complete-map-coordinate-template").html());
-		var html = template(this.coordinates.models[0].attributes.coordinates[id]);
+		var html = template(this.coordinates.models[0].attributes.coordinates[index]);
 		this.$el.find('#select-complete-map-info').html(html);
+
+		var powerFrequenciesChart = new com.spantons.model.PowerFrequencies({
+			idPlace: self.placeId,
+    		idCoord: idCoord
+		});
+
+		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#complete-map-info'});
+
+		powerFrequenciesChart.fetch({
+			success: function(e){                      
+		       	powerFrequenciesView.render(powerFrequenciesChart.attributes,self.coordinates.models[0].attributes.coordinates[index]);
+		       	$('html, body').stop().animate({  
+			        scrollTop: $('.chart_power_frequency').offset().top
+			    }, 1000);
+		    },
+		    error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the place']);
+		    }
+		});
 	},
 
 	toggleMarker: function(id){
@@ -101,7 +129,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 			});
 
 			google.maps.event.addListener(marker, 'click', function() {
-		    	self.markerClick(index);
+		    	self.markerClick(marker.index,marker.id);
 			});
 
 			self.markers.push(marker);

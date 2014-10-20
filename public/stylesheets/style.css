@@ -186,12 +186,6 @@ hr {
   display: none;
 }
 
-.chart_power_frequency{
-  margin-left: -40px;
-  width: 105%;
-  height:325px;
-}
-
 .ws-dragandrophandler {
   border:2px dashed #C3C5C7;
   margin: 20px 0;

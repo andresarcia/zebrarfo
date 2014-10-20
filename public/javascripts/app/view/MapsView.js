@@ -47,6 +47,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		this.currentMap = new com.spantons.view.GoogleMapCompleteView({
 			waitingView: self.waitingView,
 			errorView : self.errorView,
+			placeId:this.placeId
 		});
 
 		this.currentData = new com.spantons.collection.Coordinates({idPlace:this.placeId});

@@ -83,7 +83,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	    		idCoord: idCoord
 			});
 
-			var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({idCoord: idCoord});
+			var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#coord-id-'+idCoord});
 
 			powerFrequenciesChart.fetch({
 				success: function(e){                      
