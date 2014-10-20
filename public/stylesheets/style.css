@@ -151,6 +151,10 @@ hr {
   margin-left: auto;
 }
 
+.coordinate-info {
+  font-size: 13px;
+}
+
 #basic-markers-map {
   width: 100%;
   height: 220px;

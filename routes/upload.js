@@ -38,6 +38,9 @@ var saveInDB = function(place, callback){
 			doc.powerAvg = place.powerAvg;
 			doc.sdPowerAvg = place.sdPowerAvg;
 			doc.avgPowerSD = place.avgPowerSD;
+			doc.frequencyMin = place.frequencyMin;
+			doc.frequencyMax = place.frequencyMax;
+			doc.numberPowerFrequency = place.numberPowerFrequency;
 
 			doc.save().success(function(){
 				insertCoordinates(place, doc, function(err){
@@ -96,9 +99,6 @@ function insertCoordinate(data,placeId,callback){
 	db.Coordinate.findOrCreate({
 		latitude: data.latitude,
 		longitude: data.longitude,
-		numberPowerFrequency: data.numberPowerFrequency,
-		frequencyMin: data.frequencyMin,
-		frequencyMax: data.frequencyMax,
 		powerMin: data.powerMin,
 		powerMax : data.powerMax,
 		powerAvg : data.powerAvg,

@@ -10,7 +10,7 @@ from
 		from
 			Places
 		where
-			id = 1 and UserId = 1
+			id = 1
 		) as aux, Coordinates
     where
         Coordinates.PlaceId = aux.id

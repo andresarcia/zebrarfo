@@ -32,7 +32,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			sum += 1;
 		});
 
-		console.log(data);
+		console.log(sum);
 
 
 

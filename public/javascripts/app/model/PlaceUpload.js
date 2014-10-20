@@ -16,6 +16,9 @@ com.spantons.model.PlaceUpload = Backbone.Model.extend({
 		placePowerSD_X : null,
 		placePowerSD_M : null,
 		avgPowerSD : null,
+        frequencyMin: null,
+        frequencyMax: null,
+        numberPowerFrequency: null,
 		coordinates : [],
 		json: false
 	},

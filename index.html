@@ -135,33 +135,47 @@
 				{{#each this.models}}
   				<a href="#places/{{attributes.id}}/coordinates" class="list-group-item">
     				<div class="panel panel-default">
-					  	<div class="panel-heading"><strong>{{attributes.name}}</strong></div>
-				  		<table class="table">
-					    	<tr>
-						  		<td>Total number of samples</td>
-						  		<td>{{attributes.numberCoordinates}}</td>
-						  	</tr>
-						  	<tr>
-						  		<td>Minimum power</td>
-						  		<td>{{attributes.powerMin}}</td>
-						  	</tr>
-						  	<tr>
-						  		<td>Maximum power</td>
-						  		<td>{{attributes.powerMax}}</td>
-						  	</tr>
-						  	<tr>
-						  		<td>Average power</td>
-						  		<td>{{attributes.powerAvg}}</td>
-						  	</tr>
-						  	<tr>
-						  		<td>Standard deviation of power</td>
-						  		<td>{{attributes.sdPowerAvg}}</td>
-						  	</tr>
-						  	<tr>
-						  		<td>Average of Standard deviation power</td>
-						  		<td>{{attributes.avgPowerSD}}</td>
-						  	</tr>
-					  	</table>
+    					<div class="panel-body">
+    						<h1 class="col-md-12">{{this.attributes.name}}</h1>
+					  		<table class="table table-striped table-condensed">
+						    	<tr>
+							  		<td>Total number of samples</td>
+							  		<td>{{attributes.numberCoordinates}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Total number of frequencies</td>
+							  		<td>{{attributes.numberPowerFrequency}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Frequencies bandwidth</td>
+							  		<td>[{{attributes.frequencyMin}}-{{attributes.frequencyMax}}] <small><b>MHz</b></small></td>
+							  	</tr>
+							  	<tr>
+							  		<td>Minimum power</td>
+							  		<td>{{attributes.powerMin}} <small><b>dBm</b></small></td>
+							  	</tr>
+							  	<tr>
+							  		<td>Maximum power</td>
+							  		<td>{{attributes.powerMax}} <small><b>dBm</b></small></td>
+							  	</tr>
+							  	<tr>
+							  		<td>Average power</td>
+							  		<td>{{attributes.powerAvg}} <small><b>dBm</b></small></td>
+							  	</tr>
+							  	<tr>
+							  		<td>Standard deviation of power</td>
+							  		<td>{{attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
+							  	</tr>
+							  	<tr>
+							  		<td>Average of Standard deviation power</td>
+							  		<td>{{attributes.avgPowerSD}} <small><b>dBm</b></small></td>
+							  	</tr>
+						  	</table>
+						</div>
+						<div class="panel-footer">
+	  						<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
+	  						<br>
+	  					</div>
 					</div>
   				</a>
   				{{/each}}
@@ -185,24 +199,28 @@
 							  		<td>{{this.attributes.numberCoordinates}}</td>
 							  	</tr>
 							  	<tr>
+							  		<td>Total number of frequencies</td>
+							  		<td>{{this.attributes.numberPowerFrequency}}</td>
+							  	</tr>
+							  	<tr>
+							  		<td>Frequencies bandwidth</td>
+							  		<td>[{{this.attributes.frequencyMin}}-{{this.attributes.frequencyMax}}] <small><b>MHz</b></small></td>
+							  	</tr>
+							  	<tr>
 							  		<td>Minimum power</td>
-							  		<td>{{this.attributes.powerMin}}</td>
+							  		<td>{{this.attributes.powerMin}} <small><b>dBm</b></small></td>
 							  	</tr>
 							  	<tr>
 							  		<td>Maximum power</td>
-							  		<td>{{this.attributes.powerMax}}</td>
+							  		<td>{{this.attributes.powerMax}} <small><b>dBm</b></small></td>
 							  	</tr>
 							  	<tr>
 							  		<td>Average power</td>
-							  		<td>{{this.attributes.powerAvg}}</td>
+							  		<td>{{this.attributes.powerAvg}} <small><b>dBm</b></small></td>
 							  	</tr>
 							  	<tr>
 							  		<td>Standard deviation of power</td>
-							  		<td>{{this.attributes.sdPowerAvg}}</td>
-							  	</tr>
-							  	<tr>
-							  		<td>Average of Standard deviation power</td>
-							  		<td>{{this.attributes.avgPowerSD}}</td>
+							  		<td>{{this.attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
 							  	</tr>
 						  	</table>
 						  	<button id="complete-map" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
@@ -243,14 +261,6 @@
     							<span class="pull-right">{{longitude}}</span>
   							</div>
   							<div>
-    							Total number of frequencies 
-    							<span class="pull-right">{{numberPowerFrequency}}</span>
-  							</div>
-  							<div>
-    							Frequencies bandwidth 
-    							<span class="pull-right">[{{frequencyMin}} - {{frequencyMax}}] MHz</span>
-  							</div>
-  							<div>
     							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
   							</div>
   							<hr>
@@ -275,10 +285,10 @@
 				   			</thead>
 						   	<tbody>
 						      	<tr>
-						      		<td>Minimum</td><td>{{powerMin}}</td>
+						      		<td>Minimum</td><td>{{powerMin}} <small><b>dBm</b></small></td>
 						      	</tr>
 						      	<tr>
-						      		<td>Maximum</td><td>{{powerMax}}</td>
+						      		<td>Maximum</td><td>{{powerMax}} <small><b>dBm</b></small></td>
 						      	</tr>
 						   	</tbody>
 						</table>						
@@ -333,10 +343,6 @@
 		<script id="complete-map-coordinate-template" type="text/x-handlebars-template">
 			<ul class="list-group">
 				<li class="list-group-item">
-					<span class="badge">{{numberPowerFrequency}}</span>
-					Number of power and frequencies
-				</li>
-				<li class="list-group-item">
 					<div>
 						<span class="pull-right">{{latitude}}</span>
 						Latitude
@@ -358,16 +364,10 @@
 			   			</thead>
 					   	<tbody>
 					      	<tr>
-					      		<td>Minimum</td><td>{{powerMin}}</td>
+					      		<td>Minimum</td><td>{{powerMin}} <small><b>dBm</b></small></td>
 					      	</tr>
 					      	<tr>
-					      		<td>Maximum</td><td>{{powerMax}}</td>
-					      	</tr>
-					      	<tr>
-					      		<td>Average</td><td>{{powerAvg}}</td>
-					      	</tr>
-					      	<tr>
-					      		<td>Standard deviation</td><td>{{powerSD}}</td>
+					      		<td>Maximum</td><td>{{powerMax}} <small><b>dBm</b></small></td>
 					      	</tr>
 					   	</tbody>
 					</table>
@@ -461,7 +461,13 @@
 									  		<td>Name</td><td id="ws-modal-parsing-measures-data-table-name"></td>
 									  	</tr>
 									  	<tr>
-									  		<td>Number of Coordinates</td><td id="ws-modal-parsing-measures-data-table-numberCoordinates"></td>
+									  		<td>Total number of samples</td><td id="ws-modal-parsing-measures-data-table-numberCoordinates"></td>
+									  	</tr>
+									  	<tr>
+									  		<td>Total number of frequencies</td><td id="ws-modal-parsing-measures-data-table-numberPowerFrequency"></td>
+									  	</tr>
+									  	<tr>
+									  		<td>Frequencies bandwidth</td><td id="ws-modal-parsing-measures-data-table-frequenciesBandwidth"></td>
 									  	</tr>
 									  	<tr>
 									  		<td>Minimum power</td><td id="ws-modal-parsing-measures-data-table-powerMin"></td>

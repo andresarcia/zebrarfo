@@ -82,9 +82,6 @@ com.spantons.util.Parser.prototype = {
 		if(isNaN(coordinate.latitude) || isNaN(coordinate.longitude))
 			return;
 
-		coordinate.numberPowerFrequency = numberPowerFrequency;
-		coordinate.frequencyMin = Number(frequencyMin.toFixed(5));
-		coordinate.frequencyMax = Number(frequencyMax.toFixed(5));
 		coordinate.powerMin = Number(powerMin.toFixed(5));
 		coordinate.powerMax = Number(powerMax.toFixed(5));
 		powerAvg = powerAvg / numberPowerFrequency;
@@ -109,6 +106,18 @@ com.spantons.util.Parser.prototype = {
 			place.powerMin = coordinate.powerMin;
 		if (place.powerMax < coordinate.powerMax)
 			place.powerMax = coordinate.powerMax;
+
+		if(place.frequencyMin === null)
+			place.frequencyMin = frequencyMin;
+		if(place.powerMax === null)
+			place.frequencyMax = frequencyMax;
+		if (place.frequencyMin > frequencyMin)
+			place.frequencyMin = frequencyMin;
+		if (place.frequencyMax < frequencyMax)
+			place.frequencyMax = frequencyMax;
+
+		if(place.numberPowerFrequency === null)
+			place.numberPowerFrequency = numberPowerFrequency;
 	},
 
 	formatStatPlace: function(place){

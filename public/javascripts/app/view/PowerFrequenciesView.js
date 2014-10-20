@@ -91,7 +91,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			},
 	        xAxis: {
 	            title: {
-	                text: 'Frequencies (Mhz)'
+	                text: 'Frequencies (MHz)'
 	            },
 	        },
 	        yAxis: {

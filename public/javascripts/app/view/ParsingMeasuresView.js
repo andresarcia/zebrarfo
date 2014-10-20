@@ -117,13 +117,15 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		if(!this.stop){
 			var self = this;
 
-			$('#ws-modal-parsing-measures-data-table-name').text(this.model.attributes.name);
-			$('#ws-modal-parsing-measures-data-table-numberCoordinates').text(this.model.attributes.numberCoordinates);
-			$('#ws-modal-parsing-measures-data-table-powerMin').text(this.model.attributes.powerMin);
-			$('#ws-modal-parsing-measures-data-table-powerMax').text(this.model.attributes.powerMax);
-			$('#ws-modal-parsing-measures-data-table-powerAvg').text(this.model.attributes.powerAvg);
-			$('#ws-modal-parsing-measures-data-table-sdPowerAvg').text(this.model.attributes.sdPowerAvg);
-			$('#ws-modal-parsing-measures-data-table-avgPowerSD').text(this.model.attributes.avgPowerSD);
+			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
+			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.numberCoordinates);
+			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.numberPowerFrequency);
+			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencyMin/1000+' - '+this.model.attributes.frequencyMax/1000+'] <small><b>MHz</b></small>');
+			$('#ws-modal-parsing-measures-data-table-powerMin').html(this.model.attributes.powerMin + ' <small><b>dBm</b></small>');
+			$('#ws-modal-parsing-measures-data-table-powerMax').html(this.model.attributes.powerMax + ' <small><b>dBm</b></small>');
+			$('#ws-modal-parsing-measures-data-table-powerAvg').html(this.model.attributes.powerAvg + ' <small><b>dBm</b></small>');
+			$('#ws-modal-parsing-measures-data-table-sdPowerAvg').html(this.model.attributes.sdPowerAvg + ' <small><b>dBm</b></small>');
+			$('#ws-modal-parsing-measures-data-table-avgPowerSD').html(this.model.attributes.avgPowerSD + ' <small><b>dBm</b></small>');
 			
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 			$('#ws-modal-parsing-measures-data-table').fadeIn(800);

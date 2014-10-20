@@ -19,9 +19,9 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 	},
 
 	markerClick: function(id){
-		this.toggleMarker(id-1);
+		this.toggleMarker(id);
 		var template = Handlebars.compile($("#complete-map-coordinate-template").html());
-		var html = template(this.coordinates.models[0].attributes.coordinates[id-1]);
+		var html = template(this.coordinates.models[0].attributes.coordinates[id]);
 		this.$el.find('#select-complete-map-info').html(html);
 	},
 
@@ -74,7 +74,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
   		var map = new google.maps.Map(mapCanvas, mapOptions);  
   		var bounds = new google.maps.LatLngBounds();
 
-  		_.each(this.coordinates.models[0].attributes.coordinates, function(coordinate){
+  		_.each(this.coordinates.models[0].attributes.coordinates, function(coordinate,index){
   			var infowindow = new google.maps.InfoWindow({
   				content: 'Latitude: ' + coordinate.latitude + '<br>Longitude: ' + coordinate.longitude,
   			});
@@ -86,6 +86,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		      	icon: self.icon1,
 		      	animation: null,
 		      	id: coordinate.id,
+		      	index: index,
 		      	title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
 		  	});
 
@@ -100,7 +101,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 			});
 
 			google.maps.event.addListener(marker, 'click', function() {
-		    	self.markerClick(marker.id);
+		    	self.markerClick(index);
 			});
 
 			self.markers.push(marker);
