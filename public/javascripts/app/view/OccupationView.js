@@ -33,7 +33,18 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.waitingView.closeView();
 
 		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
-		powerFrequenciesView.render(data,modelData.attributes.place);		
+		var options = {
+			yAxis: {
+				min: 0,
+            	max: 1,
+            	tickInterval: 0.1,
+            	title: {
+	                text: 'Power (dBm)'
+	            }
+			}
+		};
+
+		powerFrequenciesView.render(data,options);		
 	},
 
 	render: function(){

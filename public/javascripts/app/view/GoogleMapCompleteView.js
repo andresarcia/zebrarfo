@@ -38,10 +38,20 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		});
 
 		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#complete-map-info'});
-
+		var options = {
+			yAxis: {
+	            plotLines:[{
+			        value: self.coordinates.models[0].attributes.coordinates[index].powerAvg,
+			        color: '#ff0000',
+			        width:1,
+			        zIndex:4,
+			        label:{text:'Average power'}
+			    }]
+			}
+		};
 		powerFrequenciesChart.fetch({
 			success: function(e){                      
-		       	powerFrequenciesView.render(powerFrequenciesChart.attributes,self.coordinates.models[0].attributes.coordinates[index]);
+		       	powerFrequenciesView.render(powerFrequenciesChart.attributes,options);
 		       	$('html, body').stop().animate({  
 			        scrollTop: $('.chart_power_frequency').offset().top
 			    }, 1000);

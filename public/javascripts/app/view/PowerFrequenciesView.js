@@ -57,7 +57,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		$(this.selector).find('.chart_tooltip').hide();
 	},
 
-	render: function(data,coordData){
+	render: function(data,options){
 		var self = this;
 		var dataPlot = [];
 
@@ -94,18 +94,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	                text: 'Frequencies (MHz)'
 	            },
 	        },
-	        yAxis: {
-	            title: {
-	                text: 'Power (dBm)'
-	            },
-	            plotLines:[{
-			        value: coordData.powerAvg,
-			        color: '#ff0000',
-			        width:1,
-			        zIndex:4,
-			        label:{text:'Average power'}
-			    }],
-	        },
+	        yAxis: options.yAxis,
 	        plotOptions: {
 	            line: {
 	                enableMouseTracking: true
