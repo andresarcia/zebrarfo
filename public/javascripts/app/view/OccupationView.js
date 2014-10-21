@@ -17,31 +17,23 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		var data = [];
 		var currentItem = modelData.attributes.occupation[0];
 		var sum = 0;
-
+		
 		_.each(modelData.attributes.occupation, function(item){
 			if(currentItem.frequency == item.frequency){
 				if(item.power >= modelData.attributes.place.powerAvg)
-					this.sum += 1;
+					sum += 1;
 			
 			} else {
-				data.push([item.frequency, sum]);
-				console.log(this.sum);
+				data.push({ frequency:item.frequency, power:sum/modelData.attributes.place.numberPowerFrequency });
 				currentItem = item;
-				this.sum = 0;
+				sum = 0;
 			}
 			sum += 1;
 		});
-
-		console.log(sum);
-
-
-
 		this.waitingView.closeView();
-		var options = {		
-			
-		};
 
-		// chart_canvas_occupation
+		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
+		powerFrequenciesView.render(data,modelData.attributes.place);		
 	},
 
 	render: function(){
