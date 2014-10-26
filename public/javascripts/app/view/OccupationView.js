@@ -74,13 +74,20 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		var currentItem = this.occupation[0];
 		var sum = 0;
 		var numberEachFrequency = 0;
-		
+
 		_.each(this.occupation, function(item){
 			if(currentItem.frequency == item.frequency){
 				if(item.power >= self.threshold)
 					sum += 1;
 				numberEachFrequency += 1;
+
 			} else {
+				if(sum === 0){
+					numberEachFrequency = 1;
+					if(item.power >= self.threshold)
+						sum = 1;
+				}
+
 				data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
 				currentItem = item;
 				sum = 0;
