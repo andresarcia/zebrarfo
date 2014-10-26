@@ -12,9 +12,10 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	options: {
 		supportHtml5: false,
 		fillName: false,
-		fillNameError: 'You must select a zone or enter a new zone',
+		fillNameError: 'You must pick a zone or enter a new zone',
 		fillFiles: false,
-		fillFilesError: 'You must select or drag at least one file'
+		fillFilesError: 'You must select or drag at least one file',
+		fillUnitError: 'You must pick a frequency unit'
 	},
 
 	placeName: null,
@@ -23,15 +24,17 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		files: null,
 		sizeFiles: 0,
 		numFiles: 0,
-		numFilesParser: 0
+		numFilesParser: 0,
+		unit: null
 	},
 
 	events : {
 		'blur #upload-measures-name' : 'checkName',
 		'click .item-zone-name' : 'pickName',
 		'change #upload-measures-file' : 'checkFiles',
+		'change #upload-measures-unit' : 'checkUnit',
 		'click #upload-measures-button' : 'uploadData',
-		'click #upload-measures-button-delete' : 'delateFiles'
+		'click #upload-measures-button-delete' : 'delateFiles',
 	},
 	
 	initialize: function(options){
@@ -72,6 +75,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		var html = this.template(this.places);
     	this.$el.html(html);
 
+		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
+
 		return this;
 	},
 
@@ -107,6 +112,11 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
         }
 
         this.fillFilesInfo();
+	},
+
+	checkUnit: function(evt){
+		this.filesInfo.unit = evt.val;
+		this.viewContainers.setGoodUnitContainer();
 	},
 
 	dragEnterEvent: function(evt){
@@ -170,6 +180,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	enableForm: function(){
 		this.viewContainers.enableNameContainer();
 		this.viewContainers.enableFilesContainer();
+		this.viewContainers.enableUnitContainer();
 		this.viewContainers.enableButtonDeleteContainer();
 		this.viewContainers.enableButtonSendDataContainer();
 	},
@@ -177,6 +188,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	disableForm: function(){
 		this.viewContainers.disableNameContainer();
 		this.viewContainers.disableFilesContainer();
+		this.viewContainers.disableUnitContainer();
 		this.viewContainers.disableButtonDeleteContainer();
 		this.viewContainers.disableButtonSendDataContainer();
 	},
@@ -185,7 +197,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 		evt.preventDefault();
 
-		if(!this.options.fillFiles || !this.options.fillName){
+		if(!this.options.fillFiles || !this.options.fillName || !this.filesInfo.unit){
 			var error = [];
 			if(!this.options.fillName){
 				error.push(this.options.fillNameError);
@@ -195,6 +207,11 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			if(!this.options.fillFiles){
 				error.push(this.options.fillFilesError);
 				this.viewContainers.setBadFilesContainer();
+			}
+
+			if(!this.filesInfo.unit){
+				error.push(this.options.fillUnitError);
+				this.viewContainers.setBadUnitContainer();
 			}
 
 			this.errorView.render(error);

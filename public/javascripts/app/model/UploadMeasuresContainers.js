@@ -6,6 +6,7 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	nameContainer: null,
 	filesContainer: null,
+	unitContainer: null,
 	dragFilesContainer: null,
 	filesInfoContainer: null,
 	buttonSendDataContainer: null,
@@ -17,6 +18,7 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 		this.nameContainer= this.el.find($('#upload-measures-name'));
 		this.filesContainer= this.el.find($('#upload-measures-file'));
+		this.unitContainer = this.el.find($('#upload-measures-unit'));
 		this.dragFilesContainer = this.el.find($('.ws-dragandrophandler'));
 		this.filesInfoContainer = this.el.find($('#upload-measures-files-info'));
 		this.buttonSendDataContainer = this.el.find($('#upload-measures-button'));
@@ -86,6 +88,28 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 
 	enableFilesContainer: function(){
 		this.filesContainer.filestyle('disabled', false);
+	},
+
+	/* ------------------------------------------------------------------------- */
+
+	setGoodUnitContainer: function(){
+		var containerParent = this.unitContainer.parent();
+		containerParent.addClass('has-success');
+		containerParent.removeClass('has-error');
+	},
+
+	setBadUnitContainer: function(){
+		var containerParent = this.unitContainer.parent();
+		containerParent.addClass('has-error');
+		containerParent.removeClass('has-success');
+	},
+
+	disableUnitContainer: function(){
+		this.unitContainer.prop("disabled",true);
+	},
+
+	enableUnitContainer: function(){
+		this.unitContainer.prop("disabled",false);
 	},
 
 	/* ------------------------------------------------------------------------- */
