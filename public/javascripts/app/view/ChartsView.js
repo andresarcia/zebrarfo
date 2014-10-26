@@ -35,16 +35,17 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	renderOccupation: function(){
 		var self = this;
 		this.waitingView.render();
-		this.currentChart = new com.spantons.view.OccupationView({
-			waitingView: self.waitingView,
-			errorView : self.errorView,
-		});
 
 		this.currentData = new com.spantons.model.Occupation({idPlace:this.placeId});
 		this.currentData.fetch({
 			success: function(e){                      
+				self.currentChart = new com.spantons.view.OccupationView({
+					waitingView: self.waitingView,
+					errorView : self.errorView,
+					data: self.currentData
+				});
 				self.$el.find('#occupation-tab').html(self.currentChart.render().el);
-				self.currentChart.renderChart(self.currentData);
+				self.currentChart.renderComponents();
 		    },
 		    error: function(e){  
 		     	self.waitingView.closeView();

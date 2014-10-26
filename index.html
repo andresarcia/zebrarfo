@@ -6,6 +6,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>White Spaces Monitor</title>
 		<link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.css">
+
+		<link rel="stylesheet" type="text/css" href="stylesheets/jquery.nouislider.css">
+
 		<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	</head>
 	<body>
@@ -393,10 +396,12 @@
 		<script id="occupation-template" type="text/x-handlebars-template"> 
 			<br>
 			<div class="row">
-				<div class="col-md-2">
-					<h3>Settings</h3>
+				<div class="col-md-12 slider-container">
+					<h4>Threshold</h4>
+					<div class="slider"></div>
+					<div class="slider-value"></div>
 				</div>
-				<div id="chart_canvas_occupation" class="col-md-10">
+				<div id="chart_canvas_occupation" class="col-md-12">
 					<div class="chart_power_frequency" style="height:450px;width:95%;"></div> 
 					<div class="chart_tooltip">
 						<p style="margin:0">default</p>
@@ -526,6 +531,8 @@
 		<script type="text/javascript" src="javascripts/vendor/highcharts.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/highcharts_exporting.js"></script>
 		<script type="text/javascript" src="javascripts/vendor/heatmap.js"></script>
+
+		<script type="text/javascript" src="javascripts/vendor/jquery.nouislider.js"></script>
 		
 		<script type="text/javascript" src="javascripts/app/util/Loader.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/Parser.js"></script>

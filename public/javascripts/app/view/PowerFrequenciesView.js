@@ -61,18 +61,20 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		var self = this;
 		var dataPlot = [];
 
+		var chartOptions = {
+			renderTo: $(this.selector).find('.chart_power_frequency')[0],
+	        backgroundColor: null,
+	        zoomType: 'x'
+		};
+		chartOptions = _.extend(chartOptions, options.chart);
+
 		_.each(data,function(item){
 			if(item.frequency)
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
 		});
-
+		
 		var chart = new Highcharts.Chart({	
-	        chart: {
-	        	renderTo: $(this.selector).find('.chart_power_frequency')[0],
-	            type: 'line',
-	            backgroundColor: null,
-	            zoomType: 'x'
-	        },
+	        chart: chartOptions,
 	        title: {
     			text: '',
     			style: {
@@ -98,7 +100,10 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	        plotOptions: {
 	            line: {
 	                enableMouseTracking: true
-	            }
+	            },
+	            series: {
+             	   fillOpacity: 0.35
+            	}
 	        },
 	        series: [{
 	        	showInLegend: false,

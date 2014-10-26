@@ -7,7 +7,7 @@ com.spantons.view.CoordinatesView = Backbone.View.extend({
 	template: Handlebars.compile($("#coordiantes-template").html()),
 
 	initialize: function(options){
-	
+		
 	},
 
 	render: function(data){

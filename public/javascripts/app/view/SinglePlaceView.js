@@ -95,6 +95,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 				    }]
 				}
 			};
+			this.$el.find('.chart_tooltip').css('top','360px');
 			powerFrequenciesChart.fetch({
 				success: function(e){                      
 			       	powerFrequenciesView.render(powerFrequenciesChart.attributes,options);
