@@ -9,7 +9,7 @@ com.spantons.util.Parser.prototype = {
 	numFiles: 0,
 	place: null,
 
-	initialize: function(files,place,callbackNumFilesProcessed,callback){
+	initialize: function(files,place,unit,callbackNumFilesProcessed,callback){
 		var self = this;
 
 		if(place)
@@ -17,10 +17,26 @@ com.spantons.util.Parser.prototype = {
 
 		this.numFiles = files.length;
 
+		var unitFactor = 1;
+		switch (unit) {
+		    case 'Hz':
+		        unitFactor = 1/1000;
+		        break;
+		    case 'kHz':
+		        unitFactor = 1;
+		        break;
+		    case 'MHz':
+		        unitFactor = 1000;
+		        break;
+		    case 'GHz':
+		        unitFactor = 1000000;
+		        break;
+		}
+
 		_.each(files, function(file){
    			var fr = new FileReader();
 		    fr.onload = function(e) { 
-		    	self.parser(place,fr.result);
+		    	self.parser(place,fr.result,unitFactor);
 		        self.numFilesParser++;
 		        callbackNumFilesProcessed(self.numFilesParser);
 		        if (self.numFilesParser == self.numFiles) 
@@ -30,7 +46,7 @@ com.spantons.util.Parser.prototype = {
 		});
 	},
 
-	parser: function(place,data){
+	parser: function(place,data,unitFactor){
 		arrayCoordinate = [];
 		arrayFrequencyPower = [];
 		coordinate = {};
@@ -48,7 +64,7 @@ com.spantons.util.Parser.prototype = {
         _.each(lines, function(line){
         	lineSplit = line.split("\t");	
 			if(lineSplit.length == 2){
-				var newFrequency = Number(lineSplit[0]);
+				var newFrequency = Number(lineSplit[0]) * Number(unitFactor);
 				var newPower = Number(lineSplit[1]);
 
 				if(powerMin === null && frequencyMin === null){

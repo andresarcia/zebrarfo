@@ -46,6 +46,9 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		else 
 			throw 'Any selected file';
 
+		if (!options.unit) 
+			throw 'Any frequency unit';
+
 		if (options.errorView) 
 			this.errorView = options.errorView;
 
@@ -60,9 +63,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.status.parsing = true;
 
 		if(this.html5){
-			
 			var parser = new com.spantons.util.Parser();
-			parser.initialize(this.files,this.model.attributes,
+			parser.initialize(this.files,this.model.attributes,options.unit,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
 			}, function(){

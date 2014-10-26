@@ -224,6 +224,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 				placeName:this.placeName,
 				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,
+				unit: this.filesInfo.unit,
 				errorView:this.errorView
 			});
 		}
