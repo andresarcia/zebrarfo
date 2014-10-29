@@ -21,7 +21,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			channel.events = {
 				mouseover: function(e){
 					self.mouseOnBand(e,this);
-					self.showTooltip(this.options.tooltipText,this.svgElem.d.split(' ')[1]);
+					self.showTooltip('Channel '+this.options.tooltipText,this.svgElem.d.split(' ')[1]);
 				},
 				mouseout: function(e){
 					self.mouseOnBand(e,this);

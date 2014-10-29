@@ -31,12 +31,13 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		var self = this;
 		var index = $('a[data-toggle="tab"]').index(evt.currentTarget);
 
+		var isEmpty;
+
 		switch (index) {
     		case 0:
-    			self.renderCoordinatesMap();
-    			break;
-    		case 1:
-    			self.renderHeatmap();
+    			isEmpty = this.$el.find('#coordinates-tab').is(':empty');
+    			if(isEmpty)
+    				self.renderCoordinatesMap();
     			break;
     	}
 	},
@@ -54,27 +55,6 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		this.currentData.fetch({
 			success: function(e){                      
 				self.$el.find('#coordinates-tab').html(self.currentMap.render().el);
-				self.currentMap.renderMap(self.currentData);
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
-	},
-
-	renderHeatmap: function(){
-		var self = this;
-		this.waitingView.render();
-		this.currentMap = new com.spantons.view.HeatmapView({
-			waitingView: self.waitingView,
-			errorView : self.errorView
-		});
-
-		this.currentData = new com.spantons.model.Heatmap({idPlace:this.placeId});
-		this.currentData.fetch({
-			success: function(e){                      
-				self.$el.find('#heatmap-tab').html(self.currentMap.render().el);
 				self.currentMap.renderMap(self.currentData);
 		    },
 		    error: function(e){  
