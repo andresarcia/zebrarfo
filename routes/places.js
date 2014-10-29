@@ -129,24 +129,19 @@ exports.getHeatmap = function(req,res){
 			}
 		}).success(function(place){
 			if(place) {
-				var query;
-				
-				// if(isNumber(req.params.threshold))
-				// 	query = 'select frequency / 1000 as frequency, SUM(case when potency > '+req.params.threshold+' then 1 else 0 END) / COUNT(*) as total from (select Coordinates.id from (select id from Places where id = 1 ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where aux.id = PotencyFrequencies.CoordinateId group by frequency';
-				// else
-				// 	query = 'select frequency / 1000 as frequency, SUM(case when potency > '+place.dataValues.potencyAvg+' then 1 else 0 END) / COUNT(*) as total from (select Coordinates.id from (select id from Places where id = 1 ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PotencyFrequencies where aux.id = PotencyFrequencies.CoordinateId group by frequency';
+				var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by frequency';
+	
+				db.sequelize
+				.query(query).success(function(response) {
+					var aux = {};
+					aux.place = place;
+					aux.occupation = response;
+					res.send(aux);
+				})
+				.error(function(err){
+					res.status(500).send({ error: err });
+				});
 
-				// db.sequelize
-				// .query(query).success(function(response) {
-				// 	var aux = {};
-				// 	aux.place = place;
-				// 	aux.occupation = response;
-  		// 			res.send(aux);
-				// })
-				// .error(function(err){
-				// 	res.status(500).send({ error: err });
-				// });
-			
 			} else
 				res.status(200).send('Sorry, we cannot find that!');
 		})
