@@ -14,6 +14,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	initialize: function(options){
+		var self = this;
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -23,13 +24,21 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		else
 			throw 'Any place id';
 
+		Backbone.pubSub.on('changeChart', function(index){
+			self.changeChart(null,index);
+		});
+
 		this.render();
 		this.renderOccupation();
 	},
 
-	changeChart: function(evt){
+	changeChart: function(evt,index){
 		var self = this;
-		var index = $('a[data-toggle="tab"]').index(evt.currentTarget);
+
+		if(index === undefined)
+			index = $('a[data-toggle="tab"]').index(evt.currentTarget);
+		else 
+			$('#charts-tabs li:eq('+index+') a').tab('show');
 
 		var isEmpty;
 

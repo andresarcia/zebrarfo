@@ -9,6 +9,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	events: {
 		'change .slider':'updateChart',
 		'slide .slider':'updateThreshold',
+		'click .build-heatmap-btn-container':'changeToHeatmap'
 	},
 
 	initialize: function(options){
@@ -39,6 +40,10 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	            }
 			}
 		};
+	},
+
+	changeToHeatmap: function(){
+		Backbone.pubSub.trigger('changeChart',1);
 	},
 
 	updateChart: function(){

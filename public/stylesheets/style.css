@@ -9,6 +9,9 @@ hr {
   margin: 6px 0 5px 0;
 }
 
+.btn-x-lg { width: 200px }
+.btn-2x-lg { width: 400px }
+
 .ws-body {
   padding-top: 75px;
 }
@@ -183,13 +186,17 @@ hr {
 
 .slider-container {
   padding-left: 50px;
-  padding-right: 50px;
+  padding-right: 85px;
 }
 
 .slider-value {
   margin-top: 15px;
   font-size: 14px;
   color: #6F6F6F;
+}
+
+.build-heatmap-btn-container {
+  padding: 13px 95px 0 0;
 }
 
 .ws-dropdown-container {
