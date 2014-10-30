@@ -135,7 +135,7 @@ exports.getHeatmap = function(req,res){
 				.query(query).success(function(response) {
 					var aux = {};
 					aux.place = place;
-					aux.occupation = response;
+					aux.heatmapData = response;
 					res.send(aux);
 				})
 				.error(function(err){
