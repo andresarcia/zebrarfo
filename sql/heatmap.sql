@@ -1,7 +1,7 @@
 select 
     aux.lat,
 	aux.lng,
-	MAX(PotencyFrequencies.potency) as count
+	AVG(PowerFrequencies.power) as count
 from
     (select 
         Coordinates.latitude as lat,
@@ -13,12 +13,12 @@ from
 		from
 			Places
 		where
-			id = 1 
+			id = 16
 		) as aux, Coordinates
     where
         Coordinates.PlaceId = aux.id
-	) as aux, PotencyFrequencies
+	) as aux, PowerFrequencies
 where
-    PotencyFrequencies.CoordinateId = aux.id and PotencyFrequencies.frequency between 500000 and 600000
+    PowerFrequencies.CoordinateId = aux.id and PowerFrequencies.frequency between 500000 and 600000
 group by lat , lng
 order by count desc
