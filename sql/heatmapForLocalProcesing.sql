@@ -21,4 +21,4 @@ from
 	) as aux, PowerFrequencies
 where
     PowerFrequencies.CoordinateId = aux.id
-order by frequency
+order by lat and lng
