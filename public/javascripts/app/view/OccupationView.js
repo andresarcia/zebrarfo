@@ -8,7 +8,6 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 
 	events: {
 		'change .slider':'updateChart',
-		'slide .slider':'updateThreshold',
 		'click .build-heatmap-btn-container':'changeToHeatmap'
 	},
 
@@ -18,13 +17,9 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
-		this.powerMin = options.data.attributes.place.powerMin;
-		this.powerMax = options.data.attributes.place.powerMax;
-		this.powerAvg = options.data.attributes.place.powerAvg.toFixed(0);
-		this.numberPowerFrequency = options.data.attributes.place.numberPowerFrequency;
+		this.place = options.data.attributes.place;
 		this.occupation = options.data.attributes.occupation;
-
-		this.threshold = this.powerAvg;
+		this.threshold = this.place.powerAvg;
 
 		this.chart = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
 		this.chartOptions = {
@@ -51,26 +46,31 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.renderChart();
 	},
 
-	updateThreshold: function(){
-		this.$el.find('.slider-value').html('<strong>Value </strong>'+this.slider.val()+' dBm');
-	},
-
 	renderComponents: function(){
 		this.renderSlider();
 		this.renderChart();
-		this.$el.find('.chart_tooltip').css('top','45px');
 	},
 
 	renderSlider: function(){
 		this.slider = this.$el.find('.slider').noUiSlider({
-			start: this.powerAvg,
+			start: this.place.powerAvg.toFixed(0),
 			step: 1,
 			range: {
-				'min': this.powerMin,
-				'max': this.powerMax
-			}
+				'min': this.place.powerMin,
+				'max': this.place.powerMax
+			},
+			format: wNumb({
+                decimals: 0
+            }),
 		});
-		this.$el.find('.slider-value').html('<strong>Value </strong>'+this.powerAvg+' dBm');
+
+		this.$el.find('.slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip slider_tooltip_up"></div>',function(value){
+			$(this).html(
+	        	'<strong>Value: </strong>' +'<span>' + value + ' dBm</span>'
+	    	);
+		});
 	},
 
 	renderChart: function(){
