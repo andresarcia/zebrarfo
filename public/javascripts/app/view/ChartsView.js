@@ -80,27 +80,24 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 	renderHeatmap: function(){
 		var self = this;
+		this.waitingView.render();
 		
-		this.currentMap = new com.spantons.view.HeatmapView({
-			waitingView: self.waitingView,
-			errorView : self.errorView
+		this.currentData = new com.spantons.model.Heatmap({idPlace:this.placeId});
+		this.currentData.fetch({
+			success: function(e){       
+				self.currentChart = new com.spantons.view.HeatmapView({
+					waitingView: self.waitingView,
+					errorView : self.errorView,
+					data: self.currentData
+				});               
+				self.$el.find('#heatmap-tab').html(self.currentChart.render().el);
+				self.currentChart.renderComponents();
+		    },
+		    error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
+		    }
 		});
-
-		self.$el.find('#heatmap-tab').html(self.currentMap.render().el);
-
-
-
-		// this.currentData = new com.spantons.model.Heatmap({idPlace:this.placeId});
-		// this.currentData.fetch({
-		// 	success: function(e){                      
-		// 		self.$el.find('#heatmap-tab').html(self.currentMap.render().el);
-		// 		self.currentMap.renderMap(self.currentData);
-		//     },
-		//     error: function(e){  
-		//      	self.waitingView.closeView();
-		//      	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		//     }
-		// });
 	},
 
 	render: function(){
