@@ -11,6 +11,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
+		'click .delete-link-place': 'deletePlace',
 		'click .dropdown-trigger' : 'toggleDropdown',
 		'click .see-on-map': 'seeOnMap',
 		'click #complete-map': 'launchCompleteMap'
@@ -29,6 +30,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		this.waitingView.render();
 
 		if(options.placeId){
+			this.placeId = options.placeId;
 			this.coordinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
 			this.coordinatesView = new com.spantons.view.CoordinatesView();
 
@@ -55,6 +57,22 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		     	self.waitingView.closeView();
 		     	self.errorView.render(['Sorry, we cannot find that!']);
 		     }
+		});
+	},
+
+	deletePlace: function(){
+		var self = this;
+		console.log(this.placeId);
+		this.waitingView.render();
+		var place = new com.spantons.model.Place({id:this.placeId});
+		place.destroy({
+			success: function(model, response) {
+  				self.waitingView.closeView();
+			},
+			error: function(e){
+				self.waitingView.closeView();
+		     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
+			}
 		});
 	},
 
