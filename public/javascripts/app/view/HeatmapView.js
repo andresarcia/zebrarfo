@@ -5,15 +5,19 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.HeatmapView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#heatmap-template").html()),
-
-    dataFunction: {
-        avg: 0,
-        max: 1,
-        none: 2
+    settings: {
+        dataFunction: 'avg',
+        opacity: 60,
+        radius: 6,
+        blur: 85,
     },
 
     events: {
-        'change .slider':'updateHeatmap',
+        'change .slider':'changeFrequencyRange',
+        'change #select-function-operate':'changeDataFunction',
+        'change .opacity-slider':'changeOpacity',
+        'change .radius-slider':'changeRadius',
+        'change .blur-slider':'changeBlur',
     },
 	
 	initialize: function(options){
@@ -25,29 +29,144 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
         this.heatmapDataProcessor.require(options.data.attributes.heatmapData);
 
+        // this.occupationChart = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
+        // this.occupationChartOptions = {
+        //     chart: {
+        //         type: 'areaspline',
+        //     },
+        //     yAxis: {
+        //         min: 0,
+        //         max: 1,
+        //         tickInterval: 0.1,
+        //         title: {
+        //             text: 'Power (dBm)'
+        //         }
+        //     }
+        // };
+
         this.heatmapData = options.data.attributes.heatmapData;
         this.place = options.data.attributes.place;
         // this.from = this.place.frequencyMin / 1000;
         // this.to = this.place.frequencyMax / 1000;
-        this.from = 300;
-        this.to = 600;
-        this.currentDataFunction = this.dataFunction.avg;
+        this.from = 595;
+        this.to = 895;
 	},
 
-    updateHeatmap: function(){
+    changeDataFunction: function(){
+        this.settings.dataFunction = this.$el.find("#select-function-operate").select2("val");
+        this.updateHeatmap();
+    },
+
+    changeOpacity: function(){
+        this.settings.opacity = this.opacitySlider.val();
+        this.updateHeatmap();
+    },
+
+    changeRadius: function(){
+        this.settings.radius = this.radiusSlider.val();
+        this.updateHeatmap();
+    },
+
+    changeBlur: function(){
+        this.settings.blur = this.blurSlider.val();
+        this.updateHeatmap();
+    },
+
+    changeFrequencyRange: function(){
         this.from = Number(this.slider.val()[0]);
         this.to = Number(this.slider.val()[1]);
-        // this.renderMap();
-        this._renderMap();
+        this.updateHeatmap();
     },
 
     renderComponents: function(){
-        this.renderSlider();
+        this.renderOccupationChart();
+        this.renderSettings();
+        this.updateHeatmap();
+    },
+
+    updateHeatmap: function(){
         // this.renderMap();
         this._renderMap();
     },
 
-    renderSlider: function(){
+    renderOccupationChart: function(){
+        var data = [];
+        // _.each(this.heatmapDataProcessor.data, function(item){
+        //     if(currentItem.frequency == item.frequency){
+        //         if(item.power >= self.threshold)
+        //             sum += 1;
+        //         numberEachFrequency += 1;
+
+        //     } else {
+        //         if(sum === 0){
+        //             numberEachFrequency = 1;
+        //             if(item.power >= self.threshold)
+        //                 sum = 1;
+        //         }
+
+        //         data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
+        //         currentItem = item;
+        //         sum = 0;
+        //         numberEachFrequency = 0;
+        //     }
+        // });
+    },
+
+    renderSettings: function(){
+        this.$el.find("#select-function-operate").select2();
+    
+        this.opacitySlider = this.$el.find('.opacity-slider').noUiSlider({
+            start: this.settings.opacity,
+            step: 1,
+            format: wNumb({
+                decimals: 0
+            }),
+            range: {
+                'min': 0,
+                'max': 100
+            }
+        });
+        this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
+            $(this).html(
+                '<strong>' + value + '%</strong>'
+            );
+        });
+
+        this.radiusSlider = this.$el.find('.radius-slider').noUiSlider({
+            start: this.settings.radius,
+            step: 1,
+            format: wNumb({
+                decimals: 0
+            }),
+            range: {
+                'min': 0,
+                'max': 10
+            }
+        });
+        this.$el.find('.radius-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
+            $(this).html(
+                '<strong>' + value + '</strong>'
+            );
+        });
+
+        this.blurSlider = this.$el.find('.blur-slider').noUiSlider({
+            start: this.settings.blur,
+            step: 1,
+            format: wNumb({
+                decimals: 0
+            }),
+            range: {
+                'min': 0,
+                'max': 100
+            }
+        });
+        this.$el.find('.blur-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
+            $(this).html(
+                '<strong>' + value + '%</strong>'
+            );
+        });
+
+
         this.slider = this.$el.find('.slider').noUiSlider({
             start: [this.from,this.to],
             step: 1,
@@ -92,44 +211,31 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         var self = this;
 		this.waitingView.closeView();
 
-        var data = this.heatmapDataProcessor.process({from:this.from,to:this.to},'avg');
+        var data = this.heatmapDataProcessor.process({ from: this.from, to: this.to }, this.settings.dataFunction);
 
-		var myLatlng = new google.maps.LatLng(data.data[data.data.length-1].lat, data.data[data.data.length-1].lng);
-        // map options,
+		var myLatlng = new google.maps.LatLng(data.data[Math.round(data.data.length/2)].lat, data.data[Math.round(data.data.length/2)].lng);
+        
         var myOptions = {
           zoom: 13,
           center: myLatlng,
           mapTypeId: google.maps.MapTypeId.HYBRID,
         };
-        // standard map
+        
         var map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
-        // heatmap layer
         var heatmap = new HeatmapOverlay(map, 
-          {
-            // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-            "radius": 8,
-            "maxOpacity": 1, 
-            // scales the radius based on map zoom
-            // "scaleRadius": true, 
-                            "visible":true,
-            // if set to false the heatmap uses the global maximum for colorization
-            // if activated: uses the data maximum within the current map boundaries 
-            //   (there will always be a red spot with useLocalExtremas true)
-            "useLocalExtrema": false,
-            // which field name in your data represents the latitude - default "lat"
-            latField: 'lat',
-            // which field name in your data represents the longitude - default "lng"
-            lngField: 'lng',
-            // which field name in your data represents the data value - default "value"
-            valueField: 'count'
-          }
+            {
+                "radius": self.settings.radius,
+                "opacity": self.settings.opacity/100, 
+                "blur": self.settings.blur/100,
+                "visible":true,
+                // which field name in your data represents the data value - default "value"
+                valueField: 'count'
+            }
         );
 
-        // console.log(data.max);
-        // heatmap.setData(testData);
         google.maps.event.addListenerOnce(map, "idle", function(){
             heatmap.setData({
-                max: data.max,
+                max: data.normalizeMax,
                 data: data.data
             });
         });

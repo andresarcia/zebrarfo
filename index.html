@@ -405,11 +405,35 @@
 		<script id="heatmap-template" type="text/x-handlebars-template"> 
 			<br>
 			<div class="row">
-				<div class="col-md-2">
-					Map Settings
+				<div class="col-md-3">
+					<h4>Data Settings</h4>
+					<div class="form-group">
+						<label for="select-function-operate">Pick a function to operate on the data</label>
+						<select class="form-control" id="select-function-operate">
+							<option></option>
+							<option value="avg" selected>Average</option>
+							<option value="max">Maximum</option>
+							<option value="min">Minimum</option>
+							<option value="any">Any</option>
+						</select>
+					</div>
+					<h4>Heatmap Settings</h4>
+					<div class="form-group">
+						<label for="opacity-slider">Opacity</label>
+						<div class="opacity-slider"></div>
+					</div>
+					<div class="form-group">
+						<label for="radius-slider">Radius</label>
+						<div class="radius-slider"></div>
+					</div>
+					<div class="form-group">
+						<label for="blur-slider">Blur</label>
+						<div class="blur-slider"></div>
+					</div>
 				</div>
-				<div class="col-md-10">
-					<div id="map_canvas_heatmap" style="width:100%; height:500px;"></div>
+				<div class="col-md-9">
+					<div id="map_canvas_heatmap" style="width:100%; height:400px;"></div>
+					<div class="chart_power_frequency" style="height:100px;width:95%;"></div> 
 					<div class="col-md-12 slider-container">
 						<div class="slider"></div>
 						<div class="slider-value"></div>
