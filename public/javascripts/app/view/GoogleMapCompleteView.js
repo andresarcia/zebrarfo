@@ -43,7 +43,10 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
     		idCoord: idCoord
 		});
 
-		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#complete-map-info'});
+		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
+			selector: '#complete-map-info',
+			tooltipTop: 260
+		});
 		var options = {
 			yAxis: {
 	            plotLines:[{

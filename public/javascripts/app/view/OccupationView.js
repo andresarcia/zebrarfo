@@ -21,7 +21,10 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.occupation = options.data.attributes.occupation;
 		this.threshold = this.place.powerAvg;
 
-		this.chart = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
+		this.chart = new com.spantons.view.PowerFrequenciesView({
+			selector: '#chart_canvas_occupation',
+			tooltipTop: 10,
+		});
 		this.chartOptions = {
 			chart: {
 				type: 'areaspline',

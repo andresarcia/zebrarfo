@@ -30,7 +30,10 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
         this.heatmapDataProcessor.require(options.data.attributes.heatmapData);
 
-        // this.occupationChart = new com.spantons.view.PowerFrequenciesView({selector: '#chart_canvas_occupation'});
+        // this.occupationChart = new com.spantons.view.PowerFrequenciesView({
+            // selector: '#chart_canvas_occupation',
+            // tooltipTop: 10,
+        // });
         // this.occupationChartOptions = {
         //     chart: {
         //         type: 'areaspline',

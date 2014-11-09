@@ -10,6 +10,8 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		else
 			throw 'any selector';
 
+		this.tooltipTop = options.tooltipTop;
+
 		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 		this.americanChannels = true;
 	},
@@ -49,6 +51,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	showTooltip: function(txt,left){
 		var $tooltip = $(this.selector).find('.chart_tooltip');
 		$tooltip.children().text(txt);
+		$tooltip.css('top', this.tooltipTop + 'px');
 		$tooltip.css('left', parseInt(left) + 24 + 'px');
 		$tooltip.show();
 	},

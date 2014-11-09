@@ -130,7 +130,10 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	    		idCoord: idCoord
 			});
 
-			var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({selector: '#coord-id-'+idCoord});
+			var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
+				selector: '#coord-id-'+idCoord,
+				tooltipTop: 310,
+			});
 			var options = {
 				yAxis: {
 		            plotLines:[{
@@ -142,7 +145,6 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 				    }]
 				}
 			};
-			this.$el.find('.chart_tooltip').css('top','360px');
 			powerFrequenciesChart.fetch({
 				success: function(e){                      
 			       	powerFrequenciesView.render(powerFrequenciesChart.attributes,options);
