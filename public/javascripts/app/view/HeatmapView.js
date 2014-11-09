@@ -10,6 +10,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         opacity: 60,
         radius: 6,
         blur: 85,
+        zoom: 13,
     },
 
     events: {
@@ -216,7 +217,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 		var myLatlng = new google.maps.LatLng(data.data[Math.round(data.data.length/2)].lat, data.data[Math.round(data.data.length/2)].lng);
         
         var myOptions = {
-          zoom: 13,
+          zoom: this.settings.zoom,
           center: myLatlng,
           mapTypeId: google.maps.MapTypeId.HYBRID,
         };
@@ -238,6 +239,10 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 max: data.normalizeMax,
                 data: data.data
             });
+        });
+
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+            self.settings.zoom = map.getZoom();
         });
 	},
 
