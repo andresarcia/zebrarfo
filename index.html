@@ -256,52 +256,65 @@
 			<div class="list-group">
 				{{#each this}}
   				<a href="javascript:;" id="coord-id-{{id}}" class="list-group-item">
+
   					<ul class="list-group">
   						<li class="list-group-item">
-  							<div>
-    							Latitude
-    							<span class="pull-right">{{latitude}}</span>
-  							</div>
-  							<div>
-    							Longitude
-    							<span class="pull-right">{{longitude}}</span>
-  							</div>
-  							<div>
-    							<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
-  							</div>
-  							<hr>
-  							<button class="btn btn-success btn-xs pull-right see-on-map" type="button">See marker on the map</button>
-    						<br>
+  							
+  							<table class="table table-condensed">
+						   		<thead>
+					      			<tr>
+					        			<th>Latitude</th>
+					         			<th>Longitude</th>
+					         			<th>
+					         				<a class="pull-right delete-link-coordinate">delete</a> 
+					         			</th>
+					      			</tr>
+					   			</thead>
+							   	<tbody>
+							      	<tr>
+							      		<td>{{latitude}}</td>
+							      		<td>{{longitude}}</td>
+							      		<td>
+							      			<button class="btn btn-success btn-xs pull-right see-on-map" type="button">See marker on the map</button>
+							      		</td>
+							      	</tr>
+							      	<tr>
+							      		<td colspan="2">
+							      			<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
+							      		</td>
+							      	</tr>
+							   	</tbody>
+							</table>
+  							
+    						<button class="btn btn-info btn-block dropdown-trigger coordinates-power-btn btn-xs" type="button">
+								Power 
+								<span class="caret"></span>
+							</button>
+						  						
+							<ul class="ws-dropdown-container">
+								<br>
+								<table class="table table-condensed">
+						   			<thead>
+						      			<tr>
+						        			<th>Power</th>
+						         			<th>Value</th>
+						      			</tr>
+						   			</thead>
+								   	<tbody>
+								      	<tr>
+								      		<td>Minimum</td><td>{{powerMin}} <small><b>dBm</b></small></td>
+								      	</tr>
+								      	<tr>
+								      		<td>Maximum</td><td>{{powerMax}} <small><b>dBm</b></small></td>
+								      	</tr>
+								   	</tbody>
+								</table>
+								<div class="chart_power_frequency" style="margin-left:-40px;width: 105%;height:325px;"></div>
+								<div class="chart_tooltip">
+		    						<p style="margin:0">default</p>
+								</div>
+							</ul>
   						</li>
-					</ul>
-
-					<button class="btn btn-info btn-sm btn-block dropdown-trigger" type="button">
-						Power 
-						<span class="caret"></span>
-					</button>
-				  						
-					<ul class="ws-dropdown-container">
-						<br>
-						<table class="table table-condensed">
-				   			<thead>
-				      			<tr>
-				        			<th>Power</th>
-				         			<th>Value</th>
-				      			</tr>
-				   			</thead>
-						   	<tbody>
-						      	<tr>
-						      		<td>Minimum</td><td>{{powerMin}} <small><b>dBm</b></small></td>
-						      	</tr>
-						      	<tr>
-						      		<td>Maximum</td><td>{{powerMax}} <small><b>dBm</b></small></td>
-						      	</tr>
-						   	</tbody>
-						</table>						
-						<div class="chart_power_frequency" style="margin-left:-40px;width: 105%;height:325px;"></div>
-						<div class="chart_tooltip">
-    						<p style="margin:0">default</p>
-						</div>
 					</ul>
   				</a>
   				{{/each}}

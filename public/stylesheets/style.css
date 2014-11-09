@@ -158,10 +158,41 @@ hr {
   font-size: 13px;
 }
 
-#basic-markers-map {
-  width: 100%;
-  height: 220px;
-  margin-bottom: 10px;
+.delete-link-place {
+  color: #A94344;
+}
+
+.delete-link-coordinate {
+  color: #A94344;
+  font-size: 15px;
+  padding-right: 5px;
+}
+
+.delete-link-place:active,
+.delete-link-place:hover,
+.delete-link-coordinate:active,
+.delete-link-coordinate:hover {
+  color: #D95252;
+}
+
+#coordinates .list-group-item {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  margin-bottom: -1px;
+  background-color: #fff;
+  border:0px;
+  border-bottom:1px solid #ddd;
+}
+
+#coordinates .list-group-item:first-child {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+#coordinates .list-group-item:last-child {
+  margin-bottom: 0;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
 }
 
 #coordinates .list-group-item.active,
@@ -173,6 +204,17 @@ hr {
   border-color: #DDDDDD;
 }
 
+.coordinates-power-btn {
+  margin-top: -25px;
+  margin-bottom: 10px;
+}
+
+#basic-markers-map {
+  width: 100%;
+  height: 220px;
+  margin-bottom: 10px;
+}
+
 .chart_tooltip {
   border: 1px solid #2f7ed8;
   background-color: #fff;
@@ -182,6 +224,7 @@ hr {
   position: absolute;
   box-shadow: 1px 1px 3px #666;
   display: none;
+  top:20px;
 }
 
 .slider_tooltip {
