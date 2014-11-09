@@ -125,7 +125,13 @@ exports.deleteCoordinate = function(req, res){
 				}).success(function(coord){
 					coord.destroy()
 					.success(function() {
-					    res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
+						place.numberCoordinates = place.numberCoordinates - 1;
+						place.save().success(function(){
+							res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
+						})
+						.error(function(err){
+							res.status(500).send({ error: err });
+						});
 					}).error(function(err){
 						res.status(500).send({ error: err });
 					});
