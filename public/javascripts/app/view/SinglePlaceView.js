@@ -68,6 +68,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		place.destroy({
 			success: function(model, response) {
   				self.waitingView.closeView();
+  				window.location.hash = '#places';
 			},
 			error: function(e){
 				self.waitingView.closeView();
@@ -87,7 +88,11 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 		coordinate.destroy({
 			success: function(model, response) {
+				self.coordinates.models[0].attributes.coordinates.splice(index, 1);
   				self.waitingView.closeView();
+  				self.renderMap();
+		        self.renderCoordinates();
+		        self.renderPagination();
 			},
 			error: function(e){
 				self.waitingView.closeView();
