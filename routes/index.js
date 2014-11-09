@@ -11,11 +11,20 @@ router.route('/users')
 router.route('/places')
 	.get(places.list);
 
+router.route('/places/:id')
+	.get(places.getPlace);
+
+router.route('/places/:id')
+	.delete(places.deletePlace);
+
 router.route('/places/:id/coordinates')
 	.get(places.getCoordinates);
 
 router.route('/places/:idPlace/coordinates/:id')
 	.get(places.getPowerFrequency);
+
+router.route('/places/:idPlace/coordinates/:id')
+	.delete(places.deleteCoordinate);
 
 router.route('/places/:id/occupation')
 	.get(places.getOccupation);

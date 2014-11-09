@@ -6,8 +6,8 @@ var isNumber = function(n) {
 
 var UserIdentification = 1;
 
+/*-------------------------------------------------------------------*/
 exports.list = function(req,res){
-
 	db.Place.findAll({
 		UserId:UserIdentification,
 	}).success(function(docs){
@@ -19,9 +19,56 @@ exports.list = function(req,res){
 	.error(function(err){
 		res.status(500).send({ error: err });
 	});
-	
 };
 
+/*-------------------------------------------------------------------*/
+exports.getPlace = function(req,res){
+	if(isNumber(req.params.id)){
+		db.Place.find({
+			where: {
+				UserId:UserIdentification,
+				id: req.params.id
+			}
+		}).success(function(place){
+			if(place)
+				res.send(place);
+			else
+				res.status(200).send('Sorry, we cannot find that!');
+		})
+		.error(function(err){
+			res.status(500).send({ error: err });
+		});
+	} else
+		res.status(200).send('Sorry, we cannot find that!');
+};
+
+/*-------------------------------------------------------------------*/
+exports.deletePlace = function(req,res){
+	if(isNumber(req.params.id)){
+		db.Place.find({
+			where: {
+				UserId:UserIdentification,
+				id: req.params.id
+			}
+		}).success(function(place){
+			if(place)
+				place.destroy()
+				.success(function() {
+				    res.status(200).send({ msg: 'Place '+req.params.id+ ' deleted' });
+				}).error(function(err){
+					res.status(500).send({ error: err });
+				});
+			else
+				res.status(200).send('Sorry, we cannot find that!');
+		}).error(function(err){
+			res.status(500).send({ error: err });
+		});
+	
+	} else
+		res.status(200).send('Sorry, we cannot find that!');
+};
+
+/*-------------------------------------------------------------------*/
 exports.getCoordinates = function(req,res){
 	if(isNumber(req.params.id)){
 		db.Place.find({
@@ -45,6 +92,8 @@ exports.getCoordinates = function(req,res){
 					placeObject.currentPage = result.count;
 					placeObject.coordinates = result.rows;
 					res.send(placeObject);
+				}).error(function(err){
+					res.status(500).send({ error: err });
 				});
 
 			} else
@@ -58,6 +107,43 @@ exports.getCoordinates = function(req,res){
 		res.status(200).send('Sorry, we cannot find that!');
 };
 
+/*-------------------------------------------------------------------*/
+exports.deleteCoordinate = function(req, res){
+	if(isNumber(req.params.idPlace) && isNumber(req.params.id)){
+		db.Place.find({
+			where: {
+				UserId:UserIdentification,
+				id: req.params.idPlace
+			}
+		}).success(function(place){
+			if(place){
+				db.Coordinate.find({
+					where: {
+						PlaceId:req.params.idPlace,
+						id: req.params.id
+					}
+				}).success(function(coord){
+					coord.destroy()
+					.success(function() {
+					    res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
+					}).error(function(err){
+						res.status(500).send({ error: err });
+					});
+				}).error(function(err){
+					res.status(500).send({ error: err });
+				});
+
+			} else
+				res.status(200).send('Sorry, we cannot find that!');
+		}).error(function(err){
+			res.status(500).send({ error: err });
+		});
+	}
+	else
+		res.status(200).send('Sorry, we cannot find that!');
+};
+
+/*-------------------------------------------------------------------*/
 exports.getPowerFrequency = function(req, res){
 	if(isNumber(req.params.idPlace) && isNumber(req.params.id)){
 		
@@ -68,7 +154,7 @@ exports.getPowerFrequency = function(req, res){
 			}
 		}).success(function(place){
 			if(place) {
-				var query = 'select frequency, power from (select id	from Coordinates where PlaceId = '+req.params.idPlace+' and id = '+req.params.id+' ) as aux, PowerFrequencies where CoordinateId = aux.id';
+				var query = 'select frequency, power from (select id from Coordinates where PlaceId = '+req.params.idPlace+' and id = '+req.params.id+' ) as aux, PowerFrequencies where CoordinateId = aux.id';
 				db.sequelize
 				.query(query).success(function(response) {	
   					res.send(response);
@@ -87,6 +173,7 @@ exports.getPowerFrequency = function(req, res){
 		res.status(200).send('Sorry, we cannot find that!');
 };
 
+/*-------------------------------------------------------------------*/
 exports.getOccupation = function(req,res){
 	if(isNumber(req.params.id)){
 		db.Place.find({
@@ -120,6 +207,7 @@ exports.getOccupation = function(req,res){
 		res.status(200).send('Sorry, we cannot find that!');	
 };
 
+/*-------------------------------------------------------------------*/
 exports.getHeatmap = function(req,res){
 	if(isNumber(req.params.id)){
 		db.Place.find({
