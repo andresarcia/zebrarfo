@@ -160,9 +160,11 @@ hr {
 
 .delete-link-place {
   color: #A94344;
+  cursor: pointer;
 }
 
 .delete-link-coordinate {
+  cursor: pointer;
   color: #A94344;
   font-size: 13px;
   padding-right: 5px;

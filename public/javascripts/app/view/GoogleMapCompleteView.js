@@ -5,7 +5,11 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#coordinates-map-template").html()),
-	lastMarkerToggle: null,
+	lastIndex: null,
+	lastIdCoordinate: null,
+	events: {
+		'click .delete-link-coordinate': 'deleteCoordinate',
+	},
 
 	initialize: function(options){
 		var self = this;
@@ -26,6 +30,8 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 
 	markerClick: function(index,idCoord){
 		var self = this;
+
+		this.lastIdCoordinate = idCoord;
 
 		this.toggleMarker(index);
 		var template = Handlebars.compile($("#complete-map-coordinate-template").html());
@@ -64,15 +70,38 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 	},
 
 	toggleMarker: function(id){
-		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle)
-			this.markers[this.lastMarkerToggle].setAnimation(null);
+		if(this.lastIndex !== null && id !== this.lastIndex)
+			this.markers[this.lastIndex].setAnimation(null);
 
 		if (this.markers[id].getAnimation() !== null) 
         	this.markers[id].setAnimation(null);
       	else {
         	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
-        	this.lastMarkerToggle = id;
+        	this.lastIndex = id;
       	}
+	},
+
+	deleteCoordinate: function(){
+		var self = this;
+		this.waitingView.render();
+
+		var coordinate = new com.spantons.model.Coordinate({id:this.lastIdCoordinate});
+		coordinate.urlRoot = '/api/places/'+this.placeId+'/coordinates/';
+
+		coordinate.destroy({
+			success: function(model, response) {
+				self.coordinates.models[0].attributes.coordinates.splice(self.lastIndex, 1);
+				self.lastIndex = null;
+				self.lastIdCoordinate = null;
+  				self.waitingView.closeView();
+  				self.render();
+  				self._renderMap();
+			},
+			error: function(e){
+				self.waitingView.closeView();
+		     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
+			}
+		});
 	},
 
 	render: function(){
@@ -87,14 +116,14 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.coordinates = data;
 
 		if(window.appSettings.googleMapApi)
-			self.renderMap_();
+			self._renderMap();
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.renderMap_();
+				self._renderMap();
 			});
 	},
 
-	renderMap_: function(){
+	_renderMap: function(){
 		var self = this;
 		this.markers = [];
 		this.waitingView.closeView();
