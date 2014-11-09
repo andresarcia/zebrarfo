@@ -12,9 +12,10 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	events: {
 		'click .delete-link-place': 'deletePlace',
+		'click .delete-link-coordinate': 'deleteCoordinate',
 		'click .dropdown-trigger' : 'toggleDropdown',
 		'click .see-on-map': 'seeOnMap',
-		'click #complete-map': 'launchCompleteMap'
+		'click #complete-map': 'launchCompleteMap',
 	},
 
 	defaults: {
@@ -62,7 +63,6 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	deletePlace: function(){
 		var self = this;
-		console.log(this.placeId);
 		this.waitingView.render();
 		var place = new com.spantons.model.Place({id:this.placeId});
 		place.destroy({
@@ -75,6 +75,27 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			}
 		});
 	},
+
+	deleteCoordinate: function(evt){
+		var self = this;
+		this.waitingView.render();
+		var index = this.$el.find('.delete-link-coordinate').index(evt.currentTarget);
+		var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
+		var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
+		var coordinate = new com.spantons.model.Coordinate({id:idCoord});
+		coordinate.urlRoot = '/api/places/'+idPlace+'/coordinates/';
+
+		coordinate.destroy({
+			success: function(model, response) {
+  				self.waitingView.closeView();
+			},
+			error: function(e){
+				self.waitingView.closeView();
+		     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
+			}
+		});
+	},
+
 
 	seeOnMap: function(evt){
 		if(window.appSettings.googleMapApi){

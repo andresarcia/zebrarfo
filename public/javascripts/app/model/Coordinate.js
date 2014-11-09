@@ -4,8 +4,6 @@ com.spantons.model = com.spantons.model || {};
 
 com.spantons.model.Coordinate = Backbone.Model.extend({
 
-	urlRoot: '/api/places/:id/coordinate',
-
 	parse: function(model){
 
 		model.frequencyMin = Math.ceil(model.frequencyMin/1000);
