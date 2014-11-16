@@ -5,12 +5,16 @@ com.spantons.view = com.spantons.view || {};
 com.spantons.view.HeatmapView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#heatmap-template").html()),
-    settings: {
-        dataFunction: 'avg',
-        opacity: 60,
-        radius: 6,
-        blur: 85,
-        zoom: 13,
+    heatmap: {
+        map: null,
+        heatmap: null,
+        data: [],
+        settings: {
+            dataFunction: 'avg',
+            opacity: 70,
+            radius: 10,
+            zoom: 13,
+        },
     },
 
     events: {
@@ -18,7 +22,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         'change #select-function-operate':'changeDataFunction',
         'change .opacity-slider':'changeOpacity',
         'change .radius-slider':'changeRadius',
-        'change .blur-slider':'changeBlur',
     },
 	
 	initialize: function(options){
@@ -48,7 +51,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         //     }
         // };
 
-        this.heatmapData = options.data.attributes.heatmapData;
         this.place = options.data.attributes.place;
         // this.from = this.place.frequencyMin / 1000;
         // this.to = this.place.frequencyMax / 1000;
@@ -56,71 +58,35 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.to = 895;
 	},
 
-    changeDataFunction: function(){
-        this.settings.dataFunction = this.$el.find("#select-function-operate").select2("val");
-        this.updateHeatmap();
-    },
+    render: function(){
+        var html = this.template();
+        this.$el.html(html);    
 
-    changeOpacity: function(){
-        this.settings.opacity = this.opacitySlider.val();
-        this.updateHeatmap();
-    },
-
-    changeRadius: function(){
-        this.settings.radius = this.radiusSlider.val();
-        this.updateHeatmap();
-    },
-
-    changeBlur: function(){
-        this.settings.blur = this.blurSlider.val();
-        this.updateHeatmap();
-    },
-
-    changeFrequencyRange: function(){
-        this.from = Number(this.slider.val()[0]);
-        this.to = Number(this.slider.val()[1]);
-        this.updateHeatmap();
+        return this;
     },
 
     renderComponents: function(){
         this.renderOccupationChart();
         this.renderSettings();
-        this.updateHeatmap();
+        this.renderMap();
     },
 
-    updateHeatmap: function(){
-        // this.renderMap();
-        this._renderMap();
-    },
-
-    renderOccupationChart: function(){
-        var data = [];
-        // _.each(this.heatmapDataProcessor.data, function(item){
-        //     if(currentItem.frequency == item.frequency){
-        //         if(item.power >= self.threshold)
-        //             sum += 1;
-        //         numberEachFrequency += 1;
-
-        //     } else {
-        //         if(sum === 0){
-        //             numberEachFrequency = 1;
-        //             if(item.power >= self.threshold)
-        //                 sum = 1;
-        //         }
-
-        //         data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
-        //         currentItem = item;
-        //         sum = 0;
-        //         numberEachFrequency = 0;
-        //     }
-        // });
+    renderMap: function(){
+        var self = this;
+        
+        if(window.appSettings.googleMapApi)
+            self._renderMap();
+        else 
+            Backbone.pubSub.on('event-loaded-google-map-api', function(){
+                self._renderMap();
+            });
     },
 
     renderSettings: function(){
         this.$el.find("#select-function-operate").select2();
     
         this.opacitySlider = this.$el.find('.opacity-slider').noUiSlider({
-            start: this.settings.opacity,
+            start: this.heatmap.settings.opacity,
             step: 1,
             format: wNumb({
                 decimals: 0
@@ -137,39 +103,21 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
 
         this.radiusSlider = this.$el.find('.radius-slider').noUiSlider({
-            start: this.settings.radius,
+            start: this.heatmap.settings.radius,
             step: 1,
             format: wNumb({
                 decimals: 0
             }),
             range: {
-                'min': 0,
-                'max': 10
+                'min': 5,
+                'max': 20
             }
         });
         this.$el.find('.radius-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
             $(this).html(
-                '<strong>' + value + '</strong>'
+                '<strong>' + value + 'px</strong>'
             );
         });
-
-        this.blurSlider = this.$el.find('.blur-slider').noUiSlider({
-            start: this.settings.blur,
-            step: 1,
-            format: wNumb({
-                decimals: 0
-            }),
-            range: {
-                'min': 0,
-                'max': 100
-            }
-        });
-        this.$el.find('.blur-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
-            $(this).html(
-                '<strong>' + value + '%</strong>'
-            );
-        });
-
 
         this.slider = this.$el.find('.slider').noUiSlider({
             start: [this.from,this.to],
@@ -200,60 +148,108 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
     },
 
-	renderMap: function(){
-		var self = this;
-		
-		if(window.appSettings.googleMapApi)
-			self._renderMap();
-		else 
-			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self._renderMap();
-			});
-	},
+    renderOccupationChart: function(){
+        var data = [];
+        // _.each(this.heatmapDataProcessor.data, function(item){
+        //     if(currentItem.frequency == item.frequency){
+        //         if(item.power >= self.threshold)
+        //             sum += 1;
+        //         numberEachFrequency += 1;
+
+        //     } else {
+        //         if(sum === 0){
+        //             numberEachFrequency = 1;
+        //             if(item.power >= self.threshold)
+        //                 sum = 1;
+        //         }
+
+        //         data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
+        //         currentItem = item;
+        //         sum = 0;
+        //         numberEachFrequency = 0;
+        //     }
+        // });
+    },
+
+    changeDataFunction: function(){
+        this.heatmap.settings.dataFunction = this.$el.find("#select-function-operate").select2("val");
+        this.renderHeatmap(true);
+    },
+
+    changeFrequencyRange: function(){
+        this.from = Number(this.slider.val()[0]);
+        this.to = Number(this.slider.val()[1]);
+        this.renderHeatmap(true);
+    },
+
+    changeOpacity: function(){
+        this.heatmap.settings.opacity = this.opacitySlider.val();
+        this.renderHeatmap();
+    },
+
+    changeRadius: function(){
+        this.heatmap.settings.radius = this.radiusSlider.val();
+        this.renderHeatmap();
+    },
 
 	_renderMap: function(){
         var self = this;
 		this.waitingView.closeView();
 
-        var data = this.heatmapDataProcessor.process({ from: this.from, to: this.to }, this.settings.dataFunction);
-
-		var myLatlng = new google.maps.LatLng(data.data[Math.round(data.data.length/2)].lat, data.data[Math.round(data.data.length/2)].lng);
-        
         var myOptions = {
-          zoom: this.settings.zoom,
-          center: myLatlng,
-          mapTypeId: google.maps.MapTypeId.HYBRID,
+            zoom: this.heatmap.settings.zoom,
+            mapTypeId: google.maps.MapTypeId.HYBRID,
+            scaleControl: true,
+            panControl: false,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.LARGE,
+                position: google.maps.ControlPosition.RIGHT_CENTER
+            },
         };
-        
-        var map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
-        var heatmap = new HeatmapOverlay(map, 
-            {
-                "radius": self.settings.radius,
-                "opacity": self.settings.opacity/100, 
-                "blur": self.settings.blur/100,
-                "visible":true,
-                // which field name in your data represents the data value - default "value"
-                valueField: 'count'
-            }
-        );
 
-        google.maps.event.addListenerOnce(map, "idle", function(){
-            heatmap.setData({
-                max: data.normalizeMax,
-                data: data.data
-            });
-        });
-
-        google.maps.event.addListener(map, 'zoom_changed', function() {
-            self.settings.zoom = map.getZoom();
-        });
+        this.heatmap.map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
+        this.renderHeatmap(true,true);
 	},
 
-	render: function(){
-		var html = this.template();
-    	this.$el.html(html);	
+    renderHeatmap: function(updateData,center){
+        var self = this;
 
-		return this;
-	}
+        if (this.heatmap.heatmap)
+            this.heatmap.heatmap.setMap(null);
+
+        if(updateData){
+            var data = this.heatmapDataProcessor.process(
+                { 
+                    from: this.from, 
+                    to: this.to 
+                }, 
+                this.heatmap.settings.dataFunction
+            );
+
+            if(center){
+                var latlng = new google.maps.LatLng(
+                    data.data[Math.round(data.data.length/2)].lat, 
+                    data.data[Math.round(data.data.length/2)].lng
+                );
+                
+                this.heatmap.map.setCenter(latlng);
+            }
+
+            _.each(data.data, function(item) {
+                self.heatmap.data.push({
+                    location: new google.maps.LatLng(item.lat, item.lng), 
+                    weight: item.count 
+                });
+            });
+        }
+
+        this.heatmap.heatmap = new google.maps.visualization.HeatmapLayer({
+            data: this.heatmap.data,
+            radius: Number(self.heatmap.settings.radius),
+            opacity: self.heatmap.settings.opacity/100,
+        });
+
+        this.heatmap.heatmap.setMap(this.heatmap.map);
+    }
 
 });

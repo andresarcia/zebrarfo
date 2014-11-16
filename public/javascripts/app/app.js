@@ -16,15 +16,10 @@ $(function(){
 
 function loadGoogleMapApi() {
     var l = new com.spantons.util.Loader();
-    l.require(['http://maps.googleapis.com/maps/api/js?sensor=false&callback=loadGoogleMapHeatmapPlugin']);
+    l.require(['https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&callback=loadGoogleMapHeatmapPlugin']);
 }
 
 function loadGoogleMapHeatmapPlugin(){
-	var l = new com.spantons.util.Loader();
-	l.require([
-    	"javascripts/vendor/gmaps-heatmap.js"], 
-    function() {
-        window.appSettings.googleMapApi = true;
-        Backbone.pubSub.trigger('event-loaded-google-map-api');
-    });
+    window.appSettings.googleMapApi = true;
+    Backbone.pubSub.trigger('event-loaded-google-map-api');
 }
