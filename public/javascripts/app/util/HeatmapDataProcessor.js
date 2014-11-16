@@ -152,9 +152,12 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     normalize: function(){
         var self = this;
         _.each(this.currentData.data, function(item){
-            item.count = item.count - self.currentData.min;
+            // item.count = item.count - self.currentData.min;
+            item.count  = 100 * (item.count - self.currentData.min) / self.currentData.max;
+            item.count = Math.abs(item.count) + 1;
+
             item.count = Number(item.count.toFixed(1));
-            
+
             if(self.currentData.normalizeMax === null && self.currentData.normalizeMin === null)
                 self.currentData.normalizeMax = self.currentData.normalizeMin = item.count;
             else {
