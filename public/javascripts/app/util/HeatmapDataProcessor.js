@@ -12,9 +12,10 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         count: 0,
         min: null,
         max: null,
-        normalizeMax: null
+        normalizeMax: null,
+        normalizeMin: null
     },
-    
+
     require: function(data) {
         this.data = data;
     },
@@ -32,7 +33,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     process: function(boundaries, functionName){
         var self = this;
         this.resetData();
-
         this.currentData.item = this.data[0];
 
         _.each(this.data, function(item){
@@ -56,8 +56,8 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                 }
             }
         });
+        this.normalize();
         console.log(this.currentData);
-        // this.normalize();
         return this.currentData;
     },
 
@@ -152,15 +152,16 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     normalize: function(){
         var self = this;
         _.each(this.currentData.data, function(item){
-            item.count = (item.count - self.currentData.max);
-            if(item.count === 0)
-                item.count = 1;
-
-            if(self.currentData.normalizeMax === null)
-                self.currentData.normalizeMax = item.count;
+            item.count = item.count - self.currentData.min;
+            item.count = Number(item.count.toFixed(1));
+            
+            if(self.currentData.normalizeMax === null && self.currentData.normalizeMin === null)
+                self.currentData.normalizeMax = self.currentData.normalizeMin = item.count;
             else {
                 if(self.currentData.normalizeMax < item.count)
                     self.currentData.normalizeMax = item.count;
+                if(self.currentData.normalizeMin > item.count)
+                    self.currentData.normalizeMin = item.count;
             }
 
         });
