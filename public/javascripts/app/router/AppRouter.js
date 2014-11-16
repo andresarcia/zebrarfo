@@ -32,35 +32,13 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	routes: {
 		'places': 'showPlaces',
-		'places/:id/coordinates' : 'showCoordinatesOfPlace',
+		'places/:id/coordinates' : 'showSinglePlace',
 		'places/:id/coordinates/maps' : 'showMapsOfPlace',
 		'places/:id/charts' : 'showChartsOfPlace',
+		
 		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
-	},
-
-	tempObjPlaces: function(id){
-		return {
-			indexParent: 0,
-			items: [
-				{
-					url: 'places/'+id+'/coordinates',
-					glyphicon: 'glyphicon-map-marker',
-					name: 'Coordinates'
-				},
-				{
-					url: 'places/'+id+'/coordinates/maps',
-					glyphicon: 'glyphicon-road',
-					name: 'Maps'
-				},
-				{
-					url: 'places/'+id+'/charts',
-					glyphicon: 'glyphicon-stats',
-					name: 'Occupation'
-				}
-			]
-		};
 	},
 
 	showPlaces: function(){
@@ -70,12 +48,16 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			errorView : this.helperViews.errorView
 		});
 		
+		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place-upload');
+		this.navViews.verticalNav.showSubMenuWithClass(0,'upload-menu-item');
+
 		this.navViews.verticalNav.changeActiveClass({
 			index: [0],
 		});
+		
 	},
 
-	showCoordinatesOfPlace: function(id){
+	showSinglePlace: function(id){  		
 		this.clearViews();
 		this.currentView = new com.spantons.view.SinglePlaceView({
 			waitingView: this.helperViews.waitingView,
@@ -83,9 +65,11 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
+		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
+
 		this.navViews.verticalNav.changeActiveClass({
-			index: [0,1],
+			index: [0,0],
 		});
 	},
 
@@ -97,9 +81,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
 		this.navViews.verticalNav.changeActiveClass({
-			index: [0,2],
+			index: [0,1],
 		});
 	},
 
@@ -111,9 +94,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.appendTempChildItem(this.tempObjPlaces(id));
 		this.navViews.verticalNav.changeActiveClass({
-			index: [0,3],
+			index: [0,2],
 		});
 	},
 

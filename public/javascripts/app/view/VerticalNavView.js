@@ -6,6 +6,7 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 
 	el: '#vertical-nav',
 	template: Handlebars.compile($("#vertical-nav-template").html()),	
+	currentSubMenuId: null,
 
 	initialize: function(options){
 		
@@ -21,29 +22,31 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 		return this;
 	},
 
-	appendTempChildItem: function(options){
-		var parent = this.$el.find('.parent').eq(options.indexParent);
-
-		if(parent.next().find('.temp').length > 0)
+	renderSubMenuWithId: function(parentIndex,containerId,id){
+		if(this.currentSubMenuId === containerId)
 			return;
 
-		_.each(options.items,function(item){
-			if(item.glyphicon)
-				item = $('<li class="list-group-item"><a href="#'+item.url+'" class="child item temp"><span class="glyphicon '+item.glyphicon+'"></span><span> '+item.name+'</span></a></li>').hide();
-			else
-				item = $('<li class="list-group-item"><a href="#'+item.url+'" class="child item temp"><span> '+item.name+'</span></a></li>').hide();
+		this.currentSubMenuId = containerId;
 
-			parent.next().append(item);
-			item.slideDown(700);
-		});
+		var template = Handlebars.compile($('#'+containerId).html());
+		if(id)
+			this.$el.find('.list-group-item').eq(parentIndex).find('.children').html(template({id:id}));
+		else
+			this.$el.find('.list-group-item').eq(parentIndex).find('.children').html(template);
+	},
+
+	showSubMenuWithClass: function(parentIndex,className){
+		this.$el.find('.list-group-item').eq(parentIndex).find('.children').find('.'+className).slideDown(300);
 	},
 
 	changeActiveClass: function(options){
 		if (options.index){
+			var brothers;
+			var item;
 
 			if(options.index.length < 2){
-				var brothers = this.$el.find('.parent');
-				var item = brothers.eq(options.index[0]);
+				brothers = this.$el.find('.parent');
+				item = brothers.eq(options.index[0]);
 				var childrensBlock = this.$el.find('.children');
 				var childrens = childrensBlock.find('.child');
 				
@@ -62,8 +65,8 @@ com.spantons.view.VerticalNavView = Backbone.View.extend({
 				}
 			} else {
 				var parent = this.$el.find('.parent').eq(options.index[0]);
-				var brothers = parent.next().find('.child');
-				var item = brothers.eq(options.index[1]);
+				brothers = parent.next().find('.child');
+				item = brothers.eq(options.index[1]);
 
 				if(!item.hasClass('active')){
 					parent.removeClass('active');

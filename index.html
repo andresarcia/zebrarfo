@@ -103,15 +103,7 @@
 							<span> Places</span>
 						</a>
 
-						<ul class="list-group children">
-			  				<li class="list-group-item">
-			  					<a href="#places/upload" class="child item">
-									<span class="glyphicon glyphicon-floppy-open"></span>
-									<span> Upload place</span>
-								</a>
-			  				</li>
-						</ul>
-
+						<ul class="list-group children"></ul>
 	  				</li>
 
 	  				<li class="list-group-item">
@@ -128,11 +120,41 @@
 								</a>
 			  				</li>
 						</ul>
-
 	  				</li>
 				</ul>
 	  		</div>
 		</script>
+
+		<script id="vertical-nav-template-sub-menu-single-place-upload" type="text/x-handlebars-template">
+			<li class="list-group-item upload-menu-item">
+				<a href="#places/upload" class="child item">
+					<span class="glyphicon glyphicon-floppy-open"></span>
+					<span> Upload place</span>
+				</a>
+			</li>
+		</script>
+
+		<script id="vertical-nav-template-sub-menu-single-place" type="text/x-handlebars-template">
+			<li class="list-group-item single-place-menu-item">
+				<a href="#places/{{id}}/coordinates" class="child item">
+					<span class="glyphicon glyphicon-map-marker"></span>
+					<span> Coordinates</span>
+				</a>
+			</li>
+			<li class="list-group-item single-place-menu-item">
+				<a href="#places/{{id}}/coordinates/maps" class="child item">
+					<span class="glyphicon glyphicon-road"></span>
+					<span> Maps</span>
+				</a>
+			</li>
+			<li class="list-group-item single-place-menu-item">
+				<a href="#places/{{id}}/charts" class="child item">
+					<span class="glyphicon glyphicon-stats"></span>
+					<span> Occupation</span>
+				</a>
+			</li>
+		</script>
+
 
 		<script id="places-template" type="text/x-handlebars-template">
 
@@ -198,6 +220,8 @@
 					<div class="panel panel-default">
   						<div class="panel-body">
   							<a class="pull-right delete-link-place"><small>delete</small></a> 
+  							<br>
+  							<a class="pull-right upload-more-link-place"><small>upload more samples</small></a> 
     						<h1 class="col-md-12">{{this.attributes.name}}</h1>
 					  		<table class="table table-striped">
 						    	<tr>
@@ -230,7 +254,7 @@
 							  	</tr>
 						  	</table>
 						  	<button id="complete-map" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
-								See Maps
+								See Map
 							</button>
   						</div>
 	  					<div class="panel-footer">

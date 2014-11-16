@@ -147,6 +147,9 @@ hr {
   margin-left: 8px;
   font-size: 13px; 
 }
+.single-place-menu-item, .upload-menu-item {
+  display: none;
+}
 
 .ws-containter {
   width: 92.5%;
@@ -160,6 +163,11 @@ hr {
 
 .delete-link-place {
   color: #A94344;
+  cursor: pointer;
+}
+
+.upload-more-link-place {
+  color: #0088CC;
   cursor: pointer;
 }
 
