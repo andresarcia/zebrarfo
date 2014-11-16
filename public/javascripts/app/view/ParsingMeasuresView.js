@@ -186,7 +186,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			Backbone.pubSub.trigger('event-server-error');
 		} 
 		else if (this.status.done) 
-			window.location.hash = '#places/'+this.model.id+'/coordinates';
+			window.location.hash = '#places/'+this.model.id;
 	}
 
 });

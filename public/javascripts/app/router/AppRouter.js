@@ -14,7 +14,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	currentView: null,
-	tempId: null,
+	currentData: {
+		data: null,
+		id: null
+	},
 
 	initialize: function(options){
 		var self = this;
@@ -32,29 +35,80 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	routes: {
 		'places': 'showPlaces',
-		'places/:id/coordinates' : 'showSinglePlace',
-		'places/:id/coordinates/maps' : 'showMapsOfPlace',
+		'places/upload': 'uploadPlace',
+		'places/:id' : 'showSinglePlace',
+		'places/:id/maps' : 'showMapsOfPlace',
 		'places/:id/charts' : 'showChartsOfPlace',
 		
-		'places/upload': 'uploadPlace',
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
 	},
 
-	showPlaces: function(){
-		this.clearViews();
-		this.currentView = new com.spantons.view.PlacesView({
-			waitingView: this.helperViews.waitingView,
-			errorView : this.helperViews.errorView
-		});
-		
+	/*-------------------------------------------------------------------*/
+	fetchPlacesData: function(callback){
+		if(this.currentData.data === null || this.currentData.id != 'places'){
+			var self = this;
+			this.helperViews.waitingView.render();
+
+			this.currentData.id = 'places';
+			this.currentData.data = new com.spantons.collection.Places();
+			this.currentData.data.fetch({
+				success: function(e){  
+					self.helperViews.waitingView.closeView();
+					callback();
+			     },
+			     error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the places']);
+			     }
+			});
+		} else
+			callback();
+	},
+
+	renderVerticalNavMenuPlaces: function(index){
 		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place-upload');
 		this.navViews.verticalNav.showSubMenuWithClass(0,'upload-menu-item');
 
 		this.navViews.verticalNav.changeActiveClass({
-			index: [0],
+			index: index,
 		});
-		
+	},
+
+	showPlaces: function(){
+		var self = this;
+		this.clearViews();
+		this.fetchPlacesData(function(){
+  			self.currentView = new com.spantons.view.PlacesView({
+				waitingView: self.helperViews.waitingView,
+				errorView : self.helperViews.errorView,
+				data: self.currentData.data
+			});
+			self.renderVerticalNavMenuPlaces([0]);
+		});
+	},
+
+	uploadPlace: function(){
+		var self = this;
+		this.clearViews();
+		this.fetchPlacesData(function(){
+  			self.currentView = new com.spantons.view.UploadMeasuresView({
+				waitingView: self.helperViews.waitingView,
+				errorView : self.helperViews.errorView,
+				data: self.currentData.data
+			});
+			self.renderVerticalNavMenuPlaces([0,0]);
+		});
+	},
+
+	/*-------------------------------------------------------------------*/
+	renderVerticalNavMenuSinglePlace: function(index,id){
+		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
+
+		this.navViews.verticalNav.changeActiveClass({
+			index: index,
+		});
 	},
 
 	showSinglePlace: function(id){  		
@@ -65,12 +119,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
-		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
-
-		this.navViews.verticalNav.changeActiveClass({
-			index: [0,0],
-		});
+		this.renderVerticalNavMenuSinglePlace([0,0],id);
 	},
 
 	showMapsOfPlace: function(id){
@@ -81,9 +130,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.changeActiveClass({
-			index: [0,1],
-		});
+		this.renderVerticalNavMenuSinglePlace([0,1],id);
 	},
 
 	showChartsOfPlace: function(id){
@@ -94,22 +141,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			placeId: id
 		});
 
-		this.navViews.verticalNav.changeActiveClass({
-			index: [0,2],
-		});
+		this.renderVerticalNavMenuSinglePlace([0,2],id);
 	},
 
-	uploadPlace: function(){
-		this.clearViews();
-		this.currentView = new com.spantons.view.UploadMeasuresView({
-			waitingView: this.helperViews.waitingView,
-			errorView : this.helperViews.errorView
-		});
-		this.navViews.verticalNav.changeActiveClass({
-			index: [0,0],
-		});
-	},
-
+	/*-------------------------------------------------------------------*/
 	showHotspots: function(){
 		this.navViews.verticalNav.changeActiveClass({
 			index: [1]

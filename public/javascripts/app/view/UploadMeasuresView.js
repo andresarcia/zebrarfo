@@ -7,7 +7,6 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	el: '#ws-containter',
 	template: Handlebars.compile($("#upload-measures-template").html()),
 	viewContainers: null,
-	places: null,
 
 	options: {
 		supportHtml5: false,
@@ -43,26 +42,18 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
-		this.waitingView.render();
+		this.data = options.data;
 		
-		this.places = new com.spantons.collection.Places();
-		this.places.fetch({
-			success: function(e){                      
-		        self.waitingView.closeView();
-		        self.render();
-		        self.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
-		   	    $(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
-				$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
-				$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
-				$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
+		this.waitingView.closeView();
+        this.render();
+        this.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
+   	    $(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
+		$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
+		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
+		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
 
-				Backbone.pubSub.on('event-server-error', self.enableForm, self);
-		     },
-		     error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the places']);
-		     }
-		});
+		Backbone.pubSub.on('event-server-error', self.enableForm, self);
+		
 
 		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;
@@ -72,7 +63,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 	render: function(){
 		
-		var html = this.template(this.places);
+		var html = this.template(this.data);
     	this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});

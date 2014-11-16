@@ -14,23 +14,12 @@ com.spantons.view.PlacesView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
-		this.waitingView.render();
-
-		this.places = new com.spantons.collection.Places();
-		this.places.fetch({
-			success: function(e){                      
-		        self.waitingView.closeView();
-		        self.render();
-		     },
-		     error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the places']);
-		     }
-		});
+		this.data = options.data;
+		this.render();
 	},
 
 	render: function(){
-		var html = this.template(this.places);
+		var html = this.template(this.data);
     	this.$el.html(html);	
 
 		return this;

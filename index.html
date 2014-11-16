@@ -136,13 +136,13 @@
 
 		<script id="vertical-nav-template-sub-menu-single-place" type="text/x-handlebars-template">
 			<li class="list-group-item single-place-menu-item">
-				<a href="#places/{{id}}/coordinates" class="child item">
+				<a href="#places/{{id}}" class="child item">
 					<span class="glyphicon glyphicon-map-marker"></span>
 					<span> Coordinates</span>
 				</a>
 			</li>
 			<li class="list-group-item single-place-menu-item">
-				<a href="#places/{{id}}/coordinates/maps" class="child item">
+				<a href="#places/{{id}}/maps" class="child item">
 					<span class="glyphicon glyphicon-road"></span>
 					<span> Maps</span>
 				</a>
@@ -160,7 +160,7 @@
 
 			<ul class="list-group">
 				{{#each this.models}}
-  				<a href="#places/{{attributes.id}}/coordinates" class="list-group-item">
+  				<a href="#places/{{attributes.id}}" class="list-group-item">
     				<div class="panel panel-default">
     					<div class="panel-body">
     						<h1 class="col-md-12">{{this.attributes.name}}</h1>
