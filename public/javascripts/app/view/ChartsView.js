@@ -18,11 +18,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
-
-		if(options.placeId)
-			this.placeId = options.placeId;
-		else
-			throw 'Any place id';
+		this.data = options.data;
 
 		Backbone.pubSub.on('changeChart', function(index){
 			self.changeChart(null,index);
@@ -60,12 +56,13 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		var self = this;
 		this.waitingView.render();
 
-		this.currentData = new com.spantons.model.Occupation({idPlace:this.placeId});
+		this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 		this.currentData.fetch({
 			success: function(e){                      
 				self.currentChart = new com.spantons.view.OccupationView({
 					waitingView: self.waitingView,
 					errorView : self.errorView,
+					place: self.data,
 					data: self.currentData
 				});
 				self.$el.find('#occupation-tab').html(self.currentChart.render().el);
@@ -82,12 +79,13 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		var self = this;
 		this.waitingView.render();
 		
-		this.currentData = new com.spantons.model.Heatmap({idPlace:this.placeId});
+		this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
 		this.currentData.fetch({
 			success: function(e){       
 				self.currentChart = new com.spantons.view.HeatmapView({
 					waitingView: self.waitingView,
 					errorView : self.errorView,
+					place: self.data,
 					data: self.currentData
 				});               
 				self.$el.find('#heatmap-tab').html(self.currentChart.render().el);

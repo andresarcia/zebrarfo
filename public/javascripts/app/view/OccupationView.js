@@ -17,8 +17,8 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
-		this.place = options.data.attributes.place;
-		this.occupation = options.data.attributes.occupation;
+		this.place = options.place.attributes;
+		this.occupation = options.data.attributes;
 		this.threshold = this.place.powerAvg;
 
 		this.chart = new com.spantons.view.PowerFrequenciesView({
@@ -55,12 +55,14 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	},
 
 	renderSlider: function(){
+		var self = this;
+
 		this.slider = this.$el.find('.slider').noUiSlider({
-			start: this.place.powerAvg.toFixed(0),
+			start: this.place.powerAvg,
 			step: 1,
 			range: {
-				'min': this.place.powerMin,
-				'max': this.place.powerMax
+				'min': self.place.powerMin,
+				'max': self.place.powerMax
 			},
 			format: wNumb({
                 decimals: 0

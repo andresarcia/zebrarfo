@@ -30,8 +30,13 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
         
+        this.place = options.place.attributes;
+
+        this.from = this.place.frequencyMin + 100;
+        this.to = this.place.frequencyMax - 100;
+
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
-        this.heatmapDataProcessor.require(options.data.attributes.heatmapData);
+        this.heatmapDataProcessor.require(options.data.attributes);
 
         // this.occupationChart = new com.spantons.view.PowerFrequenciesView({
             // selector: '#chart_canvas_occupation',
@@ -50,12 +55,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         //         }
         //     }
         // };
-
-        this.place = options.data.attributes.place;
-        // this.from = this.place.frequencyMin / 1000;
-        // this.to = this.place.frequencyMax / 1000;
-        this.from = 595;
-        this.to = 895;
 	},
 
     render: function(){
@@ -128,8 +127,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 decimals: 0
             }),
             range: {
-                'min': this.place.frequencyMin/1000,
-                'max': this.place.frequencyMax/1000
+                'min': this.place.frequencyMin,
+                'max': this.place.frequencyMax
             }
         });
 

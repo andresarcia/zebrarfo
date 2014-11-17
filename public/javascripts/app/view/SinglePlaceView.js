@@ -84,7 +84,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		coordinate.destroy({
 			success: function(model, response) {
 				self.coordinates.models[0].attributes.coordinates.splice(index, 1);
-  				self.coordinates.models[0].attributes.numberCoordinates -= 1;
+  				self.data.attributes.numberCoordinates -= 1;
 
   				self.waitingView.closeView();
   				self.render();
