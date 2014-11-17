@@ -185,8 +185,16 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			this.model.clear();
 			Backbone.pubSub.trigger('event-server-error');
 		} 
-		else if (this.status.done) 
+		else if (this.status.done) {
+			window.appRouter.currentData.id = 'singlePlace';
+			var newModelData = this.model.attributes;
+			delete newModelData.json;
+			delete newModelData.coordinates;
+			var newModel = new com.spantons.model.Place(newModelData, {parse: true});
+			
+			window.appRouter.currentData.data = newModel;
 			window.location.hash = '#places/'+this.model.id;
+		}
 	}
 
 });

@@ -32,6 +32,10 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 		return this.nameContainer.val();
 	},
 
+	setNameContainerVal: function(val){
+		this.nameContainer.val(val);
+	},
+
 	setGoodNameContainer: function(){
 		var containerParent = this.nameContainer.parent();
 		containerParent.children().first().children().first().removeClass('btn-default');

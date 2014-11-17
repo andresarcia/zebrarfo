@@ -43,7 +43,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 		this.data = options.data;
-		
+
 		this.waitingView.closeView();
         this.render();
         this.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
@@ -54,6 +54,13 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 		Backbone.pubSub.on('event-server-error', self.enableForm, self);
 		
+		if(!this.data.length){
+			this.options.fillName = true;
+			this.placeName = this.data.attributes.name;
+			this.viewContainers.setNameContainerVal(this.placeName);
+			this.viewContainers.setGoodNameContainer();
+			this.viewContainers.disableNameContainer();
+		}
 
 		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;

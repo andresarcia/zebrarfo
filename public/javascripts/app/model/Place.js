@@ -23,5 +23,4 @@ com.spantons.model.Place = Backbone.Model.extend({
 
 		return model;
 	}
-
 });

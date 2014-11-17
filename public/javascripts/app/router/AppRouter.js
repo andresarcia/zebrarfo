@@ -38,6 +38,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		'places/:id' : 'showSinglePlace',
 		'places/:id/maps' : 'showMapsOfPlace',
 		'places/:id/charts' : 'showChartsOfPlace',
+		'places/:id/upload' : 'showSinglePlaceUpload',
 		
 		'hotspots': 'showHotspots',
 		'hotspots/upload': 'uploadHotspots'
@@ -165,6 +166,21 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 				data: self.currentData.data
 			});
 			self.renderVerticalNavMenuSinglePlace([0,2],id);
+		});
+	},
+
+	showSinglePlaceUpload: function(id){
+		var self = this;
+		this.clearViews();
+		this.fetchSinglePlaceData(id,function(){
+  			self.currentView = new com.spantons.view.UploadMeasuresView({
+				waitingView: self.helperViews.waitingView,
+				errorView : self.helperViews.errorView,
+				data: self.currentData.data
+			});
+
+			self.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+			self.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
 		});
 	},
 
