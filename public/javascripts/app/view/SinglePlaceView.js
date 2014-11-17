@@ -29,14 +29,9 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 		this.waitingView.render();
-
-		if(options.placeId){
-			this.placeId = options.placeId;
-			this.coordinates = new com.spantons.collection.Coordinates({idPlace:options.placeId});
-			this.coordinatesView = new com.spantons.view.CoordinatesView();
-
-		} else
-			throw 'Any place id';
+		this.data = options.data;
+		this.coordinates = new com.spantons.collection.Coordinates({idPlace:this.data.id});
+		this.coordinatesView = new com.spantons.view.CoordinatesView();
 
 		this.coordinates.fetch({
 			data: { 
@@ -64,7 +59,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	deletePlace: function(){
 		var self = this;
 		this.waitingView.render();
-		var place = new com.spantons.model.Place({id:this.placeId});
+		var place = new com.spantons.model.Place({id:this.data.id});
 		place.destroy({
 			success: function(model, response) {
   				self.waitingView.closeView();
@@ -209,7 +204,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.coordinates.models[0]);
+		var html = this.template(this.data);
     	this.$el.html(html);	
     
 		return this;

@@ -20,8 +20,6 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	initialize: function(options){
-		var self = this;
-		
 		this.navViews.verticalNav = new com.spantons.view.VerticalNavView();
 
 		this.helperViews.errorView = new com.spantons.view.ErrorView();
@@ -36,6 +34,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	routes: {
 		'places': 'showPlaces',
 		'places/upload': 'uploadPlace',
+
 		'places/:id' : 'showSinglePlace',
 		'places/:id/maps' : 'showMapsOfPlace',
 		'places/:id/charts' : 'showChartsOfPlace',
@@ -56,11 +55,11 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 				success: function(e){  
 					self.helperViews.waitingView.closeView();
 					callback();
-			     },
-			     error: function(e){  
+			    },
+			    error: function(e){  
 			     	self.waitingView.closeView();
 			     	self.errorView.render(['Occurred an error retrieving the places']);
-			     }
+			    }
 			});
 		} else
 			callback();
@@ -102,6 +101,27 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
+	fetchSinglePlaceData: function(id,callback){
+		if(this.currentData.data === null || this.currentData.id != 'singlePlace'){
+			var self = this;
+			this.helperViews.waitingView.render();
+
+			this.currentData.id = 'singlePlace';
+			this.currentData.data = new com.spantons.model.Place({id:id});
+			this.currentData.data.fetch({
+				success: function(e){  
+					self.helperViews.waitingView.closeView();
+					callback();
+			    },
+			    error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the places']);
+			    }
+			});
+		} else
+			callback();
+	},
+
 	renderVerticalNavMenuSinglePlace: function(index,id){
 		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
 		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
@@ -113,13 +133,15 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 	showSinglePlace: function(id){  		
 		this.clearViews();
-		this.currentView = new com.spantons.view.SinglePlaceView({
-			waitingView: this.helperViews.waitingView,
-			errorView : this.helperViews.errorView,
-			placeId: id
+		var self = this;
+		this.fetchSinglePlaceData(id,function(){
+			self.currentView = new com.spantons.view.SinglePlaceView({
+				waitingView: self.helperViews.waitingView,
+				errorView : self.helperViews.errorView,
+				data: self.currentData.data
+			});
+			self.renderVerticalNavMenuSinglePlace([0,0],id);
 		});
-
-		this.renderVerticalNavMenuSinglePlace([0,0],id);
 	},
 
 	showMapsOfPlace: function(id){
