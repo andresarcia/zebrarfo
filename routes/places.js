@@ -87,7 +87,7 @@ exports.getCoordinates = function(req,res){
 
 	  			db.Coordinate.findAndCountAll(options)
 				.success(function(result) {
-					var placeObject = place.dataValues;
+					var placeObject = {};
 					placeObject.total = result.count;
 					placeObject.currentPage = result.count;
 					placeObject.coordinates = result.rows;
@@ -182,33 +182,15 @@ exports.getPowerFrequency = function(req, res){
 /*-------------------------------------------------------------------*/
 exports.getOccupation = function(req,res){
 	if(isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:UserIdentification,
-				id: req.params.id
-			}
-		}).success(function(place){
-			if(place) {
-				var query = 'select frequency,power from (select Coordinates.id from (select id from Places where id = '+req.params.id+') as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where aux.id = PowerFrequencies.CoordinateId order by frequency';
-	
-				db.sequelize
-				.query(query).success(function(response) {
-					var aux = {};
-					aux.place = place;
-					aux.occupation = response;
-					res.send(aux);
-				})
-				.error(function(err){
-					res.status(500).send({ error: err });
-				});
-				
-			} else
-			res.status(200).send('Sorry, we cannot find that!');
+		var query = 'select frequency,power from (select Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where aux.id = PowerFrequencies.CoordinateId order by frequency';
+
+		db.sequelize
+		.query(query).success(function(response) {
+			res.send(response);
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
-
 	} else
 		res.status(200).send('Sorry, we cannot find that!');	
 };
@@ -216,33 +198,15 @@ exports.getOccupation = function(req,res){
 /*-------------------------------------------------------------------*/
 exports.getHeatmap = function(req,res){
 	if(isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:UserIdentification,
-				id: req.params.id
-			}
-		}).success(function(place){
-			if(place) {		
-				var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by lat, lng';
-	
-				db.sequelize
-				.query(query).success(function(response) {
-					var aux = {};
-					aux.place = place;
-					aux.heatmapData = response;
-					res.send(aux);
-				})
-				.error(function(err){
-					res.status(500).send({ error: err });
-				});
+		var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by lat, lng';
 
-			} else
-				res.status(200).send('Sorry, we cannot find that!');
+		db.sequelize
+		.query(query).success(function(response) {
+			res.send(response);
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
-	
 	} else
 		res.status(200).send('Sorry, we cannot find that!');
 };

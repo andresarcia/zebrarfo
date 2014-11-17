@@ -5,12 +5,18 @@ var users = require('./users');
 var places = require('./places');
 var upload = require('./upload');
 
+/*-------------------------------------------------------------------*/
 router.route('/users')
 	.post(users.create);
 
+/*-------------------------------------------------------------------*/
 router.route('/places')
 	.get(places.list);
 
+router.route('/places/upload')
+	.post(upload.createPlace);
+
+/*-------------------------------------------------------------------*/
 router.route('/places/:id')
 	.get(places.getPlace);
 
@@ -32,9 +38,7 @@ router.route('/places/:id/occupation')
 router.route('/places/:id/heatmap')
 	.get(places.getHeatmap);
 
-router.route('/places/upload')
-	.post(upload.createPlace);
-
+/*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {
  	res.send({
   		message: 'Wellcome to API',
