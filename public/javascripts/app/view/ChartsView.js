@@ -21,12 +21,17 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
+		if(!window.appRouter.currentData.innerData.charts)
+			window.appRouter.currentData.innerData.charts = {};
+
 		Backbone.pubSub.on('changeChart', function(index){
 			self.changeChart(null,index);
 		});
 
 		this.render();
-		if(options.type !== undefined)
+		if(window.appRouter.currentData.innerData.charts.tab)
+			this.changeChart(null,window.appRouter.currentData.innerData.charts.tab);
+		else if(options.type !== undefined)
 			this.changeChart(null,options.type);
 		else
 			this.changeChart(null,0);
@@ -39,6 +44,8 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			index = $('a[data-toggle="tab"]').index(evt.currentTarget);
 		else 
 			$('#charts-tabs li:eq('+index+') a').tab('show');
+
+		window.appRouter.currentData.innerData.charts.tab = index;
 
 		var isEmpty;
 		switch (index) {
@@ -64,49 +71,75 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderOccupation: function(){
-		var self = this;
-		this.waitingView.render();
+		if(window.appRouter.currentData.innerData.charts.occupation) {
+			this.currentChart = new com.spantons.view.OccupationView({
+				waitingView: this.waitingView,
+				errorView : this.errorView,
+				place: this.data,
+				data: window.appRouter.currentData.innerData.charts.occupation
+			});
+			this.$el.find('#occupation-tab').html(this.currentChart.render().el);
+			this.currentChart.renderComponents();
+			
+		} else {
+			var self = this;
+			this.waitingView.render();
 
-		this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
-		this.currentData.fetch({
-			success: function(e){                      
-				self.currentChart = new com.spantons.view.OccupationView({
-					waitingView: self.waitingView,
-					errorView : self.errorView,
-					place: self.data,
-					data: self.currentData
-				});
-				self.$el.find('#occupation-tab').html(self.currentChart.render().el);
-				self.currentChart.renderComponents();
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
+			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
+			this.currentData.fetch({
+				success: function(e){                      
+					self.currentChart = new com.spantons.view.OccupationView({
+						waitingView: self.waitingView,
+						errorView : self.errorView,
+						place: self.data,
+						data: self.currentData
+					});
+					self.$el.find('#occupation-tab').html(self.currentChart.render().el);
+					self.currentChart.renderComponents();
+					window.appRouter.currentData.innerData.charts.occupation = self.currentData;
+			    },
+			    error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
+			    }
+			});
+		}
 	},
 
 	renderHeatmap: function(){
-		var self = this;
-		this.waitingView.render();
-		
-		this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
-		this.currentData.fetch({
-			success: function(e){       
-				self.currentChart = new com.spantons.view.HeatmapView({
-					waitingView: self.waitingView,
-					errorView : self.errorView,
-					place: self.data,
-					data: self.currentData
-				});               
-				self.$el.find('#heatmap-tab').html(self.currentChart.render().el);
-				self.currentChart.renderComponents();
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
+		if(window.appRouter.currentData.innerData.charts.heatmap) {
+			this.currentChart = new com.spantons.view.HeatmapView({
+				waitingView: this.waitingView,
+				errorView : this.errorView,
+				place: this.data,
+				data: window.appRouter.currentData.innerData.charts.heatmap
+			});
+			this.$el.find('#heatmap-tab').html(this.currentChart.render().el);
+			this.currentChart.renderComponents();
+
+		} else {
+			var self = this;
+			this.waitingView.render();
+			
+			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
+			this.currentData.fetch({
+				success: function(e){       
+					self.currentChart = new com.spantons.view.HeatmapView({
+						waitingView: self.waitingView,
+						errorView : self.errorView,
+						place: self.data,
+						data: self.currentData
+					});               
+					self.$el.find('#heatmap-tab').html(self.currentChart.render().el);
+					self.currentChart.renderComponents();
+					window.appRouter.currentData.innerData.charts.heatmap = self.currentData;
+			    },
+			    error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
+			    }
+			});
+		}
 	},
 
 	render: function(){

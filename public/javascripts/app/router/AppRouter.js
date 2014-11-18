@@ -16,7 +16,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	currentView: null,
 	currentData: {
 		data: null,
-		id: null
+		id: null,
+		innerData: {},
 	},
 
 	initialize: function(options){
@@ -50,6 +51,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			var self = this;
 			this.helperViews.waitingView.render();
 
+			this.currentData.innerData = {};
 			this.currentData.id = 'places';
 			this.currentData.data = new com.spantons.collection.Places();
 			this.currentData.data.fetch({
@@ -107,6 +109,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			var self = this;
 			this.helperViews.waitingView.render();
 
+			this.currentData.innerData = {};
 			this.currentData.id = 'singlePlace';
 			this.currentData.data = new com.spantons.model.Place({id:id});
 			this.currentData.data.fetch({

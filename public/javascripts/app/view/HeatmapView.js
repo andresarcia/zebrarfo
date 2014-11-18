@@ -205,9 +205,12 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 position: google.maps.ControlPosition.RIGHT_CENTER
             },
         };
-
+        
         this.heatmap.map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
-        this.renderHeatmap(true,true);
+        google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
+            google.maps.event.trigger(self.heatmap.map, 'resize');
+            self.renderHeatmap(true,true);
+        });
 	},
 
     renderHeatmap: function(updateData,center){
