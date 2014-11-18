@@ -71,6 +71,8 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderOccupation: function(){
+		this.waitingView.render();
+		
 		if(window.appRouter.currentData.innerData.charts.occupation) {
 			this.currentChart = new com.spantons.view.OccupationView({
 				waitingView: this.waitingView,
@@ -83,7 +85,6 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			
 		} else {
 			var self = this;
-			this.waitingView.render();
 
 			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 			this.currentData.fetch({
@@ -94,9 +95,9 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 						place: self.data,
 						data: self.currentData
 					});
+					window.appRouter.currentData.innerData.charts.occupation = self.currentData;
 					self.$el.find('#occupation-tab').html(self.currentChart.render().el);
 					self.currentChart.renderComponents();
-					window.appRouter.currentData.innerData.charts.occupation = self.currentData;
 			    },
 			    error: function(e){  
 			     	self.waitingView.closeView();
@@ -130,9 +131,9 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 						place: self.data,
 						data: self.currentData
 					});               
+					window.appRouter.currentData.innerData.charts.heatmap = self.currentData;
 					self.$el.find('#heatmap-tab').html(self.currentChart.render().el);
 					self.currentChart.renderComponents();
-					window.appRouter.currentData.innerData.charts.heatmap = self.currentData;
 			    },
 			    error: function(e){  
 			     	self.waitingView.closeView();

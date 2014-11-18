@@ -105,8 +105,8 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			}
 		});
 
-		this.waitingView.closeView();
 		this.chart.render(data,this.chartOptions);		
+		this.waitingView.closeView();
 	},
 
 	render: function(){

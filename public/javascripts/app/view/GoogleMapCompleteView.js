@@ -19,6 +19,8 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		else
 			throw 'Any place id';
 
+		this.coordinates = options.data;
+
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -114,10 +116,9 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
     	return this;
 	},
 
-	renderMap: function(data){
+	renderMap: function(){
 		var self = this;
-		this.coordinates = data;
-
+		
 		if(window.appSettings.googleMapApi)
 			self._renderMap();
 		else 
@@ -129,7 +130,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 	_renderMap: function(){
 		var self = this;
 		this.markers = [];
-		this.waitingView.closeView();
     
 		var coordinatesLength = this.coordinates.models[0].attributes.coordinates.length;
 		var middleCoordinate = this.coordinates.models[0].attributes.coordinates[Math.round(coordinatesLength/2)];
@@ -179,6 +179,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
   		});
 
 		map.fitBounds(bounds);
+		this.waitingView.closeView();
 	}
 
 });

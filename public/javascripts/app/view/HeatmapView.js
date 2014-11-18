@@ -193,7 +193,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
 	_renderMap: function(){
         var self = this;
-		this.waitingView.closeView();
 
         var myOptions = {
             zoom: this.heatmap.settings.zoom,
@@ -211,6 +210,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             google.maps.event.trigger(self.heatmap.map, 'resize');
             self.renderHeatmap(true,true);
         });
+
+        this.waitingView.closeView();
 	},
 
     renderHeatmap: function(updateData,center){

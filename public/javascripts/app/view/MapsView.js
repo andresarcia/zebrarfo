@@ -23,6 +23,9 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		else
 			throw 'Any place id';
 
+		if(!window.appRouter.currentData.innerData.maps)
+			window.appRouter.currentData.innerData.maps = {};
+
 		this.render();
 		this.renderCoordinatesMap();
 	},
@@ -43,25 +46,42 @@ com.spantons.view.MapsView = Backbone.View.extend({
 	},
 
 	renderCoordinatesMap: function(){
-		var self = this;
 		this.waitingView.render();
-		this.currentMap = new com.spantons.view.GoogleMapCompleteView({
-			waitingView: self.waitingView,
-			errorView : self.errorView,
-			placeId:this.placeId
-		});
 
-		this.currentData = new com.spantons.collection.Coordinates({idPlace:this.placeId});
-		this.currentData.fetch({
-			success: function(e){                      
-				self.$el.find('#coordinates-tab').html(self.currentMap.render().el);
-				self.currentMap.renderMap(self.currentData);
-		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-		    }
-		});
+		if(window.appRouter.currentData.innerData.maps.coordinates) {
+			this.currentMap = new com.spantons.view.GoogleMapCompleteView({
+				waitingView: this.waitingView,
+				errorView : this.errorView,
+				placeId:this.placeId,
+				data: window.appRouter.currentData.innerData.maps.coordinates
+			});
+
+			this.$el.find('#coordinates-tab').html(this.currentMap.render().el);
+			this.currentMap.renderMap();
+			
+		} else {
+			var self = this;
+
+			this.currentData = new com.spantons.collection.Coordinates({idPlace:this.placeId});
+			this.currentData.fetch({
+				success: function(e){            
+					self.currentMap = new com.spantons.view.GoogleMapCompleteView({
+						waitingView: self.waitingView,
+						errorView : self.errorView,
+						placeId:self.placeId,
+						data: self.currentData
+					});
+
+					window.appRouter.currentData.innerData.maps.coordinates = self.currentData;
+					self.$el.find('#coordinates-tab').html(self.currentMap.render().el);
+					self.currentMap.renderMap();
+			    },
+			    error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
+			    }
+			});
+		}
 	},
 
 	render: function(){
