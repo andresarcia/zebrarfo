@@ -37,7 +37,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 		'places/:id' : 'showSinglePlace',
 		'places/:id/maps' : 'showMapsOfPlace',
-		'places/:id/charts' : 'showChartsOfPlace',
+		'places/:id/charts?type=:type' : 'showChartsOfPlace',
 		'places/:id/upload' : 'showSinglePlaceUpload',
 		
 		'hotspots': 'showHotspots',
@@ -156,14 +156,25 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.renderVerticalNavMenuSinglePlace([0,1],id);
 	},
 
-	showChartsOfPlace: function(id){
+	showChartsOfPlace: function(id,type){
+		if(this.currentView !== null && this.currentView.id == 'placeChart')
+			return;
+
 		this.clearViews();
 		var self = this;
+		var chartType;
+
+		if(type === 'occupation') 
+			chartType = 0;
+		else if(type === 'heatmap') 
+			chartType = 1;
+
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new com.spantons.view.ChartsView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
-				data: self.currentData.data
+				data: self.currentData.data,
+				type: chartType
 			});
 			self.renderVerticalNavMenuSinglePlace([0,2],id);
 		});

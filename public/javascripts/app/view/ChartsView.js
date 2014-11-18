@@ -15,6 +15,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
+		this.id = 'placeChart';
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -25,7 +26,10 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.render();
-		this.renderOccupation();
+		if(options.type !== undefined)
+			this.changeChart(null,options.type);
+		else
+			this.changeChart(null,0);
 	},
 
 	changeChart: function(evt,index){
@@ -37,19 +41,26 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			$('#charts-tabs li:eq('+index+') a').tab('show');
 
 		var isEmpty;
-
 		switch (index) {
     		case 0:
+    			this.changeUrl('occupation');
     			isEmpty = this.$el.find('#occupation-tab').is(':empty');
     			if(isEmpty)
     				self.renderOccupation();
     			break;
     		case 1:
+    			this.changeUrl('heatmap');
     			isEmpty = this.$el.find('#heatmap-tab').is(':empty');
     			if(isEmpty)
     				self.renderHeatmap();
     			break;
     	}
+	},
+
+	changeUrl: function(url){
+		var type = com.spantons.util.GetURLParameter('type');
+		if(type != url)
+			window.location.hash = '#places/'+this.data.id+'/charts?type='+url;
 	},
 
 	renderOccupation: function(){
