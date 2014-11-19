@@ -114,7 +114,6 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			this.currentData.data = new com.spantons.model.Place({id:id});
 			this.currentData.data.fetch({
 				success: function(e){  
-					self.helperViews.waitingView.closeView();
 					callback();
 			    },
 			    error: function(e){  
