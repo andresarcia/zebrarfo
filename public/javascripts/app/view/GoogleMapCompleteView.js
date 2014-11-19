@@ -7,8 +7,10 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 	template: Handlebars.compile($("#coordinates-map-template").html()),
 	lastIndex: null,
 	lastIdCoordinate: null,
+	currentPowerFrequencies: {},
 	events: {
 		'click .delete-link-coordinate': 'deleteCoordinate',
+		'change #allocation-channel':'changeAllocationChannel',
 	},
 
 	initialize: function(options){
@@ -28,6 +30,11 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		self.icon1 = "../../../images/marker_red.png";
 		self.icon2 = "../../../images/marker_green.png";
 		self.mapZoom = 15;	
+
+		this.powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
+			selector: '#complete-map-info',
+			tooltipTop: 260
+		});
 	},
 
 	markerClick: function(index,idCoord){
@@ -39,17 +46,15 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		var template = Handlebars.compile($("#complete-map-coordinate-template").html());
 		var html = template(this.coordinates.models[0].attributes.coordinates[index]);
 		this.$el.find('#select-complete-map-info').html(html);
+		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 
-		var powerFrequenciesChart = new com.spantons.model.PowerFrequencies({
+		this.currentPowerFrequencies.data = new com.spantons.model.PowerFrequencies({
 			idPlace: self.placeId,
     		idCoord: idCoord
 		});
 
-		var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
-			selector: '#complete-map-info',
-			tooltipTop: 260
-		});
-		var options = {
+		this.currentPowerFrequencies.options = {
 			yAxis: {
 	            plotLines:[{
 			        value: self.coordinates.models[0].attributes.coordinates[index].powerAvg,
@@ -60,12 +65,9 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 			    }]
 			}
 		};
-		powerFrequenciesChart.fetch({
+		this.currentPowerFrequencies.data.fetch({
 			success: function(e){                      
-		       	powerFrequenciesView.render(powerFrequenciesChart.attributes,options);
-		       	$('html, body').stop().animate({  
-			        scrollTop: $('.chart_power_frequency').offset().top
-			    }, 1000);
+		       	self.renderPowerFrequencies();
 		    },
 		    error: function(e){  
 		     	self.waitingView.closeView();
@@ -85,6 +87,11 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
         	this.lastIndex = id;
       	}
 	},
+
+	changeAllocationChannel: function(){
+		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.renderPowerFrequencies();
+    },
 
 	deleteCoordinate: function(){
 		var self = this;
@@ -114,6 +121,13 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
     	this.$el.html(html);	
 
     	return this;
+	},
+
+	renderPowerFrequencies: function(){
+		this.powerFrequenciesView.render(this.currentPowerFrequencies.data.attributes,this.currentPowerFrequencies.options);
+       	$('html, body').stop().animate({  
+	        scrollTop: $('.chart_power_frequency').offset().top
+	    }, 1000);
 	},
 
 	renderMap: function(){

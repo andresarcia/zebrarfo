@@ -11,6 +11,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
+		'change #allocation-channel':'changeAllocationChannel',
 		'click .delete-link-place': 'deletePlace',
 		'click .delete-link-coordinate': 'deleteCoordinate',
 		'click .dropdown-trigger' : 'toggleDropdown',
@@ -99,6 +100,10 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		});
 	},
 
+	changeAllocationChannel: function(){
+		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.renderCoordinates();
+    },
 
 	seeOnMap: function(evt){
 		if(window.appSettings.googleMapApi){
@@ -206,6 +211,9 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	render: function(){
 		var html = this.template(this.data);
     	this.$el.html(html);	
+
+    	this.$el.find("#allocation-channel").select2();
+    	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
     
 		return this;
 	},

@@ -8,6 +8,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 
 	events: {
 		'change .slider':'updateChart',
+		'change #allocation-channel':'changeAllocationChannel',
 		'click .build-heatmap-btn-container':'changeToHeatmap'
 	},
 
@@ -44,6 +45,11 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		Backbone.pubSub.trigger('changeChart',1);
 	},
 
+	changeAllocationChannel: function(){
+		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.renderChart();
+    },
+
 	updateChart: function(){
 		this.threshold = this.slider.val();
 		this.renderChart();
@@ -71,9 +77,9 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 
 		this.$el.find('.slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip slider_tooltip_up"></div>',function(value){
+		.to('-inline-<div class="slider_tooltip" style="top:-26px;left:-20px"></div>',function(value){
 			$(this).html(
-	        	'<strong>Value: </strong>' +'<span>' + value + ' dBm</span>'
+	        	'<strong>' + value + ' dBm</strong>'
 	    	);
 		});
 	},
@@ -112,6 +118,9 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	render: function(){
 		var html = this.template();
     	this.$el.html(html);	
+
+    	this.$el.find("#allocation-channel").select2();
+    	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 
 		return this;
 	},

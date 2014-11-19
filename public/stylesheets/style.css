@@ -265,6 +265,11 @@ hr {
   padding: 13px 95px 0 0;
 }
 
+.occupation-settings {
+  padding-left: 60px;
+  padding-right: 85px;
+}
+
 #map_canvas_heatmap {
   margin-bottom: 35px;
 }

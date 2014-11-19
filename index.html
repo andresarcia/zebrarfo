@@ -252,6 +252,15 @@
 							  		<td>Standard deviation of power</td>
 							  		<td>{{this.attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
 							  	</tr>
+							  	<tr>
+							  		<td>Allocation channel</td>
+							  		<td>
+							  			<select class="form-control" id="allocation-channel">
+											<option value="0">American 6Mhz</option>
+											<option value="1">European 8Mhz</option>
+										</select>
+							  		</td>
+							  	</tr>
 						  	</table>
 						  	<button id="complete-map" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
 								See Map
@@ -405,6 +414,15 @@
 					      		<td>Maximum</td><td>{{powerMax}} <small>dBm</small></td>
 					      	</tr>
 					      	<tr>
+						  		<td>Allocation channel</td>
+						  		<td>
+						  			<select class="form-control" id="allocation-channel">
+										<option value="0">American 6Mhz</option>
+										<option value="1">European 8Mhz</option>
+									</select>
+						  		</td>
+							</tr>
+					      	<tr>
 					      		<td colspan="2">
 					      			<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
 					      		</td>
@@ -431,10 +449,14 @@
 		</script>
 
 		<script id="occupation-template" type="text/x-handlebars-template"> 
-			<br>
 			<div class="row">
-				<div class="col-md-12 slider-container">
-					<h4>Threshold</h4>
+				<div class="col-md-12 slider-container occupation-settings">
+					<h5>Allocation channel</h5>
+					<select class="form-control" id="allocation-channel">
+						<option value="0">American 6Mhz</option>
+						<option value="1">European 8Mhz</option>
+					</select>
+					<h5>Threshold</h5>
 					<div class="slider"></div>
 				</div>
 				<div id="chart_canvas_occupation" class="col-md-12">
