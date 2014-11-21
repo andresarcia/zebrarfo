@@ -12,7 +12,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         settings: {
             dataFunction: 'avg',
             opacity: 70,
-            radius: 10,
+            radius: 15,
             zoom: 13,
         },
     },
@@ -108,8 +108,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 decimals: 0
             }),
             range: {
-                'min': 5,
-                'max': 20
+                'min': 10,
+                'max': 25
             }
         });
         this.$el.find('.radius-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
@@ -238,6 +238,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 this.heatmap.map.setCenter(latlng);
             }
 
+            self.heatmap.data = [];
             _.each(data.data, function(item) {
                 self.heatmap.data.push({
                     location: new google.maps.LatLng(item.lat, item.lng), 
