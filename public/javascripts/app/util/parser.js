@@ -113,33 +113,37 @@ com.spantons.util.Parser.prototype = {
 		coordinate.createdDate = String(arrayCoordinate[2]);
 		coordinate.data = arrayFrequencyPower;
 
-		place.coordinates.push(coordinate);
-		place.numberCoordinates ++;
-		place.powerAvg = place.powerAvg + coordinate.powerAvg;	
-		place.avgPowerSD = place.avgPowerSD + coordinate.powerSD;
-		place.placePowerSD_M = place.placePowerSD_M + coordinate.powerAvg;
-		place.placePowerSD_X = place.placePowerSD_X + (coordinate.powerAvg * coordinate.powerAvg);
+		this.saveInPlace(coordinate,frequencyMin,frequencyMax,numberPowerFrequency);
+	},
 
-		if(place.powerMin === null)
-			place.powerMin = coordinate.powerMin;
-		if(place.powerMax === null)
-			place.powerMax = coordinate.powerMax;
-		if (place.powerMin > coordinate.powerMin)
-			place.powerMin = coordinate.powerMin;
-		if (place.powerMax < coordinate.powerMax)
-			place.powerMax = coordinate.powerMax;
+	saveInPlace: function(coordinate,frequencyMin,frequencyMax,numberPowerFrequency){
+		this.place.coordinates.push(coordinate);
+		this.place.numberCoordinates ++;
+		this.place.powerAvg += coordinate.powerAvg;	
+		this.place.avgPowerSD += coordinate.powerSD;
+		this.place.placePowerSD_M += coordinate.powerAvg;
+		this.place.placePowerSD_X += (coordinate.powerAvg * coordinate.powerAvg);
 
-		if(place.frequencyMin === null)
-			place.frequencyMin = frequencyMin;
-		if(place.powerMax === null)
-			place.frequencyMax = frequencyMax;
-		if (place.frequencyMin > frequencyMin)
-			place.frequencyMin = frequencyMin;
-		if (place.frequencyMax < frequencyMax)
-			place.frequencyMax = frequencyMax;
+		if(this.place.powerMin === null)
+			this.place.powerMin = coordinate.powerMin;
+		if(this.place.powerMax === null)
+			this.place.powerMax = coordinate.powerMax;
+		if (this.place.powerMin > coordinate.powerMin)
+			this.place.powerMin = coordinate.powerMin;
+		if (this.place.powerMax < coordinate.powerMax)
+			this.place.powerMax = coordinate.powerMax;
 
-		if(place.numberPowerFrequency === null)
-			place.numberPowerFrequency = numberPowerFrequency;
+		if(this.place.frequencyMin === null)
+			this.place.frequencyMin = frequencyMin;
+		if(this.place.powerMax === null)
+			this.place.frequencyMax = frequencyMax;
+		if (this.place.frequencyMin > frequencyMin)
+			this.place.frequencyMin = frequencyMin;
+		if (this.place.frequencyMax < frequencyMax)
+			this.place.frequencyMax = frequencyMax;
+
+		if(this.place.numberPowerFrequency === null)
+			this.place.numberPowerFrequency = numberPowerFrequency;
 	},
 
 	placeStats: function(){
