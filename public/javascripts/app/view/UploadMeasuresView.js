@@ -54,7 +54,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 		Backbone.pubSub.on('event-server-error', self.enableForm, self);
 		
-		if(!this.data.length){
+		if(window.appRouter.currentData.id == 'singlePlace'){
 			this.options.fillName = true;
 			this.placeName = this.data.attributes.name;
 			this.viewContainers.setNameContainerVal(this.placeName);
