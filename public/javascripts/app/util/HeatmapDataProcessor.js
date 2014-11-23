@@ -67,19 +67,8 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             this.currentData.count += 1;
 
         } else {
-            var count = this.currentData.operation / this.currentData.count;
-            
-            this.currentData.data.push({
-                lat: this.currentData.item.lat, 
-                lng: this.currentData.item.lng, 
-                count: count
-            });
-
-            this.calculateMaxMin(count);
-                        
-            this.currentData.item = item;
-            this.currentData.operation = item.power;
-            this.currentData.count = 1;
+            this.currentData.operation = this.currentData.operation / this.currentData.count;
+            this.saveItem(item);
         }
     },
 
@@ -89,19 +78,8 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                 this.currentData.operation = item.power;
 
         } else {
-            var count = this.currentData.operation;
-            
-            this.currentData.data.push({
-                lat: this.currentData.item.lat, 
-                lng: this.currentData.item.lng, 
-                count: count
-            });
-
-            this.calculateMaxMin(count);
-                        
-            this.currentData.item = item;
-            this.currentData.operation = item.power;
-            this.currentData.count = 1;
+            this.currentData.operation = this.currentData.operation;
+            this.saveItem(item);
         }
     },
 
@@ -111,30 +89,14 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                 this.currentData.operation = item.power;
 
         } else {
-            var count = this.currentData.operation;
-            
-            this.currentData.data.push({
-                lat: this.currentData.item.lat, 
-                lng: this.currentData.item.lng, 
-                count: count
-            });
-
-            this.calculateMaxMin(count);
-                        
-            this.currentData.item = item;
-            this.currentData.operation = item.power;
-            this.currentData.count = 1;
+            this.currentData.operation = this.currentData.operation;
+            this.saveItem(item);
         }
     },
 
     defaultFunction: function(item){
-        this.calculateMaxMin(item.power);
-
-        this.currentData.data.push({
-            lat: item.lat, 
-            lng: item.lng, 
-            count: item.power
-        });
+        this.currentData.operation = item.power;
+        this.saveItem(item);
     },
 
     calculateMaxMin: function(val){
@@ -147,6 +109,20 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             if(this.currentData.max < val)
                 this.currentData.max = val;
         }
+    },
+
+    saveItem: function(item){
+        this.currentData.data.push({
+            lat: this.currentData.item.lat, 
+            lng: this.currentData.item.lng, 
+            count: this.currentData.operation
+        });
+
+        this.calculateMaxMin(this.currentData.operation);
+
+        this.currentData.item = item;
+        this.currentData.operation = item.power;
+        this.currentData.count = 1;
     },
 
     normalize: function(){
