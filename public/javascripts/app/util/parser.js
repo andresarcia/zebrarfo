@@ -28,7 +28,7 @@ com.spantons.util.Parser.prototype = {
 		        self.numFilesParser++;
 		        callbackNumFilesProcessed(self.numFilesParser);
 		        if (self.numFilesParser == self.numFiles) 
-		        	callback(self.formatStatPlace(place));
+		        	callback(self.placeStats());
 		    };
 		    fr.readAsText(file);
 		});
@@ -142,22 +142,24 @@ com.spantons.util.Parser.prototype = {
 			place.numberPowerFrequency = numberPowerFrequency;
 	},
 
-	formatStatPlace: function(place){
-		place.powerAvg = place.powerAvg / place.numberCoordinates;
-		place.powerAvg = Number(place.powerAvg.toFixed(5));
+	placeStats: function(){
+		this.place.powerAvg = this.place.powerAvg / this.place.numberCoordinates;
+		this.place.powerAvg = Number(this.place.powerAvg.toFixed(5));
 		
-		if(place.numberCoordinates === 1)
-			place.sdPowerAvg = 0;
+		if(this.place.numberCoordinates === 1)
+			this.place.sdPowerAvg = 0;
+		
 		else {
-			place.placePowerSD_X = Math.sqrt((place.placePowerSD_X - (place.placePowerSD_M*place.placePowerSD_M)/place.numberCoordinates)/(place.numberCoordinates - 1));
-			place.sdPowerAvg = Number(place.placePowerSD_X.toFixed(5));
+			this.place.placePowerSD_X = Math.sqrt((this.place.placePowerSD_X - (this.place.placePowerSD_M*this.place.placePowerSD_M)/this.place.numberCoordinates)/(this.place.numberCoordinates - 1));
+			this.place.sdPowerAvg = Number(this.place.placePowerSD_X.toFixed(5));
 		}
-		place.avgPowerSD = place.avgPowerSD / place.numberCoordinates;
-		place.avgPowerSD = Number(place.avgPowerSD.toFixed(5));
+		
+		this.place.avgPowerSD = this.place.avgPowerSD / this.place.numberCoordinates;
+		this.place.avgPowerSD = Number(this.place.avgPowerSD.toFixed(5));
 
-		delete place.placePowerSD_X;
-		delete place.placePowerSD_M;
+		delete this.place.placePowerSD_X;
+		delete this.place.placePowerSD_M;
 
-		return place;
+		return this.place;
 	}
 };
