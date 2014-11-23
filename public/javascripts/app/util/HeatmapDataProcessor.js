@@ -52,12 +52,15 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                         break;
 
                     default:
-                        self.defaultFunction(item);
+                        self.averageFunction(item);
                 }
             }
         });
+
+        if(this.currentData.data.length === 0)
+            this.saveItem(this.currentData.item);
+
         this.normalize();
-        console.log(this.currentData);
         return this.currentData;
     },
 
@@ -92,11 +95,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             this.currentData.operation = this.currentData.operation;
             this.saveItem(item);
         }
-    },
-
-    defaultFunction: function(item){
-        this.currentData.operation = item.power;
-        this.saveItem(item);
     },
 
     calculateMaxMin: function(val){
@@ -139,7 +137,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                 if(self.currentData.normalizeMin > item.count)
                     self.currentData.normalizeMin = item.count;
             }
-
         });
     }
     
