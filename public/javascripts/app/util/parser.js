@@ -53,22 +53,21 @@ com.spantons.util.Parser.prototype = {
 
 	parser: function(place,data){
 		var self = this;
-		arrayCoordinate = [];
-		arrayFrequencyPower = [];
-		coordinate = {};
-		numberPowerFrequency = 0;
-		frequencyMin = null;
-		frequencyMax = null;
-		powerMin = null;
-		powerMax = null;
-		powerAvg = null;
-		powerSD_X = null;
-		powerSD_M = null;
+		var arrayCoordinate = [];
+		var arrayFrequencyPower = [];
+		var numberPowerFrequency = 0;
+		var frequencyMin = null;
+		var frequencyMax = null;
+		var powerMin = null;
+		var powerMax = null;
+		var powerAvg = null;
+		var powerSD_X = null;
+		var powerSD_M = null;
 
-		var lines = data.split("\n");
+		var lines = data.split('\n');
 		        
         _.each(lines, function(line){
-        	lineSplit = line.split("\t");	
+        	lineSplit = line.split('\t');	
 			if(lineSplit.length == 2){
 				var newFrequency = Number(lineSplit[0]) * self.unitFactor;
 				var newPower = Number(lineSplit[1]);
@@ -88,17 +87,18 @@ com.spantons.util.Parser.prototype = {
 					if (powerMin > newPower)
 						powerMin = newPower;
 				}
-				powerAvg = powerAvg + newPower;
-				powerSD_M = powerSD_M + newPower;
-				powerSD_X = powerSD_X + (newPower * newPower);
-				numberPowerFrequency ++;
+
+				powerAvg += newPower;
+				powerSD_M += newPower;
+				powerSD_X += (newPower * newPower);
+				numberPowerFrequency += 1;
 				arrayFrequencyPower.push({ frequency: newFrequency, power:newPower });
 			}
 			else if(lineSplit.length == 1)
 				arrayCoordinate.push(lineSplit);
         });
 
-        coordinate = {};
+        var coordinate = {};
         coordinate.latitude = Number(arrayCoordinate[0]);
 		coordinate.longitude = Number(arrayCoordinate[1]);
 		if(isNaN(coordinate.latitude) || isNaN(coordinate.longitude))
