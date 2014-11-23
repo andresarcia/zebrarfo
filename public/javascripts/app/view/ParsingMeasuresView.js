@@ -70,7 +70,6 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			}, function(){
 
 			});
-
 		}
 	},
 
