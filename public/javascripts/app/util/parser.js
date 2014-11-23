@@ -7,6 +7,7 @@ com.spantons.util.Parser = function(){};
 com.spantons.util.Parser.prototype = {
 	numFilesParser: 0,
 	numFiles: 0,
+	unitFactor: 1,
 	place: null,
 
 	initialize: function(files,place,unit,callbackNumFilesProcessed,callback){
@@ -14,29 +15,16 @@ com.spantons.util.Parser.prototype = {
 
 		if(place)
 			this.place = place;
+		else
+			throw 'Any Place';
 
 		this.numFiles = files.length;
-
-		var unitFactor = 1;
-		switch (unit) {
-		    case 'Hz':
-		        unitFactor = 1/1000;
-		        break;
-		    case 'kHz':
-		        unitFactor = 1;
-		        break;
-		    case 'MHz':
-		        unitFactor = 1000;
-		        break;
-		    case 'GHz':
-		        unitFactor = 1000000;
-		        break;
-		}
+		this.chooseUnitFactor(unit);
 
 		_.each(files, function(file){
    			var fr = new FileReader();
 		    fr.onload = function(e) { 
-		    	self.parser(place,fr.result,unitFactor);
+		    	self.parser(place,fr.result);
 		        self.numFilesParser++;
 		        callbackNumFilesProcessed(self.numFilesParser);
 		        if (self.numFilesParser == self.numFiles) 
@@ -46,7 +34,25 @@ com.spantons.util.Parser.prototype = {
 		});
 	},
 
-	parser: function(place,data,unitFactor){
+	chooseUnitFactor: function(unit){
+		switch (unit) {
+		    case 'Hz':
+		        this.unitFactor = 1/1000;
+		        break;
+		    case 'kHz':
+		        this.unitFactor = 1;
+		        break;
+		    case 'MHz':
+		        this.unitFactor = 1000;
+		        break;
+		    case 'GHz':
+		        this.unitFactor = 1000000;
+		        break;
+		}
+	},
+
+	parser: function(place,data){
+		var self = this;
 		arrayCoordinate = [];
 		arrayFrequencyPower = [];
 		coordinate = {};
@@ -64,7 +70,7 @@ com.spantons.util.Parser.prototype = {
         _.each(lines, function(line){
         	lineSplit = line.split("\t");	
 			if(lineSplit.length == 2){
-				var newFrequency = Number(lineSplit[0]) * Number(unitFactor);
+				var newFrequency = Number(lineSplit[0]) * self.unitFactor;
 				var newPower = Number(lineSplit[1]);
 
 				if(powerMin === null && frequencyMin === null){
