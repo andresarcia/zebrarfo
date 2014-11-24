@@ -15,18 +15,12 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	parentComponent: null,
 
 	status: {
-		initialize: false,
-		parsing: false,
-		uploading: false,
 		waitingForServer: false,
 		done: false
 	},
 
 	errorView: null,
 	stop: false,
-
-	timeBase: 3,
-	timeToWait: 0,
 
 	events: {
 		'click #ws-modal-parsing-measures-button' : 'cancelUpload'
@@ -58,9 +52,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.parentComponent = $('.list-group');
 		this.progressBar = $('.progress-bar');
 
-		this.setNumberFilesParser(0);
-		this.status.initialize = true;
-		this.status.parsing = true;
+		this.restartProgressBar();
 
 		if(this.html5){
 			var parser = new com.spantons.util.Parser();
@@ -68,7 +60,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
 			}, function(){
-
+				self.showMeasuresData();
 			});
 		}
 	},
@@ -80,43 +72,35 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		return this;
 	},
 
-	updateProgressBar: function(val){
+	updateProgressBar: function(){
 		if(!this.stop){
-			var total;
-			var percentLoaded;
+			this.progressBar.css('width',this.percentLoaded + '%');
+			this.progressBar.text(this.percentLoaded + '%');
 
-			if(!this.status.uploading)
-				percentLoaded = Math.round((val / this.files.length) * 40);
-			else 
-				percentLoaded = Math.round(40 + val);
-				
-			this.progressBar.css('width',percentLoaded + '%');
-			this.progressBar.text(percentLoaded + '%');
-
-			if(percentLoaded >= 100)
+			if(this.percentLoaded >= 100){
+				this.progressBar.css('width','100%');
+				this.progressBar.text('100%');
 				this.progressBar.addClass('progress-bar-success');
+			}
 		}
 	},	
 
+	restartProgressBar: function(){
+		this.progressBar.removeClass('progress-bar-success');
+		this.progressBar.css('width','0%');
+		this.progressBar.text('0%');
+	},
+
 	setNumberFilesParser: function(numFilesProcessed){
 		if(!this.stop){
-			var self = this;
-
-			this.timeToWait += this.timeBase;
-
-			setTimeout(function() {
-				self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
-				self.updateProgressBar(numFilesProcessed);
-
-				if(self.files.length == numFilesProcessed)
-					self.showMeasuresData();
-			}, this.timeToWait);
+			this.parentComponent.children().first().children().text(numFilesProcessed+' / '+this.files.length);	
+			this.percentLoaded = (numFilesProcessed / this.files.length) * 40;
+			this.updateProgressBar();
 		}
 	},
 
 	showMeasuresData: function(){
 		if(!this.stop){
-			var self = this;
 
 			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
 			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.numberCoordinates);
@@ -131,9 +115,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 			$('#ws-modal-parsing-measures-data-table').fadeIn(800);
 			
-			window.setTimeout(function(){
-				self.uploadDataToServer();
-			}, 500);
+			this.uploadDataToServer();
 		}
 	},
 
@@ -141,14 +123,13 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		var self = this;
 		this.parentComponent.children().eq(2).addClass('active');
 		this.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).show();
-		this.status.uploading = true;
 
 		this.model.on('progress', function(evt) { 
 			if (evt.lengthComputable) {
-		    	var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
-		    	self.updateProgressBar(percentLoaded * 40 / 100);
+		    	self.percentLoaded += Math.round((evt.loaded / evt.total) * 40);
+		    	self.updateProgressBar();
 
-		    	if(percentLoaded >= 40){
+		    	if(self.percentLoaded >= 80){
 		    		$('.modal-footer').children().prop("disabled",true);
 		    		self.status.waitingForServer = true;
 		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
@@ -163,7 +144,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
        		success: function(model, response, options){
        			self.status.done = true;
        			$('.modal-footer').children().prop("disabled",false);
-       			self.updateProgressBar(60);
+       			self.percentLoaded = 100;
+       			self.updateProgressBar();
             	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
             	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
             	self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
