@@ -19,6 +19,7 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 		this.nameContainer= this.el.find($('#upload-measures-name'));
 		this.filesContainer= this.el.find($('#upload-measures-file'));
 		this.unitContainer = this.el.find($('#upload-measures-unit'));
+		this.gpsFunctionContainer = this.el.find($('#upload-gps-position-function'));
 		this.dragFilesContainer = this.el.find($('.ws-dragandrophandler'));
 		this.filesInfoContainer = this.el.find($('#upload-measures-files-info'));
 		this.buttonSendDataContainer = this.el.find($('#upload-measures-button'));
@@ -69,7 +70,6 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	},
 
 	/* ------------------------------------------------------------------------- */
-	
 	getFilesContainerVal: function(){
 		return this.filesContainer.val();
 	},
@@ -95,7 +95,6 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	},
 
 	/* ------------------------------------------------------------------------- */
-
 	setGoodUnitContainer: function(){
 		var containerParent = this.unitContainer.parent();
 		containerParent.addClass('has-success');
@@ -117,7 +116,20 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	},
 
 	/* ------------------------------------------------------------------------- */
+	setGoodGpsFunctionContainer: function(){
+		var containerParent = this.gpsFunctionContainer.parent();
+		containerParent.addClass('has-success');
+	},
 
+	disableGpsFunctionContainer: function(){
+		this.gpsFunctionContainer.prop("disabled",true);
+	},
+
+	enableGpsFunctionContainer: function(){
+		this.gpsFunctionContainer.prop("disabled",false);
+	},
+
+	/* ------------------------------------------------------------------------- */
 	setDragFilesContainerOver: function(){
 		this.dragFilesContainer.css('border', '2px solid #0B85A1');
 	},
@@ -132,7 +144,6 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	},
 
 	/* ------------------------------------------------------------------------- */
-
 	renderFilesInfoContainer: function(numFiles,sizeFiles){
 		var containers = this.filesInfoContainer.find('span');
 
@@ -151,7 +162,6 @@ com.spantons.model.UploadMeasuresContainers = Backbone.Model.extend({
 	},
 
 	/* ------------------------------------------------------------------------- */
-	
 	setDeleteFilesContainerDefault: function(){
 		this.filesContainer.filestyle('clear');
 		this.filesContainer.filestyle('primary');

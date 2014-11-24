@@ -534,12 +534,24 @@
 				</div>
 				
 				<div class="form-group has-feedback">
+					<label for="upload-measures-unit">Please select the unit for frequency</label>
 					<select class="form-control" id="upload-measures-unit">
 						<option></option>
 						<option value="Hz">Hertz - Hz</option>
 						<option value="kHz">Kilohertz - kHz</option>
 						<option value="MHz">Megahertz - MHz</option>
 						<option value="GHz">Gigahertz - GHz</option>
+					</select>
+				</div>
+
+				<div class="form-group has-feedback">
+					<label for="upload-gps-position-function">Please select the function for calculating representative samples of a common GPS position</label>
+					<select class="form-control" id="upload-gps-position-function">
+						<option value="avg">Average</option>
+						<option value="max">Maximum</option>
+						<option value="min">Minimum</option>
+						<option value="first">First</option>
+						<option value="last">Last</option>
 					</select>
 				</div>
 		

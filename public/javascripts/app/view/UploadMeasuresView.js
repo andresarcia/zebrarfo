@@ -24,14 +24,16 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		sizeFiles: 0,
 		numFiles: 0,
 		numFilesParser: 0,
-		unit: null
+		unit: null,
+		gpsFunction: 'avg'
 	},
 
 	events : {
 		'blur #upload-measures-name' : 'checkName',
 		'click .item-zone-name' : 'pickName',
 		'change #upload-measures-file' : 'checkFiles',
-		'change #upload-measures-unit' : 'checkUnit',
+		'change #upload-measures-unit' : 'changeUnit',
+		'change #upload-gps-position-function' : 'changeGpsFunction',
 		'click #upload-measures-button' : 'uploadData',
 		'click #upload-measures-button-delete' : 'delateFiles',
 	},
@@ -62,6 +64,8 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			this.viewContainers.disableNameContainer();
 		}
 
+		this.viewContainers.setGoodGpsFunctionContainer();
+
 		if (window.File && window.FileReader && window.FileList && window.Blob)
             this.options.supportHtml5 = true;
 		else 
@@ -74,6 +78,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
     	this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
+		this.$el.find("#upload-gps-position-function").select2();
 
 		return this;
 	},
@@ -98,9 +103,11 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	checkFiles: function(evt){
-		if(this.options.supportHtml5)
+		if(this.options.supportHtml5){
+			this.filesInfo.files = null;
 			this.filesInfo.files = evt.target.files;
-			
+		}
+		
         if(this.viewContainers.getFilesContainerVal() !== ''){
 			this.options.fillFiles = true;
 			this.viewContainers.setGoodFilesContainer();
@@ -112,9 +119,13 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
         this.fillFilesInfo();
 	},
 
-	checkUnit: function(evt){
+	changeUnit: function(evt){
 		this.filesInfo.unit = evt.val;
 		this.viewContainers.setGoodUnitContainer();
+	},
+
+	changeGpsFunction: function(evt){
+		this.filesInfo.gpsFunction = evt.val;
 	},
 
 	dragEnterEvent: function(evt){
@@ -137,6 +148,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 	dropEvent: function(evt){
 		evt.stopPropagation();
     	evt.preventDefault();
+    	this.filesInfo.files = null;
     	this.filesInfo.files = evt.originalEvent.dataTransfer.files;
     	this.options.fillFiles = true;
     	this.viewContainers.setDragFilesContainerDrop();
@@ -179,6 +191,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.viewContainers.enableNameContainer();
 		this.viewContainers.enableFilesContainer();
 		this.viewContainers.enableUnitContainer();
+		this.viewContainers.enableGpsFunctionContainer();
 		this.viewContainers.enableButtonDeleteContainer();
 		this.viewContainers.enableButtonSendDataContainer();
 	},
@@ -187,6 +200,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		this.viewContainers.disableNameContainer();
 		this.viewContainers.disableFilesContainer();
 		this.viewContainers.disableUnitContainer();
+		this.viewContainers.disableGpsFunctionContainer();
 		this.viewContainers.disableButtonDeleteContainer();
 		this.viewContainers.disableButtonSendDataContainer();
 	},
@@ -223,6 +237,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,
 				unit: this.filesInfo.unit,
+				gpsFunction: this.filesInfo.gpsFunction,
 				errorView:this.errorView
 			});
 		}
