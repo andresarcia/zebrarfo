@@ -32,8 +32,10 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         
         this.place = options.place.attributes;
 
-        this.from = this.place.frequencyMin + 100;
-        this.to = this.place.frequencyMax - 100;
+        var tail = Math.round((this.place.frequencyMax - this.place.frequencyMin) * 0.10);
+
+        this.from = this.place.frequencyMin + tail;
+        this.to = this.place.frequencyMax - tail;
 
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
         this.heatmapDataProcessor.require(options.data.attributes);
@@ -231,10 +233,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
             if(center){
                 var latlng = new google.maps.LatLng(
-                    data.data[Math.round(data.data.length/2)].lat, 
-                    data.data[Math.round(data.data.length/2)].lng
+                    data.data[0].lat, 
+                    data.data[0].lng
                 );
-                
                 this.heatmap.map.setCenter(latlng);
             }
 
