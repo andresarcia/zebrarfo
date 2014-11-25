@@ -1,3 +1,4 @@
+var _ = require("underscore");
 var async = require('async');
 var parserTxt = require('./utils/parser');
 var db = require('../models');
@@ -10,18 +11,241 @@ exports.createPlace = function(req, res){
 	
 	else {
 		if(req.body.json){
-			saveInDB(req.body, function(err,place){
-				if(err) {
-					console.error(err);
-					res.status(500).send({ error: err });
-				}
-				res.send(place);
+			/*-------------------------*/
+			console.log('*PARSING*');
+			/*-------------------------*/
+			reduceCommonGps(req.body, function(newPlace){
+				/*-------------------------*/
+				console.log('*SAVING*');
+				/*-------------------------*/
+				saveInDB(newPlace, function(err,place){
+					if(err) {
+						console.error(err);
+						res.status(500).send({ error: err });
+					}
+					res.send(place);
+				});
 			});
-		}
-		else	
+		
+		} else	
 			parserFiles(req.body);
 	}
 };
+
+
+/*--------------------------------------------------------------------------------------------------------------*/
+function reduceCommonGps(place,callback){
+	var newPlace = {};
+	newPlace.name = place.name;
+	newPlace.coordinates = [];
+	newPlace.numberCoordinates = 0;
+	newPlace.powerMin = null;
+	newPlace.powerMax = null;
+	newPlace.powerAvg = null;
+	newPlace.sdPowerAvg = null;
+	newPlace.placePowerSD_X = null;
+	newPlace.placePowerSD_M = null;
+	newPlace.avgPowerSD = null;
+	newPlace.numberPowerFrequency = null;
+    newPlace.frequencyMin = null;
+    newPlace.frequencyMax = null;
+
+	var samplesObj = _.groupBy(place.coordinates, function(sample){
+		return sample.latitude + sample.longitude;
+	});
+
+	/*-------------------------*/
+	console.log('groupBy lat and lng READY');
+	console.log('# samples: ' + _.keys(samplesObj).length);
+	console.log('');
+	var numberSamples = 1;
+	/*-------------------------*/
+	
+	_.each(_.keys(samplesObj), function(key){
+		/*-------------------------*/
+		console.log('#' + numberSamples);
+		/*-------------------------*/
+
+		var samplesToReduce = samplesObj[key];
+		var union = [];
+	
+		_.each(samplesToReduce, function(item){
+			union = union.concat(item.data);
+		});
+
+		/*-------------------------*/
+		console.log('#' + numberSamples + ' - Union READY');
+		/*-------------------------*/
+
+		var groupByFrequencies = _.groupBy(union, function(item){
+			return item.frequency;
+		});
+
+		/*-------------------------*/
+		console.log('#' + numberSamples + ' - groupBy frequencies READY');
+		/*-------------------------*/
+		
+		var data = [];
+		var frequencies = _.keys(groupByFrequencies);
+		_.each(frequencies, function(key){
+			var operation;
+			switch (place.gpsFunction) {
+			    case 'avg':
+			        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+						return memo + item.power; 
+					}, 0);
+					operation /= groupByFrequencies[key].length;
+			        break;
+
+			    case 'max':
+			        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+			        	if(memo < item.power)
+							return item.power;
+						else
+							return memo;
+					}, groupByFrequencies[key][0].power);
+			        break;
+
+			    case 'min':
+			        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+			        	if(memo > item.power)
+							return item.power;
+						else
+							return memo;
+					}, groupByFrequencies[key][0].power);
+			        break;
+
+			    case 'first':
+			        operation = groupByFrequencies[key][0].power;
+			        break;
+
+			    case 'last':
+			        operation = groupByFrequencies[key][groupByFrequencies[key].length - 1].power;
+			        break;
+			}
+			data.push({ frequency: Number(key), power:operation });	
+		});
+
+		var coord = takeCoordStats({
+			latitude: samplesObj[key][0].latitude,
+			longitude: samplesObj[key][0].longitude,
+			data: data,
+			createdDate: samplesObj[key][0].createdDate
+		});
+
+		saveNewPlace(coord, newPlace);
+
+		/*-------------------------*/
+		numberSamples += 1;
+		/*-------------------------*/
+	});
+
+	takePlaceStats(newPlace);
+	callback(newPlace);
+}
+
+
+function takeCoordStats(coord){
+
+	var coordinate = {};
+	coordiante = _.extend(coordinate, coord);
+
+	var numberPowerFrequency = 0;
+	var frequencyMin = null;
+	var frequencyMax = null;
+	var powerMin = null;
+	var powerMax = null;
+	var powerAvg = null;
+	var powerSD_X = null;
+	var powerSD_M = null;
+
+	_.each(coord.data,function(item){
+		if(powerMin === null && frequencyMin === null){
+			powerMin = powerMax = item.power;
+			frequencyMin = frequencyMax = item.frequency;
+		
+		} else {
+			if (frequencyMax < item.frequency)
+				frequencyMax = item.frequency;
+			if (frequencyMin > item.frequency)
+				frequencyMin = item.frequency;
+
+			if (powerMax < item.power)
+				powerMax = item.power;
+			if (powerMin > item.power)
+				powerMin = item.power;
+		}
+
+		powerAvg += item.power;
+		powerSD_M += item.power;
+		powerSD_X += (item.power * item.power);
+		numberPowerFrequency += 1;
+	});
+
+	coordinate.powerMin = Number(powerMin.toFixed(5));
+	coordinate.powerMax = Number(powerMax.toFixed(5));
+	powerAvg = powerAvg / numberPowerFrequency;
+	coordinate.powerAvg = Number(powerAvg.toFixed(5));
+	powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/numberPowerFrequency)/(numberPowerFrequency - 1));
+	coordinate.powerSD = Number(powerSD_X.toFixed(5));
+
+	return {
+		coordinate: coordinate,
+		frequencyMin: frequencyMin,
+		frequencyMax: frequencyMax,
+		numberPowerFrequency: numberPowerFrequency
+	};
+}
+
+
+function saveNewPlace(coord, newPlace){
+	newPlace.coordinates.push(coord.coordinate);
+	newPlace.numberCoordinates += 1;
+	newPlace.powerAvg += coord.coordinate.powerAvg;	
+	newPlace.avgPowerSD += coord.coordinate.powerSD;
+	newPlace.placePowerSD_M += coord.coordinate.powerAvg;
+	newPlace.placePowerSD_X += (coord.coordinate.powerAvg * coord.coordinate.powerAvg);
+
+	if(newPlace.powerMin === null)
+		newPlace.powerMin = coord.coordinate.powerMin;
+	if(newPlace.powerMax === null)
+		newPlace.powerMax = coord.coordinate.powerMax;
+	if (newPlace.powerMin > coord.coordinate.powerMin)
+		newPlace.powerMin = coord.coordinate.powerMin;
+	if (newPlace.powerMax < coord.coordinate.powerMax)
+		newPlace.powerMax = coord.coordinate.powerMax;
+
+	if(newPlace.frequencyMin === null)
+		newPlace.frequencyMin = coord.frequencyMin;
+	if(newPlace.powerMax === null)
+		newPlace.frequencyMax = coord.frequencyMax;
+	if (newPlace.frequencyMin > coord.frequencyMin)
+		newPlace.frequencyMin = coord.frequencyMin;
+	if (newPlace.frequencyMax < coord.frequencyMax)
+		newPlace.frequencyMax = coord.frequencyMax;
+
+	if(newPlace.numberPowerFrequency === null)
+		newPlace.numberPowerFrequency = coord.numberPowerFrequency;
+}
+
+function takePlaceStats(newPlace){
+	newPlace.powerAvg = newPlace.powerAvg / newPlace.numberCoordinates;
+	newPlace.powerAvg = Number(newPlace.powerAvg.toFixed(5));
+	
+	if(newPlace.numberCoordinates === 1)
+		newPlace.sdPowerAvg = 0;
+	
+	else {
+		newPlace.placePowerSD_X = Math.sqrt((newPlace.placePowerSD_X - (newPlace.placePowerSD_M*newPlace.placePowerSD_M)/newPlace.numberCoordinates)/(newPlace.numberCoordinates - 1));
+		newPlace.sdPowerAvg = Number(newPlace.placePowerSD_X.toFixed(5));
+	}
+	
+	newPlace.avgPowerSD = newPlace.avgPowerSD / newPlace.numberCoordinates;
+	newPlace.avgPowerSD = Number(newPlace.avgPowerSD.toFixed(5));
+
+	delete newPlace.placePowerSD_X;
+	delete newPlace.placePowerSD_M;
+}
 
 /*--------------------------------------------------------------------------------------------------------------*/
 var saveInDB = function(place, callback){
