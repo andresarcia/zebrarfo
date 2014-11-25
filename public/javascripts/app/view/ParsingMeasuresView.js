@@ -30,7 +30,11 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		var self = this;
 
 		if (options.placeName && options.supportHtml5){
-			this.model = new com.spantons.model.PlaceUpload({name:options.placeName,json:options.supportHtml5});
+			this.model = new com.spantons.model.PlaceUpload({
+				name:options.placeName,
+				json:options.supportHtml5,
+				coordinates: []
+			});
 			this.html5 = options.supportHtml5;
 		} else 
 			throw 'Place name or html5 support are not defined';
