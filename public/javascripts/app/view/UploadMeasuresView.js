@@ -25,7 +25,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 		numFiles: 0,
 		numFilesParser: 0,
 		unit: null,
-		gpsFunction: 'avg'
+		gpsFunction: null
 	},
 
 	events : {

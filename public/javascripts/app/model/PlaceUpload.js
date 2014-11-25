@@ -11,16 +11,12 @@ com.spantons.model.PlaceUpload = Backbone.Model.extend({
 		numberCoordinates : 0,
 		powerMin : null,
 		powerMax : null,
-		powerAvg : null,
-		sdPowerAvg : null,
-		placePowerSD_X : null,
-		placePowerSD_M : null,
-		avgPowerSD : null,
         frequencyMin: null,
         frequencyMax: null,
         numberPowerFrequency: null,
 		coordinates : [],
-		json: false
+		json: false,
+        gpsFunction: 'avg'
 	},
 
 	sync: function(method, model, options) {
