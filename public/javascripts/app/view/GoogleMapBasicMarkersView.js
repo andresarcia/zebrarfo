@@ -10,11 +10,6 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 	initialize: function(options){
 		if(options.idContainer){
 			this.idContainer = options.idContainer;
-
-			this.icon1 = "../../../images/marker_red.png";
-			this.icon2 = "../../../images/marker_green.png";
-			this.mapZoom = 15;	
-
 			$('#'+this.idContainer).html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		} else
@@ -72,15 +67,13 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		this.markers = [];
 
     	var mapCanvas = document.getElementById(this.idContainer);
-    	var centerCoord = new google.maps.LatLng(data[0].latitude,data[0].longitude);
   		var mapOptions = {
-    		zoom: this.mapZoom,
     		scrollwheel: false,
-    		center: centerCoord,
     		mapTypeId: google.maps.MapTypeId.ROADMAP
   		};
 
   		var map = new google.maps.Map(mapCanvas, mapOptions);  
+  		var bounds = new google.maps.LatLngBounds();
 
   		_.each(data, function(coordinate){
   			var infowindow = new google.maps.InfoWindow({
@@ -91,19 +84,19 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
   			var marker = new google.maps.Marker({
 			    position: latLng,
 		      	map: map,
-		      	icon: self.icon1,
+		      	icon: window.appSettings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
 		      	title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {
-		    	marker.setIcon(self.icon2);
+		    	marker.setIcon(window.appSettings.markers.iconHover);
 		    	infowindow.open(map, marker);
 			});
 
 			google.maps.event.addListener(marker, 'mouseout', function() {
-		    	marker.setIcon(self.icon1);
+		    	marker.setIcon(window.appSettings.markers.iconIdle);
 		    	infowindow.close();
 			});
 
@@ -112,7 +105,10 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 			});
 
 			self.markers.push(marker);
+			bounds.extend(marker.position);
   		});
+
+  		map.fitBounds(bounds);
 	}
 
 });

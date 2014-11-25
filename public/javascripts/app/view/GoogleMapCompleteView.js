@@ -27,9 +27,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
-		self.icon1 = "../../../images/marker_red.png";
-		self.icon2 = "../../../images/marker_green.png";
-
 		this.powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
 			selector: '#complete-map-info',
 			tooltipTop: 260
@@ -160,7 +157,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
   			var marker = new google.maps.Marker({
 			    position: latLng,
 		      	map: map,
-		      	icon: self.icon1,
+		      	icon: window.appSettings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
 		      	index: index,
@@ -168,12 +165,12 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {
-		    	marker.setIcon(self.icon2);
+		    	marker.setIcon(window.appSettings.markers.iconHover);
 		    	infowindow.open(map, marker);
 			});
 
 			google.maps.event.addListener(marker, 'mouseout', function() {
-		    	marker.setIcon(self.icon1);
+		    	marker.setIcon(window.appSettings.markers.iconIdle);
 		    	infowindow.close();
 			});
 
