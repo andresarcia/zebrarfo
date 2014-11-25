@@ -7,6 +7,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 	template: Handlebars.compile($("#heatmap-template").html()),
     heatmap: {
         map: null,
+        bounds: null,
         heatmap: null,
         data: [],
         settings: {
@@ -208,6 +209,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         };
         
         this.heatmap.map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
+        this.heatmap.bounds = new google.maps.LatLngBounds();
         google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
             google.maps.event.trigger(self.heatmap.map, 'resize');
             self.renderHeatmap(true,true);
@@ -231,21 +233,31 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 this.heatmap.settings.dataFunction
             );
 
-            if(center){
-                var latlng = new google.maps.LatLng(
-                    data.data[0].lat, 
-                    data.data[0].lng
-                );
-                this.heatmap.map.setCenter(latlng);
-            }
-
             self.heatmap.data = [];
             _.each(data.data, function(item) {
+                var location = new google.maps.LatLng(item.lat, item.lng);
+
                 self.heatmap.data.push({
-                    location: new google.maps.LatLng(item.lat, item.lng), 
+                    location: location, 
                     weight: item.count 
                 });
+
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: self.heatmap.map,
+                    // icon: self.icon1,
+                    // animation: null,
+                    // id: coordinate.id,
+                    // index: index,
+                    // title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
+                });
+                marker.setVisible(false);
+
+                self.heatmap.bounds.extend(marker.position);
             });
+
+            if(center)
+                this.heatmap.map.fitBounds(this.heatmap.bounds);
         }
 
         this.heatmap.heatmap = new google.maps.visualization.HeatmapLayer({
