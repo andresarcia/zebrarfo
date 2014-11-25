@@ -39,6 +39,9 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		} else 
 			throw 'Place name or html5 support are not defined';
 		
+		if(options.gpsFunction)
+			this.model.set("gpsFunction",options.gpsFunction);
+
 		if (options.files) 
 			this.files = options.files;
 		else 
@@ -55,16 +58,20 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.modal.modal({keyboard: false, backdrop : 'static'});
 		this.parentComponent = $('.list-group');
 		this.progressBar = $('.progress-bar');
+		this.lastPercentLoaded = 0;
+		this.timeBase = 3;
+		this.timeToWait = 0;
 
 		this.restartProgressBar();
 
 		if(this.html5){
 			var parser = new com.spantons.util.Parser();
-			parser.initialize(this.files,this.model.attributes,options.unit,
+
+			parser.initialize(this.files, this.model.attributes, options.unit,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
 			}, function(){
-				self.showMeasuresData();
+				
 			});
 		}
 	},
@@ -78,8 +85,13 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	updateProgressBar: function(){
 		if(!this.stop){
-			this.progressBar.css('width',this.percentLoaded + '%');
-			this.progressBar.text(this.percentLoaded + '%');
+			var percent = Math.round(this.percentLoaded);
+			if(percent == this.lastPercentLoaded)
+				return;
+
+			this.progressBar.text(percent + '%');
+			this.progressBar.css('width', percent + '%');
+			this.lastPercentLoaded = percent;
 
 			if(this.percentLoaded >= 100){
 				this.progressBar.css('width','100%');
@@ -90,6 +102,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 	},	
 
 	restartProgressBar: function(){
+		this.percentLoaded = 0;
+		this.lastPercentLoaded = 0;
 		this.progressBar.removeClass('progress-bar-success');
 		this.progressBar.css('width','0%');
 		this.progressBar.text('0%');
@@ -97,9 +111,18 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 
 	setNumberFilesParser: function(numFilesProcessed){
 		if(!this.stop){
-			this.parentComponent.children().first().children().text(numFilesProcessed+' / '+this.files.length);	
-			this.percentLoaded = (numFilesProcessed / this.files.length) * 40;
-			this.updateProgressBar();
+			var self = this;
+			this.timeToWait += this.timeBase;
+
+			setTimeout(function() {
+				self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
+				self.percentLoaded = (numFilesProcessed / self.files.length) * 40;
+				self.updateProgressBar();
+
+				if(self.files.length == numFilesProcessed)
+					self.showMeasuresData();
+
+			}, this.timeToWait);
 		}
 	},
 
@@ -112,9 +135,6 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencyMin/1000+' - '+this.model.attributes.frequencyMax/1000+'] <small><b>MHz</b></small>');
 			$('#ws-modal-parsing-measures-data-table-powerMin').html(this.model.attributes.powerMin + ' <small><b>dBm</b></small>');
 			$('#ws-modal-parsing-measures-data-table-powerMax').html(this.model.attributes.powerMax + ' <small><b>dBm</b></small>');
-			$('#ws-modal-parsing-measures-data-table-powerAvg').html(this.model.attributes.powerAvg + ' <small><b>dBm</b></small>');
-			$('#ws-modal-parsing-measures-data-table-sdPowerAvg').html(this.model.attributes.sdPowerAvg + ' <small><b>dBm</b></small>');
-			$('#ws-modal-parsing-measures-data-table-avgPowerSD').html(this.model.attributes.avgPowerSD + ' <small><b>dBm</b></small>');
 			
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 			$('#ws-modal-parsing-measures-data-table').fadeIn(800);
@@ -174,6 +194,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			window.appRouter.currentData.id = 'singlePlace';
 			var newModelData = this.model.attributes;
 			delete newModelData.json;
+			delete newModelData.gpsFunction;
 			delete newModelData.coordinates;
 			var newModel = new com.spantons.model.Place(newModelData, {parse: true});
 			
