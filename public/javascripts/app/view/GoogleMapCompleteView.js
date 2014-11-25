@@ -29,7 +29,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 
 		self.icon1 = "../../../images/marker_red.png";
 		self.icon2 = "../../../images/marker_green.png";
-		self.mapZoom = 15;	
 
 		this.powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
 			selector: '#complete-map-info',
@@ -147,7 +146,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
     
     	var mapCanvas = document.getElementById('map_canvas_coordinates');
   		var mapOptions = {
-    		zoom: this.mapZoom,
     		mapTypeId: google.maps.MapTypeId.ROADMAP
   		};
   		var map = new google.maps.Map(mapCanvas, mapOptions);  

@@ -14,7 +14,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             dataFunction: 'avg',
             opacity: 70,
             radius: 15,
-            zoom: 13,
         },
     },
 
@@ -198,7 +197,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         var self = this;
 
         var myOptions = {
-            zoom: this.heatmap.settings.zoom,
             mapTypeId: google.maps.MapTypeId.HYBRID,
             scaleControl: true,
             panControl: false,
