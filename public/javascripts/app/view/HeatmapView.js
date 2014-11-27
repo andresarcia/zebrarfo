@@ -19,9 +19,13 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
     events: {
         'change .slider':'changeFrequencyRange',
+        'change #select-channels':'changeChannelRange',
+        'select2-removing #select-channels':'checkChannelRange',
         'change #select-function-operate':'changeDataFunction',
+        'change input:radio[name=select-change-data-by]':'changeFrequencyBy',
         'change .opacity-slider':'changeOpacity',
         'change .radius-slider':'changeRadius',
+        'change #allocation-channel':'changeAllocationChannel',
     },
 	
 	initialize: function(options){
@@ -34,29 +38,14 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
         var tail = Math.round((this.place.frequencyMax - this.place.frequencyMin) * 0.10);
 
-        this.from = this.place.frequencyMin + tail;
-        this.to = this.place.frequencyMax - tail;
+        this.boundaries = [];
+        this.boundaries.push({
+            from: this.place.frequencyMin + tail,
+            to: this.place.frequencyMax - tail
+        });
 
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
         this.heatmapDataProcessor.require(options.data.attributes);
-
-        // this.occupationChart = new com.spantons.view.PowerFrequenciesView({
-            // selector: '#chart_canvas_occupation',
-            // tooltipTop: 10,
-        // });
-        // this.occupationChartOptions = {
-        //     chart: {
-        //         type: 'areaspline',
-        //     },
-        //     yAxis: {
-        //         min: 0,
-        //         max: 1,
-        //         tickInterval: 0.1,
-        //         title: {
-        //             text: 'Power (dBm)'
-        //         }
-        //     }
-        // };
 	},
 
     render: function(){
@@ -67,7 +56,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
     },
 
     renderComponents: function(){
-        this.renderOccupationChart();
         this.renderSettings();
         this.renderMap();
     },
@@ -121,7 +109,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
 
         this.slider = this.$el.find('.slider').noUiSlider({
-            start: [this.from,this.to],
+            start: [this.boundaries[0].from,this.boundaries[0].to],
             step: 1,
             behaviour: 'tap-drag',
             connect: true,
@@ -147,29 +135,27 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 '<span>' + value + ' MHz</span>'
             );
         });
+
+        this.$el.find("#allocation-channel").select2();
+        this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+
+        this.$el.find('.heatmap-select-channels').hide();
     },
 
-    renderOccupationChart: function(){
-        var data = [];
-        // _.each(this.heatmapDataProcessor.data, function(item){
-        //     if(currentItem.frequency == item.frequency){
-        //         if(item.power >= self.threshold)
-        //             sum += 1;
-        //         numberEachFrequency += 1;
+    renderChannelInput: function(){
+        var channelData = [];
+        _.each(window.appSettings.channels[window.appSettings.currentChannelAllocation], function(channel){
+            channelData.push({
+                id: channel.from + '-' + channel.to,
+                text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
+        });
 
-        //     } else {
-        //         if(sum === 0){
-        //             numberEachFrequency = 1;
-        //             if(item.power >= self.threshold)
-        //                 sum = 1;
-        //         }
-
-        //         data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
-        //         currentItem = item;
-        //         sum = 0;
-        //         numberEachFrequency = 0;
-        //     }
-        // });
+        this.$el.find('#select-channels').select2({
+            placeholder: 'Select channels',
+            multiple: true,
+            data: channelData,
+        });
+        this.$el.find('#select-channels').select2('val', [channelData[0].id]);
     },
 
     changeDataFunction: function(){
@@ -177,9 +163,56 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.renderHeatmap(true);
     },
 
+    changeFrequencyBy: function(){
+        var val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
+        if(val === 'frequency'){
+            this.$el.find('.heatmap-select-channels').hide();
+            this.$el.find('.heatmap-slider-container').show();
+            this.changeFrequencyRange();
+        
+        } if(val === 'channels'){
+            this.$el.find('.heatmap-slider-container').hide();
+            this.renderChannelInput();
+            this.$el.find('.heatmap-select-channels').show();
+            this.changeChannelRange();
+        }
+    },
+
+    changeAllocationChannel: function(){
+        window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+        this.renderChannelInput();
+        this.changeChannelRange();
+    },
+
     changeFrequencyRange: function(){
-        this.from = Number(this.slider.val()[0]);
-        this.to = Number(this.slider.val()[1]);
+        var self = this;
+        this.boundaries = [];
+
+        this.boundaries.push({
+            from: Number(self.slider.val()[0]),
+            to: Number(self.slider.val()[1])
+        });
+        this.renderHeatmap(true);
+    },
+
+    checkChannelRange: function(evt){
+        if(this.$el.find("#select-channels").select2("val").length == 1)
+            evt.preventDefault();
+    },
+
+    changeChannelRange: function(){
+        var self = this;
+        this.boundaries = [];
+
+        _.each(this.$el.find("#select-channels").select2("val"), function(item){
+            var boundaries = item.split("-");
+            self.boundaries.push({
+                from: Number(boundaries[0]),
+                to: Number(boundaries[1])
+            });
+        });
+
+        this.boundaries = _.sortBy(this.boundaries, function(item) { return item.to; });
         this.renderHeatmap(true);
     },
 
@@ -224,10 +257,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
         if(updateData){
             var data = this.heatmapDataProcessor.process(
-                { 
-                    from: this.from, 
-                    to: this.to 
-                }, 
+                this.boundaries, 
                 this.heatmap.settings.dataFunction
             );
 

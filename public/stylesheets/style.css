@@ -271,7 +271,11 @@ hr {
 }
 
 #map_canvas_heatmap {
-  margin-bottom: 35px;
+  margin-bottom: 20px;
+}
+
+.heatmap-slider-container {
+  margin-top: 35px;
 }
 
 .ws-dropdown-container {

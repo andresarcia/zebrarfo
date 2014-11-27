@@ -485,6 +485,16 @@
 							<option value="min">Minimum</option>
 						</select>
 					</div>
+					<div class="form-group">
+						<label for="select-change-data-by">Change data by</label>
+						<br />
+						<label class="radio-inline">
+							<input type="radio" name="select-change-data-by" value="frequency" checked> Frequency
+						</label>
+						<label class="radio-inline">
+    						<input type="radio" name="select-change-data-by" value="channels"> Channels
+	  					</label>
+					</div>
 					<h4>Heatmap Settings</h4>
 					<div class="form-group">
 						<label for="opacity-slider">Opacity</label>
@@ -494,13 +504,24 @@
 						<label for="radius-slider">Radius</label>
 						<div class="radius-slider"></div>
 					</div>
+					<br />
+					<div class="form-group heatmap-select-channels">
+						<label for="allocation-channel">Allocation channel</label>
+						<select class="form-control" id="allocation-channel">
+							<option value="0">American 6Mhz</option>
+							<option value="1">European 8Mhz</option>
+						</select>
+					</div>
 				</div>
 				<div class="col-md-9">
 					<div id="map_canvas_heatmap" style="width:100%; height:400px;"></div>
-					<div class="chart_power_frequency" style="height:100px;width:95%;"></div> 
-					<div class="col-md-12 slider-container">
+					<div class="col-md-12 heatmap-slider-container">
 						<div class="slider"></div>
 						<div class="slider-value"></div>
+					</div>
+					<div class="col-md-12 heatmap-select-channels">
+						<label for="select-channels">Please select the channels to observe</label>
+						<input class="form-control" id="select-channels" type="hidden" />
 					</div>
 				</div>
 			</div>

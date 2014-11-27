@@ -35,25 +35,35 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.resetData();
         this.currentData.item = this.data[0];
 
-        _.each(this.data, function(item){
-            var frequency = item.frequency / 1000;
-            if(frequency >= boundaries.from && frequency <= boundaries.to){
-                switch (functionName) {
-                    case 'avg':
-                        self.averageFunction(item);
-                        break;
+        var chunks = [];
+        _.each(boundaries, function(itemBoundaries){
+            var filter = _.filter(self.data, function(itemData){ 
+                return itemData.frequency / 1000 >= itemBoundaries.from && itemData.frequency / 1000 <= itemBoundaries.to; 
+            });
+            chunks.push(filter);
+        });
 
-                    case 'max':
-                        self.maxFunction(item);
-                        break;
+        var data = [];
+        _.each(chunks, function(item){
+            data = data.concat(item);
+        });
 
-                    case 'min':
-                        self.minFunction(item);
-                        break;
+        _.each(data, function(item){
+            switch (functionName) {
+                case 'avg':
+                    self.averageFunction(item);
+                    break;
 
-                    default:
-                        self.averageFunction(item);
-                }
+                case 'max':
+                    self.maxFunction(item);
+                    break;
+
+                case 'min':
+                    self.minFunction(item);
+                    break;
+
+                default:
+                    self.averageFunction(item);
             }
         });
 
