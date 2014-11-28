@@ -11,9 +11,9 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			throw 'any selector';
 
 		this.tooltipTop = options.tooltipTop;
+		this.trackClick = options.trackClick;
 
 		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
-		this.americanChannels = true;
 	},
 
 	appendChannels: function(chart){
@@ -28,7 +28,11 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 				mouseout: function(e){
 					self.mouseOnBand(e,this);
 					self.hideTooltip();
-				}
+				},
+				click: function(e){
+					if(self.trackClick)
+						self.clickEvent(e,this);
+				},
 			};
 			chart.xAxis[0].addPlotBand(channel);
 		});
@@ -54,6 +58,20 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		$tooltip.css('top', this.tooltipTop + 'px');
 		$tooltip.css('left', parseInt(left) + 24 + 'px');
 		$tooltip.show();
+	},
+
+	clickEvent: function(e,self){
+		if(self.selected !== true){
+			self.selected = true;
+			self.svgElem.attr({
+        		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.5 : 0.3).get(),
+    		});
+		} else {
+			self.selected = undefined;
+			self.svgElem.attr({
+        		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.1 : 0).get(),
+    		});
+		}
 	},
 
 	hideTooltip: function(){
@@ -90,8 +108,12 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
                     'Pinch the chart to zoom in'
         	},
 			tooltip: {
+				// followPointer: true,
+        		// followTouchMove: true,
+
+
     			formatter: function() {
-        			return this.x + '</b> : <b>' + this.y;
+        			return this.x + '</b> : <b>' + (this.y).toFixed(3);
     			}
 			},
 	        xAxis: {
@@ -106,16 +128,26 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	            },
 	            series: {
              	   fillOpacity: 0.35
-            	}
+            	},
 	        },
 	        series: [{
 	        	showInLegend: false,
-	            data: dataPlot
+	            data: dataPlot,
+	            states: {
+                    hover: false
+                },
+                marker: {
+                	lineWidth: 2,
+                	radius: 6
+            	},
+	            zIndex: -20
+	            // enableMouseTracking: false,
+	            // allowPointSelect: true,
 	        }]
 	    });
 
-		this.appendChannels(chart);
-		
+		this.appendChannels(chart);	
+
 		return this;
 	},
 

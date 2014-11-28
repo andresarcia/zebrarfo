@@ -25,6 +25,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.chart = new com.spantons.view.PowerFrequenciesView({
 			selector: '#chart_canvas_occupation',
 			tooltipTop: 10,
+			trackClick: true,
 		});
 		this.chartOptions = {
 			chart: {
@@ -32,7 +33,11 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			},
 			yAxis: {
 				min: 0,
-            	max: 1,
+            	max: 1.1,
+            	
+            	endOnTick: false,
+            	showLastLabel: false,
+
             	tickInterval: 0.1,
             	title: {
 	                text: 'Power (dBm)'

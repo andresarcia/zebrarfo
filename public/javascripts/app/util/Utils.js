@@ -20,11 +20,11 @@ com.spantons.util.GetURLParameter = function(name){
        return results[1] || 0;
 };
 
-com.spantons.util.SetChannelsInRange = function(frequency){
+com.spantons.util.SetChannelsInRange = function(frequencyMin,frequencyMax){
   _.each(window.appSettings.channels, function(item){
     var aux = [];
     _.each(item, function(channel){
-      if(frequency > channel.from)
+      if(frequencyMin < channel.to && frequencyMax > channel.from)
         aux.push(channel);
     });
     window.appSettings.fixedChannels.push(aux);

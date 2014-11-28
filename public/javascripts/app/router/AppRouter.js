@@ -128,7 +128,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.currentData.innerData = {};
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
-		com.spantons.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMax);
+		com.spantons.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
