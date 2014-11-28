@@ -143,7 +143,13 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 				        zIndex:4,
 				        label:{text:'Average power'}
 				    }]
-				}
+				},
+				tooltip: {
+					positioner: {
+						x: 80, 
+						y: 0 
+					}
+				},
 			};
 			powerFrequenciesChart.fetch({
 				success: function(e){                      

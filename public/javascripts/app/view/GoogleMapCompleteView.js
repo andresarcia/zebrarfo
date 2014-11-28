@@ -59,7 +59,13 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 			        zIndex:4,
 			        label:{text:'Average power'}
 			    }]
-			}
+			},
+			tooltip: {
+				positioner: {
+					x: 80, 
+					y: 0 
+				}
+			},
 		};
 		this.currentPowerFrequencies.data.fetch({
 			success: function(e){                      

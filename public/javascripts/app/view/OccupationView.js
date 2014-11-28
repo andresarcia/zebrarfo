@@ -31,6 +31,12 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			chart: {
 				type: 'areaspline',
 			},
+			tooltip: {
+				positioner: {
+					x: 80, 
+					y: 40 
+				}
+			},
 			yAxis: {
 				min: 0,
             	max: 1.1,

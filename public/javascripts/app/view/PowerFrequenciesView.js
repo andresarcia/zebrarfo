@@ -108,11 +108,11 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
                     'Pinch the chart to zoom in'
         	},
 			tooltip: {
-				// followPointer: true,
-        		// followTouchMove: true,
-
-
-    			formatter: function() {
+				positioner: function(){
+					if(options.tooltip.positioner)
+                		return options.tooltip.positioner;
+            	},
+    			formatter: function(){
         			return this.x + '</b> : <b>' + (this.y).toFixed(3);
     			}
 			},
@@ -140,9 +140,6 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
                 	lineWidth: 2,
                 	radius: 6
             	},
-	            zIndex: -20
-	            // enableMouseTracking: false,
-	            // allowPointSelect: true,
 	        }]
 	    });
 
