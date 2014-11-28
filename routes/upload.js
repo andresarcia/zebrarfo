@@ -54,18 +54,7 @@ function reduceCommonGps(place,callback){
 		return sample.latitude + sample.longitude;
 	});
 
-	/*-------------------------*/
-	console.log('groupBy lat and lng READY');
-	console.log('# samples: ' + _.keys(samplesObj).length);
-	console.log('');
-	var numberSamples = 1;
-	/*-------------------------*/
-	
 	_.each(_.keys(samplesObj), function(key){
-		/*-------------------------*/
-		console.log('#' + numberSamples);
-		/*-------------------------*/
-
 		var samplesToReduce = samplesObj[key];
 		var union = [];
 	
@@ -73,17 +62,9 @@ function reduceCommonGps(place,callback){
 			union = union.concat(item.data);
 		});
 
-		/*-------------------------*/
-		console.log('#' + numberSamples + ' - Union READY');
-		/*-------------------------*/
-
 		var groupByFrequencies = _.groupBy(union, function(item){
 			return item.frequency;
 		});
-
-		/*-------------------------*/
-		console.log('#' + numberSamples + ' - groupBy frequencies READY');
-		/*-------------------------*/
 		
 		var data = [];
 		var frequencies = _.keys(groupByFrequencies);
@@ -134,10 +115,6 @@ function reduceCommonGps(place,callback){
 		});
 
 		saveNewPlace(coord, newPlace);
-
-		/*-------------------------*/
-		numberSamples += 1;
-		/*-------------------------*/
 	});
 
 	takePlaceStats(newPlace);

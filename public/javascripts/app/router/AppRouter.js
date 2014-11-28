@@ -112,7 +112,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			var data = new com.spantons.model.Place({id:id});
 			data.fetch({
 				success: function(e){  
-					self.setPlaceData = data;
+					self.setPlaceData(data);
 			    	callback();
 			    },
 			    error: function(e){  
