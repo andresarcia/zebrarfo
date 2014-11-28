@@ -292,6 +292,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             data: this.heatmap.data,
             radius: Number(self.heatmap.settings.radius),
             opacity: self.heatmap.settings.opacity/100,
+            gradient: ['rgba(0, 0, 0, 0)','#000000','#63328D','#145DF5','#00DADD','#00F24F','#FEF252','#FF8D33','#EE1F1A'],
         });
 
         this.heatmap.heatmap.setMap(this.heatmap.map);
