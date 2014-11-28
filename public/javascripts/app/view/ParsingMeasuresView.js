@@ -191,7 +191,6 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			Backbone.pubSub.trigger('event-server-error');
 		} 
 		else if (this.status.done) {
-			window.appRouter.currentData.id = 'singlePlace';
 			var newModelData = this.model.attributes;
 			delete newModelData.json;
 			delete newModelData.gpsFunction;
@@ -199,6 +198,8 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			var newModel = new com.spantons.model.Place(newModelData, {parse: true});
 			
 			window.appRouter.currentData.data = newModel;
+			window.appRouter.currentData.id = 'singlePlace';
+			com.spantons.util.SetChannelsInRange(newModel.attributes.frequencyMax);
 			window.location.hash = '#places/'+this.model.id;
 		}
 	}

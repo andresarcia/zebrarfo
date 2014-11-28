@@ -144,7 +144,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
     renderChannelInput: function(){
         var channelData = [];
-        _.each(window.appSettings.channels[window.appSettings.currentChannelAllocation], function(channel){
+        _.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
             channelData.push({
                 id: channel.from + '-' + channel.to,
                 text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});

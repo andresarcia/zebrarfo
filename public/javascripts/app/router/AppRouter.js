@@ -114,7 +114,8 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			this.currentData.data = new com.spantons.model.Place({id:id});
 			this.currentData.data.fetch({
 				success: function(e){  
-					callback();
+					com.spantons.util.SetChannelsInRange(self.currentData.data.attributes.frequencyMax);
+			    	callback();
 			    },
 			    error: function(e){  
 			     	self.waitingView.closeView();

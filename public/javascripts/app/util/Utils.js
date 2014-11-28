@@ -19,3 +19,14 @@ com.spantons.util.GetURLParameter = function(name){
     else
        return results[1] || 0;
 };
+
+com.spantons.util.SetChannelsInRange = function(frequency){
+  _.each(window.appSettings.channels, function(item){
+    var aux = [];
+    _.each(item, function(channel){
+      if(frequency > channel.from)
+        aux.push(channel);
+    });
+    window.appSettings.fixedChannels.push(aux);
+  });
+};
