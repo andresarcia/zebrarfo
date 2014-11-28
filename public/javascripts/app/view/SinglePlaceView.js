@@ -219,7 +219,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	launchCompleteMap: function(){
-		window.location.hash = '#places/'+this.coordinates.id+'/coordinates/maps';
+		window.location.hash = '#places/'+this.coordinates.id+'/maps';
 	}
 
 });

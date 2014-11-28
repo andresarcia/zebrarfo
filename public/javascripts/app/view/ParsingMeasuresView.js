@@ -197,9 +197,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			delete newModelData.coordinates;
 			var newModel = new com.spantons.model.Place(newModelData, {parse: true});
 			
-			window.appRouter.currentData.data = newModel;
-			window.appRouter.currentData.id = 'singlePlace';
-			com.spantons.util.SetChannelsInRange(newModel.attributes.frequencyMax);
+			window.appRouter.setPlaceData(newModel);
 			window.location.hash = '#places/'+this.model.id;
 		}
 	}

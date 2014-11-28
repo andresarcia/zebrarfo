@@ -109,12 +109,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			var self = this;
 			this.helperViews.waitingView.render();
 
-			this.currentData.innerData = {};
-			this.currentData.id = 'singlePlace';
-			this.currentData.data = new com.spantons.model.Place({id:id});
-			this.currentData.data.fetch({
+			var data = new com.spantons.model.Place({id:id});
+			data.fetch({
 				success: function(e){  
-					com.spantons.util.SetChannelsInRange(self.currentData.data.attributes.frequencyMax);
+					self.setPlaceData = data;
 			    	callback();
 			    },
 			    error: function(e){  
@@ -124,6 +122,13 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			});
 		} else
 			callback();
+	},
+
+	setPlaceData: function(data){
+		this.currentData.innerData = {};
+		this.currentData.id = 'singlePlace';
+		this.currentData.data = data;
+		com.spantons.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMax);
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
