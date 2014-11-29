@@ -22,6 +22,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         'change #select-channels':'changeChannelRange',
         'select2-removing #select-channels':'checkChannelRange',
         'change #select-function-operate':'changeDataFunction',
+        'change .max-intensity-slider':'changeMaxIntensity',
         'change input:radio[name=select-change-data-by]':'changeFrequencyBy',
         'change .opacity-slider':'changeOpacity',
         'change .radius-slider':'changeRadius',
@@ -85,6 +86,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 'max': 100
             }
         });
+
+        this.renderMaxIntensitySlider();
+
         this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
             $(this).html(
                 '<strong>' + value + '%</strong>'
@@ -142,6 +146,25 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.$el.find('.heatmap-select-channels').hide();
     },
 
+    renderMaxIntensitySlider: function(){
+        this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
+            start: -120,
+            step: 1,
+            format: wNumb({
+                decimals: 0
+            }),
+            range: {
+                'min': -120,
+                'max': 0
+            }
+        });
+        this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
+            $(this).html(
+                '<strong>' + value + ' dBm</strong>'
+            );
+        });
+    },
+
     renderChannelInput: function(){
         var channelData = [];
         _.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
@@ -161,6 +184,13 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
     changeDataFunction: function(){
         this.heatmap.settings.dataFunction = this.$el.find("#select-function-operate").select2("val");
         this.renderHeatmap(true);
+    },
+
+    changeMaxIntensity: function(){
+        this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.maxIntensitySlider.val());
+        if(this.heatmap.settings.maxIntensity < 1)
+            this.heatmap.settings.maxIntensity = 1;
+        this.renderHeatmap();
     },
 
     changeFrequencyBy: function(){
@@ -261,6 +291,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 this.heatmap.settings.dataFunction
             );
 
+            this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(data.max);
+            this.maxIntensitySlider.val(data.max);
+
             self.heatmap.data = [];
             _.each(data.data, function(item) {
                 var location = new google.maps.LatLng(item.lat, item.lng);
@@ -290,6 +323,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
         this.heatmap.heatmap = new google.maps.visualization.HeatmapLayer({
             data: this.heatmap.data,
+            maxIntensity: this.heatmap.settings.maxIntensity,
             radius: Number(self.heatmap.settings.radius),
             opacity: self.heatmap.settings.opacity/100,
             gradient: ['rgba(0, 0, 0, 0)','#000000','#63328D','#145DF5','#00DADD','#00F24F','#FEF252','#FF8D33','#EE1F1A'],

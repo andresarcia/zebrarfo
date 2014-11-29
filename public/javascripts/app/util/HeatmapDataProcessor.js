@@ -148,6 +148,10 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                     self.currentData.normalizeMin = item.count;
             }
         });
+    },
+
+    normalizeValue: function(value){
+        return (value - this.currentData.min + 1).toFixed(1);
     }
     
 };
