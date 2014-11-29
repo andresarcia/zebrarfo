@@ -14,12 +14,16 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		this.trackClick = options.trackClick;
 
 		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+
+		Backbone.pubSub.on('event-occupation-channel-select', this.selectChannel, this);
+		Backbone.pubSub.on('event-occupation-channel-deselect', this.deselectChannel, this);
 	},
 
 	appendChannels: function(chart){
 		var self = this;
 		
 		_.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
+			channel.id = channel.from + '-' + channel.to;
 			channel.events = {
 				mouseover: function(e){
 					self.mouseOnBand(e,this);
@@ -60,20 +64,44 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 		$tooltip.show();
 	},
 
+	selectChannel: function(value){
+		var self = this;
+		_.each(this.chart.xAxis[0].plotLinesAndBands, function(band){
+			if(band.id == value)
+				self.selectBand(band);
+		});
+	},
+
+	deselectChannel: function(value){
+		var self = this;
+		_.each(this.chart.xAxis[0].plotLinesAndBands, function(band){
+			if(band.id == value)
+				self.deselectBand(band);
+		});
+	},
+
 	clickEvent: function(e,self){
 		if(self.selected !== true){
 			self.selected = true;
-			self.svgElem.attr({
-        		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.5 : 0.3).get(),
-    		});
-    		Backbone.pubSub.trigger('event-occupation-channel-select',self.options.from + '-' + self.options.to);
+			this.selectBand(self);
+    		Backbone.pubSub.trigger('event-power-frequencies-channel-select',self.options.id);
 		} else {
 			self.selected = undefined;
-			self.svgElem.attr({
-        		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.1 : 0).get(),
-    		});
-    		Backbone.pubSub.trigger('event-occupation-channel-deselect',self.options.from + '-' + self.options.to);
+			this.deselectBand(self);
+    		Backbone.pubSub.trigger('event-power-frequencies-channel-deselect',self.options.id);
 		}
+	},
+
+	selectBand: function(band){
+		band.svgElem.attr({
+			fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.5 : 0.3).get(),
+		});
+	},
+
+	deselectBand: function(band){
+		band.svgElem.attr({
+    		fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.1 : 0).get(),
+		});
 	},
 
 	hideTooltip: function(){
@@ -96,7 +124,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
 		});
 		
-		var chart = new Highcharts.Chart({	
+		this.chart = new Highcharts.Chart({	
 	        chart: chartOptions,
 	        title: {
     			text: '',
@@ -145,7 +173,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 	        }]
 	    });
 
-		this.appendChannels(chart);	
+		this.appendChannels(this.chart);	
 
 		return this;
 	},

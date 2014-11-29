@@ -9,6 +9,8 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	events: {
 		'change .slider':'updateChart',
 		'change #allocation-channel':'changeAllocationChannel',
+		'select2-selecting #select-channels':'pushChannelsFromInput',
+		'select2-removed #select-channels':'popChannelFromInput',
 		'click .build-heatmap-btn-container':'changeToHeatmap'
 	},
 
@@ -51,8 +53,8 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			}
 		};
 
-		Backbone.pubSub.on('event-occupation-channel-select', this.pushToChannelInput, self);
-		Backbone.pubSub.on('event-occupation-channel-deselect', this.popChannelFromInput, self);
+		Backbone.pubSub.on('event-power-frequencies-channel-select', this.pushChannelsFromGraph, this);
+		Backbone.pubSub.on('event-power-frequencies-channel-deselect', this.popChannelsFromGraph, this);
 	},
 
 	changeToHeatmap: function(){
@@ -69,14 +71,24 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.renderChart();
 	},
 
-	pushToChannelInput: function(data){
-		console.log(this);
-		console.log('select');
+	pushChannelsFromGraph: function(data){
+		var channels = this.$el.find('#select-channels').select2("val"); 
+		channels.push(data);
+		this.$el.find('#select-channels').select2("val",channels);
 	},
 
-	popChannelFromInput: function(data){
-		console.log(this);
-		console.log('deselect');
+	pushChannelsFromInput: function(evt){
+		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val);
+	},
+
+	popChannelsFromGraph: function(data){
+		var channels = this.$el.find('#select-channels').select2("val"); 
+		channels = _.without(channels, data);
+		this.$el.find('#select-channels').select2("val",channels);
+	},
+
+	popChannelFromInput: function(evt){
+		Backbone.pubSub.trigger('event-occupation-channel-deselect',evt.val);
 	},
 
 	renderComponents: function(){
