@@ -50,6 +50,9 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	            }
 			}
 		};
+
+		Backbone.pubSub.on('event-occupation-channel-select', this.pushToChannelInput, self);
+		Backbone.pubSub.on('event-occupation-channel-deselect', this.popChannelFromInput, self);
 	},
 
 	changeToHeatmap: function(){
@@ -66,9 +69,20 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.renderChart();
 	},
 
+	pushToChannelInput: function(data){
+		console.log(this);
+		console.log('select');
+	},
+
+	popChannelFromInput: function(data){
+		console.log(this);
+		console.log('deselect');
+	},
+
 	renderComponents: function(){
 		this.renderSlider();
 		this.renderChart();
+		this.renderChannelInput();
 	},
 
 	renderSlider: function(){
@@ -94,6 +108,21 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	    	);
 		});
 	},
+
+	renderChannelInput: function(){
+        var channelData = [];
+        _.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
+            channelData.push({
+                id: channel.from + '-' + channel.to,
+                text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
+        });
+
+        this.$el.find('#select-channels').select2({
+            placeholder: 'Select channels',
+            multiple: true,
+            data: channelData,
+        });
+    },
 
 	renderChart: function(){
 		var self = this;

@@ -66,11 +66,13 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 			self.svgElem.attr({
         		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.5 : 0.3).get(),
     		});
+    		Backbone.pubSub.trigger('event-occupation-channel-select',self.options.from + '-' + self.options.to);
 		} else {
 			self.selected = undefined;
 			self.svgElem.attr({
         		fill: Highcharts.Color(self.options.color).setOpacity(self.options.color != 'rgba(0, 0, 0, 0)' ? 0.1 : 0).get(),
     		});
+    		Backbone.pubSub.trigger('event-occupation-channel-deselect',self.options.from + '-' + self.options.to);
 		}
 	},
 
