@@ -18,10 +18,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
-		if(options.placeId)
-			this.placeId = options.placeId;
-		else
-			throw 'Any place id';
+		this.data = options.data;
 
 		if(!window.appRouter.currentData.innerData.maps)
 			window.appRouter.currentData.innerData.maps = {};
@@ -52,7 +49,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 			this.currentMap = new com.spantons.view.GoogleMapCompleteView({
 				waitingView: this.waitingView,
 				errorView : this.errorView,
-				placeId:this.placeId,
+				placeId:this.data.id,
 				data: window.appRouter.currentData.innerData.maps.coordinates
 			});
 
@@ -62,13 +59,13 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		} else {
 			var self = this;
 
-			this.currentData = new com.spantons.collection.Coordinates({idPlace:this.placeId});
+			this.currentData = new com.spantons.collection.Coordinates({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){            
 					self.currentMap = new com.spantons.view.GoogleMapCompleteView({
 						waitingView: self.waitingView,
 						errorView : self.errorView,
-						placeId:self.placeId,
+						placeId:self.data.id,
 						data: self.currentData
 					});
 
@@ -85,7 +82,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template();
+		var html = this.template(this.data);
     	this.$el.html(html);	
 
 		return this;

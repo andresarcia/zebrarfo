@@ -154,14 +154,16 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showMapsOfPlace: function(id){
+		var self = this;
 		this.clearViews();
-		this.currentView = new com.spantons.view.MapsView({
-			waitingView: this.helperViews.waitingView,
-			errorView : this.helperViews.errorView,
-			placeId: id
+		this.fetchSinglePlaceData(id,function(){
+			self.currentView = new com.spantons.view.MapsView({
+				waitingView: self.helperViews.waitingView,
+				errorView : self.helperViews.errorView,
+				data: self.currentData.data,
+			});
+			self.renderVerticalNavMenuSinglePlace([0,1],id);
 		});
-
-		this.renderVerticalNavMenuSinglePlace([0,1],id);
 	},
 
 	showChartsOfPlace: function(id,type){

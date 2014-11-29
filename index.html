@@ -212,7 +212,7 @@
 		<script id="single-place-template" type="text/x-handlebars-template">
 			<ol class="breadcrumb">
   				<li><a href="#places">Places</a></li>
-  				<li class="active">Coordinates</li>
+  				<li class="active">{{this.attributes.name}}</li>
 			</ol>
 			
 			<div class="row">
@@ -355,6 +355,11 @@
 		</script>
 
 		<script id="maps-template" type="text/x-handlebars-template"> 
+			<ol class="breadcrumb">
+  				<li><a href="#places">Places</a></li>
+  				<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+  				<li class="active">Maps</li>
+			</ol>
 			<ul class="nav nav-tabs" role="tablist">
 				<li class="active"><a href="#coordinates-tab" role="tab" data-toggle="tab">Coordinates</a></li>
 			</ul>
@@ -438,6 +443,11 @@
 		</script>
 
 		<script id="charts-template" type="text/x-handlebars-template"> 
+			<ol class="breadcrumb">
+  				<li><a href="#places">Places</a></li>
+  				<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+  				<li class="active">Charts</li>
+			</ol>
 			<ul class="nav nav-tabs" role="tablist" id="charts-tabs">
 				<li class="active"><a href="#occupation-tab" role="tab" data-toggle="tab">Occupation</a></li>
 				<li><a href="#heatmap-tab" role="tab" data-toggle="tab">Heatmap</a></li>

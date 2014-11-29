@@ -144,7 +144,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template();
+		var html = this.template(this.data);
     	this.$el.html(html);	
 
 		return this;
