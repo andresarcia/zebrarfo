@@ -47,6 +47,12 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
         this.heatmapDataProcessor.require(options.data.attributes);
+
+        this.frequencyBy = options.frequencyBy;
+        if(options.channels)
+            this.channels = options.channels;
+        else
+            this.channels = [];
 	},
 
     render: function(){
@@ -144,6 +150,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 
         this.$el.find('.heatmap-select-channels').hide();
+
+        this.changeFrequencyBy(this.frequencyBy,false);
     },
 
     renderMaxIntensitySlider: function(){
@@ -178,7 +186,13 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             multiple: true,
             data: channelData,
         });
-        this.$el.find('#select-channels').select2('val', [channelData[0].id]);
+
+        if(this.channels === undefined || this.channels.length < 1){
+            this.channels = [];
+            this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
+        }
+
+        this.$el.find('#select-channels').select2('val', this.channels);
     },
 
     changeDataFunction: function(){
@@ -193,23 +207,43 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.renderHeatmap();
     },
 
-    changeFrequencyBy: function(){
-        var val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
+    changeFrequencyBy: function(value,update){
+        var val;
+        if($.type(value) === "string")
+            val = value;
+        else if(value === undefined)
+            val = 'frequency';
+        else
+            val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
+
+        update = typeof update !== 'undefined' ? update : true;
+
         if(val === 'frequency'){
             this.$el.find('.heatmap-select-channels').hide();
             this.$el.find('.heatmap-slider-container').show();
-            this.changeFrequencyRange();
+            if(update)
+                this.changeFrequencyRange();
         
         } if(val === 'channels'){
             this.$el.find('.heatmap-slider-container').hide();
             this.renderChannelInput();
             this.$el.find('.heatmap-select-channels').show();
-            this.changeChannelRange();
+            if(update)
+                this.changeChannelRange();
         }
+    },
+
+    updateDataByTab: function(options){
+        this.frequencyBy = options.frequencyBy;
+        this.channels = options.channels;
+        this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+        this.changeFrequencyBy(this.frequencyBy,false);
     },
 
     changeAllocationChannel: function(){
         window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+        this.channels = [];
+        this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
         this.renderChannelInput();
         this.changeChannelRange();
     },
@@ -226,15 +260,17 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
     },
 
     checkChannelRange: function(evt){
-        if(this.$el.find("#select-channels").select2("val").length == 1)
+        if(this.channels.length == 1)
             evt.preventDefault();
     },
 
     changeChannelRange: function(){
         var self = this;
         this.boundaries = [];
+        this.channels = this.$el.find('#select-channels').select2("val"); 
+        Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 
-        _.each(this.$el.find("#select-channels").select2("val"), function(item){
+        _.each(this.channels, function(item){
             var boundaries = item.split("-");
             self.boundaries.push({
                 from: Number(boundaries[0]),

@@ -21,20 +21,31 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
-		if(!window.appRouter.currentData.innerData.charts)
+		if(!window.appRouter.currentData.innerData.charts){
 			window.appRouter.currentData.innerData.charts = {};
-
-		Backbone.pubSub.on('changeChart', function(index){
-			self.changeChart(null,index);
-		});
+			window.appRouter.currentData.innerData.charts.occupation = {};
+			window.appRouter.currentData.innerData.charts.heatmap = {};
+		}
 
 		this.render();
+
 		if(window.appRouter.currentData.innerData.charts.tab)
 			this.changeChart(null,window.appRouter.currentData.innerData.charts.tab);
 		else if(options.type !== undefined)
 			this.changeChart(null,options.type);
 		else
 			this.changeChart(null,0);
+
+		Backbone.pubSub.on('single-place-change-to-heatmap', function(){
+			self.changeChart(null,1);
+		});
+
+		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
+			window.appRouter.currentData.innerData.charts.channels = channels;
+			if(window.appRouter.currentData.innerData.charts.channels.length > 0)
+				window.appRouter.currentData.innerData.charts.heatmap.frequencyBy = 'channels';
+		});
+
 	},
 
 	changeChart: function(evt,index){
@@ -54,12 +65,23 @@ com.spantons.view.ChartsView = Backbone.View.extend({
     			isEmpty = this.$el.find('#occupation-tab').is(':empty');
     			if(isEmpty)
     				self.renderOccupation();
+    			else
+    				window.appRouter.currentData.innerData.charts.occupation.view.updateDataByTab({
+    					channels: window.appRouter.currentData.innerData.charts.channels
+    				});
+
     			break;
     		case 1:
     			this.changeUrl('heatmap');
     			isEmpty = this.$el.find('#heatmap-tab').is(':empty');
     			if(isEmpty)
     				self.renderHeatmap();
+    			else
+    				window.appRouter.currentData.innerData.charts.heatmap.view.updateDataByTab({
+    					frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+						channels: window.appRouter.currentData.innerData.charts.channels
+    				});
+
     			break;
     	}
 	},
@@ -71,33 +93,34 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderOccupation: function(){
-		this.waitingView.render();
-		
-		if(window.appRouter.currentData.innerData.charts.occupation) {
-			this.currentChart = new com.spantons.view.OccupationView({
+		if(window.appRouter.currentData.innerData.charts.occupation.data) {
+			window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
 				waitingView: this.waitingView,
 				errorView : this.errorView,
 				place: this.data,
-				data: window.appRouter.currentData.innerData.charts.occupation
+				data: window.appRouter.currentData.innerData.charts.occupation.data,
+				channels: window.appRouter.currentData.innerData.charts.channels
 			});
-			this.$el.find('#occupation-tab').html(this.currentChart.render().el);
-			this.currentChart.renderComponents();
+			this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
+			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
 			
 		} else {
 			var self = this;
+			this.waitingView.render();
 
 			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){                      
-					self.currentChart = new com.spantons.view.OccupationView({
+					window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
 						waitingView: self.waitingView,
 						errorView : self.errorView,
 						place: self.data,
-						data: self.currentData
+						data: self.currentData,
+						channels: window.appRouter.currentData.innerData.charts.channels
 					});
-					window.appRouter.currentData.innerData.charts.occupation = self.currentData;
-					self.$el.find('#occupation-tab').html(self.currentChart.render().el);
-					self.currentChart.renderComponents();
+					window.appRouter.currentData.innerData.charts.occupation.data = self.currentData;
+					self.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
+					window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
 			    },
 			    error: function(e){  
 			     	self.waitingView.closeView();
@@ -108,32 +131,37 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderHeatmap: function(){
-		if(window.appRouter.currentData.innerData.charts.heatmap) {
-			this.currentChart = new com.spantons.view.HeatmapView({
+		if(window.appRouter.currentData.innerData.charts.heatmap.data) {
+			window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
 				waitingView: this.waitingView,
 				errorView : this.errorView,
 				place: this.data,
-				data: window.appRouter.currentData.innerData.charts.heatmap
+				data: window.appRouter.currentData.innerData.charts.heatmap.data,
+				frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+				channels: window.appRouter.currentData.innerData.charts.channels
 			});
-			this.$el.find('#heatmap-tab').html(this.currentChart.render().el);
-			this.currentChart.renderComponents();
+			this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
+			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
 
 		} else {
 			var self = this;
-			this.waitingView.render();
+			// this.waitingView.render();
 			
 			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){       
-					self.currentChart = new com.spantons.view.HeatmapView({
+					window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
 						waitingView: self.waitingView,
 						errorView : self.errorView,
 						place: self.data,
-						data: self.currentData
+						data: self.currentData,
+						frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+						channels: window.appRouter.currentData.innerData.charts.channels
 					});               
-					window.appRouter.currentData.innerData.charts.heatmap = self.currentData;
-					self.$el.find('#heatmap-tab').html(self.currentChart.render().el);
-					self.currentChart.renderComponents();
+					window.appRouter.currentData.innerData.charts.heatmap.data = self.currentData;
+					
+					self.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
+					window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
 			    },
 			    error: function(e){  
 			     	self.waitingView.closeView();

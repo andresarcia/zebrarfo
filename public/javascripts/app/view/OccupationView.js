@@ -53,17 +53,24 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 			}
 		};
 
+		if(options.channels)
+			this.channels = options.channels;
+		else
+			this.channels = [];
+
 		Backbone.pubSub.on('event-power-frequencies-channel-select', this.pushChannelsFromGraph, this);
 		Backbone.pubSub.on('event-power-frequencies-channel-deselect', this.popChannelsFromGraph, this);
 	},
 
 	changeToHeatmap: function(){
-		Backbone.pubSub.trigger('changeChart',1);
+		Backbone.pubSub.trigger('single-place-change-to-heatmap');
 	},
 
 	changeAllocationChannel: function(){
 		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.clearChannels();
 		this.renderChart();
+		this.renderChannelInput();
     },
 
 	updateChart: function(){
@@ -71,30 +78,52 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.renderChart();
 	},
 
+	updateDataByTab: function(data){
+		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.channels = data.channels;
+		this.renderChart();
+		this.renderChannelInput();
+	},
+
 	pushChannelsFromGraph: function(data){
-		var channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.channels;
 		channels.push(data);
-		this.$el.find('#select-channels').select2("val",channels);
+		this.channels = channels;
+		this.$el.find('#select-channels').select2("val",this.channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
 	pushChannelsFromInput: function(evt){
+		this.channels = this.$el.find('#select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
 	popChannelsFromGraph: function(data){
-		var channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.channels;
 		channels = _.without(channels, data);
-		this.$el.find('#select-channels').select2("val",channels);
+		this.channels = channels;
+		this.$el.find('#select-channels').select2("val",this.channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
 	popChannelFromInput: function(evt){
+		this.channels = this.$el.find('#select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-deselect',evt.val);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+	},
+
+	clearChannels: function(evt){
+		this.channels = [];
+		this.$el.find('#select-channels').select2("val",this.channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
 	renderComponents: function(){
 		this.renderSlider();
-		this.renderChart();
 		this.renderChannelInput();
+		this.renderChart();
 	},
 
 	renderSlider: function(){
@@ -134,6 +163,8 @@ com.spantons.view.OccupationView = Backbone.View.extend({
             multiple: true,
             data: channelData,
         });
+
+        this.$el.find('#select-channels').select2('val', this.channels);
     },
 
 	renderChart: function(){
@@ -164,6 +195,11 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		});
 
 		this.chart.render(data,this.chartOptions);		
+
+		_.each(this.channels,function(item){
+			Backbone.pubSub.trigger('event-occupation-channel-select',item);
+		});
+
 		this.waitingView.closeView();
 	},
 

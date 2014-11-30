@@ -107,7 +107,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	fetchSinglePlaceData: function(id,callback){
 		if(this.currentData.data === null || this.currentData.id != 'singlePlace'){
 			var self = this;
-			this.helperViews.waitingView.render();
+			// this.helperViews.waitingView.render();
 
 			var data = new com.spantons.model.Place({id:id});
 			data.fetch({
