@@ -100,7 +100,7 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 	deselectBand: function(band){
 		band.svgElem.attr({
-    		fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.1 : 0).get(),
+    		fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get(),
 		});
 	},
 
