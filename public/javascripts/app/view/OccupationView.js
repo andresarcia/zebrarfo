@@ -87,6 +87,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		var self = this;
 		this.channels = data.channels;
 
+		this.chart.chart.destroy();
 		setTimeout(function(){
         	self.renderChart();
         }, 200);
