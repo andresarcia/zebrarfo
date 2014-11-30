@@ -145,7 +145,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 		} else {
 			var self = this;
-			// this.waitingView.render();
+			this.waitingView.render();
 			
 			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
 			this.currentData.fetch({

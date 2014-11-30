@@ -225,6 +225,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 this.changeFrequencyRange();
         
         } if(val === 'channels'){
+            this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
             this.$el.find('.heatmap-slider-container').hide();
             this.renderChannelInput();
             this.$el.find('.heatmap-select-channels').show();
@@ -237,7 +238,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.frequencyBy = options.frequencyBy;
         this.channels = options.channels;
         this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
-        this.changeFrequencyBy(this.frequencyBy,false);
+        this.changeFrequencyBy(this.frequencyBy,true);
     },
 
     changeAllocationChannel: function(){

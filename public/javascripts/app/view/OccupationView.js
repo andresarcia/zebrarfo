@@ -32,6 +32,11 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.chartOptions = {
 			chart: {
 				type: 'areaspline',
+				events: {
+            		load: function(event) {
+            			
+            		}
+         		},
 			},
 			tooltip: {
 				positioner: {
@@ -79,17 +84,25 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	},
 
 	updateDataByTab: function(data){
+		var self = this;
+		this.channels = data.channels;
+
+		setTimeout(function(){
+        	self.renderChart();
+        }, 200);
+
 		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
-		this.channels = data.channels;
+		
 
 		if((this.channels === undefined || this.channels.length < 1) && data.frequencyBy === 'channels'){
             this.channels = [];
             this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
-        }
+        
+        } else if(this.channels === undefined)
+        	this.channels = [];
 
-		this.renderChart();
-		this.renderChannelInput();
+        this.renderChannelInput();
 	},
 
 	pushChannelsFromGraph: function(data){
