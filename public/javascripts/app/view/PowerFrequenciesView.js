@@ -82,23 +82,23 @@ com.spantons.view.PowerFrequenciesView = Backbone.View.extend({
 
 	clickEvent: function(e,self){
 		if(self.selected !== true){
-			self.selected = true;
 			this.selectBand(self);
     		Backbone.pubSub.trigger('event-power-frequencies-channel-select',self.options.id);
 		} else {
-			self.selected = undefined;
 			this.deselectBand(self);
     		Backbone.pubSub.trigger('event-power-frequencies-channel-deselect',self.options.id);
 		}
 	},
 
 	selectBand: function(band){
+		band.selected = true;
 		band.svgElem.attr({
 			fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.7 : 0.3).get(),
 		});
 	},
 
 	deselectBand: function(band){
+		band.selected = undefined;
 		band.svgElem.attr({
     		fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get(),
 		});

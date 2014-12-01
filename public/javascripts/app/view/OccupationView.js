@@ -9,7 +9,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	events: {
 		'change .slider':'updateChart',
 		'change #allocation-channel':'changeAllocationChannel',
-		'select2-selecting #select-channels':'pushChannelsFromInput',
+		'change #select-channels':'pushChannelsFromInput',
 		'select2-removed #select-channels':'popChannelFromInput',
 		'click .build-heatmap-btn-container':'changeToHeatmap'
 	},
@@ -116,7 +116,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 
 	pushChannelsFromInput: function(evt){
 		this.channels = this.$el.find('#select-channels').select2("val"); 
-		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val);
+		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val[evt.val.length - 1]);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
