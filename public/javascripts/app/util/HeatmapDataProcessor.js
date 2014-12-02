@@ -22,6 +22,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     resetData: function(){
+        this.currentData = {};
         this.currentData.data = [];
         this.currentData.item = null;
         this.currentData.operation = null;
@@ -37,7 +38,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.currentData.item = this.data[0];
 
         /*----------------------------------------------------*/
-        var a = performance.now();
+        // var a = performance.now();
         /*----------------------------------------------------*/
         _.each(boundaries, function(itemBoundaries){
             var filter = _.filter(self.data, function(itemData){ 
@@ -73,13 +74,12 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.normalize();
 
         /*----------------------------------------------------*/
-        // console.log(this.currentData.data);
-        console.log('#' + this.currentData.data.length);
-        var b = performance.now();
-        console.log('It took ' + (b - a) + ' ms.');
-        console.log('-------------------------------');
+        // console.log(this.currentData);
+        // console.log('#' + this.currentData.data.length);
+        // var b = performance.now();
+        // console.log('It took ' + (b - a) + ' ms.');
+        // console.log('-------------------------------');
         /*----------------------------------------------------*/
-
 
         return this.currentData;
     },
@@ -131,8 +131,13 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
     saveItem: function(item){
         var distance = com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng);
-            if(distance < this.place.distaceAvg)
-                return;
+        
+        if(distance < this.place.distaceAvg){
+            this.currentData.item = item;
+            this.currentData.operation = item.power;
+            this.currentData.count = 1;
+            return;
+        }
 
         this.currentData.data.push({
             lat: this.currentData.item.lat, 
