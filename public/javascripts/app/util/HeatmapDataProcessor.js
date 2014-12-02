@@ -16,8 +16,9 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         normalizeMin: null
     },
 
-    require: function(data) {
-        this.data = data.data;
+    require: function(options) {
+        this.place = options.place;
+        this.data = options.data.data;
     },
 
     resetData: function(){
@@ -28,9 +29,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.currentData.min = null;
         this.currentData.max = null;
         this.currentData.normalizeMax = null;
-
-        this.currentData.distanceSum = 0;
-        this.currentData.distanceCount = 0;
     },
 
     process: function(boundaries, functionName){
@@ -45,6 +43,10 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             var filter = _.filter(self.data, function(itemData){ 
                 return itemData.frequency / 1000 >= itemBoundaries.from && itemData.frequency / 1000 <= itemBoundaries.to; 
             });
+            /*----------------------------------------------------*/
+            // console.log(filter[0].frequency);
+            // console.log(filter[filter.length - 1].frequency);
+            /*----------------------------------------------------*/
             _.each(filter, function(item){
                 switch (functionName) {
                     case 'avg':
@@ -71,11 +73,14 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.normalize();
 
         /*----------------------------------------------------*/
+        // console.log(this.currentData.data);
+        console.log('#' + this.currentData.data.length);
         var b = performance.now();
         console.log('It took ' + (b - a) + ' ms.');
         console.log('-------------------------------');
         /*----------------------------------------------------*/
-        
+
+
         return this.currentData;
     },
 
@@ -125,14 +130,15 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     saveItem: function(item){
+        var distance = com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng);
+            if(distance < this.place.distaceAvg)
+                return;
+
         this.currentData.data.push({
             lat: this.currentData.item.lat, 
             lng: this.currentData.item.lng, 
             count: this.currentData.operation
         });
-
-        this.currentData.distanceSum += com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng) * 1000;
-        this.currentData.distanceCount += 1;
 
         this.calculateMaxMin(this.currentData.operation);
 
@@ -143,8 +149,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
     normalize: function(){
         var self = this;
-        var distanceAvg = this.currentData.distanceSum / this.currentData.distanceCount;
-        console.log('distance average: ' + distanceAvg);
 
         _.each(this.currentData.data, function(item){
             item.count = item.count - self.currentData.min + 1;

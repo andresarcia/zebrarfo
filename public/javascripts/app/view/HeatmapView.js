@@ -46,7 +46,10 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
 
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
-        this.heatmapDataProcessor.require(options.data.attributes);
+        this.heatmapDataProcessor.require({
+            place: options.place.attributes,
+            data: options.data.attributes
+        });
 
         this.frequencyBy = options.frequencyBy;
         if(options.channels)
