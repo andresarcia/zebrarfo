@@ -1,6 +1,7 @@
 var _ = require("underscore");
 var async = require('async');
 var parserTxt = require('./utils/parser');
+var utils = require('./utils/utils');
 var db = require('../models');
 
 var UserIdentification = 1;
@@ -16,6 +17,8 @@ exports.createPlace = function(req, res){
 			/*-------------------------*/
 			reduceCommonGps(req.body, function(newPlace){
 				/*-------------------------*/
+				console.log(newPlace);
+				console.log('');
 				console.log('*SAVING*');
 				/*-------------------------*/
 				saveInDB(newPlace, function(err,place){
@@ -43,12 +46,18 @@ function reduceCommonGps(place,callback){
 	newPlace.powerMax = null;
 	newPlace.powerAvg = null;
 	newPlace.sdPowerAvg = null;
-	newPlace.placePowerSD_X = null;
-	newPlace.placePowerSD_M = null;
 	newPlace.avgPowerSD = null;
 	newPlace.numberPowerFrequency = null;
     newPlace.frequencyMin = null;
     newPlace.frequencyMax = null;
+    newPlace.totalDistance = 0;
+    newPlace.distaceAvg = 0;
+
+    /* -- vars for take stats -- */
+	newPlace.placePowerSD_X = null;
+	newPlace.placePowerSD_M = null;
+	newPlace.countSamplesDistance = 0;
+	/* ------------------------- */
 
 	var samplesObj = _.groupBy(place.coordinates, function(sample){
 		return sample.latitude + sample.longitude;
@@ -203,6 +212,13 @@ function saveNewPlace(coord, newPlace){
 
 	if(newPlace.numberPowerFrequency === null)
 		newPlace.numberPowerFrequency = coord.numberPowerFrequency;
+
+	if(newPlace.coordinates.length > 1){
+		var lastItem = newPlace.coordinates[newPlace.coordinates.length - 2];
+		var currentItem = newPlace.coordinates[newPlace.coordinates.length - 1];
+		newPlace.totalDistance += utils.GetDistanceFromLatLonInKm(lastItem.latitude, lastItem.longitude, currentItem.latitude, currentItem.longitude);
+		newPlace.countSamplesDistance += 1;
+	}
 }
 
 function takePlaceStats(newPlace){
@@ -220,8 +236,16 @@ function takePlaceStats(newPlace){
 	newPlace.avgPowerSD = newPlace.avgPowerSD / newPlace.numberCoordinates;
 	newPlace.avgPowerSD = Number(newPlace.avgPowerSD.toFixed(5));
 
+	if(newPlace.coordinates.length > 1)
+		newPlace.distaceAvg = newPlace.totalDistance/newPlace.countSamplesDistance;
+	else 
+		newPlace.totalDistance = newPlace.distaceAvg = 0;
+
+	/* -- delete vars for take stats -- */
 	delete newPlace.placePowerSD_X;
 	delete newPlace.placePowerSD_M;
+	delete newPlace.countSamplesDistance;
+	/* -------------------------------- */
 }
 
 /*--------------------------------------------------------------------------------------------------------------*/
@@ -242,6 +266,8 @@ var saveInDB = function(place, callback){
 			doc.frequencyMin = place.frequencyMin;
 			doc.frequencyMax = place.frequencyMax;
 			doc.numberPowerFrequency = place.numberPowerFrequency;
+			doc.totalDistance = place.totalDistance;
+			doc.distaceAvg = place.distaceAvg;
 
 			doc.save().success(function(){
 				insertCoordinates(place, doc, function(err){
@@ -363,6 +389,9 @@ var takeStatistics = function(placeReturned, place, callback){
 				var sdPowerAvg_X = (placeReturned.powerAvg * placeReturned.powerAvg) + (place.powerAvg * place.powerAvg);
 				sdPowerAvg_X = Math.sqrt((sdPowerAvg_X - (sdPowerAvg_M*sdPowerAvg_M)/count)/(count - 1));
 				placeReturned.sdPowerAvg = Number(sdPowerAvg_X.toFixed(5));
+
+				placeReturned.totalDistance = placeReturned.totalDistance + place.totalDistance;
+				placeReturned.distaceAvg = (placeReturned.distaceAvg + place.distaceAvg)/2;
 
 			} else
 				placeReturned.sdPowerAvg = 0;

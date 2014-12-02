@@ -44,6 +44,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,3),
       allowNull: true,
     },
+    totalDistance: {
+      type: DataTypes.DECIMAL(12,3),
+      allowNull: true,
+    },
+    distaceAvg: {
+      type: DataTypes.DECIMAL(12,3),
+      allowNull: true,
+    },
 
     UserId: {
       type: DataTypes.INTEGER,
