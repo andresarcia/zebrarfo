@@ -17,7 +17,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     require: function(data) {
-        this.data = data;
+        this.data = data.data;
     },
 
     resetData: function(){
@@ -28,6 +28,9 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.currentData.min = null;
         this.currentData.max = null;
         this.currentData.normalizeMax = null;
+
+        this.currentData.distanceSum = 0;
+        this.currentData.distanceCount = 0;
     },
 
     process: function(boundaries, functionName){
@@ -35,42 +38,44 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.resetData();
         this.currentData.item = this.data[0];
 
-        var chunks = [];
+        /*----------------------------------------------------*/
+        var a = performance.now();
+        /*----------------------------------------------------*/
         _.each(boundaries, function(itemBoundaries){
             var filter = _.filter(self.data, function(itemData){ 
                 return itemData.frequency / 1000 >= itemBoundaries.from && itemData.frequency / 1000 <= itemBoundaries.to; 
             });
-            chunks.push(filter);
-        });
+            _.each(filter, function(item){
+                switch (functionName) {
+                    case 'avg':
+                        self.averageFunction(item);
+                        break;
 
-        var data = [];
-        _.each(chunks, function(item){
-            data = data.concat(item);
-        });
+                    case 'max':
+                        self.maxFunction(item);
+                        break;
 
-        _.each(data, function(item){
-            switch (functionName) {
-                case 'avg':
-                    self.averageFunction(item);
-                    break;
+                    case 'min':
+                        self.minFunction(item);
+                        break;
 
-                case 'max':
-                    self.maxFunction(item);
-                    break;
-
-                case 'min':
-                    self.minFunction(item);
-                    break;
-
-                default:
-                    self.averageFunction(item);
-            }
+                    default:
+                        self.averageFunction(item);
+                }
+            });
         });
 
         if(this.currentData.data.length === 0)
             this.saveItem(this.currentData.item);
 
         this.normalize();
+
+        /*----------------------------------------------------*/
+        var b = performance.now();
+        console.log('It took ' + (b - a) + ' ms.');
+        console.log('-------------------------------');
+        /*----------------------------------------------------*/
+        
         return this.currentData;
     },
 
@@ -126,6 +131,9 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             count: this.currentData.operation
         });
 
+        this.currentData.distanceSum += com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng) * 1000;
+        this.currentData.distanceCount += 1;
+
         this.calculateMaxMin(this.currentData.operation);
 
         this.currentData.item = item;
@@ -135,6 +143,9 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
     normalize: function(){
         var self = this;
+        var distanceAvg = this.currentData.distanceSum / this.currentData.distanceCount;
+        console.log('distance average: ' + distanceAvg);
+
         _.each(this.currentData.data, function(item){
             item.count = item.count - self.currentData.min + 1;
             item.count = Number(item.count.toFixed(1));

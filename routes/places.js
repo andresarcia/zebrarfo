@@ -202,7 +202,9 @@ exports.getHeatmap = function(req,res){
 
 		db.sequelize
 		.query(query).success(function(response) {
-			res.send(response);
+			var sol = {};
+			sol.data = response;
+			res.send(sol);
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
