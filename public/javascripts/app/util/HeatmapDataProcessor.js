@@ -45,8 +45,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
                 return itemData.frequency / 1000 >= itemBoundaries.from && itemData.frequency / 1000 <= itemBoundaries.to; 
             });
             /*----------------------------------------------------*/
-            // console.log(filter[0].frequency);
-            // console.log(filter[filter.length - 1].frequency);
+            // console.log('frequency min: ' + filter[0].frequency + ' ,max: ' + filter[filter.length - 1].frequency);
             /*----------------------------------------------------*/
             _.each(filter, function(item){
                 switch (functionName) {
@@ -74,6 +73,12 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.normalize();
 
         /*----------------------------------------------------*/
+        // console.log('max: ' + this.currentData.max);
+        // console.log('max ref: ' + this.normalizeValue(this.currentData.max));
+
+        _.each(this.currentData.data, function(item,index){
+            console.log(index + ',' + item.count);
+        });
         // console.log(this.currentData);
         // console.log('#' + this.currentData.data.length);
         // var b = performance.now();
@@ -130,14 +135,14 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     saveItem: function(item){
-        var distance = com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng);
+        // var distance = com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng);
         
-        if(distance < this.place.distaceAvg){
-            this.currentData.item = item;
-            this.currentData.operation = item.power;
-            this.currentData.count = 1;
-            return;
-        }
+        // if(distance < this.place.distaceAvg){
+        //     this.currentData.item = item;
+        //     this.currentData.operation = item.power;
+        //     this.currentData.count = 1;
+        //     return;
+        // }
 
         this.currentData.data.push({
             lat: this.currentData.item.lat, 
