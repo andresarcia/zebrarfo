@@ -76,14 +76,16 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         // console.log('max: ' + this.currentData.max);
         // console.log('max ref: ' + this.normalizeValue(this.currentData.max));
 
-        _.each(this.currentData.data, function(item,index){
-            console.log(index + ',' + item.count);
-        });
+        // _.each(this.currentData.data, function(item,index){
+            // console.log(item.lat + ',' + item.lng + ',' + item.count);
+            // console.log(index + ',' + item.count);
+            // console.log(item.count);
+        // });
         // console.log(this.currentData);
         // console.log('#' + this.currentData.data.length);
         // var b = performance.now();
         // console.log('It took ' + (b - a) + ' ms.');
-        // console.log('-------------------------------');
+        console.log('-------------------------------');
         /*----------------------------------------------------*/
 
         return this.currentData;
@@ -162,6 +164,8 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
         _.each(this.currentData.data, function(item){
             item.count = item.count - self.currentData.min + 1;
+            // item.count = 100*(item.count - self.currentData.min)/(self.currentData.max - self.currentData.min);
+
             item.count = Number(item.count.toFixed(1));
 
             if(self.currentData.normalizeMax === null && self.currentData.normalizeMin === null)
