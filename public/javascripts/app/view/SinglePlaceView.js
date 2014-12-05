@@ -59,17 +59,33 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 
 	deletePlace: function(){
 		var self = this;
-		this.waitingView.render();
-		var place = new com.spantons.model.Place({id:this.data.id});
-		place.destroy({
-			success: function(model, response) {
-  				self.waitingView.closeView();
-  				window.location.hash = '#places';
-			},
-			error: function(e){
-				self.waitingView.closeView();
-		     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
-			}
+		var deleteFunction = function(){
+			self.waitingView.render();
+			var place = new com.spantons.model.Place({id:self.data.id});
+			place.destroy({
+				success: function(model, response) {
+	  				self.waitingView.closeView();
+	  				window.location.hash = '#places';
+				},
+				error: function(e){
+					self.waitingView.closeView();
+			     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
+				}
+			});
+		};
+
+		bootbox.dialog({
+	  		message: '<h4>Are you sure to delete <b>' + this.data.attributes.name + '</b>?</h4>',
+	  		buttons: {
+	  			main: {
+	      			label: "Cancel",
+	    		},
+	    		danger: {
+	      			label: "Delete!",
+	      			className: "btn-danger",
+	      			callback: deleteFunction
+	    		},
+	  		}
 		});
 	},
 

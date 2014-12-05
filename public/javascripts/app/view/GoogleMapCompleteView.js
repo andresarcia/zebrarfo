@@ -26,6 +26,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
+		self.waitingView.closeView();
 
 		this.powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
 			selector: '#complete-map-info',
@@ -67,8 +68,11 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 				}
 			},
 		};
+
+		this.waitingView.render();
 		this.currentPowerFrequencies.data.fetch({
-			success: function(e){                      
+			success: function(e){         
+				self.waitingView.closeView();
 		       	self.renderPowerFrequencies();
 		    },
 		    error: function(e){  
@@ -121,7 +125,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 	render: function(){
 		var html = this.template();
     	this.$el.html(html);	
-
+    	
     	return this;
 	},
 
@@ -189,7 +193,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
   		});
 
 		map.fitBounds(bounds);
-		this.waitingView.closeView();
 	}
 
 });

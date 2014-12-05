@@ -54,6 +54,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 			});
 
 			this.$el.find('#coordinates-tab').html(this.currentMap.render().el);
+			
 			this.currentMap.renderMap();
 			
 		} else {
