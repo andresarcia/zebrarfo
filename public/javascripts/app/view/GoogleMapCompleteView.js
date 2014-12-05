@@ -171,7 +171,6 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		      	animation: null,
 		      	id: coordinate.id,
 		      	index: index,
-		      	title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {

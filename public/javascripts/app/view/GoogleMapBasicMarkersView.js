@@ -87,7 +87,6 @@ com.spantons.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		      	icon: window.appSettings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
-		      	title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {

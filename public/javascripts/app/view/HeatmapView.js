@@ -10,10 +10,12 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         bounds: null,
         heatmap: null,
         data: [],
+        markers: [],
         settings: {
             dataFunction: 'avg',
             opacity: 70,
             radius: 15,
+            currentMarkerItem: 0
         },
     },
 
@@ -335,7 +337,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             this.maxIntensitySlider.val(data.max);
 
             self.heatmap.data = [];
-            _.each(data.data, function(item) {
+            self.heatmap.markers = [];
+
+            _.each(data.data, function(item, index) {
                 var location = new google.maps.LatLng(item.lat, item.lng);
 
                 self.heatmap.data.push({
@@ -343,17 +347,31 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                     weight: item.count 
                 });
 
+                var infowindow = new google.maps.InfoWindow({
+                    content: 'Latitude: ' + item.lat + '<br>Longitude: ' + item.lng + '<br>Weight: ' + self.heatmapDataProcessor.denormalizeValue(item.count) + ' dBm',
+                });
+
                 var marker = new google.maps.Marker({
                     position: location,
                     map: self.heatmap.map,
-                    // icon: self.icon1,
-                    // animation: null,
-                    // id: coordinate.id,
-                    // index: index,
-                    // title: 'lat:'+coordinate.latitude+' lng:'+coordinate.longitude,
+                    icon: window.appSettings.markers.iconIdle,
+                    index: index,
                 });
-                marker.setVisible(false);
 
+                google.maps.event.addListener(marker, 'mouseover', function() {
+                    marker.setIcon(window.appSettings.markers.iconHover);
+                    infowindow.open(self.heatmap.map, marker);
+                });
+
+                google.maps.event.addListener(marker, 'mouseout', function() {
+                    marker.setIcon(window.appSettings.markers.iconIdle);
+                    infowindow.close();
+                });
+
+                if(index != self.heatmap.settings.currentMarkerItem)
+                    marker.setVisible(false);
+
+                self.heatmap.markers.push(marker);
                 self.heatmap.bounds.extend(marker.position);
             });
 

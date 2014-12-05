@@ -85,7 +85,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         // console.log('#' + this.currentData.data.length);
         // var b = performance.now();
         // console.log('It took ' + (b - a) + ' ms.');
-        console.log('-------------------------------');
+        // console.log('-------------------------------');
         /*----------------------------------------------------*/
 
         return this.currentData;
@@ -163,10 +163,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         var self = this;
 
         _.each(this.currentData.data, function(item){
-            item.count = item.count - self.currentData.min + 1;
-            // item.count = 100*(item.count - self.currentData.min)/(self.currentData.max - self.currentData.min);
-
-            item.count = Number(item.count.toFixed(1));
+            item.count = self.normalizeValue(item.count);
 
             if(self.currentData.normalizeMax === null && self.currentData.normalizeMin === null)
                 self.currentData.normalizeMax = self.currentData.normalizeMin = item.count;
@@ -181,6 +178,10 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
     normalizeValue: function(value){
         return (value - this.currentData.min + 1).toFixed(1);
+    },
+
+    denormalizeValue: function(value){
+        return (Number(value) + this.currentData.min - 1).toFixed(1);
     }
     
 };
