@@ -15,7 +15,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             dataFunction: 'avg',
             opacity: 70,
             radius: 15,
-            currentMarkerItem: 0
+            currentMarkerItem: 0,
+            markersCount: 0,
         },
     },
 
@@ -28,6 +29,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         'change input:radio[name=select-change-data-by]':'changeFrequencyBy',
         'change .opacity-slider':'changeOpacity',
         'change .radius-slider':'changeRadius',
+        'slide .markers-slider':'changeMarker',
         'change #allocation-channel':'changeAllocationChannel',
     },
 	
@@ -157,6 +159,21 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.$el.find('.heatmap-select-channels').hide();
 
         this.changeFrequencyBy(this.frequencyBy,false);
+    },
+
+    renderMarkersSlider: function(max){
+        this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
+            start: this.heatmap.settings.currentMarkerItem,
+            step: 1,
+            orientation: "vertical",
+            format: wNumb({
+                decimals: 0
+            }),
+            range: {
+                'min': 0,
+                'max': max
+            }
+        }, true);
     },
 
     renderMaxIntensitySlider: function(){
@@ -298,6 +315,26 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         this.renderHeatmap();
     },
 
+    changeMarker: function(){
+        var marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
+        if(marker === undefined)
+            return;
+
+        marker.setVisible(false);
+
+        this.heatmap.settings.currentMarkerItem = this.markersSlider.val();
+        marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
+        marker.setVisible(true);
+    },
+
+    disableMarker: function(){
+        var marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
+        if(marker === undefined)
+            return;
+
+        marker.setVisible(false);
+    },
+
 	_renderMap: function(){
         var self = this;
 
@@ -336,8 +373,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(data.max);
             this.maxIntensitySlider.val(data.max);
 
-            self.heatmap.data = [];
-            self.heatmap.markers = [];
+            this.disableMarker();
+            this.heatmap.data = [];
+            this.heatmap.markers = [];
 
             _.each(data.data, function(item, index) {
                 var location = new google.maps.LatLng(item.lat, item.lng);
@@ -354,17 +392,14 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 var marker = new google.maps.Marker({
                     position: location,
                     map: self.heatmap.map,
-                    icon: window.appSettings.markers.iconIdle,
                     index: index,
                 });
 
                 google.maps.event.addListener(marker, 'mouseover', function() {
-                    marker.setIcon(window.appSettings.markers.iconHover);
                     infowindow.open(self.heatmap.map, marker);
                 });
 
                 google.maps.event.addListener(marker, 'mouseout', function() {
-                    marker.setIcon(window.appSettings.markers.iconIdle);
                     infowindow.close();
                 });
 
@@ -374,7 +409,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 self.heatmap.markers.push(marker);
                 self.heatmap.bounds.extend(marker.position);
             });
-
+            
+            this.renderMarkersSlider(data.data.length - 1);
             if(center)
                 this.heatmap.map.fitBounds(this.heatmap.bounds);
         }
