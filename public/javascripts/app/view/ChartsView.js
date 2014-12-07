@@ -93,37 +93,30 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderOccupation: function(){
-		if(window.appRouter.currentData.innerData.charts.occupation.data) {
-			window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
-				waitingView: this.waitingView,
-				errorView : this.errorView,
-				place: this.data,
-				data: window.appRouter.currentData.innerData.charts.occupation.data,
-				channels: window.appRouter.currentData.innerData.charts.channels
-			});
-			this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
-			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
-			
-		} else {
-			var self = this;
-			this.waitingView.render();
+		window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+			place: this.data,
+			channels: window.appRouter.currentData.innerData.charts.channels
+		});
 
+		this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
+
+		this.waitingView.closeView();
+
+		if(window.appRouter.currentData.innerData.charts.occupation.data) 
+			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(window.appRouter.currentData.innerData.charts.occupation.data);
+			
+		else {
+			var self = this;
+			
 			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){                      
-					window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
-						waitingView: self.waitingView,
-						errorView : self.errorView,
-						place: self.data,
-						data: self.currentData,
-						channels: window.appRouter.currentData.innerData.charts.channels
-					});
 					window.appRouter.currentData.innerData.charts.occupation.data = self.currentData;
-					self.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
-					window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
+					window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
 			    },
 			    error: function(e){  
-			     	self.waitingView.closeView();
 			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
 			    }
 			});

@@ -21,7 +21,6 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 
 		this.place = options.place.attributes;
-		this.occupation = options.data.attributes;
 		this.threshold = this.place.powerAvg;
 
 		this.chart = new com.spantons.view.PowerFrequenciesView({
@@ -140,7 +139,9 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
-	renderComponents: function(){
+	renderComponents: function(data){
+		this.occupation = data.attributes;
+
 		this.renderSlider();
 		this.renderChannelInput();
 		this.renderChart();
@@ -219,8 +220,6 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		_.each(this.channels,function(item){
 			Backbone.pubSub.trigger('event-occupation-channel-select',item);
 		});
-
-		this.waitingView.closeView();
 	},
 
 	render: function(){
@@ -229,6 +228,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 
     	this.$el.find("#allocation-channel").select2();
     	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+    	this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;
 	},
