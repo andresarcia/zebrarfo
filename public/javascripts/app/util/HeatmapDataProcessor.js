@@ -81,7 +81,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
             // console.log(index + ',' + item.count);
             // console.log(item.count);
         // });
-        console.log(this.currentData);
+        // console.log(this.currentData);
         // console.log('#' + this.currentData.data.length);
         // var b = performance.now();
         // console.log('It took ' + (b - a) + ' ms.');

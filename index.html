@@ -220,8 +220,8 @@
 			</ol>
 			
 			<div class="row">
-				<div class="col-md-4 coordinate-info">
-					<div class="panel panel-default">
+				<div class="col-md-4">
+					<div class="panel panel-default coordinate-info">
   						<div class="panel-body">
   							<a class="pull-right delete-link-place"><small>delete</small></a> 
   							<br>
@@ -261,8 +261,10 @@
 							  		<td>{{this.attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
 							  	</tr>
 							  	<tr>
-							  		<td>Allocation channel</td>
-							  		<td>
+							  		<td colspan="2">Allocation channel</td>
+							  	</tr>
+							  	<tr>
+							  		<td colspan="2">
 							  			<select class="form-control" id="allocation-channel">
 											<option value="0">American 6Mhz</option>
 											<option value="1">European 8Mhz</option>
