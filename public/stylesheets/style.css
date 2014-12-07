@@ -23,6 +23,12 @@ hr {
 .ws-modal {
   position: relative;
 }
+
+.disable-container {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
 .ws-error, .ws-waiting {
   position: fixed;
   height: 100%;
@@ -271,6 +277,11 @@ hr {
 
 #map_canvas_heatmap {
   margin-bottom: 20px;
+}
+
+.heatmap-slider-container,
+.heatmap-select-channels {
+  display: none;
 }
 
 .heatmap-slider-container {

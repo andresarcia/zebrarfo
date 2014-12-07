@@ -50,10 +50,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
 
         this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
-        this.heatmapDataProcessor.require({
-            place: options.place.attributes,
-            data: options.data.attributes
-        });
 
         this.frequencyBy = options.frequencyBy;
         if(options.channels)
@@ -62,14 +58,13 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             this.channels = [];
 	},
 
-    render: function(){
-        var html = this.template();
-        this.$el.html(html);    
+    renderComponents: function(data){
+        this.heatmapDataProcessor.require({
+            place: this.place,
+            data: data.attributes
+        });
 
-        return this;
-    },
-
-    renderComponents: function(){
+        this.$el.find('.heatmap-settings').removeClass('disable-container');
         this.renderSettings();
         this.renderMap();
     },
@@ -99,8 +94,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 'max': 100
             }
         });
-
-        this.renderMaxIntensitySlider();
 
         this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
             $(this).html(
@@ -176,9 +169,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         }, true);
     },
 
-    renderMaxIntensitySlider: function(){
+    renderMaxIntensitySlider: function(start){
         this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
-            start: -120,
+            start: start,
             step: 1,
             format: wNumb({
                 decimals: 0
@@ -187,7 +180,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 'min': -120,
                 'max': 0
             }
-        });
+        }, true);
         this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
             $(this).html(
                 '<strong>' + value + ' dBm</strong>'
@@ -371,7 +364,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             );
 
             this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(data.max);
-            this.maxIntensitySlider.val(data.max);
+            this.renderMaxIntensitySlider(data.max);
 
             this.disableMarker();
             this.heatmap.data = [];
@@ -411,6 +404,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             });
             
             this.renderMarkersSlider(data.data.length - 1);
+
             if(center)
                 this.heatmap.map.fitBounds(this.heatmap.bounds);
         }
@@ -424,6 +418,16 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         });
 
         this.heatmap.heatmap.setMap(this.heatmap.map);
+    },
+
+    render: function(){
+        var html = this.template();
+        this.$el.html(html);    
+
+        this.$el.find('.heatmap-settings').addClass('disable-container');
+        this.$el.find('#map_canvas_heatmap').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+
+        return this;
     }
 
 });

@@ -109,7 +109,6 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			
 		else {
 			var self = this;
-			
 			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){                      
@@ -124,40 +123,30 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderHeatmap: function(){
-		if(window.appRouter.currentData.innerData.charts.heatmap.data) {
-			window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
-				waitingView: this.waitingView,
-				errorView : this.errorView,
-				place: this.data,
-				data: window.appRouter.currentData.innerData.charts.heatmap.data,
-				frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
-				channels: window.appRouter.currentData.innerData.charts.channels
-			});
-			this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
-			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
+		window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+			place: this.data,
+			frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+			channels: window.appRouter.currentData.innerData.charts.channels
+		});
 
-		} else {
+		this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
+
+		this.waitingView.closeView();
+
+		if(window.appRouter.currentData.innerData.charts.heatmap.data) 
+			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(window.appRouter.currentData.innerData.charts.heatmap.data);
+
+		else {
 			var self = this;
-			this.waitingView.render();
-			
 			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){       
-					window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
-						waitingView: self.waitingView,
-						errorView : self.errorView,
-						place: self.data,
-						data: self.currentData,
-						frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
-						channels: window.appRouter.currentData.innerData.charts.channels
-					});               
 					window.appRouter.currentData.innerData.charts.heatmap.data = self.currentData;
-					
-					self.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
-					window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
+					window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
 			    },
 			    error: function(e){  
-			     	self.waitingView.closeView();
 			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
 			    }
 			});
