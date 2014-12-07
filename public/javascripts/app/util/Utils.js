@@ -20,6 +20,13 @@ com.spantons.util.GetURLParameter = function(name){
        return results[1] || 0;
 };
 
+com.spantons.util.CkeckUrl = function(url){
+  if(window.location.hash == url)
+    return true;
+    
+  return false;
+};
+
 com.spantons.util.SetChannelsInRange = function(frequencyMin,frequencyMax){
   var data = [];
   _.each(window.appSettings.channels, function(item){

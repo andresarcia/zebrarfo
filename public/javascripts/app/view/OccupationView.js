@@ -85,8 +85,10 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	updateDataByTab: function(data){
 		var self = this;
 		this.channels = data.channels;
+		
+		if(this.chart.chart)
+			this.chart.chart.destroy();
 
-		this.chart.chart.destroy();
 		setTimeout(function(){
         	self.renderChart();
         }, 200);

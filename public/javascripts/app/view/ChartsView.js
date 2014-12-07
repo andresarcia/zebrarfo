@@ -61,7 +61,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		var isEmpty;
 		switch (index) {
     		case 0:
-    			this.changeUrl('occupation');
+    			window.location.hash = '#places/'+this.data.id+'/charts?type=occupation';
     			isEmpty = this.$el.find('#occupation-tab').is(':empty');
     			if(isEmpty)
     				self.renderOccupation();
@@ -72,7 +72,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
     			break;
     		case 1:
-    			this.changeUrl('heatmap');
+    			window.location.hash = '#places/'+this.data.id+'/charts?type=heatmap';
     			isEmpty = this.$el.find('#heatmap-tab').is(':empty');
     			if(isEmpty)
     				self.renderHeatmap();
@@ -84,12 +84,6 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
     			break;
     	}
-	},
-
-	changeUrl: function(url){
-		var type = com.spantons.util.GetURLParameter('type');
-		if(type != url)
-			window.location.hash = '#places/'+this.data.id+'/charts?type='+url;
 	},
 
 	renderOccupation: function(){
@@ -113,7 +107,8 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			this.currentData.fetch({
 				success: function(e){                      
 					window.appRouter.currentData.innerData.charts.occupation.data = self.currentData;
-					window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
+					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
+						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
 			    },
 			    error: function(e){  
 			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
@@ -144,7 +139,8 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			this.currentData.fetch({
 				success: function(e){       
 					window.appRouter.currentData.innerData.charts.heatmap.data = self.currentData;
-					window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
+					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
+						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
 			    },
 			    error: function(e){  
 			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
