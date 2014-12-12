@@ -49,7 +49,15 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
     },
     distaceAvg: {
-      type: DataTypes.DECIMAL(12,3),
+      type: DataTypes.DECIMAL(12,7),
+      allowNull: true,
+    },
+    distaceMin: {
+      type: DataTypes.DECIMAL(12,7),
+      allowNull: true,
+    },
+    distaceMax: {
+      type: DataTypes.DECIMAL(12,7),
       allowNull: true,
     },
 
