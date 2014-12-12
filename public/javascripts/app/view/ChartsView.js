@@ -60,30 +60,30 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 		var isEmpty;
 		switch (index) {
-    		case 0:
-    			window.location.hash = '#places/'+this.data.id+'/charts?type=occupation';
-    			isEmpty = this.$el.find('#occupation-tab').is(':empty');
-    			if(isEmpty)
-    				self.renderOccupation();
-    			else
-    				window.appRouter.currentData.innerData.charts.occupation.view.updateDataByTab({
-    					channels: window.appRouter.currentData.innerData.charts.channels
-    				});
-
-    			break;
-    		case 1:
-    			window.location.hash = '#places/'+this.data.id+'/charts?type=heatmap';
-    			isEmpty = this.$el.find('#heatmap-tab').is(':empty');
-    			if(isEmpty)
-    				self.renderHeatmap();
-    			else
-    				window.appRouter.currentData.innerData.charts.heatmap.view.updateDataByTab({
-    					frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+			case 0:
+				window.location.hash = '#places/'+this.data.id+'/charts?type=occupation';
+				isEmpty = this.$el.find('#occupation-tab').is(':empty');
+				if(isEmpty)
+					self.renderOccupation();
+				else
+					window.appRouter.currentData.innerData.charts.occupation.view.updateDataByTab({
 						channels: window.appRouter.currentData.innerData.charts.channels
-    				});
+					});
 
-    			break;
-    	}
+				break;
+			case 1:
+				window.location.hash = '#places/'+this.data.id+'/charts?type=heatmap';
+				isEmpty = this.$el.find('#heatmap-tab').is(':empty');
+				if(isEmpty)
+					self.renderHeatmap();
+				else
+					window.appRouter.currentData.innerData.charts.heatmap.view.updateDataByTab({
+						frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
+						channels: window.appRouter.currentData.innerData.charts.channels
+					});
+
+				break;
+		}
 	},
 
 	renderOccupation: function(){
@@ -105,14 +105,14 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			var self = this;
 			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
 			this.currentData.fetch({
-				success: function(e){                      
+				success: function(e){
 					window.appRouter.currentData.innerData.charts.occupation.data = self.currentData;
 					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
 						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
-			    },
-			    error: function(e){  
-			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-			    }
+				},
+				error: function(e){  
+				 	self.errorView.render(['Occurred an error retrieving the coordinates']);
+				}
 			});
 		}
 	},
@@ -137,21 +137,21 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			var self = this;
 			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
 			this.currentData.fetch({
-				success: function(e){       
+				success: function(e){
 					window.appRouter.currentData.innerData.charts.heatmap.data = self.currentData;
 					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
 						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
-			    },
-			    error: function(e){  
-			     	self.errorView.render(['Occurred an error retrieving the coordinates']);
-			    }
+				},
+				error: function(e){  
+				 	self.errorView.render(['Occurred an error retrieving the coordinates']);
+				}
 			});
 		}
 	},
 
 	render: function(){
 		var html = this.template(this.data);
-    	this.$el.html(html);	
+		this.$el.html(html);	
 
 		return this;
 	},

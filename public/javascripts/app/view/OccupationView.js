@@ -96,7 +96,6 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		
-
 		if((this.channels === undefined || this.channels.length < 1) && data.frequencyBy === 'channels'){
             this.channels = [];
             this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);

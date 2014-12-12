@@ -95,6 +95,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             }
         });
 
+        this.renderMaxIntensitySlider();
+
         this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
             $(this).html(
                 '<strong>' + value + '%</strong>'
@@ -169,9 +171,9 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
         }, true);
     },
 
-    renderMaxIntensitySlider: function(start){
+    renderMaxIntensitySlider: function(){
         this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
-            start: start,
+            start: this.place.powerMax,
             step: 1,
             format: wNumb({
                 decimals: 0
@@ -181,6 +183,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 'max': 0
             }
         }, true);
+
+        this.maxIntensitySlider.val(this.place.powerMax);
         this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
             $(this).html(
                 '<strong>' + value + ' dBm</strong>'
@@ -363,9 +367,6 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 this.heatmap.settings.dataFunction
             );
 
-            this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(data.max);
-            this.renderMaxIntensitySlider(data.max);
-
             this.disableMarker();
             this.heatmap.data = [];
             this.heatmap.markers = [];
@@ -403,6 +404,8 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
                 self.heatmap.bounds.extend(marker.position);
             });
             
+            this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.place.powerMax);
+            this.renderMaxIntensitySlider();
             this.renderMarkersSlider(data.data.length - 1);
 
             if(center)
@@ -422,7 +425,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
 
     render: function(){
         var html = this.template();
-        this.$el.html(html);    
+        this.$el.html(html);
 
         this.$el.find('.heatmap-settings').addClass('disable-container');
         this.$el.find('#map_canvas_heatmap').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
