@@ -198,7 +198,9 @@ exports.getOccupation = function(req,res){
 /*-------------------------------------------------------------------*/
 exports.getHeatmap = function(req,res){
 	if(isNumber(req.params.id)){
-		var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by lat, lng';
+		// var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by lat, lng';
+
+		var query = 'select aux.id, aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by frequency';
 
 		db.sequelize
 		.query(query).success(function(response) {
