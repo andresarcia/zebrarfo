@@ -35,36 +35,49 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     process: function(boundaries, functionName){
         var self = this;
         this.resetData();
-        this.currentData.item = this.data[0];
-
+    
         /*----------------------------------------------------*/
         // var a = performance.now();
         /*----------------------------------------------------*/
-        _.each(boundaries, function(itemBoundaries){
-            var filter = _.filter(self.data, function(itemData){ 
-                return itemData.frequency / 1000 >= itemBoundaries.from && itemData.frequency / 1000 <= itemBoundaries.to; 
-            });
-            /*----------------------------------------------------*/
-            // console.log('frequency min: ' + filter[0].frequency + ' ,max: ' + filter[filter.length - 1].frequency);
-            /*----------------------------------------------------*/
-            _.each(filter, function(item){
-                switch (functionName) {
-                    case 'avg':
-                        self.averageFunction(item);
-                        break;
+        var data = [];
+        var indexForBoundaries = 0;
+        for (var i = 0; i < this.data.length; i++){
+            if( this.data[i].frequency / 1000 >= boundaries[indexForBoundaries].from && 
+                this.data[i].frequency / 1000 <= boundaries[indexForBoundaries].to){
 
-                    case 'max':
-                        self.maxFunction(item);
-                        break;
+                data.push(this.data[i]);
+            }
 
-                    case 'min':
-                        self.minFunction(item);
-                        break;
+            if(this.data[i].frequency / 1000 > boundaries[indexForBoundaries].to){
+                if(indexForBoundaries < boundaries.length - 1)
+                    indexForBoundaries += 1;
+                else 
+                    break;
+            }
+        }
 
-                    default:
-                        self.averageFunction(item);
-                }
-            });
+        data = _.sortBy(data, function(sample){
+            return sample.id;
+        });
+        
+        this.currentData.item = data[0];
+        _.each(data, function(item){
+            switch (functionName) {
+                case 'avg':
+                    self.averageFunction(item);
+                    break;
+
+                case 'max':
+                    self.maxFunction(item);
+                    break;
+
+                case 'min':
+                    self.minFunction(item);
+                    break;
+
+                default:
+                    self.averageFunction(item);
+            }
         });
 
         if(this.currentData.data.length === 0)
@@ -92,7 +105,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     averageFunction: function(item){
-        if(this.currentData.item.lat == item.lat && this.currentData.item.lng == item.lng){
+        if(this.currentData.item.id == item.id){
             this.currentData.operation += item.power;
             this.currentData.count += 1;
 
@@ -103,7 +116,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     maxFunction: function(item){
-        if(this.currentData.item.lat == item.lat && this.currentData.item.lng == item.lng){
+        if(this.currentData.item.id == item.id){
             if(this.currentData.operation < item.power || this.currentData.operation === null)
                 this.currentData.operation = item.power;
 
@@ -114,7 +127,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     minFunction: function(item){
-        if(this.currentData.item.lat == item.lat && this.currentData.item.lng == item.lng){
+        if(this.currentData.item.id == item.id){
             if(this.currentData.operation > item.power || this.currentData.operation === null)
                 this.currentData.operation = item.power;
 
@@ -137,19 +150,30 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     },
 
     saveItem: function(item){
-        // var distance = com.spantons.util.GetDistanceFromLatLonInKm(this.currentData.item.lat,this.currentData.item.lng,item.lat,item.lng);
-        
-        // if(distance < this.place.distaceAvg){
-        //     this.currentData.item = item;
-        //     this.currentData.operation = item.power;
-        //     this.currentData.count = 1;
-        //     return;
-        // }
 
+        var distance = 0;
+        var lastSaved = this.currentData.data[this.currentData.data.length - 1];
+
+        if (lastSaved !== undefined){
+            distance = com.spantons.util.GetDistanceFromLatLonInKm(
+                lastSaved.lat,
+                lastSaved.lng,
+                this.currentData.item.lat,
+                this.currentData.item.lng);
+        }
+
+        // if(distance < this.place.distanceMax && lastSaved !== undefined){
+        if(distance < 0.5 && lastSaved !== undefined){
+            this.currentData.item = item;
+            this.currentData.operation = item.power;
+            this.currentData.count = 1;
+            return;
+        }
+        
         this.currentData.data.push({
             lat: this.currentData.item.lat, 
             lng: this.currentData.item.lng, 
-            count: this.currentData.operation
+            count: this.currentData.operation,
         });
 
         this.calculateMaxMin(this.currentData.operation);
@@ -157,6 +181,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         this.currentData.item = item;
         this.currentData.operation = item.power;
         this.currentData.count = 1;
+
     },
 
     normalize: function(){
