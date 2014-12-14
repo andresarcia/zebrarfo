@@ -9,6 +9,10 @@ hr {
   margin: 6px 0 5px 0;
 }
 
+img[src*="gstatic.com/"], img[src*="googleapis.com/"]  {
+  max-width: 99999px;
+}
+
 .btn-x-lg { width: 200px }
 .btn-2x-lg { width: 400px }
 
