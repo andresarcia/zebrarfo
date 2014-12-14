@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.router = com.spantons.router || {};
+var app = app || {};
+app.router = app.router || {};
 
-com.spantons.router.AppRouter = Backbone.Router.extend({
+app.router.AppRouter = Backbone.Router.extend({
 
 	helperViews: {
 		errorView: null,
@@ -21,10 +20,10 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 	},
 
 	initialize: function(options){
-		this.navViews.verticalNav = new com.spantons.view.VerticalNavView();
+		this.navViews.verticalNav = new app.view.VerticalNavView();
 
-		this.helperViews.errorView = new com.spantons.view.ErrorView();
-		this.helperViews.waitingView = new com.spantons.view.WaitingView();
+		this.helperViews.errorView = new app.view.ErrorView();
+		this.helperViews.waitingView = new app.view.WaitingView();
 	},
 
 	clearViews: function(){
@@ -53,7 +52,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 
 			this.currentData.innerData = {};
 			this.currentData.id = 'places';
-			this.currentData.data = new com.spantons.collection.Places();
+			this.currentData.data = new app.collection.Places();
 			this.currentData.data.fetch({
 				success: function(e){  
 					self.helperViews.waitingView.closeView();
@@ -81,7 +80,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		this.clearViews();
 		this.fetchPlacesData(function(){
-  			self.currentView = new com.spantons.view.PlacesView({
+  			self.currentView = new app.view.PlacesView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data
@@ -94,7 +93,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		this.clearViews();
 		this.fetchPlacesData(function(){
-  			self.currentView = new com.spantons.view.UploadMeasuresView({
+  			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data
@@ -109,7 +108,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			var self = this;
 			this.helperViews.waitingView.render();
 
-			var data = new com.spantons.model.Place({id:id});
+			var data = new app.model.Place({id:id});
 			data.fetch({
 				success: function(e){  
 					self.setPlaceData(data);
@@ -128,7 +127,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.currentData.innerData = {};
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
-		window.appSettings.fixedChannels = com.spantons.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
+		window.appSettings.fixedChannels = app.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
@@ -144,7 +143,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		this.clearViews();
 		var self = this;
 		this.fetchSinglePlaceData(id,function(){
-			self.currentView = new com.spantons.view.SinglePlaceView({
+			self.currentView = new app.view.SinglePlaceView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data
@@ -157,7 +156,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
-			self.currentView = new com.spantons.view.MapsView({
+			self.currentView = new app.view.MapsView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data,
@@ -180,7 +179,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 			chartType = 1;
 
 		this.fetchSinglePlaceData(id,function(){
-			self.currentView = new com.spantons.view.ChartsView({
+			self.currentView = new app.view.ChartsView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data,
@@ -194,7 +193,7 @@ com.spantons.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
-  			self.currentView = new com.spantons.view.UploadMeasuresView({
+  			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data

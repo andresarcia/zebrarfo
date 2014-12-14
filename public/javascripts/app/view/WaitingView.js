@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.WaitingView = Backbone.View.extend({
+app.view.WaitingView = Backbone.View.extend({
 
 	el: '#waiting',
 	template: Handlebars.compile($("#waiting-template").html()),

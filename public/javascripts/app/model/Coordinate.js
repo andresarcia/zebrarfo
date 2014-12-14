@@ -1,7 +1,6 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.model = com.spantons.model || {};
+var app = app || {};
+app.model = app.model || {};
 
-com.spantons.model.Coordinate = Backbone.Model.extend({
+app.model.Coordinate = Backbone.Model.extend({
 
 });

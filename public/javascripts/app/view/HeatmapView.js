@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.HeatmapView = Backbone.View.extend({
+app.view.HeatmapView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#heatmap-template").html()),
     heatmap: {
@@ -49,7 +48,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
             to: this.place.frequencyMax - tail
         });
 
-        this.heatmapDataProcessor = new com.spantons.util.HeatmapDataProcessor();
+        this.heatmapDataProcessor = new app.util.HeatmapDataProcessor();
 
         this.frequencyBy = options.frequencyBy;
         if(options.channels)

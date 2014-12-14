@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.PlacesView = Backbone.View.extend({
+app.view.PlacesView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	places: null,

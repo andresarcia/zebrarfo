@@ -1,10 +1,9 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.collection = com.spantons.collection || {};
+var app = app || {};
+app.collection = app.collection || {};
 
-com.spantons.collection.Places = Backbone.Collection.extend({
+app.collection.Places = Backbone.Collection.extend({
   
- 	model: com.spantons.model.Place,
+ 	model: app.model.Place,
   	url: '/api/places/'
 
 });

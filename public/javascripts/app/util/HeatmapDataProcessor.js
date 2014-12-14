@@ -1,10 +1,9 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.util = com.spantons.util || {};
+var app = app || {};
+app.util = app.util || {};
 
-com.spantons.util.HeatmapDataProcessor = function(){};
+app.util.HeatmapDataProcessor = function(){};
 
-com.spantons.util.HeatmapDataProcessor.prototype = {
+app.util.HeatmapDataProcessor.prototype = {
     currentData: {
         data: [],
         item: null,
@@ -154,7 +153,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
         var lastSaved = this.currentData.data[this.currentData.data.length - 1];
 
         if (lastSaved !== undefined){
-            distance = com.spantons.util.GetDistanceFromLatLonInKm(
+            distance = app.util.GetDistanceFromLatLonInKm(
                 lastSaved.lat,
                 lastSaved.lng,
                 this.currentData.item.lat,

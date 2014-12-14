@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.CoordinatesView = Backbone.View.extend({
+app.view.CoordinatesView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#coordiantes-template").html()),
 

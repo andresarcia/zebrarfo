@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.model = com.spantons.model || {};
+var app = app || {};
+app.model = app.model || {};
 
-com.spantons.model.ChartsData = Backbone.Model.extend({
+app.model.ChartsData = Backbone.Model.extend({
 
 	initialize: function(options) {
     	this.id = options.idPlace;

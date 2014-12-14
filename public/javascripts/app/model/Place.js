@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.model = com.spantons.model || {};
+var app = app || {};
+app.model = app.model || {};
 
-com.spantons.model.Place = Backbone.Model.extend({
+app.model.Place = Backbone.Model.extend({
 
 	urlRoot: '/api/places/',
 

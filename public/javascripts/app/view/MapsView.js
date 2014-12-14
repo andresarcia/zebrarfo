@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.MapsView = Backbone.View.extend({
+app.view.MapsView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	template: Handlebars.compile($("#maps-template").html()),
@@ -46,7 +45,7 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		this.waitingView.render();
 
 		if(window.appRouter.currentData.innerData.maps.coordinates) {
-			this.currentMap = new com.spantons.view.GoogleMapCompleteView({
+			this.currentMap = new app.view.GoogleMapCompleteView({
 				waitingView: this.waitingView,
 				errorView : this.errorView,
 				placeId:this.data.id,
@@ -60,10 +59,10 @@ com.spantons.view.MapsView = Backbone.View.extend({
 		} else {
 			var self = this;
 
-			this.currentData = new com.spantons.collection.Coordinates({idPlace:this.data.id});
+			this.currentData = new app.collection.Coordinates({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){            
-					self.currentMap = new com.spantons.view.GoogleMapCompleteView({
+					self.currentMap = new app.view.GoogleMapCompleteView({
 						waitingView: self.waitingView,
 						errorView : self.errorView,
 						placeId:self.data.id,

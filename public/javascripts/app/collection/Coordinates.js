@@ -1,10 +1,9 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.collection = com.spantons.collection || {};
+var app = app || {};
+app.collection = app.collection || {};
 
-com.spantons.collection.Coordinates = Backbone.Collection.extend({
+app.collection.Coordinates = Backbone.Collection.extend({
   
- 	model: com.spantons.model.Coordinate,
+ 	model: app.model.Coordinate,
 
   	initialize: function(options) {
     	this.id = options.idPlace;

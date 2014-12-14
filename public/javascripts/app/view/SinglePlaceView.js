@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.SinglePlaceView = Backbone.View.extend({
+app.view.SinglePlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	coordinates: null,
@@ -15,8 +14,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		'click .delete-link-place': 'deletePlace',
 		'click .delete-link-coordinate': 'deleteCoordinate',
 		'click .dropdown-trigger' : 'toggleDropdown',
-		'click .see-on-map': 'seeOnMap',
-		'click #complete-map': 'launchCompleteMap',
+		'click .see-on-map': 'seeOnMap'
 	},
 
 	defaults: {
@@ -31,8 +29,8 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.waitingView.render();
 		this.data = options.data;
-		this.coordinates = new com.spantons.collection.Coordinates({idPlace:this.data.id});
-		this.coordinatesView = new com.spantons.view.CoordinatesView();
+		this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
+		this.coordinatesView = new app.view.CoordinatesView();
 
 		this.coordinates.fetch({
 			data: { 
@@ -43,7 +41,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			success: function(e){          
 				self.waitingView.closeView();
 		        self.render();
-		        self.mapView = new com.spantons.view.GoogleMapBasicMarkersView({
+		        self.mapView = new app.view.GoogleMapBasicMarkersView({
 					idContainer: 'basic-markers-map'
 				});
 		        self.renderMap();
@@ -61,7 +59,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 		var deleteFunction = function(){
 			self.waitingView.render();
-			var place = new com.spantons.model.Place({id:self.data.id});
+			var place = new app.model.Place({id:self.data.id});
 			place.destroy({
 				success: function(model, response) {
 	  				self.waitingView.closeView();
@@ -95,7 +93,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var index = this.$el.find('.delete-link-coordinate').index(evt.currentTarget);
 		var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
 		var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
-		var coordinate = new com.spantons.model.Coordinate({id:idCoord});
+		var coordinate = new app.model.Coordinate({id:idCoord});
 		coordinate.urlRoot = '/api/places/'+idPlace+'/coordinates/';
 
 		coordinate.destroy({
@@ -141,12 +139,12 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 			var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
 			var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
 
-			var powerFrequenciesChart = new com.spantons.model.PowerFrequencies({
+			var powerFrequenciesChart = new app.model.PowerFrequencies({
 				idPlace: idPlace,
 	    		idCoord: idCoord
 			});
 
-			var powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
+			var powerFrequenciesView = new app.view.PowerFrequenciesView({
 				selector: '#coord-id-'+idCoord,
 				tooltipTop: 310,
 			});
@@ -201,7 +199,7 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
 		var container = this.$el.find('.pagination');
 		var total = this.coordinates.models[0].attributes.total;
 		
-		new com.spantons.view.PaginationView({ 
+		new app.view.PaginationView({ 
 			numberOfPages: Math.ceil(total/self.defaults.limit),
 			currentPage: index,
 			mainView: self
@@ -238,10 +236,6 @@ com.spantons.view.SinglePlaceView = Backbone.View.extend({
     	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
     
 		return this;
-	},
-
-	launchCompleteMap: function(){
-		window.location.hash = '#places/'+this.coordinates.id+'/maps';
 	}
 
 });

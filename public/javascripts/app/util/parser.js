@@ -1,10 +1,9 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.util = com.spantons.util || {};
+var app = app || {};
+app.util = app.util || {};
 
-com.spantons.util.Parser = function(){};
+app.util.Parser = function(){};
 
-com.spantons.util.Parser.prototype = {
+app.util.Parser.prototype = {
 	numFilesParser: 0,
 	numFiles: 0,
 	numCoordReady: 0,

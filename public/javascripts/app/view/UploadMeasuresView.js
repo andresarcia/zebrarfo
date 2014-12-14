@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.UploadMeasuresView = Backbone.View.extend({
+app.view.UploadMeasuresView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	template: Handlebars.compile($("#upload-measures-template").html()),
@@ -48,7 +47,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 
 		this.waitingView.closeView();
         this.render();
-        this.viewContainers = new com.spantons.model.UploadMeasuresContainers({el:self.$el});
+        this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
    	    $(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
@@ -165,7 +164,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			sizeFiles += file.size;
 		});
 
-		this.filesInfo.sizeFiles = com.spantons.util.FormatSizeUnits(sizeFiles);
+		this.filesInfo.sizeFiles = app.util.FormatSizeUnits(sizeFiles);
 		if(filesBadType.length > 0){
 			this.delateFiles();
 			this.errorView.render(['Only .txt files are allowed']);
@@ -232,7 +231,7 @@ com.spantons.view.UploadMeasuresView = Backbone.View.extend({
 			
 			this.disableForm();
 
-			new com.spantons.view.ParsingMeasuresView({
+			new app.view.ParsingMeasuresView({
 				placeName:this.placeName,
 				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,

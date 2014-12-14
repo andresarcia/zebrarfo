@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.ChartsView = Backbone.View.extend({
+app.view.ChartsView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	template: Handlebars.compile($("#charts-template").html()),
@@ -88,7 +87,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderOccupation: function(){
-		window.appRouter.currentData.innerData.charts.occupation.view = new com.spantons.view.OccupationView({
+		window.appRouter.currentData.innerData.charts.occupation.view = new app.view.OccupationView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			place: this.data,
@@ -102,11 +101,11 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 			
 		else {
 			var self = this;
-			this.currentData = new com.spantons.model.ChartsData({idPlace:this.data.id});
+			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){
 					window.appRouter.currentData.innerData.charts.data = self.currentData;
-					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
+					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
 						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
 				},
 				error: function(e){  
@@ -117,7 +116,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 	},
 
 	renderHeatmap: function(){
-		window.appRouter.currentData.innerData.charts.heatmap.view = new com.spantons.view.HeatmapView({
+		window.appRouter.currentData.innerData.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			place: this.data,
@@ -132,11 +131,11 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 		else {
 			var self = this;
-			this.currentData = new com.spantons.model.ChartsData({idPlace:this.data.id});
+			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){
 					window.appRouter.currentData.innerData.charts.data = self.currentData;
-					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
+					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
 						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
 				},
 				error: function(e){  

@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
+app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	el: '#modal-parsing-measures',
 	model: null,
@@ -30,7 +29,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		var self = this;
 
 		if (options.placeName && options.supportHtml5){
-			this.model = new com.spantons.model.PlaceUpload({
+			this.model = new app.model.PlaceUpload({
 				name:options.placeName,
 				json:options.supportHtml5,
 				coordinates: []
@@ -65,7 +64,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 		this.restartProgressBar();
 
 		if(this.html5){
-			var parser = new com.spantons.util.Parser();
+			var parser = new app.util.Parser();
 
 			parser.initialize(this.files, this.model.attributes, options.unit,
 			function(numFilesProcessed){
@@ -195,7 +194,7 @@ com.spantons.view.ParsingMeasuresView = Backbone.View.extend({
 			delete newModelData.json;
 			delete newModelData.gpsFunction;
 			delete newModelData.coordinates;
-			var newModel = new com.spantons.model.Place(newModelData, {parse: true});
+			var newModel = new app.model.Place(newModelData, {parse: true});
 			
 			window.appRouter.setPlaceData(newModel);
 			window.location.hash = '#places/'+this.model.id;

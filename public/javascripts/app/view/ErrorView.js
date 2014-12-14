@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.ErrorView = Backbone.View.extend({
+app.view.ErrorView = Backbone.View.extend({
 
 	el: '#error',
 	template: Handlebars.compile($("#error-template").html()),

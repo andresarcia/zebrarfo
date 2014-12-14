@@ -1,10 +1,9 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.util = com.spantons.util || {};
+var app = app || {};
+app.util = app.util || {};
 
-com.spantons.util.Loader = function(){};
+app.util.Loader = function(){};
 
-com.spantons.util.Loader.prototype = {
+app.util.Loader.prototype = {
     require: function (scripts, callback) {
         this.loadCount      = 0;
         this.totalRequired  = scripts.length;

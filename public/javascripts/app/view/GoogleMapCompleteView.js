@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
+app.view.GoogleMapCompleteView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#coordinates-map-template").html()),
 	lastIndex: null,
@@ -28,7 +27,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		self.waitingView.closeView();
 
-		this.powerFrequenciesView = new com.spantons.view.PowerFrequenciesView({
+		this.powerFrequenciesView = new app.view.PowerFrequenciesView({
 			selector: '#complete-map-info',
 			tooltipTop: 260
 		});
@@ -46,7 +45,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.$el.find("#allocation-channel").select2();
 		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 
-		this.currentPowerFrequencies.data = new com.spantons.model.PowerFrequencies({
+		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
 			idPlace: self.placeId,
     		idCoord: idCoord
 		});
@@ -103,7 +102,7 @@ com.spantons.view.GoogleMapCompleteView = Backbone.View.extend({
 		var self = this;
 		this.waitingView.render();
 
-		var coordinate = new com.spantons.model.Coordinate({id:this.lastIdCoordinate});
+		var coordinate = new app.model.Coordinate({id:this.lastIdCoordinate});
 		coordinate.urlRoot = '/api/places/'+this.placeId+'/coordinates/';
 
 		coordinate.destroy({

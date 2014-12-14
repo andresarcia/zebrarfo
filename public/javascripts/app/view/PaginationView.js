@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.PaginationView = Backbone.View.extend({
+app.view.PaginationView = Backbone.View.extend({
 
 	el: '.pagination',
 	numberOfPages: null,

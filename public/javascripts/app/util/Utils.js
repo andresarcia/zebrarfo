@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.util = com.spantons.util || {};
+var app = app || {};
+app.util = app.util || {};
 
-com.spantons.util.FormatSizeUnits = function(bytes){
+app.util.FormatSizeUnits = function(bytes){
 	if(bytes === 0) 
     	return '0 Byte';
    	
@@ -12,7 +11,7 @@ com.spantons.util.FormatSizeUnits = function(bytes){
    	return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
 };
 
-com.spantons.util.GetURLParameter = function(name){
+app.util.GetURLParameter = function(name){
     var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results === null)
        return null;
@@ -20,14 +19,14 @@ com.spantons.util.GetURLParameter = function(name){
        return results[1] || 0;
 };
 
-com.spantons.util.CkeckUrl = function(url){
+app.util.CkeckUrl = function(url){
   if(window.location.hash == url)
     return true;
     
   return false;
 };
 
-com.spantons.util.SetChannelsInRange = function(frequencyMin,frequencyMax){
+app.util.SetChannelsInRange = function(frequencyMin,frequencyMax){
   var data = [];
   _.each(window.appSettings.channels, function(item){
     var aux = [];
@@ -44,7 +43,7 @@ function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
 
-com.spantons.util.GetDistanceFromLatLonInKm = function(lat1,lon1,lat2,lon2) {
+app.util.GetDistanceFromLatLonInKm = function(lat1,lon1,lat2,lon2) {
   var R = 6371; // Radius of the earth in km
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
   var dLon = deg2rad(lon2-lon1); 

@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.model = com.spantons.model || {};
+var app = app || {};
+app.model = app.model || {};
 
-com.spantons.model.PowerFrequencies = Backbone.Model.extend({
+app.model.PowerFrequencies = Backbone.Model.extend({
 
 	initialize: function(options) {
     	this.idPlace = options.idPlace;

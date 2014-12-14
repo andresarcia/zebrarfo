@@ -1,8 +1,7 @@
-var com = com || {};
-com.spantons = com.spantons || {};
-com.spantons.view = com.spantons.view || {};
+var app = app || {};
+app.view = app.view || {};
 
-com.spantons.view.OccupationView = Backbone.View.extend({
+app.view.OccupationView = Backbone.View.extend({
 
 	template: Handlebars.compile($("#occupation-template").html()),
 
@@ -23,7 +22,7 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 		this.place = options.place.attributes;
 		this.threshold = this.place.powerAvg;
 
-		this.chart = new com.spantons.view.PowerFrequenciesView({
+		this.chart = new app.view.PowerFrequenciesView({
 			selector: '#chart_canvas_occupation',
 			tooltipTop: 10,
 			trackClick: true,
