@@ -141,11 +141,14 @@ com.spantons.view.OccupationView = Backbone.View.extend({
 	},
 
 	renderComponents: function(data){
-		this.occupation = data.attributes;
+		var self = this;
+		this.occupation = data.attributes.data;
 
-		this.renderSlider();
-		this.renderChannelInput();
-		this.renderChart();
+		setTimeout(function(){
+			self.renderSlider();
+			self.renderChannelInput();
+        	self.renderChart();
+        }, 200);
 	},
 
 	renderSlider: function(){

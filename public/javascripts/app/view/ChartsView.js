@@ -28,6 +28,7 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 		}
 
 		this.render();
+		this.waitingView.closeView();
 
 		if(window.appRouter.currentData.innerData.charts.tab)
 			this.changeChart(null,window.appRouter.currentData.innerData.charts.tab);
@@ -96,22 +97,20 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 		this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
 
-		this.waitingView.closeView();
-
-		if(window.appRouter.currentData.innerData.charts.occupation.data) 
-			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(window.appRouter.currentData.innerData.charts.occupation.data);
+		if(window.appRouter.currentData.innerData.charts.data) 
+			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(window.appRouter.currentData.innerData.charts.data);
 			
 		else {
 			var self = this;
-			this.currentData = new com.spantons.model.Occupation({idPlace:this.data.id});
+			this.currentData = new com.spantons.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){
-					window.appRouter.currentData.innerData.charts.occupation.data = self.currentData;
+					window.appRouter.currentData.innerData.charts.data = self.currentData;
 					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
 						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
 				},
 				error: function(e){  
-				 	self.errorView.render(['Occurred an error retrieving the coordinates']);
+				 	self.errorView.render(['Occurred an error retrieving the data']);
 				}
 			});
 		}
@@ -128,22 +127,20 @@ com.spantons.view.ChartsView = Backbone.View.extend({
 
 		this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
 
-		this.waitingView.closeView();
-
-		if(window.appRouter.currentData.innerData.charts.heatmap.data) 
-			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(window.appRouter.currentData.innerData.charts.heatmap.data);
+		if(window.appRouter.currentData.innerData.charts.data) 
+			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(window.appRouter.currentData.innerData.charts.data);
 
 		else {
 			var self = this;
-			this.currentData = new com.spantons.model.Heatmap({idPlace:this.data.id});
+			this.currentData = new com.spantons.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
 				success: function(e){
-					window.appRouter.currentData.innerData.charts.heatmap.data = self.currentData;
+					window.appRouter.currentData.innerData.charts.data = self.currentData;
 					if(com.spantons.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
 						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
 				},
 				error: function(e){  
-				 	self.errorView.render(['Occurred an error retrieving the coordinates']);
+				 	self.errorView.render(['Occurred an error retrieving the data']);
 				}
 			});
 		}

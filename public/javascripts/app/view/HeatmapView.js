@@ -61,7 +61,7 @@ com.spantons.view.HeatmapView = Backbone.View.extend({
     renderComponents: function(data){
         this.heatmapDataProcessor.require({
             place: this.place,
-            data: data.attributes
+            data: data.attributes.data
         });
 
         this.$el.find('.heatmap-settings').removeClass('disable-container');

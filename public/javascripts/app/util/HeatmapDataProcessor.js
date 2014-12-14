@@ -18,7 +18,7 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
 
     require: function(options) {
         this.place = options.place;
-        this.data = options.data.data;
+        this.data = options.data;
     },
 
     resetData: function(){
@@ -35,7 +35,6 @@ com.spantons.util.HeatmapDataProcessor.prototype = {
     process: function(boundaries, functionName){
         var self = this;
         this.resetData();
-    
         /*----------------------------------------------------*/
         // var a = performance.now();
         /*----------------------------------------------------*/
