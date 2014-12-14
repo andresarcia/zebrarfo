@@ -5,54 +5,55 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	coordinates: null,
-	coordinatesView: null,
 	mapView: null,
+	currentPowerFrequencies: {},
 	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
 		'click .delete-link-place': 'deletePlace',
-		'click .delete-link-coordinate': 'deleteCoordinate',
-		'click .dropdown-trigger' : 'toggleDropdown',
-		'click .see-on-map': 'seeOnMap'
 	},
 
-	defaults: {
-		offset: 0,
-		limit: 5,
-	},
-	
 	initialize: function(options){
 		var self = this;
 
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.waitingView.render();
 		this.data = options.data;
-		this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-		this.coordinatesView = new app.view.CoordinatesView();
+		if(!window.appRouter.currentData.innerData.singlePlace)
+			window.appRouter.currentData.innerData.singlePlace = {};
 
-		this.coordinates.fetch({
-			data: { 
-				offset: self.defaults.offset,
-				limit: self.defaults.limit
-			},
+		this.render();
 
-			success: function(e){          
-				self.waitingView.closeView();
-		        self.render();
-		        self.mapView = new app.view.GoogleMapBasicMarkersView({
-					idContainer: 'basic-markers-map'
-				});
-		        self.renderMap();
-		        self.renderCoordinates();
-		        self.renderPagination();
-		     },
-		     error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Sorry, we cannot find that!']);
-		     }
-		});
+		if(window.appRouter.currentData.innerData.singlePlace.coordinates) {
+			this.coordinates = window.appRouter.currentData.innerData.singlePlace.coordinates;
+			this.mapView = new app.view.GoogleMapBasicMarkersView({
+				idContainer: 'basic-markers-map'
+			});
+			this.renderMap();
+		
+		} else {
+			this.waitingView.render();
+			this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
+			this.coordinates.fetch({
+				success: function(e){          
+					window.appRouter.currentData.innerData.singlePlace.coordinates = self.coordinates;
+					self.waitingView.closeView();
+			        self.mapView = new app.view.GoogleMapBasicMarkersView({
+						idContainer: 'basic-markers-map'
+					});
+			        self.renderMap();
+			     },
+			     error: function(e){  
+			     	self.waitingView.closeView();
+			     	self.errorView.render(['Sorry, we cannot find that!']);
+			     }
+			});
+		}
+
+		Backbone.pubSub.on('event-marker-selected-on-google-map', function(res){
+			self.renderCoordinateResume(res);
+		}, this);
 	},
 
 	deletePlace: function(){
@@ -104,8 +105,6 @@ app.view.SinglePlaceView = Backbone.View.extend({
   				self.waitingView.closeView();
   				self.render();
   				self.renderMap();
-		        self.renderCoordinates();
-		        self.renderPagination();
 			},
 			error: function(e){
 				self.waitingView.closeView();
@@ -116,116 +115,71 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	changeAllocationChannel: function(){
 		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
-		this.renderCoordinates();
+		this.renderPowerFrequencies();
     },
 
-	seeOnMap: function(evt){
-		if(window.appSettings.googleMapApi){
-			var index = $(".see-on-map").index(evt.currentTarget);
-			this.mapView.toggleMarker(index);
-		} else
-			bootbox.alert('Still loading map', function() {
-			  // callback luego de cargar el mapa
-			});
-	},
+    renderCoordinateResume: function(res){
+    	var self = this;
+    	var template = Handlebars.compile($("#su-coordinate-resume-template").html());
+		var html = template(this.coordinates.models[0].attributes.coordinates[res.index]);
+		this.$el.find('#su-selected-coordinate-map').html(html);
 
-	toggleDropdown: function(evt){
-		var isHidden = $(evt.currentTarget).next().is(":hidden");
-		var isEmpty = $(evt.currentTarget).parent().find('.chart_power_frequency').is(':empty');
-
-		if(isHidden && isEmpty){
-			var self = this;
-			var index = this.$el.find('.dropdown-trigger').index(evt.currentTarget);
-			var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
-			var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
-
-			var powerFrequenciesChart = new app.model.PowerFrequencies({
-				idPlace: idPlace,
-	    		idCoord: idCoord
-			});
-
-			var powerFrequenciesView = new app.view.PowerFrequenciesView({
-				selector: '#coord-id-'+idCoord,
-				tooltipTop: 310,
-			});
-			var options = {
-				yAxis: {
-		            plotLines:[{
-				        value: self.coordinates.models[0].attributes.coordinates[index].powerAvg,
-				        color: '#ff0000',
-				        width:1,
-				        zIndex:4,
-				        label:{text:'Average power'}
-				    }]
-				},
-				tooltip: {
-					positioner: {
-						x: 80, 
-						y: 0 
-					}
-				},
-			};
-			powerFrequenciesChart.fetch({
-				success: function(e){                      
-			       	powerFrequenciesView.render(powerFrequenciesChart.attributes,options);
-			    },
-			    error: function(e){  
-			     	self.waitingView.closeView();
-			     	self.errorView.render(['Occurred an error retrieving the place']);
-			    }
-			});
-		}
-
-		$(evt.currentTarget).next().slideToggle();
-	},
-
-	renderMap: function(){
-		var self = this;
-
-		if(window.appSettings.googleMapApi)
-			this.mapView.render(this.coordinates.models[0].attributes.coordinates);		
-		else 
-			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.mapView.render(self.coordinates.models[0].attributes.coordinates);
-			});
-	},
-
-	renderCoordinates: function(){
-		this.$el.find('#coordinates').html(this.coordinatesView.render(this.coordinates.models[0].attributes.coordinates).el);
-	},
-
-	renderPagination:  function(index){
-		var self = this;
-		var container = this.$el.find('.pagination');
-		var total = this.coordinates.models[0].attributes.total;
-		
-		new app.view.PaginationView({ 
-			numberOfPages: Math.ceil(total/self.defaults.limit),
-			currentPage: index,
-			mainView: self
+		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
+			idPlace: this.data.id,
+    		idCoord: res.id
 		});
-	},
 
-	fetchData: function(index){
-		var self = this;
+		this.currentPowerFrequencies.options = {
+			yAxis: {
+	            plotLines:[{
+			        value: this.coordinates.models[0].attributes.coordinates[res.index].powerAvg,
+			        color: '#ff0000',
+			        width:1,
+			        zIndex:4,
+			        label:{text:'Average power'}
+			    }]
+			},
+			tooltip: {
+				positioner: {
+					x: 80, 
+					y: 0 
+				}
+			},
+		};
 
 		this.waitingView.render();
-		this.coordinates.fetch({
-			data: { 
-				offset: (index - 1) * self.defaults.limit,
-				limit: self.defaults.limit				
-			},
-
-			success: function(e){                      
-		        self.waitingView.closeView();
-		        self.renderMap();
-		    	self.renderCoordinates();
+		this.currentPowerFrequencies.data.fetch({
+			success: function(e){         
+				self.waitingView.closeView();
+		       	self.renderPowerFrequencies();
 		    },
 		    error: function(e){  
 		     	self.waitingView.closeView();
 		     	self.errorView.render(['Occurred an error retrieving the place']);
 		    }
 		});
+    },
+
+    renderPowerFrequencies: function(){
+    	var view = new app.view.PowerFrequenciesView({
+			selector: '#su-selected-coordinate-map',
+			tooltipTop: 260
+		});
+		view.render(this.currentPowerFrequencies.data.attributes,this.currentPowerFrequencies.options);
+       	$('html, body').stop().animate({  
+	        scrollTop: $('.chart_power_frequency').offset().top
+	    }, 1000);
+	},
+
+	renderMap: function(){
+		var self = this;
+
+		if(window.appSettings.googleMapApi)
+			this.mapView.render(this.coordinates.models[0].attributes.coordinates);
+		else 
+			Backbone.pubSub.on('event-loaded-google-map-api', function(){
+				self.mapView.render(self.coordinates.models[0].attributes.coordinates);
+			});
 	},
 
 	render: function(){

@@ -15,26 +15,12 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 			throw 'No id container for map canvas';
 	},
 
-	markerClick: function(id){
-		var targetId = '#coord-id-'+id;
-		$('#coordinates .list-group-item').removeClass('active');
-		$(targetId).addClass('active');
-
-		if($(document).width() < 768){
-			$('html, body').stop().animate({  
-		        scrollTop: $(targetId).offset().top - ($('#vertical-nav').height() + $('.navbar-fixed-top').height() + 5)  
-		    }, 1000);
-		
-		} else {
-			$('html, body').stop().animate({  
-		        scrollTop: $(targetId).offset().top - ($('.navbar-fixed-top').height() + 10)
-		    }, 1000);
-		}
+	markerClick: function(index,id){
+		this.toggleMarker(index);
+		Backbone.pubSub.trigger('event-marker-selected-on-google-map',{index:index, id:id});
 	},
 
 	toggleMarker: function(id){
-		var self = this;
-
 		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle)
 			this.markers[this.lastMarkerToggle].setAnimation(null);
 
@@ -43,21 +29,6 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
       	else {
         	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
         	this.lastMarkerToggle = id;
-
-        	if($(document).width() < 768){
-				$('html, body').stop().animate({  
-			        scrollTop: $('#'+self.idContainer).offset().top - ($('#vertical-nav').height() + $('.navbar-fixed-top').height() + 5)  
-			    }, 1000);
-			
-			} else {
-				$('html, body').stop().animate({  
-			        scrollTop: $('#'+self.idContainer).offset().top - ($('.navbar-fixed-top').height() + 10)
-			    }, 1000);
-			}
-
-	    	$('#coordinates .list-group-item').removeClass('active');
-	    	var targetId = '#coord-id-'+this.markers[id].id;
-			$(targetId).addClass('active');
       	}
 	},
 
@@ -74,7 +45,7 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
   		var map = new google.maps.Map(mapCanvas, mapOptions);  
   		var bounds = new google.maps.LatLngBounds();
 
-  		_.each(data, function(coordinate){
+  		_.each(data, function(coordinate, index){
   			var infowindow = new google.maps.InfoWindow({
   				content: 'Latitude: ' + coordinate.latitude + '<br>Longitude: ' + coordinate.longitude,
   			});
@@ -86,6 +57,7 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		      	icon: window.appSettings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
+		      	index: index,
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {
@@ -99,7 +71,7 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 			});
 
 			google.maps.event.addListener(marker, 'click', function() {
-		    	self.markerClick(marker.id);
+		    	self.markerClick(marker.index,marker.id);
 			});
 
 			self.markers.push(marker);

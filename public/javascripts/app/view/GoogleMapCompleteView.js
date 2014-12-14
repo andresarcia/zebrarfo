@@ -39,7 +39,7 @@ app.view.GoogleMapCompleteView = Backbone.View.extend({
 		this.lastIdCoordinate = idCoord;
 
 		this.toggleMarker(index);
-		var template = Handlebars.compile($("#complete-map-coordinate-template").html());
+		var template = Handlebars.compile($("#su-coordinate-resume-template").html());
 		var html = template(this.coordinates.models[0].attributes.coordinates[index]);
 		this.$el.find('#select-complete-map-info').html(html);
 		this.$el.find("#allocation-channel").select2();

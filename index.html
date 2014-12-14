@@ -143,8 +143,8 @@
 			</li>
 			<li class="list-group-item single-place-menu-item">
 				<a href="#places/{{id}}/maps" class="child item">
-					<span class="glyphicon glyphicon-road"></span>
-					<span> Maps</span>
+					<span class="glyphicon glyphicon-pencil"></span>
+					<span> Edit place</span>
 				</a>
 			</li>
 			<li class="list-group-item single-place-menu-item">
@@ -157,7 +157,6 @@
 
 
 		<script id="places-template" type="text/x-handlebars-template">
-
 			<ul id="su-places-container" class="list-group">
 				{{#each this.models}}
   				<a href="#places/{{attributes.id}}" class="list-group-item">
@@ -284,84 +283,14 @@
 			  	</div>
 			  	
 			  	<div class="col-md-8">
-			  		<div id="basic-markers-map"></div>
-			  		<div id="coordinates"></div>
+			  		<div id="basic-markers-map" style="height:450px;"></div>
+			  		<div id="su-selected-coordinate-map">
+						<div class="page-header" style="text-align:center">
+  							<h1>Click <small>on any marker will get info of the sample</small></h1>
+						</div>
+					</div>
 			  	</div>
-
-			  	<div class="col-md-12 text-center">
-				  	<ul class="pagination"></ul>
-				</div>
-
 		  	</div>
-		</script>
-
-		<script id="coordiantes-template" type="text/x-handlebars-template"> 
-			<div class="list-group">
-				{{#each this}}
-  				<a href="javascript:;" id="coord-id-{{id}}" class="list-group-item">
-
-  					<ul class="list-group">
-  						<li class="list-group-item">
-  							
-  							<table class="table table-condensed">
-						   		<thead>
-					      			<tr>
-					        			<th>Latitude</th>
-					         			<th>Longitude</th>
-					         			<th>
-					         				<a class="pull-right delete-link-coordinate">delete</a> 
-					         			</th>
-					      			</tr>
-					   			</thead>
-							   	<tbody>
-							      	<tr>
-							      		<td>{{latitude}}</td>
-							      		<td>{{longitude}}</td>
-							      		<td>
-							      			<button class="btn btn-success btn-xs pull-right see-on-map" type="button">See marker on the map</button>
-							      		</td>
-							      	</tr>
-							      	<tr>
-							      		<td colspan="2">
-							      			<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
-							      		</td>
-							      	</tr>
-							   	</tbody>
-							</table>
-  							
-    						<button class="btn btn-info btn-block dropdown-trigger coordinates-power-btn btn-xs" type="button">
-								Power 
-								<span class="caret"></span>
-							</button>
-						  						
-							<ul class="ws-dropdown-container">
-								<br>
-								<table class="table table-condensed">
-						   			<thead>
-						      			<tr>
-						        			<th>Power</th>
-						         			<th>Value</th>
-						      			</tr>
-						   			</thead>
-								   	<tbody>
-								      	<tr>
-								      		<td>Minimum</td><td>{{powerMin}} <small><b>dBm</b></small></td>
-								      	</tr>
-								      	<tr>
-								      		<td>Maximum</td><td>{{powerMax}} <small><b>dBm</b></small></td>
-								      	</tr>
-								   	</tbody>
-								</table>
-								<div class="chart_power_frequency" style="margin-left:-40px;width: 105%;height:325px;"></div>
-								<div class="chart_tooltip">
-		    						<p style="margin:0">default</p>
-								</div>
-							</ul>
-  						</li>
-					</ul>
-  				</a>
-  				{{/each}}
-			</div>
 		</script>
 
 		<script id="maps-template" type="text/x-handlebars-template"> 
@@ -395,7 +324,7 @@
 			</div>
 		</script>
 
-		<script id="complete-map-coordinate-template" type="text/x-handlebars-template">
+		<script id="su-coordinate-resume-template" type="text/x-handlebars-template">
 			<ul class="list-group">
 				<li class="list-group-item">
 					<table class="table table-condensed">
@@ -403,9 +332,6 @@
 			      			<tr>
 			        			<th>Latitude</th>
 			         			<th>Longitude</th>
-			         			<th>
-			         				<a class="pull-right delete-link-coordinate">delete</a> 
-			         			</th>
 			      			</tr>
 			   			</thead>
 					   	<tbody>
@@ -417,8 +343,7 @@
 					   	<thead>
 			      			<tr>
 			        			<th>Power</th>
-			         			<th colspan="2">Value</th>
-			         			
+			         			<th>Value</th>
 			      			</tr>
 			   			</thead>
 					   	<tbody>
@@ -428,15 +353,6 @@
 					      	<tr>
 					      		<td>Maximum</td><td>{{powerMax}} <small>dBm</small></td>
 					      	</tr>
-					      	<tr>
-						  		<td>Allocation channel</td>
-						  		<td>
-						  			<select class="form-control" id="allocation-channel">
-										<option value="0">American 6Mhz</option>
-										<option value="1">European 8Mhz</option>
-									</select>
-						  		</td>
-							</tr>
 					      	<tr>
 					      		<td colspan="2">
 					      			<h5><small>Created date <b>{{createdDate}}</b></small></h5> 
@@ -717,8 +633,7 @@
 		<script type="text/javascript" src="javascripts/app/view/PaginationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/SinglePlaceView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/CoordinatesView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/GoogleMapBasicMarkersView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/GoogleMapMarkersView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PowerFrequenciesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapCompleteView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
