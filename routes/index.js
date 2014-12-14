@@ -32,11 +32,8 @@ router.route('/places/:idPlace/coordinates/:id')
 router.route('/places/:idPlace/coordinates/:id')
 	.delete(places.deleteCoordinate);
 
-router.route('/places/:id/occupation')
-	.get(places.getOccupation);
-
-router.route('/places/:id/heatmap')
-	.get(places.getHeatmap);
+router.route('/places/:id/charts')
+	.get(places.getChartsData);
 
 /*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {

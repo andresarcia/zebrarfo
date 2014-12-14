@@ -180,37 +180,17 @@ exports.getPowerFrequency = function(req, res){
 };
 
 /*-------------------------------------------------------------------*/
-exports.getOccupation = function(req,res){
+exports.getChartsData = function(req,res){
 	if(isNumber(req.params.id)){
-		var query = 'select frequency,power from (select Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where aux.id = PowerFrequencies.CoordinateId order by frequency';
+		var query = 'select aux.id, aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by frequency';
 
 		db.sequelize
 		.query(query).success(function(response) {
-			res.send(response);
+			res.send({ data: response });
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
 	} else
 		res.status(200).send('Sorry, we cannot find that!');	
-};
-
-/*-------------------------------------------------------------------*/
-exports.getHeatmap = function(req,res){
-	if(isNumber(req.params.id)){
-		// var query = 'select aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by lat, lng';
-
-		var query = 'select aux.id, aux.lat,aux.lng,frequency,power from (select Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id from (select id from Places where id = '+req.params.id+' and UserId = '+ UserIdentification+' ) as aux, Coordinates where Coordinates.PlaceId = aux.id) as aux, PowerFrequencies where PowerFrequencies.CoordinateId = aux.id order by frequency';
-
-		db.sequelize
-		.query(query).success(function(response) {
-			var sol = {};
-			sol.data = response;
-			res.send(sol);
-		})
-		.error(function(err){
-			res.status(500).send({ error: err });
-		});
-	} else
-		res.status(200).send('Sorry, we cannot find that!');
 };
