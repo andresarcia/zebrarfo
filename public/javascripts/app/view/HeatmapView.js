@@ -385,6 +385,7 @@ app.view.HeatmapView = Backbone.View.extend({
                 var marker = new google.maps.Marker({
                     position: location,
                     map: self.heatmap.map,
+                    icon: window.appSettings.markers.iconNormal,
                     index: index,
                 });
 

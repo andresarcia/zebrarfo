@@ -142,7 +142,7 @@
 				</a>
 			</li>
 			<li class="list-group-item single-place-menu-item">
-				<a href="#places/{{id}}/maps" class="child item">
+				<a href="#places/{{id}}/edit" class="child item">
 					<span class="glyphicon glyphicon-pencil"></span>
 					<span> Edit place</span>
 				</a>
@@ -154,7 +154,6 @@
 				</a>
 			</li>
 		</script>
-
 
 		<script id="places-template" type="text/x-handlebars-template">
 			<ul id="su-places-container" class="list-group">
@@ -293,37 +292,6 @@
 		  	</div>
 		</script>
 
-		<script id="maps-template" type="text/x-handlebars-template"> 
-			<ol class="breadcrumb">
-  				<li><a href="#places">Places</a></li>
-  				<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
-  				<li class="active">Maps</li>
-			</ol>
-			<ul class="nav nav-tabs" role="tablist">
-				<li class="active"><a href="#coordinates-tab" role="tab" data-toggle="tab">Coordinates</a></li>
-			</ul>
-			<div class="tab-content">
-  				<div class="tab-pane fade in active" id="coordinates-tab"></div>
-			</div>
-		</script>	
-
-		<script id="coordinates-map-template" type="text/x-handlebars-template"> 
-			<br>
-			<div class="row">
-				<div class="col-md-12">
-					<div id="map_canvas_coordinates" style="width:100%; height:250px;"></div>
-				</div>
-				<div class="col-md-12" id="complete-map-info">
-					<br>
-					<div id="select-complete-map-info">
-						<div class="page-header" style="text-align:center">
-  							<h1>Click <small>on the marker will get a info of the coordinate</small></h1>
-						</div>
-					</div>
-				</div>
-			</div>
-		</script>
-
 		<script id="su-coordinate-resume-template" type="text/x-handlebars-template">
 			<ul class="list-group">
 				<li class="list-group-item">
@@ -366,6 +334,27 @@
 					</div>
 				</li>
 			</ul>		
+		</script>
+
+		<script id="su-edit-place-template" type="text/x-handlebars-template"> 
+			<ol class="breadcrumb">
+  				<li><a href="#places">Places</a></li>
+  				<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+  				<li class="active">Edit place</li>
+			</ol>
+			<div class="row">
+				<div class="col-md-3">
+					hola
+				</div>
+			  	<div class="col-md-9">
+			  		<div class="col-md-11">
+						<div id="map_canvas_coordinates" style="height:450px;"></div>
+					</div>
+					<div class="col-md-1">
+						<div class="markers-slider" style="height:450px;"></div>
+					</div>
+			  	</div>
+			</div>
 		</script>
 
 		<script id="charts-template" type="text/x-handlebars-template"> 
@@ -635,11 +624,11 @@
 		<script type="text/javascript" src="javascripts/app/view/SinglePlaceView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GoogleMapMarkersView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PowerFrequenciesView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/GoogleMapCompleteView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/MapsView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/OccupationView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/EditPlaceView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/GoogleMapMarkersWithHeatmapView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ChartsView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/OccupationView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/HeatmapView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/UploadMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ParsingMeasuresView.js"></script>
 		<script type="text/javascript" src="javascripts/app/router/AppRouter.js"></script>

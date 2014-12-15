@@ -17,17 +17,22 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 
 	markerClick: function(index,id){
 		this.toggleMarker(index);
-		Backbone.pubSub.trigger('event-marker-selected-on-google-map',{index:index, id:id});
+		Backbone.pubSub.trigger('event-marker-selected-on-google-map-main',{index:index, id:id});
 	},
 
 	toggleMarker: function(id){
-		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle)
+		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle){
 			this.markers[this.lastMarkerToggle].setAnimation(null);
+			this.markers[this.lastMarkerToggle].setIcon(window.appSettings.markers.iconIdle);
+		}
 
-		if (this.markers[id].getAnimation() !== null) 
+		if (this.markers[id].getAnimation() !== null) {
         	this.markers[id].setAnimation(null);
-      	else {
+        	this.markers[id].setIcon(window.appSettings.markers.iconIdle);
+		
+		} else {
         	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
+        	this.markers[id].setIcon(window.appSettings.markers.iconHover);
         	this.lastMarkerToggle = id;
       	}
 	},
@@ -66,7 +71,8 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 			});
 
 			google.maps.event.addListener(marker, 'mouseout', function() {
-		    	marker.setIcon(window.appSettings.markers.iconIdle);
+		    	if(marker.getAnimation() === null)
+		    		marker.setIcon(window.appSettings.markers.iconIdle);
 		    	infowindow.close();
 			});
 

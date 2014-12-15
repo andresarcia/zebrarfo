@@ -12,21 +12,21 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
 		'click .delete-link-place': 'deletePlace',
+		'click #su-edit-place': 'launchEditPlace'
 	},
 
 	initialize: function(options){
 		var self = this;
 
 		this.errorView = options.errorView;
+		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 		this.data = options.data;
-		if(!window.appRouter.currentData.innerData.singlePlace)
-			window.appRouter.currentData.innerData.singlePlace = {};
-
+		
 		this.render();
 
-		if(window.appRouter.currentData.innerData.singlePlace.coordinates) {
-			this.coordinates = window.appRouter.currentData.innerData.singlePlace.coordinates;
+		if(window.appRouter.currentData.innerData.coordinates) {
+			this.coordinates = window.appRouter.currentData.innerData.coordinates;
 			this.mapView = new app.view.GoogleMapBasicMarkersView({
 				idContainer: 'basic-markers-map'
 			});
@@ -37,7 +37,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
 			this.coordinates.fetch({
 				success: function(e){          
-					window.appRouter.currentData.innerData.singlePlace.coordinates = self.coordinates;
+					window.appRouter.currentData.innerData.coordinates = self.coordinates;
 					self.waitingView.closeView();
 			        self.mapView = new app.view.GoogleMapBasicMarkersView({
 						idContainer: 'basic-markers-map'
@@ -51,7 +51,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			});
 		}
 
-		Backbone.pubSub.on('event-marker-selected-on-google-map', function(res){
+		Backbone.pubSub.on('event-marker-selected-on-google-map-main', function(res){
 			self.renderCoordinateResume(res);
 		}, this);
 	},
@@ -92,10 +92,9 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 		this.waitingView.render();
 		var index = this.$el.find('.delete-link-coordinate').index(evt.currentTarget);
-		var idPlace = this.coordinates.models[0].attributes.coordinates[index].PlaceId;
 		var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
 		var coordinate = new app.model.Coordinate({id:idCoord});
-		coordinate.urlRoot = '/api/places/'+idPlace+'/coordinates/';
+		coordinate.urlRoot = '/api/places/'+this.data.id+'/coordinates/';
 
 		coordinate.destroy({
 			success: function(model, response) {
@@ -190,6 +189,10 @@ app.view.SinglePlaceView = Backbone.View.extend({
     	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
     
 		return this;
+	},
+
+	launchEditPlace: function(){
+		window.location.hash = '#places/'+this.data.id+'/edit';
 	}
 
 });

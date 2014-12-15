@@ -36,7 +36,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/upload': 'uploadPlace',
 
 		'places/:id' : 'showSinglePlace',
-		'places/:id/maps' : 'showMapsOfPlace',
+		'places/:id/edit' : 'showEditPlace',
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
 		'places/:id/upload' : 'showSinglePlaceUpload',
 		
@@ -59,8 +59,8 @@ app.router.AppRouter = Backbone.Router.extend({
 					callback();
 			    },
 			    error: function(e){  
-			     	self.waitingView.closeView();
-			     	self.errorView.render(['Occurred an error retrieving the places']);
+			     	self.helperViews.waitingView.closeView();
+			     	self.helperViews.errorView.render(['Occurred an error retrieving the places']);
 			    }
 			});
 		} else
@@ -111,12 +111,13 @@ app.router.AppRouter = Backbone.Router.extend({
 			var data = new app.model.Place({id:id});
 			data.fetch({
 				success: function(e){  
+					self.helperViews.waitingView.closeView();
 					self.setPlaceData(data);
 			    	callback();
 			    },
 			    error: function(e){  
-			     	self.waitingView.closeView();
-			     	self.errorView.render(['Occurred an error retrieving the places']);
+			     	self.helperViews.waitingView.closeView();
+			     	self.helperViews.errorView.render(['Occurred an error retrieving the places']);
 			    }
 			});
 		} else
@@ -140,8 +141,8 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showSinglePlace: function(id){  		
-		this.clearViews();
 		var self = this;
+		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.SinglePlaceView({
 				waitingView: self.helperViews.waitingView,
@@ -152,11 +153,11 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showMapsOfPlace: function(id){
+	showEditPlace: function(id){
 		var self = this;
 		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
-			self.currentView = new app.view.MapsView({
+			self.currentView = new app.view.EditPlaceView({
 				waitingView: self.helperViews.waitingView,
 				errorView : self.helperViews.errorView,
 				data: self.currentData.data,

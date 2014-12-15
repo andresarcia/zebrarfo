@@ -11,8 +11,9 @@ $(function(){
         currentChannelAllocation: 0,
         googleMapApi: false,
         markers: {
-            iconIdle: '../../images/marker_red.png',
-            iconHover: '../../images/marker_green.png'
+            iconIdle: '../../images/icon_unselected_transparent.png',
+            iconHover: '../../images/icon_selected.png',
+            iconNormal: '../../images/icon_unselected_normal.png'
         }
     };
 
