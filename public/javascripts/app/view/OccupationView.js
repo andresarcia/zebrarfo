@@ -44,14 +44,14 @@ app.view.OccupationView = Backbone.View.extend({
 			},
 			yAxis: {
 				min: 0,
-            	max: 1.1,
+            	max: 110,
             	
             	endOnTick: false,
             	showLastLabel: false,
 
-            	tickInterval: 0.1,
+            	tickInterval: 10,
             	title: {
-	                text: 'Power (dBm)'
+	                text: 'Occupation (%)'
 	            }
 			}
 		};
@@ -211,7 +211,7 @@ app.view.OccupationView = Backbone.View.extend({
 						sum = 1;
 				}
 
-				data.push({ frequency:item.frequency, power:sum/numberEachFrequency });
+				data.push({ frequency:item.frequency, power:(sum/numberEachFrequency)*100 });
 				currentItem = item;
 				sum = 0;
 				numberEachFrequency = 0;
