@@ -4,9 +4,6 @@ app.view = app.view || {};
 app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 	markers: null,
-	selected: [],
-
-	lastMarkerToggle: null,
 
 	initialize: function(options){
 		if(options.idContainer){
@@ -15,6 +12,8 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 		} else
 			throw 'No id container for map canvas';
+
+		this.selected = [];
 	},
 
 	markerClick: function(index,id){
@@ -24,16 +23,23 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 	toggleMarker: function(index){
 		if(!this.markers[index].selected){
-			this.enableMarker(index);
 			this.appendMarker(index);
+			this.enableMarker(index);
+			this.fillMarkers();
 		
 		} else {
 			this.disableMarker(index);
 			this.removeMarker(index);
+			this.emptyMakers();
 		}
 	},
 
 	appendMarker: function(index){
+		this.emptyMakers();
+
+		if(this.selected === undefined || this.selected === null)
+			this.selected = [];
+
 		if(this.selected.length < 1)
 			this.selected.push(this.markers[index]);
 		
@@ -74,6 +80,35 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		this.markers[id].selected = false;
 		this.markers[id].setIcon(window.appSettings.markers.iconIdle);
 		this.markers[id].setAnimation(null);
+	},
+
+	fillMarkers: function(){
+		if(this.selected.length < 2)
+			return;
+
+		for(var i = this.selected[0].index + 1; i < this.selected[1].index; i++){
+			this.markers[i].setIcon(window.appSettings.markers.iconHover);
+		}
+	},
+
+	emptyMakers: function(){
+		var self = this;
+		if(this.selected.length < 1)
+			return;
+		
+		if(this.selected.length == 1){
+			_.each(this.markers, function(item){
+				if(self.selected[0].index != item.index)
+					item.setIcon(window.appSettings.markers.iconIdle);
+			});
+		}
+			
+		if(this.selected.length == 2){
+			for(var i = this.selected[0].index + 1; i < this.selected[1].index; i++){
+				if(this.selected[0].index != this.markers[i].index && this.selected[1].index != this.markers[i].index)
+					this.markers[i].setIcon(window.appSettings.markers.iconIdle);
+			}
+		}
 	},
 
 	render: function(data){
