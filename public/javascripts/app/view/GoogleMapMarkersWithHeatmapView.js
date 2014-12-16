@@ -17,124 +17,136 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 		this.selected = [];
 		
-		Backbone.pubSub.on('event-slider-changed-on-edit', function(index){
-			self.emptyMakers();
+		Backbone.pubSub.on('event-slider-changed-on-edit', function(indexArray){
+			var self = this;
+			n = [];
+			_.each(indexArray, function(item){
+				n.push(self.markers[item]);
+			});
 
-			if(this.selected.length == 1)
-				self.disableMarker(this.selected[0].index);
-			
-			else if(this.selected.length == 2){
-				self.disableMarker(this.selected[0].index);
-				self.disableMarker(this.selected[1].index);
-			}
-
-			if(index.length == 1){
-				self.selected = [this.markers[index[0]]];
-				self.enableMarker(index[0]);
-			
-			} else if(index.length == 2){
-				self.selected = [this.markers[index[0]],this.markers[index[1]]];
-				self.enableMarker(index[0]);
-				self.enableMarker(index[1]);
-			}
-
-			self.fillMarkers();
-
+			this.paintMarkers(n);
 		}, this);
 	},
 
-	markerClick: function(index,id){
-		this.toggleMarker(index);
+	markerClick: function(i){
+		this.changeMarkersHeader(i);
 		Backbone.pubSub.trigger('event-marker-selected-on-google-map-edit', this.selected);
 	},
 
-	toggleMarker: function(index){
-		if(!this.markers[index].selected){
-			this.appendMarker(index);
-			this.enableMarker(index);
-			this.fillMarkers();
-		
-		} else {
-			this.disableMarker(index);
-			this.removeMarker(index);
-			this.emptyMakers();
-		}
-	},
-
-	appendMarker: function(index){
-		this.emptyMakers();
+	changeMarkersHeader: function(i){
+		var n = [];
 
 		if(this.selected === undefined || this.selected === null)
 			this.selected = [];
 
 		if(this.selected.length < 1)
-			this.selected.push(this.markers[index]);
+			n.push(this.markers[i]);
 		
 		else if(this.selected.length == 1){
-			if(this.selected[0].index < this.markers[index].index)
-				this.selected[1] = this.markers[index];
-			else {
-				this.selected[1] = this.selected[0];
-				this.selected[0] = this.markers[index];
+			if(this.selected[0].index == this.markers[i].index)
+				n = [];
+
+			else if(this.selected[0].index < this.markers[i].index){
+				n[0] = this.selected[0];
+				n[1] = this.markers[i];
+			
+			} else {
+				n[0] = this.markers[i];
+				n[1] = this.selected[0];
 			}
 		
 		} else if(this.selected.length == 2){
-			if(this.selected[0].index < this.markers[index].index){
-				this.disableMarker(this.selected[1].index);
-				this.selected[1] = this.markers[index];
+			if(this.selected[0].index == this.markers[i].index)
+				n[0] = this.selected[1];
+
+			else if(this.selected[1].index == this.markers[i].index)
+				n[0] = this.selected[0];
+
+			else if(this.selected[0].index < this.markers[i].index){
+				n[0] = this.selected[0];
+				n[1] = this.markers[i];
 			
 			} else {
-				this.disableMarker(this.selected[0].index);
-				this.selected[0] = this.markers[index];
+				n[0] = this.markers[i];
+				n[1] = this.selected[1];
 			}
 		}
+
+		this.paintMarkers(n);
 	},
 
-	removeMarker: function(index){
-		for(var i = this.selected.length; i--;) {
-			if(this.selected[i].index === index) 
-				this.selected.splice(i, 1);
-		}
+	paintMarkers: function(n){
+		var o = this.selected;
+		this.cleanMarkers(o,n);
+		this.fillMarkers(n);
+		this.paintMarkersHeaders(o,n);
+		this.selected = n;
 	},
 
-	enableMarker: function(id){
-		this.markers[id].selected = true;
-		this.markers[id].setIcon(window.appSettings.markers.iconHover);
-		this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
-	},
-
-	disableMarker: function(id){
-		this.markers[id].selected = false;
-		this.markers[id].setIcon(window.appSettings.markers.iconIdle);
-		this.markers[id].setAnimation(null);
-	},
-
-	fillMarkers: function(){
-		if(this.selected.length < 2)
+	cleanMarkers: function(o,n){
+		if(o.length < 2)
 			return;
 
-		for(var i = this.selected[0].index + 1; i < this.selected[1].index; i++){
-			this.markers[i].setIcon(window.appSettings.markers.iconHover);
-		}
-	},
+		if(n.length == 2){
 
-	emptyMakers: function(){
-		var self = this;
-		if(this.selected.length < 1)
-			return;
+			if(o[0].index < n[0].index){
+				for(var i = o[0].index; i < n[0].index; i++)
+					this.markers[i].setIcon(window.appSettings.markers.iconIdle);
+			}  
+
+			if(o[1].index > n[1].index){
+				for(var j = n[1].index + 1; j <= o[1].index; j++)
+					this.markers[j].setIcon(window.appSettings.markers.iconIdle);
+			}
 		
-		if(this.selected.length == 1){
-			_.each(this.markers, function(item){
-				if(self.selected[0].index != item.index)
+		} else {
+			for(var k = o[0].index; k <= o[1].index; k++)
+				this.markers[k].setIcon(window.appSettings.markers.iconIdle);
+
+			if(n.length == 1)
+				this.markers[n[0].index].setIcon(window.appSettings.markers.iconHover);
+		}
+	},
+
+	fillMarkers: function(n){
+		if(n.length === 0)
+			return;
+
+		else if(n.length == 1)
+			this.markers[n[0].index].setIcon(window.appSettings.markers.iconHover);
+
+		else if(n.length == 2){
+			for(var i = n[0].index + 1; i < n[1].index; i++)
+				this.markers[i].setIcon(window.appSettings.markers.iconHover);
+		}
+	},
+
+	paintMarkersHeaders: function(o,n){
+		if(n.length === 0){
+			_.each(o,function(item){
+				item.setAnimation(null);
+				item.setIcon(window.appSettings.markers.iconIdle);
+			});
+		
+		} else {
+			_.each(o, function(item){
+				if(item.index != n[0].index && n[1] === undefined)
+					item.setAnimation(null);
+				
+				else if(item.index != n[0].index && n[1] !== undefined && item.index != n[1].index)
+					item.setAnimation(null);
+
+				if(item.index < n[0].index || n.length == 1)
+					item.setIcon(window.appSettings.markers.iconIdle);
+				if(n[1] !== undefined && item.index > n[1].index)
 					item.setIcon(window.appSettings.markers.iconIdle);
 			});
-		}
-			
-		if(this.selected.length == 2){
-			for(var i = this.selected[0].index + 1; i < this.selected[1].index; i++){
-				if(this.selected[0].index != this.markers[i].index && this.selected[1].index != this.markers[i].index)
-					this.markers[i].setIcon(window.appSettings.markers.iconIdle);
-			}
+
+			_.each(n, function(item){
+				item.setIcon(window.appSettings.markers.iconHover);
+				if(item.animation === null)
+					item.setAnimation(google.maps.Animation.BOUNCE);
+			});
 		}
 	},
 
@@ -167,7 +179,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		  	});
 
 			google.maps.event.addListener(marker, 'click', function() {
-		    	self.markerClick(marker.index,marker.id);
+		    	self.markerClick(marker.index);
 			});
 
 			self.markers.push(marker);

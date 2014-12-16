@@ -61,6 +61,11 @@ app.view.EditPlaceView = Backbone.View.extend({
                 'max': this.coordinates.models[0].attributes.coordinates.length - 1
             }
         }, true);
+
+        // .noUi-vertical .noUi-handle
+        // heigth
+        // .noUi-handle:before, .noUi-handle:after
+        // top
 	},
 
 	renderMap: function(){
@@ -90,7 +95,9 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	changeSliderByMarkers: function(markers){
-		if(markers.length == 1)
+		if(markers.length === 0)
+			this.renderMarkerSlider(0);
+		else if(markers.length == 1)
 			this.renderMarkerSlider(markers[0].index);
 		else if(markers.length == 2)
 			this.renderMarkerSlider([markers[0].index, markers[1].index]);
@@ -103,7 +110,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		else if(index.constructor === Array)
 			Backbone.pubSub.trigger('event-slider-changed-on-edit', [Number(index[0]),Number(index[1])]);
-
 	},
 
 });
