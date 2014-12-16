@@ -9,10 +9,6 @@ hr {
   margin: 6px 0 5px 0;
 }
 
-img[src*="gstatic.com/"], img[src*="googleapis.com/"]  {
-  max-width: 99999px;
-}
-
 .btn-x-lg { width: 200px }
 .btn-2x-lg { width: 400px }
 
@@ -197,44 +193,15 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"]  {
   color: #D95252;
 }
 
-#coordinates .list-group-item {
-  position: relative;
-  display: block;
-  padding: 10px 15px;
-  margin-bottom: -1px;
-  background-color: #fff;
-  border:0px;
-  border-bottom:1px solid #ddd;
-}
-
-#coordinates .list-group-item:first-child {
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-}
-#coordinates .list-group-item:last-child {
-  margin-bottom: 0;
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
-
-#coordinates .list-group-item.active,
-#coordinates .list-group-item.active:hover,
-#coordinates .list-group-item.active:focus {
-  z-index: 2;
-  color: inherit;
-  background-color: #DDDDDD;
-  border-color: #DDDDDD;
-}
-
-.coordinates-power-btn {
-  margin-top: -25px;
+#su-coord-markers-map {
   margin-bottom: 10px;
 }
 
-#basic-markers-map {
-  width: 100%;
-  height: 220px;
-  margin-bottom: 10px;
+#markers-slider-edit-place .noUi-vertical .noUi-handle {
+  height: 20px;
+}
+#markers-slider-edit-place .noUi-handle:before, .noUi-handle:after {
+  top: 9px !important;
 }
 
 .chart_tooltip {

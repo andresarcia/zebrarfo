@@ -61,11 +61,6 @@ app.view.EditPlaceView = Backbone.View.extend({
                 'max': this.coordinates.models[0].attributes.coordinates.length - 1
             }
         }, true);
-
-        // .noUi-vertical .noUi-handle
-        // heigth
-        // .noUi-handle:before, .noUi-handle:after
-        // top
 	},
 
 	renderMap: function(){

@@ -28,7 +28,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		if(window.appRouter.currentData.innerData.coordinates) {
 			this.coordinates = window.appRouter.currentData.innerData.coordinates;
 			this.mapView = new app.view.GoogleMapBasicMarkersView({
-				idContainer: 'basic-markers-map'
+				idContainer: 'su-coord-markers-map'
 			});
 			this.renderMap();
 		
@@ -40,7 +40,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 					window.appRouter.currentData.innerData.coordinates = self.coordinates;
 					self.waitingView.closeView();
 			        self.mapView = new app.view.GoogleMapBasicMarkersView({
-						idContainer: 'basic-markers-map'
+						idContainer: 'su-coord-markers-map'
 					});
 			        self.renderMap();
 			     },

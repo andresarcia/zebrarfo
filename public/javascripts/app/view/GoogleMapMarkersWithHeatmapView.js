@@ -153,6 +153,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 	render: function(data){
 		var self = this;
 		this.markers = [];
+		this.heatmapData = [];
 
     	var mapCanvas = document.getElementById(this.idContainer);
   		var mapOptions = {
@@ -184,9 +185,34 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			self.markers.push(marker);
 			bounds.extend(marker.position);
+
+			self.heatmapData.push(latLng);
   		});
 
   		map.fitBounds(bounds);
+  		
+  		var heatmap = new google.maps.visualization.HeatmapLayer({
+    		data: this.heatmapData,
+    		radius: 60,
+    		gradient: [
+				'rgba(0, 255, 255, 0)',
+				'rgba(0, 255, 255, 1)',
+				'rgba(0, 191, 255, 1)',
+				'rgba(0, 127, 255, 1)',
+				'rgba(0, 63, 255, 1)',
+				'rgba(0, 0, 255, 1)',
+				'rgba(0, 0, 223, 1)',
+				'rgba(0, 0, 191, 1)',
+				'rgba(0, 0, 159, 1)',
+				'rgba(0, 0, 127, 1)',
+				'rgba(63, 0, 91, 1)',
+				'rgba(127, 0, 63, 1)',
+				'rgba(191, 0, 31, 1)',
+				'rgba(255, 0, 0, 1)'
+			]
+  		});
+
+  		heatmap.setMap(map);
 	}
 
 });
