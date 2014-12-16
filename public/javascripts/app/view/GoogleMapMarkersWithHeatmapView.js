@@ -6,6 +6,8 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 	markers: null,
 
 	initialize: function(options){
+		var self = this;
+
 		if(options.idContainer){
 			this.idContainer = options.idContainer;
 			$('#'+this.idContainer).html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
@@ -14,6 +16,31 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			throw 'No id container for map canvas';
 
 		this.selected = [];
+		
+		Backbone.pubSub.on('event-slider-changed-on-edit', function(index){
+			self.emptyMakers();
+
+			if(this.selected.length == 1)
+				self.disableMarker(this.selected[0].index);
+			
+			else if(this.selected.length == 2){
+				self.disableMarker(this.selected[0].index);
+				self.disableMarker(this.selected[1].index);
+			}
+
+			if(index.length == 1){
+				self.selected = [this.markers[index[0]]];
+				self.enableMarker(index[0]);
+			
+			} else if(index.length == 2){
+				self.selected = [this.markers[index[0]],this.markers[index[1]]];
+				self.enableMarker(index[0]);
+				self.enableMarker(index[1]);
+			}
+
+			self.fillMarkers();
+
+		}, this);
 	},
 
 	markerClick: function(index,id){

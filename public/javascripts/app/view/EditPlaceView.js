@@ -42,15 +42,16 @@ app.view.EditPlaceView = Backbone.View.extend({
 		}
 
 		Backbone.pubSub.on('event-marker-selected-on-google-map-edit', function(markers){
-			console.log(markers);
+			this.changeSliderByMarkers(markers);
 		}, this);
-
 	},
 
-	renderMarkerSlider: function(){
+	renderMarkerSlider: function(start){
 		this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
-            start: 0,
+            start: start,
             step: 1,
+            connect: start.length > 1 ? true : false,
+            behaviour: 'drag',
             orientation: "vertical",
             format: wNumb({
                 decimals: 0
@@ -77,7 +78,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.mapView = new app.view.GoogleMapMarkersWithHeatmapView({
 			idContainer: 'map_canvas_coordinates'
 		});
-		this.renderMarkerSlider();
+		this.renderMarkerSlider(0);
         this.renderMap();
 	},
 
@@ -88,9 +89,21 @@ app.view.EditPlaceView = Backbone.View.extend({
 		return this;
 	},
 
+	changeSliderByMarkers: function(markers){
+		if(markers.length == 1)
+			this.renderMarkerSlider(markers[0].index);
+		else if(markers.length == 2)
+			this.renderMarkerSlider([markers[0].index, markers[1].index]);
+	},
+
 	addMarkers: function(){
-		var markerId = this.markersSlider.val();
-		console.log(this.coordinates.models[0].attributes.coordinates[markerId]);
+		var index = this.markersSlider.val();
+		if(typeof index === 'string')
+			Backbone.pubSub.trigger('event-slider-changed-on-edit', [Number(index)]);
+
+		else if(index.constructor === Array)
+			Backbone.pubSub.trigger('event-slider-changed-on-edit', [Number(index[0]),Number(index[1])]);
+
 	},
 
 });
