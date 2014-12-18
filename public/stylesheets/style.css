@@ -165,8 +165,11 @@ hr {
   margin-left: auto;
 }
 
-.coordinate-info {
+.su-sample-info {
   font-size: 13px;
+  -webkit-box-shadow: 0 8px 16px -10px black;
+     -moz-box-shadow: 0 8px 16px -10px black;
+          box-shadow: 0 8px 16px -10px black;
 }
 
 .delete-link-place {
