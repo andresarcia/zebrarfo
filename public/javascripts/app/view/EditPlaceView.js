@@ -18,6 +18,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 		this.data = options.data;
+		this.editMarkers = [];
+		this.editMarkersIndex = 0;
 
 		this.render();
 
@@ -90,21 +92,53 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	changeSliderByMarkers: function(markers){
+		var markersRange = [];
 		if(markers.length === 0)
-			this.renderMarkerSlider(0);
+			markersRange = [0];
 		else if(markers.length == 1)
-			this.renderMarkerSlider(markers[0].index);
+			markersRange = [markers[0].index];
 		else if(markers.length == 2)
-			this.renderMarkerSlider([markers[0].index, markers[1].index]);
+			markersRange = [markers[0].index, markers[1].index];
+
+		this.renderMarkerSlider(markersRange);
+		this.appendToEditingArea(markersRange);
 	},
 
 	addMarkers: function(){
+		var markersRange = [];
 		var index = this.markersSlider.val();
 		if(typeof index === 'string')
-			Backbone.pubSub.trigger('event-slider-changed-on-edit', [Number(index)]);
+			markersRange = [Number(index)];
 
 		else if(index.constructor === Array)
-			Backbone.pubSub.trigger('event-slider-changed-on-edit', [Number(index[0]),Number(index[1])]);
+			markersRange = [Number(index[0]),Number(index[1])];
+
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', markersRange);
+		this.appendToEditingArea(markersRange);
+	},
+
+	appendToEditingArea: function(markersRange){
+		var coordinates = {};
+
+		if(markersRange.length == 1){
+			coordinates.from = this.coordinates.models[0].attributes.coordinates[markersRange[0]];
+			coordinates.from.index = markersRange[0];
+		
+		} else if(markersRange.length == 2){
+			coordinates.from = this.coordinates.models[0].attributes.coordinates[markersRange[0]];
+			coordinates.from.index = markersRange[0];
+			coordinates.to = this.coordinates.models[0].attributes.coordinates[markersRange[1]];
+			coordinates.to.index = markersRange[1];
+		}
+
+		this.editMarkers[this.editMarkersIndex] = coordinates;
+		this.renderEditingArea();
+	},
+
+	renderEditingArea: function(){
+		var template = Handlebars.compile($("#su-list-coord-to-edit-template").html());
+		var html = template({data: this.editMarkers});
+		this.$el.find('#su-list-coord-to-edit').html(html);
 	},
 
 });
