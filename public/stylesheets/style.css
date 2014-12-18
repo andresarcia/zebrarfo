@@ -16,6 +16,23 @@ hr {
   padding-top: 75px;
 }
 
+.ws-blue {
+  color: #0088CC;
+}
+.ws-red {
+  color: #A94344;
+}
+.ws-red:active,
+.ws-red:hover {
+  color: #D95252;
+}
+.ws-gray {
+  color: #A6A6A6;
+}
+.ws-dark-gray {
+  color: #353535;
+}
+
 .btn-without-corners {
   border-radius: 0;
 }
@@ -172,36 +189,16 @@ hr {
           box-shadow: 0 8px 16px -10px black;
 }
 
-.delete-link-place {
-  color: #A94344;
-  cursor: pointer;
-}
-
-.upload-more-link-place {
-  color: #0088CC;
-  cursor: pointer;
-}
-
-.delete-link-coordinate {
-  cursor: pointer;
-  color: #A94344;
-  font-size: 13px;
-  padding-right: 5px;
-}
-
-.delete-link-place:active,
-.delete-link-place:hover,
-.delete-link-coordinate:active,
-.delete-link-coordinate:hover {
-  color: #D95252;
-}
-
 #su-coord-markers-map {
   margin-bottom: 10px;
 }
 
+#markers-slider-edit-place {
+  margin-left: -18px;
+}
 #markers-slider-edit-place .noUi-vertical .noUi-handle {
   height: 20px;
+  top: -2px !important;
 }
 #markers-slider-edit-place .noUi-handle:before, .noUi-handle:after {
   top: 9px !important;
