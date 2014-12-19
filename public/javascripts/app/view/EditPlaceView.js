@@ -10,6 +10,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	events: {
 		'slide .markers-slider':'addMarkers',
+		'click .su-create-new-edition-range': 'addEditionRange',
 	},
 
 	initialize: function(options){
@@ -120,7 +121,11 @@ app.view.EditPlaceView = Backbone.View.extend({
 	appendToEditingArea: function(markersRange){
 		var coordinates = {};
 
-		if(markersRange.length == 1){
+		if(markersRange.length == 1 && markersRange[0] === 0) {
+			coordinates.from = {};
+			coordinates.from.index = 'Please select a marker';
+
+		} else if(markersRange.length == 1){
 			coordinates.from = this.coordinates.models[0].attributes.coordinates[markersRange[0]];
 			coordinates.from.index = markersRange[0];
 		
@@ -129,6 +134,13 @@ app.view.EditPlaceView = Backbone.View.extend({
 			coordinates.from.index = markersRange[0];
 			coordinates.to = this.coordinates.models[0].attributes.coordinates[markersRange[1]];
 			coordinates.to.index = markersRange[1];
+
+			coordinates.distance = app.util.GetDistanceFromLatLonInKm(
+                coordinates.from.latitude,
+                coordinates.from.longitude,
+                coordinates.to.latitude,
+                coordinates.to.longitude);
+			coordinates.distance = coordinates.distance.toFixed(1);
 		}
 
 		this.editMarkers[this.editMarkersIndex] = coordinates;
@@ -139,6 +151,13 @@ app.view.EditPlaceView = Backbone.View.extend({
 		var template = Handlebars.compile($("#su-list-coord-to-edit-template").html());
 		var html = template({data: this.editMarkers});
 		this.$el.find('#su-list-coord-to-edit').html(html);
+	},
+
+	addEditionRange: function(){
+		this.editMarkersIndex += 1;
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', []);
+		this.renderMarkerSlider([0]);
+		this.appendToEditingArea([0]);
 	},
 
 });

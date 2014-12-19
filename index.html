@@ -365,23 +365,32 @@
 
 		<script id="su-list-coord-to-edit-template" type="text/x-handlebars-template">
 			{{#each data}}
-				<div class="page-header">
+				<div class="page-header su-coord-to-edit">
 					<div class="ws-blue">
   						<small>From</small>
-  						<span class="ws-dark-gray text-right"><small>{{from.index}}</small></span>
+  						<span class="ws-dark-gray"><small>{{from.index}}</small></span>
   					</div>
-  					<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+  					{{#if from.latitude}}
+  						<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+  					{{/if}}
 					
 					{{#if to}}
 						<div class="ws-blue">
 	  						<small>To</small>
-	  						<span class="ws-dark-gray text-right"><small>{{to.index}}</small></span>
+	  						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
 	  					</div>
-	  					<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+	  					{{#if to.latitude}}
+	  						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+	  					{{/if}}
+
+	  					<div class="ws-blue">
+	  						<small>Distance</small>
+	  						<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
+	  					</div>
   					{{/if}}
 
   					{{#unless to}}
-  						<small>You can select other marker for a range</small>
+  						<small>You can select two markers for make a range</small>
 					{{/unless}}
 				</div>
 			{{/each}}
