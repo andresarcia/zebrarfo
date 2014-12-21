@@ -194,31 +194,20 @@ app.view.OccupationView = Backbone.View.extend({
 	renderChart: function(){
 		var self = this;
 		var data = [];
-		var currentItem = this.occupation[0];
-		var sum = 0;
-		var numberEachFrequency = 0;
 
-		_.each(this.occupation, function(item){
-			if(currentItem.frequency == item.frequency){
-				if(item.power >= self.threshold)
-					sum += 1;
-				numberEachFrequency += 1;
+		var dataGrouped = _.groupBy(this.occupation, function(sample){
+            return sample.frequency;
+        });
 
-			} else {
-				if(sum === 0){
-					numberEachFrequency = 1;
-					if(item.power >= self.threshold)
-						sum = 1;
-				}
-
-				data.push({ frequency:item.frequency, power:(sum/numberEachFrequency)*100 });
-				currentItem = item;
-				sum = 0;
-				numberEachFrequency = 0;
-			}
+		_.each(dataGrouped, function(itemSameFrequency){
+			var passed = 0;
+			_.each(itemSameFrequency, function(item){
+				if(item.power >= self.threshold) passed += 1;
+			});
+			data.push({ frequency:itemSameFrequency[0].frequency, power:(passed/itemSameFrequency.length)*100 });
 		});
 
-		this.chart.render(data,this.chartOptions);		
+		this.chart.render(data,this.chartOptions);
 
 		_.each(this.channels,function(item){
 			Backbone.pubSub.trigger('event-occupation-channel-select',item);
