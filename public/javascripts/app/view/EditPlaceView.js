@@ -11,6 +11,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 	events: {
 		'slide .markers-slider':'addMarkers',
 		'click .su-create-new-edition-range': 'addEditionRange',
+		'click .su-coord-to-edit': 'selectEditingArea'
 	},
 
 	initialize: function(options){
@@ -151,6 +152,9 @@ app.view.EditPlaceView = Backbone.View.extend({
 		var template = Handlebars.compile($("#su-list-coord-to-edit-template").html());
 		var html = template({data: this.editMarkers});
 		this.$el.find('#su-list-coord-to-edit').html(html);
+
+		this.$el.find('.su-coord-to-edit').removeClass('active');
+		this.$el.find('.su-coord-to-edit').eq(this.editMarkersIndex).addClass('active');
 	},
 
 	addEditionRange: function(){
@@ -159,5 +163,28 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.renderMarkerSlider([0]);
 		this.appendToEditingArea([0]);
 	},
+
+	selectEditingArea: function(evt){
+		if($(evt.currentTarget).hasClass('active'))
+			return;
+
+		var index = this.$el.find('.su-coord-to-edit').index(evt.currentTarget);
+		this.editMarkersIndex = index;
+
+		this.$el.find('.su-coord-to-edit').removeClass('active');
+		this.$el.find('.su-coord-to-edit').eq(this.editMarkersIndex).addClass('active');
+
+		var markersRange = [];
+		var currentMarkers = this.editMarkers[this.editMarkersIndex];
+
+		if(currentMarkers.to)
+			markersRange = [currentMarkers.from.index, currentMarkers.to.index];
+
+		else if(currentMarkers.from.index.constructor === Number)
+			markersRange = [currentMarkers.from.index];
+
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', markersRange);
+		this.renderMarkerSlider(markersRange);
+	}
 
 });

@@ -365,7 +365,7 @@
 
 		<script id="su-list-coord-to-edit-template" type="text/x-handlebars-template">
 			{{#each data}}
-				<div class="page-header su-coord-to-edit">
+				<a href="javascript:void(0)" class="su-coord-to-edit">
 					<div class="ws-blue">
   						<small>From</small>
   						<span class="ws-dark-gray"><small>{{from.index}}</small></span>
@@ -392,7 +392,7 @@
   					{{#unless to}}
   						<small>You can select two markers for make a range</small>
 					{{/unless}}
-				</div>
+				</a>
 			{{/each}}
 			<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
 				<h3>Click <small>to create a new edition range</small></h3>

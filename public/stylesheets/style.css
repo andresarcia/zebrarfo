@@ -193,6 +193,26 @@ hr {
   margin-bottom: 10px;
 }
 
+.su-coord-to-edit{
+  position: relative;
+  display: block;
+  padding: 20px 0 9px 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+.su-coord-to-edit:active,
+.su-coord-to-edit:hover,
+.su-coord-to-edit:visited,
+.su-coord-to-edit:link {
+  text-decoration: none;
+}
+.su-coord-to-edit:hover{
+  font-weight: bold;
+}
+.su-coord-to-edit.active{
+  font-weight: 400;
+  background-color: #F9F9F9;
+}
 #markers-slider-edit-place {
   margin-left: -18px;
 }
