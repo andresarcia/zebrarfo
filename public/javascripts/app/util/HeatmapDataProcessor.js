@@ -17,8 +17,13 @@ app.util.HeatmapDataProcessor.prototype = {
         this.data = options.data;
     },
 
-    process: function(boundaries, functionName){
+    process: function(boundaries, functionName,distance){
         var self = this;
+
+        if (distance)
+            this.spreadDistance = distance;
+        else
+            this.spreadDistance = 0;
 
         this.dataProcessed = {};
         this.dataProcessed.data = [];
@@ -94,8 +99,7 @@ app.util.HeatmapDataProcessor.prototype = {
         else
             this.distanceStat.max(item.count);
 
-        // if(distance < this.place.distanceMax && lastSaved !== undefined){
-        if(distance < 0.5 && lastSaved !== undefined){
+        if(distance < this.spreadDistance && lastSaved !== undefined){
             this.distanceStat.max(item.count);
             return;
         }
