@@ -11,7 +11,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 	events: {
 		'slide .markers-slider':'addMarkers',
 		'click .su-create-new-edition-range': 'addEditionRange',
-		'click .su-coord-to-edit': 'selectEditingArea'
+		'click .su-coord-to-edit': 'selectEditingArea',
+		'click .su-edit-remove-from-list': 'removeEditionRange',
 	},
 
 	initialize: function(options){
@@ -52,7 +53,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	renderMarkerSlider: function(start){
 		this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
-            start: start,
+            start: start.length > 0 ? start:0,
             step: 1,
             connect: start.length > 1 ? true : false,
             behaviour: 'drag',
@@ -155,13 +156,36 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		this.$el.find('.su-coord-to-edit').removeClass('active');
 		this.$el.find('.su-coord-to-edit').eq(this.editMarkersIndex).addClass('active');
+
+		if(this.editMarkers.length > 0)
+			this.$el.find('.action-btn').prop('disabled', false);
+		else
+			this.$el.find('.action-btn').prop('disabled', true);
 	},
 
 	addEditionRange: function(){
-		this.editMarkersIndex += 1;
+		if(this.editMarkers.length !== 0)
+			this.editMarkersIndex += 1;
 		Backbone.pubSub.trigger('event-slider-changed-on-edit', []);
 		this.renderMarkerSlider([0]);
 		this.appendToEditingArea([0]);
+	},
+
+	removeEditionRange: function(){
+		this.editMarkers.splice(this.editMarkersIndex, 1);
+		if(this.editMarkersIndex > 0)
+			this.editMarkersIndex -= 1;
+		else {
+			if(this.editMarkers.length > 1)
+				this.editMarkersIndex += 1;
+			else 
+				this.editMarkersIndex = 0;
+		}
+		
+		var indexes = this.getMarkersIndex();
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', indexes);
+		this.renderMarkerSlider(indexes);
+		this.renderEditingArea();
 	},
 
 	selectEditingArea: function(evt){
@@ -174,8 +198,17 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.$el.find('.su-coord-to-edit').removeClass('active');
 		this.$el.find('.su-coord-to-edit').eq(this.editMarkersIndex).addClass('active');
 
+		var indexes = this.getMarkersIndex();
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', indexes);
+		this.renderMarkerSlider(indexes);
+	},
+
+	getMarkersIndex: function(){
 		var markersRange = [];
 		var currentMarkers = this.editMarkers[this.editMarkersIndex];
+
+		if(currentMarkers === undefined)
+			return markersRange;
 
 		if(currentMarkers.to)
 			markersRange = [currentMarkers.from.index, currentMarkers.to.index];
@@ -183,8 +216,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		else if(currentMarkers.from.index.constructor === Number)
 			markersRange = [currentMarkers.from.index];
 
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', markersRange);
-		this.renderMarkerSlider(markersRange);
+		return markersRange;
 	}
 
 });

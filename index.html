@@ -353,6 +353,14 @@
 					</div>
 				</div>
 			  	<div class="col-md-9">
+			  		<div id="su-edit-place-controls" class="col-xs-12 col-sm-12 col-md-12 btn-group" role="group">
+						<button type="button" class="btn action-btn" aria-label="Left Align" disabled>
+  							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn undo-btn" aria-label="Left Align" disabled>
+  							<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+						</button>
+					</div>
 			  		<div class="col-xs-11 col-sm-11 col-md-11">
 						<div id="map_canvas_coordinates" style="height:450px;"></div>
 					</div>
@@ -366,6 +374,9 @@
 		<script id="su-list-coord-to-edit-template" type="text/x-handlebars-template">
 			{{#each data}}
 				<a href="javascript:void(0)" class="su-coord-to-edit">
+					<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
+  						<small>remove from list</small>
+  					</span> 
 					<div class="ws-blue">
   						<small>From</small>
   						<span class="ws-dark-gray"><small>{{from.index}}</small></span>

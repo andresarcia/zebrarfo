@@ -154,6 +154,10 @@ app.view.HeatmapView = Backbone.View.extend({
 
         this.$el.find('.heatmap-select-channels').hide();
 
+        // console.log(this.place.distaceMin);
+        // console.log(this.place.distaceAvg); 
+        // console.log(this.place.distaceMax);
+
         this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
             start: this.heatmap.settings.distance,
             step: 0.1,

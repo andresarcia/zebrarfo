@@ -193,12 +193,30 @@ hr {
   margin-bottom: 10px;
 }
 
+#su-edit-place-controls {
+  margin-bottom: 5px;
+}
+#su-edit-place-controls > .btn,
+#su-edit-place-controls > .btn:active {
+  color: #353535;
+  background-color: #fff;
+  border-color: #fff;
+}
+#su-edit-place-controls >.btn:hover,
+#su-edit-place-controls >.btn:focus {
+  color: #0088CC;
+  background-color: #fff;
+  border-color: #ffffff;
+}
 .su-coord-to-edit{
   position: relative;
   display: block;
-  padding: 20px 0 9px 10px;
+  padding: 20px 10px 9px 10px;
   margin-bottom: 20px;
   border-bottom: 1px solid #eee;
+}
+.su-edit-remove-from-list {
+  margin-top: -18px!important;
 }
 .su-coord-to-edit:active,
 .su-coord-to-edit:hover,
