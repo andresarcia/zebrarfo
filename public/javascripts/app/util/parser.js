@@ -6,7 +6,10 @@ app.util.Parser = function(){};
 app.util.Parser.prototype = {
 	numFilesParser: 0,
 	numFiles: 0,
+	numCoordReady: 0,
 	unitFactor: 1,
+	place: null,
+	samples: [],
 
 	initialize: function(files,place,unit,callbackNumFilesProcessed,callback){
 		var self = this;
@@ -19,11 +22,6 @@ app.util.Parser.prototype = {
 		this.numFiles = files.length;
 		this.chooseUnitFactor(unit);
 
-		this.frequencyMin = new app.util.Stats();
-		this.frequencyMax = new app.util.Stats();
-		this.powerMin = new app.util.Stats();
-		this.powerMax = new app.util.Stats();
-
 		_.each(files, function(file){
    			var fr = new FileReader();
 		    fr.onload = function(e) { 
@@ -31,15 +29,8 @@ app.util.Parser.prototype = {
 		    	self.numFilesParser += 1;
 		    	callbackNumFilesProcessed(self.numFilesParser);
 		        
-		        if (self.numFilesParser == self.numFiles){
-		        	self.place.numberCoordinates = self.powerMin.getCount();
-					self.place.powerMin = self.powerMin.getResult();
-					self.place.powerMax = self.powerMax.getResult();
-					self.place.frequencyMin = self.frequencyMin.getResult();
-					self.place.frequencyMax = self.frequencyMax.getResult();
-		        
-		        	callback(self.place);
-		        }
+		        if (self.numFilesParser == self.numFiles)
+		        	callback(this.place);
 		    };
 		    fr.readAsText(file);
 		});
@@ -97,31 +88,58 @@ app.util.Parser.prototype = {
 		var coordinate = {};
 		coordiante = _.extend(coordinate, coord);
 
-		var frequencyMin = new app.util.Stats();
-		var frequencyMax = new app.util.Stats();
-		var powerMin = new app.util.Stats();
-		var powerMax = new app.util.Stats();
-		
+		var numberPowerFrequency = 0;
+		var frequencyMin = null;
+		var frequencyMax = null;
+		var powerMin = null;
+		var powerMax = null;
+
 		_.each(coord.data,function(item){
-			powerMin.min(item.power);
-			powerMax.max(item.power);
-			frequencyMin.min(item.frequency);
-			frequencyMax.max(item.frequency);
+			if(powerMin === null && frequencyMin === null){
+				powerMin = powerMax = item.power;
+				frequencyMin = frequencyMax = item.frequency;
+			
+			} else {
+				if (frequencyMax < item.frequency)
+					frequencyMax = item.frequency;
+				if (frequencyMin > item.frequency)
+					frequencyMin = item.frequency;
+
+				if (powerMax < item.power)
+					powerMax = item.power;
+				if (powerMin > item.power)
+					powerMin = item.power;
+			}
+			numberPowerFrequency += 1;
 		});
 
-		coordinate.powerMin = Number(powerMin.getResult().toFixed(5));
-		coordinate.powerMax = Number(powerMax.getResult().toFixed(5));
+		coordinate.powerMin = Number(powerMin.toFixed(5));
+		coordinate.powerMax = Number(powerMax.toFixed(5));
 
-		this.saveInPlace(coordinate,frequencyMin.getResult(),frequencyMax.getResult(),powerMin.getCount());
+		this.saveInPlace(coordinate,frequencyMin,frequencyMax,numberPowerFrequency);
 	},
 
 	saveInPlace: function(coordinate,frequencyMin,frequencyMax,numberPowerFrequency){
 		this.place.coordinates.push(coordinate);
+		this.place.numberCoordinates ++;
 
-		this.powerMin.min(coordinate.powerMin);
-		this.powerMax.max(coordinate.powerMax);
-		this.frequencyMin.min(frequencyMin);
-		this.frequencyMax.max(frequencyMax);
+		if(this.place.powerMin === null)
+			this.place.powerMin = coordinate.powerMin;
+		if(this.place.powerMax === null)
+			this.place.powerMax = coordinate.powerMax;
+		if (this.place.powerMin > coordinate.powerMin)
+			this.place.powerMin = coordinate.powerMin;
+		if (this.place.powerMax < coordinate.powerMax)
+			this.place.powerMax = coordinate.powerMax;
+
+		if(this.place.frequencyMin === null)
+			this.place.frequencyMin = frequencyMin;
+		if(this.place.powerMax === null)
+			this.place.frequencyMax = frequencyMax;
+		if (this.place.frequencyMin > frequencyMin)
+			this.place.frequencyMin = frequencyMin;
+		if (this.place.frequencyMax < frequencyMax)
+			this.place.frequencyMax = frequencyMax;
 
 		if(this.place.numberPowerFrequency === null)
 			this.place.numberPowerFrequency = numberPowerFrequency;

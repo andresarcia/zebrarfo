@@ -219,15 +219,11 @@
 			
 			<div class="row">
 				<div class="col-md-4">
-					<div class="panel panel-default su-sample-info">
+					<div class="panel panel-default coordinate-info">
   						<div class="panel-body">
-  							<a href="#places/{{this.attributes.id}}/upload" class="pull-right ws-blue">
-  								<small>upload more samples</small>
-  							</a>
+  							<a class="pull-right delete-link-place"><small>delete</small></a> 
   							<br>
-  							<a href="javascript:void(0)" class="pull-right delete-link-place ws-red">
-  								<small>delete</small>
-  							</a> 
+  							<a href="#places/{{this.attributes.id}}/upload" class="pull-right upload-more-link-place"><small>upload more samples</small></a> 
     						<h2 class="col-md-12">{{this.attributes.name}}</h2>
 					  		<table class="table table-striped">
 						    	<tr>
@@ -340,74 +336,47 @@
 			</ul>		
 		</script>
 
-		<script id="su-edit-place-template" type="text/x-handlebars-template">
+		<script id="su-edit-place-template" type="text/x-handlebars-template"> 
 			<ol class="breadcrumb">
   				<li><a href="#places">Places</a></li>
   				<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
   				<li class="active">Edit place</li>
 			</ol>
 			<div class="row">
-				<div id="su-list-coord-to-edit" class="col-md-3">
-					<div class="page-header">
-						<h1>Click <small>on any marker or drag slider to start editing</small></h1>
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="#" class="list-group-item active">
+							<h4 class="list-group-item-heading">
+								Edit points
+							</h4>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">
+								Example 1
+							</h4>
+							<p class="list-group-item-text">
+								Lorem ipsum bla bla
+							</p>
+						</a>
+						<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">
+								24*7 support
+							</h4>
+							<p class="list-group-item-text">
+								We provide 24*7 support.
+							</p>
+						</a>
 					</div>
 				</div>
 			  	<div class="col-md-9">
-			  		<div id="su-edit-place-controls" class="col-xs-12 col-sm-12 col-md-12 btn-group" role="group">
-						<button type="button" class="btn action-btn" aria-label="Left Align" disabled>
-  							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-						</button>
-						<button type="button" class="btn undo-btn" aria-label="Left Align" disabled>
-  							<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-						</button>
-					</div>
-			  		<div class="col-xs-11 col-sm-11 col-md-11">
+			  		<div class="col-md-11">
 						<div id="map_canvas_coordinates" style="height:450px;"></div>
 					</div>
-					<div class="col-xs-1 col-sm-1 col-md-1" id="markers-slider-edit-place">
+					<div class="col-md-1" id="markers-slider-edit-place">
 						<div class="markers-slider" style="height:450px;"></div>
 					</div>
 			  	</div>
 			</div>
-		</script>
-
-		<script id="su-list-coord-to-edit-template" type="text/x-handlebars-template">
-			{{#each data}}
-				<a href="javascript:void(0)" class="su-coord-to-edit">
-					<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
-  						<small>remove from list</small>
-  					</span> 
-					<div class="ws-blue">
-  						<small>From</small>
-  						<span class="ws-dark-gray"><small>{{from.index}}</small></span>
-  					</div>
-  					{{#if from.latitude}}
-  						<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
-  					{{/if}}
-					
-					{{#if to}}
-						<div class="ws-blue">
-	  						<small>To</small>
-	  						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
-	  					</div>
-	  					{{#if to.latitude}}
-	  						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
-	  					{{/if}}
-
-	  					<div class="ws-blue">
-	  						<small>Distance</small>
-	  						<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
-	  					</div>
-  					{{/if}}
-
-  					{{#unless to}}
-  						<small>You can select two markers for make a range</small>
-					{{/unless}}
-				</a>
-			{{/each}}
-			<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
-				<h3>Click <small>to create a new edition range</small></h3>
-			</a>
 		</script>
 
 		<script id="charts-template" type="text/x-handlebars-template"> 
@@ -501,10 +470,10 @@
 					</div>
 				</div>
 				<div class="col-md-9">
-					<div class="col-xs-11 col-sm-11 col-md-11">
+					<div class="col-md-11">
 						<div id="map_canvas_heatmap" style="width:100%; height:400px;"></div>
 					</div>
-					<div class="col-xs-1 col-sm-1 col-md-1">
+					<div class="col-md-1">
 						<div class="markers-slider" style="height:400px;"></div>
 					</div>
 
@@ -515,11 +484,6 @@
 					<div class="col-md-12 heatmap-select-channels">
 						<label for="select-channels">Please select the channels to observe</label>
 						<input class="form-control" id="select-channels" type="hidden" />
-					</div>
-					
-					<div class="col-md-12 heatmap-select-spread-distance">
-						<label for="spread-distance-slider">Please select the distance between each point</label>
-						<div class="spread-distance-slider"></div>
 					</div>
 				</div>
 			</div>
@@ -663,9 +627,8 @@
 		<script type="text/javascript" src="javascripts/vendor/select2.js"></script>
 		
 		<script type="text/javascript" src="javascripts/app/util/Loader.js"></script>
-		<script type="text/javascript" src="javascripts/app/util/Stats.js"></script>
-		<script type="text/javascript" src="javascripts/app/util/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/Parser.js"></script>
+		<script type="text/javascript" src="javascripts/app/util/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/app/util/HeatmapDataProcessor.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/UploadMeasuresContainers.js"></script>
 		<script type="text/javascript" src="javascripts/app/model/Place.js"></script>
