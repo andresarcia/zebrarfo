@@ -2,14 +2,10 @@ var fs        = require('fs'),
     path      = require('path'),
     Sequelize = require('sequelize'),
     lodash    = require('lodash'),
-    sequelize = new Sequelize('ws_monitor','ws_monitor','ws_monitor', {
-      dialect: 'mysql',
-      dialectOptions: {
-        socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
-      },
-      logging: false,
-    }),
+    connection = require('./../db_connection'),
     db        = {};
+
+sequelize = connection.createConnection();
 
 fs
   .readdirSync(__dirname)
