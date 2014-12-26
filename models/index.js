@@ -2,7 +2,11 @@ var fs        = require('fs'),
     path      = require('path'),
     Sequelize = require('sequelize'),
     lodash    = require('lodash'),
+<<<<<<< HEAD
     sequelize = new Sequelize('tvws','root','qwerty1234', {
+=======
+    sequelize = new Sequelize('ws_monitor','ws_monitor','ws_monitor', {
+>>>>>>> FETCH_HEAD
       dialect: 'mysql',
       dialectOptions: {
         socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',

@@ -16,6 +16,7 @@ app.view.HeatmapView = Backbone.View.extend({
             radius: 15,
             currentMarkerItem: 0,
             markersCount: 0,
+            distance: 0,
         },
     },
 
@@ -29,6 +30,7 @@ app.view.HeatmapView = Backbone.View.extend({
         'change .opacity-slider':'changeOpacity',
         'change .radius-slider':'changeRadius',
         'slide .markers-slider':'changeMarker',
+        'change .spread-distance-slider':'changeSpreadDistance',
         'change #allocation-channel':'changeAllocationChannel',
     },
 	
@@ -151,6 +153,29 @@ app.view.HeatmapView = Backbone.View.extend({
         this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
 
         this.$el.find('.heatmap-select-channels').hide();
+
+        // console.log(this.place.distaceMin);
+        // console.log(this.place.distaceAvg); 
+        // console.log(this.place.distaceMax);
+
+        this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
+            start: this.heatmap.settings.distance,
+            step: 0.1,
+            connect: "lower",
+            format: wNumb({
+                decimals: 1
+            }),
+            range: {
+                'min': 0,
+                'max': 5
+            }
+        });
+
+        this.$el.find('.spread-distance-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down"></div>', function(value) {
+            $(this).html(
+                '<strong>'+ value + ' Km: </strong>'
+            );
+        });
 
         this.changeFrequencyBy(this.frequencyBy,false);
     },
@@ -301,6 +326,11 @@ app.view.HeatmapView = Backbone.View.extend({
         this.renderHeatmap(true);
     },
 
+    changeSpreadDistance: function(){
+        this.heatmap.settings.distance = this.spreadSlider.val();
+        this.renderHeatmap(true);
+    },
+
     changeOpacity: function(){
         this.heatmap.settings.opacity = this.opacitySlider.val();
         this.renderHeatmap();
@@ -363,7 +393,8 @@ app.view.HeatmapView = Backbone.View.extend({
         if(updateData){
             var data = this.heatmapDataProcessor.process(
                 this.boundaries, 
-                this.heatmap.settings.dataFunction
+                this.heatmap.settings.dataFunction,
+                this.heatmap.settings.distance
             );
 
             this.disableMarker();
