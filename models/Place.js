@@ -60,6 +60,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,7),
       allowNull: true,
     },
+    visible : {
+      type:DataTypes.BOOLEAN,
+      defaultValue: 1
+    },
 
     UserId: {
       type: DataTypes.INTEGER,

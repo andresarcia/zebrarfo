@@ -33,6 +33,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: null,
     },
+    visible : {
+      type:DataTypes.BOOLEAN,
+      defaultValue: 1
+    },
 
     PlaceId: {
       type: DataTypes.INTEGER,
