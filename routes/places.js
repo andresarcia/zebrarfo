@@ -9,7 +9,10 @@ var UserIdentification = 1;
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res){
 	db.Place.findAll({
-		UserId:UserIdentification,
+		where: {
+			UserId:UserIdentification,
+			visible: true
+		}
 	}).success(function(docs){
 		if(docs)
 			res.send(docs);
@@ -27,7 +30,8 @@ exports.getPlace = function(req,res){
 		db.Place.find({
 			where: {
 				UserId:UserIdentification,
-				id: req.params.id
+				id: req.params.id,
+				visible: true
 			}
 		}).success(function(place){
 			if(place)
@@ -48,13 +52,14 @@ exports.deletePlace = function(req,res){
 		db.Place.find({
 			where: {
 				UserId:UserIdentification,
-				id: req.params.id
+				id: req.params.id,
+				visible: true
 			}
 		}).success(function(place){
 			if(place)
 				place.destroy()
 				.success(function() {
-				    res.status(200).send({ msg: 'Place '+req.params.id+ ' deleted' });
+					res.status(200).send({ msg: 'Place '+req.params.id+ ' deleted' });
 				}).error(function(err){
 					res.status(500).send({ error: err });
 				});
@@ -74,16 +79,29 @@ exports.getCoordinates = function(req,res){
 		db.Place.find({
 			where: {
 				UserId:UserIdentification,
-				id: req.params.id
+				id: req.params.id,
+				visible: true
 			}
 		}).success(function(place){
 			if(place){
 				var options;
 
 				if(isNumber(req.query.offset) && isNumber(req.query.limit))
-					options = { where: { PlaceId:place.id }, offset: req.query.offset, limit: req.query.limit };
+					options = { 
+								where: { 
+									PlaceId:place.id, 
+									visible: true 
+								}, 
+								offset: req.query.offset, 
+								limit: req.query.limit 
+							};
 				else
-					options = { where: { PlaceId:place.id }};
+					options = { 
+								where: { 
+									PlaceId:place.id, 
+									visible: true 
+								}
+							};
 
 	  			db.Coordinate.findAndCountAll(options)
 				.success(function(result) {
@@ -109,44 +127,48 @@ exports.getCoordinates = function(req,res){
 
 /*-------------------------------------------------------------------*/
 exports.deleteCoordinate = function(req, res){
-	if(isNumber(req.params.idPlace) && isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:UserIdentification,
-				id: req.params.idPlace
-			}
-		}).success(function(place){
-			if(place){
-				db.Coordinate.find({
-					where: {
-						PlaceId:req.params.idPlace,
-						id: req.params.id
-					}
-				}).success(function(coord){
-					coord.destroy()
-					.success(function() {
-						place.numberCoordinates = place.numberCoordinates - 1;
-						place.save().success(function(){
-							res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
-						})
-						.error(function(err){
-							res.status(500).send({ error: err });
-						});
-					}).error(function(err){
-						res.status(500).send({ error: err });
-					});
-				}).error(function(err){
-					res.status(500).send({ error: err });
-				});
+	console.log(req.params.id);
+	res.status(200).send({ id:req.params.id});
 
-			} else
-				res.status(200).send('Sorry, we cannot find that!');
-		}).error(function(err){
-			res.status(500).send({ error: err });
-		});
-	}
-	else
-		res.status(200).send('Sorry, we cannot find that!');
+	// if(isNumber(req.params.idPlace) && isNumber(req.params.id)){
+	// 	db.Place.find({
+	// 		where: {
+	// 			UserId:UserIdentification,
+	// 			id: req.params.idPlace,
+	// 			visible: true
+	// 		}
+	// 	}).success(function(place){
+	// 		if(place){
+	// 			db.Coordinate.find({
+	// 				where: {
+	// 					PlaceId:req.params.idPlace,
+	// 					id: req.params.id
+	// 				}
+	// 			}).success(function(coord){
+	// 				coord.destroy()
+	// 				.success(function() {
+	// 					place.numberCoordinates = place.numberCoordinates - 1;
+	// 					place.save().success(function(){
+	// 						res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
+	// 					})
+	// 					.error(function(err){
+	// 						res.status(500).send({ error: err });
+	// 					});
+	// 				}).error(function(err){
+	// 					res.status(500).send({ error: err });
+	// 				});
+	// 			}).error(function(err){
+	// 				res.status(500).send({ error: err });
+	// 			});
+
+	// 		} else
+	// 			res.status(200).send('Sorry, we cannot find that!');
+	// 	}).error(function(err){
+	// 		res.status(500).send({ error: err });
+	// 	});
+	// }
+	// else
+	// 	res.status(200).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
