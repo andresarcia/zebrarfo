@@ -88,30 +88,6 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		});
 	},
 
-	deleteCoordinate: function(evt){
-		var self = this;
-		this.waitingView.render();
-		var index = this.$el.find('.delete-link-coordinate').index(evt.currentTarget);
-		var idCoord = this.coordinates.models[0].attributes.coordinates[index].id;
-		var coordinate = new app.model.Coordinate({id:idCoord});
-		coordinate.urlRoot = '/api/places/'+this.data.id+'/coordinates/';
-
-		coordinate.destroy({
-			success: function(model, response) {
-				self.coordinates.models[0].attributes.coordinates.splice(index, 1);
-  				self.data.attributes.numberCoordinates -= 1;
-
-  				self.waitingView.closeView();
-  				self.render();
-  				self.renderMap();
-			},
-			error: function(e){
-				self.waitingView.closeView();
-		     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
-			}
-		});
-	},
-
 	changeAllocationChannel: function(){
 		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		this.renderPowerFrequencies();

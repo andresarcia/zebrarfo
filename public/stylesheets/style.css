@@ -46,6 +46,39 @@ hr {
   opacity: 0.4;
 }
 
+.glass-pane {
+  position: fixed;
+  background-color:rgba(0,0,0,0.433);
+  z-index: 10;
+  display: none;
+}
+.glass-icon {
+  position: absolute;
+  color: #ffffff;
+  text-shadow: 0 1px 0 #ccc,
+               0 2px 0 #c9c9c9,
+               0 3px 0 #bbb,
+               0 4px 0 #b9b9b9,
+               0 5px 0 #aaa,
+               0 6px 1px rgba(0,0,0,.1),
+               0 0 5px rgba(0,0,0,.1),
+               0 1px 3px rgba(0,0,0,.3),
+               0 3px 5px rgba(0,0,0,.2),
+               0 5px 10px rgba(0,0,0,.25),
+               0 10px 10px rgba(0,0,0,.2),
+               0 20px 20px rgba(0,0,0,.15);
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+     -moz-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+       -o-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+}
+.glass-icon:hover{
+  color: #0088CC;
+}
+
 .ws-error, .ws-waiting {
   position: fixed;
   height: 100%;
@@ -223,13 +256,6 @@ hr {
 .su-coord-to-edit:visited,
 .su-coord-to-edit:link {
   text-decoration: none;
-}
-.su-coord-to-edit:hover{
-  font-weight: bold;
-}
-.su-coord-to-edit.active{
-  font-weight: 400;
-  background-color: #F9F9F9;
 }
 #markers-slider-edit-place {
   margin-left: -18px;

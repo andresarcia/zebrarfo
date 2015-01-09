@@ -347,18 +347,14 @@
   				<li class="active">Edit place</li>
 			</ol>
 			<div class="row">
-				<div id="su-list-coord-to-edit" class="col-md-3">
-					<div class="page-header">
-						<h1>Click <small>on any marker or drag slider to start editing</small></h1>
-					</div>
-				</div>
+				<div id="su-list-coord-to-edit" class="col-md-3"></div>
 			  	<div class="col-md-9">
 			  		<div id="su-edit-place-controls" class="col-xs-12 col-sm-12 col-md-12 btn-group" role="group">
-						<button type="button" class="btn action-btn" aria-label="Left Align" disabled>
+						<button type="button" class="btn action-btn su-delete-coordinates" aria-label="Left Align" disabled>
   							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 						</button>
-						<button type="button" class="btn undo-btn" aria-label="Left Align" disabled>
-  							<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+						<button type="button" class="btn btn-default action-btn su-inverse-coordinates" aria-label="Left Align" disabled>
+  							inverse
 						</button>
 					</div>
 			  		<div class="col-xs-11 col-sm-11 col-md-11">
@@ -372,42 +368,59 @@
 		</script>
 
 		<script id="su-list-coord-to-edit-template" type="text/x-handlebars-template">
-			{{#each data}}
-				<a href="javascript:void(0)" class="su-coord-to-edit">
-					<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
-  						<small>remove from list</small>
-  					</span> 
-					<div class="ws-blue">
-  						<small>From</small>
-  						<span class="ws-dark-gray"><small>{{from.index}}</small></span>
+			{{#if data}}
+				{{#if hidden}}
+					<div class="ws-blue pull-right">
+  						<small>Hidden restore stack</small>
+  						<span class="ws-dark-gray"><small>{{hiddenNumber}}</small></span>
   					</div>
-  					{{#if from.latitude}}
-  						<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
-  					{{/if}}
-					
-					{{#if to}}
+				{{/if}}
+				<h2><small>Edit list</small></h2>
+
+				{{#each data}}
+					<a href="javascript:void(0)" class="su-coord-to-edit">
+						<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
+	  						<small>remove from list</small>
+	  					</span> 
 						<div class="ws-blue">
-	  						<small>To</small>
-	  						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
+	  						<small>From</small>
+	  						<span class="ws-dark-gray"><small>{{from.index}}</small></span>
 	  					</div>
-	  					{{#if to.latitude}}
-	  						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+	  					{{#if from.latitude}}
+	  						<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+	  					{{/if}}
+						
+						{{#if to}}
+							<div class="ws-blue">
+		  						<small>To</small>
+		  						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
+		  					</div>
+		  					{{#if to.latitude}}
+		  						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+		  					{{/if}}
+
+		  					<div class="ws-blue">
+		  						<small>Distance</small>
+		  						<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
+		  					</div>
 	  					{{/if}}
 
-	  					<div class="ws-blue">
-	  						<small>Distance</small>
-	  						<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
-	  					</div>
-  					{{/if}}
-
-  					{{#unless to}}
-  						<small>You can select two markers for make a range</small>
-					{{/unless}}
-				</a>
-			{{/each}}
-			<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
-				<h3>Click <small>to create a new edition range</small></h3>
-			</a>
+	  					{{#unless to}}
+	  						<small>You can select two markers for make a range</small>
+						{{/unless}}
+					</a>
+				{{/each}}
+				{{#if create}}
+					<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
+						<h3>Click <small>to create a new edition range</small></h3>
+					</a>
+				{{/if}}
+			{{/if}}
+			{{#unless data}}
+				<div class="page-header">
+					<h1>Click <small>on any marker or drag slider to start editing</small></h1>
+				</div>
+			{{/unless}}
 		</script>
 
 		<script id="charts-template" type="text/x-handlebars-template"> 
@@ -677,6 +690,7 @@
 		<script type="text/javascript" src="javascripts/app/collection/Coordinates.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/GlassPaneView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PaginationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>

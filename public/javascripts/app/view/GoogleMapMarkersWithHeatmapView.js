@@ -26,6 +26,8 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			this.paintMarkers(n);
 		}, this);
+
+		Backbone.pubSub.on('event-inverse-markers-google-map', this.inverseMarkers, this);
 	},
 
 	markerClick: function(i){
@@ -150,6 +152,47 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		}
 	},
 
+	hideMarkers: function(indexes){
+		if(indexes.length === 0)
+			return;
+
+		else if(indexes.length == 1)
+			this.markers[indexes[0]].setVisible(false);
+
+		else if(indexes.length == 2){
+			for(var i = indexes[0]; i <= indexes[1]; i++)
+				this.markers[i].setVisible(false);
+		}
+
+		this.reTakeHeatmapData();
+	},
+
+	showMarkers: function(indexes){
+		if(indexes.length === 0)
+			return;
+
+		else if(indexes.length == 1)
+			this.markers[indexes[0]].setVisible(true);
+
+		else if(indexes.length == 2){
+			for(var i = indexes[0]; i <= indexes[1]; i++)
+				this.markers[i].setVisible(true);
+		}
+
+		this.reTakeHeatmapData();
+	},
+
+	inverseMarkers: function(indexes){
+		var range = [];
+		if(indexes[0] > 0)
+			range.push([0, indexes[0]]);
+
+		if(indexes[1] < this.markers[this.markers.length - 1].index)
+			range.push([indexes[1], this.markers[this.markers.length - 1].index]);
+
+		console.log(range);
+	},
+
 	render: function(data){
 		var self = this;
 		this.markers = [];
@@ -161,7 +204,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
     		mapTypeId: google.maps.MapTypeId.ROADMAP
   		};
 
-  		var map = new google.maps.Map(mapCanvas, mapOptions);  
+  		this.map = new google.maps.Map(mapCanvas, mapOptions);  
   		var bounds = new google.maps.LatLngBounds();
 
   		_.each(data, function(coordinate, index){
@@ -172,7 +215,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
   			var latLng = new google.maps.LatLng(coordinate.latitude,coordinate.longitude);
   			var marker = new google.maps.Marker({
 			    position: latLng,
-		      	map: map,
+		      	map: self.map,
 		      	icon: window.appSettings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
@@ -189,30 +232,47 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			self.heatmapData.push(latLng);
   		});
 
-  		map.fitBounds(bounds);
-  		
-  		var heatmap = new google.maps.visualization.HeatmapLayer({
+  		this.map.fitBounds(bounds);
+  		this.renderHeatmap();
+	},
+
+	renderHeatmap: function(){
+		this.heatmap = new google.maps.visualization.HeatmapLayer({
     		data: this.heatmapData,
     		radius: 60,
-    		gradient: [
-				'rgba(0, 255, 255, 0)',
-				'rgba(0, 255, 255, 1)',
-				'rgba(0, 191, 255, 1)',
-				'rgba(0, 127, 255, 1)',
-				'rgba(0, 63, 255, 1)',
-				'rgba(0, 0, 255, 1)',
-				'rgba(0, 0, 223, 1)',
-				'rgba(0, 0, 191, 1)',
-				'rgba(0, 0, 159, 1)',
-				'rgba(0, 0, 127, 1)',
-				'rgba(63, 0, 91, 1)',
-				'rgba(127, 0, 63, 1)',
-				'rgba(191, 0, 31, 1)',
-				'rgba(255, 0, 0, 1)'
-			]
+    		// gradient: [
+				// 'rgba(0, 255, 255, 0)',
+				// 'rgba(0, 255, 255, 1)',
+				// 'rgba(0, 191, 255, 1)',
+				// 'rgba(0, 127, 255, 1)',
+				// 'rgba(0, 63, 255, 1)',
+				// 'rgba(0, 0, 255, 1)',
+				// 'rgba(0, 0, 223, 1)',
+				// 'rgba(0, 0, 191, 1)',
+				// 'rgba(0, 0, 159, 1)',
+				// 'rgba(0, 0, 127, 1)',
+				// 'rgba(63, 0, 91, 1)',
+				// 'rgba(127, 0, 63, 1)',
+				// 'rgba(191, 0, 31, 1)',
+				// 'rgba(255, 0, 0, 1)'
+			// ]
   		});
 
-  		heatmap.setMap(map);
-	}
+  		this.heatmap.setMap(this.map);
+	},
+
+	reTakeHeatmapData: function(){
+		var self = this;
+		this.heatmapData = [];
+		this.heatmap.setMap(null);
+		
+		_.each(this.markers, function(marker){
+			if(marker.visible === true)
+				self.heatmapData.push(marker.position);
+		});
+
+		google.maps.event.trigger(this.map, 'resize');
+		this.renderHeatmap();
+	},
 
 });
