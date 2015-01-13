@@ -13,7 +13,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 		'click .su-edit-remove-from-list': 'removeEditionRange',
 		'click .su-create-new-edition-range': 'addEditionRange',
 		'click .su-delete-coordinates': '_deleteCoordinates',
-		'click .su-inverse-coordinates': '_inverseCoordinates',
 	},
 
 	initialize: function(options){
@@ -29,21 +28,28 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		if(window.appRouter.currentData.innerData.coordinates) {
 			this.coordinates = window.appRouter.currentData.innerData.coordinates;
+			this.calculateRealCoorDict();
+			this.calculateRelativeCoorDict();
+
 			self.renderAfterLoad();
 		
 		} else {
 			this.waitingView.render();
-			this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-			this.coordinates.fetch({
-				success: function(e){          
+			var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
+			coordinates.fetch({
+				success: function(e){
+					self.coordinates = coordinates.models[0].attributes.coordinates;
 					window.appRouter.currentData.innerData.coordinates = self.coordinates;
+					self.calculateRealCoorDict();
+					self.calculateRelativeCoorDict();
+
 					self.waitingView.closeView();
-			        self.renderAfterLoad();
-			     },
-			     error: function(e){  
-			     	self.waitingView.closeView();
-			     	self.errorView.render(['Sorry, we cannot find that!']);
-			     }
+					self.renderAfterLoad();
+				},
+				error: function(e){  
+					self.waitingView.closeView();
+					self.errorView.render(['Sorry, we cannot find that!']);
+				}
 			});
 		}
 
@@ -54,9 +60,25 @@ app.view.EditPlaceView = Backbone.View.extend({
 		Backbone.pubSub.on('event-glass-pane-clicked', this.restore, this);
 	},
 
+	calculateRealCoorDict: function(){
+		var self = this;
+		this.realCoorDict = {};
+		_.each(this.coordinates, function(item, index){
+			self.realCoorDict[item.id] = index;
+		});
+	},
+
+	calculateRelativeCoorDict: function(){
+		var self = this;
+		this.relativeCoorDict = {};
+		_.each(this.coordinates, function(item, index){
+			self.relativeCoorDict[item.id] = index;
+		});
+	},
+
 	render: function(){
 		var html = this.template(this.data);
-    	this.$el.html(html);
+		this.$el.html(html);
 
 		return this;
 	},
@@ -73,7 +95,7 @@ app.view.EditPlaceView = Backbone.View.extend({
             }),
             range: {
                 'min': 0,
-                'max': this.coordinates.models[0].attributes.coordinates.length - 1
+                'max': this.coordinates.length - 1
             }
         }, true);
 	},
@@ -82,10 +104,10 @@ app.view.EditPlaceView = Backbone.View.extend({
 		var self = this;
 
 		if(window.appSettings.googleMapApi)
-			this.mapView.render(this.coordinates.models[0].attributes.coordinates);
+			this.mapView.render(this.coordinates);
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.mapView.render(self.coordinates.models[0].attributes.coordinates);
+				self.mapView.render(self.coordinates);
 			});
 	},
 
@@ -162,13 +184,26 @@ app.view.EditPlaceView = Backbone.View.extend({
 		if(markers.length === 0)
 			markersRange = [0];
 		else if(markers.length == 1)
-			markersRange = [markers[0].index];
+			markersRange = [markers[0].id];
 		else if(markers.length == 2)
-			markersRange = [markers[0].index, markers[1].index];
+			markersRange = [markers[0].id, markers[1].id];
+
+		markersRange = this.realIndex2Relative(markersRange);
 
 		this.renderMarkerSlider(markersRange);
 		this.appendToEditingArea(markersRange);
 		this.$el.find('.action-btn').prop('disabled', false);
+	},
+
+	realIndex2Relative: function(v){
+		var self = this;
+		var n = [];
+
+		_.each(v, function(item){
+			n.push(self.relativeCoorDict[item]);
+		});
+
+		return n;
 	},
 
 	addMarkersBySlider: function(){
@@ -185,9 +220,20 @@ app.view.EditPlaceView = Backbone.View.extend({
 		else if(index.constructor === Array)
 			markersRange = [Number(index[0]),Number(index[1])];
 
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', markersRange);
+		Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(markersRange));
 		this.appendToEditingArea(markersRange);
 		this.$el.find('.action-btn').prop('disabled', false);
+	},
+
+	relativeIndex2Real: function(v){
+		var self = this;
+		var n = [];
+
+		_.each(v, function(item){
+			n.push(self.realCoorDict[self.coordinates[item].id]);
+		});
+
+		return n;
 	},
 
 	appendToEditingArea: function(markersRange){
@@ -198,13 +244,13 @@ app.view.EditPlaceView = Backbone.View.extend({
 			coordinates.from.index = 'Please select a marker';
 
 		} else if(markersRange.length == 1){
-			coordinates.from = this.coordinates.models[0].attributes.coordinates[markersRange[0]];
+			coordinates.from = this.coordinates[markersRange[0]];
 			coordinates.from.index = markersRange[0];
 		
 		} else if(markersRange.length == 2){
-			coordinates.from = this.coordinates.models[0].attributes.coordinates[markersRange[0]];
+			coordinates.from = this.coordinates[markersRange[0]];
 			coordinates.from.index = markersRange[0];
-			coordinates.to = this.coordinates.models[0].attributes.coordinates[markersRange[1]];
+			coordinates.to = this.coordinates[markersRange[1]];
 			coordinates.to.index = markersRange[1];
 
 			coordinates.distance = app.util.GetDistanceFromLatLonInKm(
@@ -261,13 +307,22 @@ app.view.EditPlaceView = Backbone.View.extend({
 	_deleteCoordinates: function(){
 		this.editMarkers[this.editMarkersIndex].action = 'delete';
 		this.editMarkers[this.editMarkersIndex].editable = false;
-		this.mapView.hideMarkers(this.getMarkersIndex());
-		this.addEditionRange();
-	},
+		this.editMarkers[this.editMarkersIndex].coordinates = _.clone(this.coordinates);
 
-	_inverseCoordinates: function(){
-		var indexes = this.getMarkersIndex();
-		Backbone.pubSub.trigger('event-inverse-markers-google-map', indexes);
+		this.mapView.hideMarkers(this.relativeIndex2Real(this.getMarkersIndex()));
+
+		var v = this.getMarkersIndex();
+		if(v.length == 1)
+			this.coordinates.splice(v[0], 1);
+
+		else {
+			for (var i = v[1]; i >= v[0]; i--)
+				this.coordinates.splice(i, 1);
+		}
+
+		this.renderMarkerSlider(0);
+		this.addEditionRange();
+		this.calculateRelativeCoorDict();
 	},
 
 	restore: function(){
@@ -278,8 +333,9 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		switch (this.editMarkers[this.editMarkersIndex].action) {
 			case 'delete':
-				this.mapView.showMarkers(indexes);
-				Backbone.pubSub.trigger('event-slider-changed-on-edit', indexes);
+				this.coordinates = this.editMarkers[this.editMarkersIndex].coordinates;
+				this.mapView.showMarkers(this.relativeIndex2Real(indexes));
+				Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(indexes));
 				this.renderMarkerSlider(indexes);
 				break;
 		}
@@ -295,8 +351,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 		// var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
 		// for (var i = this.editMarkers[this.editMarkersIndex].from.index; i <= this.editMarkers[this.editMarkersIndex].to.index; i++) {
 
-		// 	var id = this.coordinates.models[0].attributes.coordinates[i].id;
-		// 	var index = this.coordinates.models[0].attributes.coordinates[i].index;
+		// 	var id = this.coordinates[i].id;
+		// 	var index = this.coordinates[i].index;
 		// 	console.log(id);
 		// 	var coordinate = new app.model.Coordinate({id:id});
 		// 	coordinate.urlRoot = '/api/places/'+this.data.id+'/coordinates/';

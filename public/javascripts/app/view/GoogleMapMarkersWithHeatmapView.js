@@ -26,8 +26,6 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			this.paintMarkers(n);
 		}, this);
-
-		Backbone.pubSub.on('event-inverse-markers-google-map', this.inverseMarkers, this);
 	},
 
 	markerClick: function(i){
@@ -180,17 +178,6 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		}
 
 		this.reTakeHeatmapData();
-	},
-
-	inverseMarkers: function(indexes){
-		var range = [];
-		if(indexes[0] > 0)
-			range.push([0, indexes[0]]);
-
-		if(indexes[1] < this.markers[this.markers.length - 1].index)
-			range.push([indexes[1], this.markers[this.markers.length - 1].index]);
-
-		console.log(range);
 	},
 
 	render: function(data){
