@@ -285,6 +285,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.renderMarkerSlider([0]);
 		this.renderEditingArea();
 		this.$el.find('.action-btn').prop('disabled', true);
+		this.$el.find('.select-btn').removeClass('active');
 	},
 
 	getMarkersIndex: function(){
@@ -355,6 +356,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		switch (this.editMarkers[this.editMarkersIndex].action) {
 			case 'delete':
 				this.coordinates = this.editMarkers[this.editMarkersIndex].coordinates;
+				this.calculateRelativeCoorDict();
 				this.mapView.showMarkers(this.relativeIndex2Real(indexes));
 				Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(indexes));
 				this.renderMarkerSlider(indexes);
