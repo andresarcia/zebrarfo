@@ -229,17 +229,18 @@ hr {
 #su-edit-place-controls {
   margin-bottom: 5px;
 }
-#su-edit-place-controls > .btn,
-#su-edit-place-controls > .btn:active {
+#su-edit-place-controls .btn-group > .btn {
   color: #353535;
   background-color: #fff;
-  border-color: #fff;
 }
-#su-edit-place-controls >.btn:hover,
-#su-edit-place-controls >.btn:focus {
+#su-edit-place-controls .btn-group > .btn:disabled {
+  color: #A6A6A6;
+  background-color: #fff; 
+}
+#su-edit-place-controls .btn-group >.btn:hover,
+#su-edit-place-controls .btn-group > .btn.active {
   color: #0088CC;
   background-color: #fff;
-  border-color: #ffffff;
 }
 .su-coord-to-edit{
   position: relative;
