@@ -34,9 +34,10 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		
 		} else {
 			this.waitingView.render();
-			this.coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-			this.coordinates.fetch({
-				success: function(e){          
+			var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
+			coordinates.fetch({
+				success: function(e){
+					self.coordinates = coordinates.models[0].attributes.coordinates;
 					window.appRouter.currentData.innerData.coordinates = self.coordinates;
 					self.waitingView.closeView();
 			        self.mapView = new app.view.GoogleMapBasicMarkersView({
@@ -96,7 +97,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
     renderCoordinateResume: function(res){
     	var self = this;
     	var template = Handlebars.compile($("#su-coordinate-resume-template").html());
-		var html = template(this.coordinates.models[0].attributes.coordinates[res.index]);
+		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
 		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
@@ -107,7 +108,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.currentPowerFrequencies.options = {
 			yAxis: {
 	            plotLines:[{
-			        value: this.coordinates.models[0].attributes.coordinates[res.index].powerAvg,
+			        value: this.coordinates[res.index].powerAvg,
 			        color: '#ff0000',
 			        width:1,
 			        zIndex:4,
@@ -150,10 +151,10 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 
 		if(window.appSettings.googleMapApi)
-			this.mapView.render(this.coordinates.models[0].attributes.coordinates);
+			this.mapView.render(this.coordinates);
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.mapView.render(self.coordinates.models[0].attributes.coordinates);
+				self.mapView.render(self.coordinates);
 			});
 	},
 
