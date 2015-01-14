@@ -16,16 +16,6 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			throw 'No id container for map canvas';
 
 		this.selected = [];
-		
-		Backbone.pubSub.on('event-slider-changed-on-edit', function(indexArray){
-			var self = this;
-			n = [];
-			_.each(indexArray, function(item){
-				n.push(self.markers[item]);
-			});
-
-			this.paintMarkers(n);
-		}, this);
 	},
 
 	markerClick: function(i){
@@ -71,6 +61,16 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 				n[1] = this.selected[1];
 			}
 		}
+
+		this.paintMarkers(n);
+	},
+
+	changeMarkers: function(v){
+		var self = this;
+		n = [];
+		_.each(v, function(item){
+			n.push(self.markers[item]);
+		});
 
 		this.paintMarkers(n);
 	},
@@ -150,31 +150,41 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		}
 	},
 
-	hideMarkers: function(indexes){
-		if(indexes.length === 0)
+	hideMarkers: function(v){
+		if(v.length === 0)
 			return;
 
-		else if(indexes.length == 1)
-			this.markers[indexes[0]].setVisible(false);
+		else if(v.length == 1){
+			this.markers[v[0]].setVisible(false);
+			this.markers[v[0]].visibleCount += 1;
+		}
 
-		else if(indexes.length == 2){
-			for(var i = indexes[0]; i <= indexes[1]; i++)
+		else if(v.length == 2){
+			for(var i = v[0]; i <= v[1]; i++){
 				this.markers[i].setVisible(false);
+				this.markers[i].visibleCount += 1;
+			}
 		}
 
 		this.reTakeHeatmapData();
 	},
 
-	showMarkers: function(indexes){
-		if(indexes.length === 0)
+	showMarkers: function(v){
+		if(v.length === 0)
 			return;
 
-		else if(indexes.length == 1)
-			this.markers[indexes[0]].setVisible(true);
+		else if(v.length == 1){
+			this.markers[v[0]].visibleCount -= 1;
+			if(this.markers[v[0]].visibleCount === 0)
+				this.markers[v[0]].setVisible(true);
+		}
 
-		else if(indexes.length == 2){
-			for(var i = indexes[0]; i <= indexes[1]; i++)
-				this.markers[i].setVisible(true);
+		else if(v.length == 2){
+			for(var i = v[0]; i <= v[1]; i++){
+				this.markers[i].visibleCount -= 1;
+				if(this.markers[i].visibleCount === 0)
+					this.markers[i].setVisible(true);
+			}
 		}
 
 		this.reTakeHeatmapData();
@@ -207,6 +217,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		      	animation: null,
 		      	id: coordinate.id,
 		      	index: index,
+		      	visibleCount: 0,
 		  	});
 
 			google.maps.event.addListener(marker, 'click', function() {

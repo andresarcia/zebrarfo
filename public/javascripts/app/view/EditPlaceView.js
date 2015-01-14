@@ -178,7 +178,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	changeSliderByMarkers: function(markers){
 		if(this.editMarkers[this.editMarkersIndex] && this.editMarkers[this.editMarkersIndex].editable === false){
-			Backbone.pubSub.trigger('event-slider-changed-on-edit', []);
+			this.mapView.changeMarkers([]);
 			return;
 		}
 
@@ -216,7 +216,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		}
 
 		var markersRange = this.getSliderVal();
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(markersRange));
+		this.mapView.changeMarkers(this.relativeIndex2Real(markersRange));
 		this.appendToEditingArea(markersRange);
 		this.checkPositionButtons();
 		this.$el.find('.action-btn').prop('disabled', false);
@@ -281,7 +281,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		else 
 			this.editMarkersIndex = 0;
 			
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', []);
+		this.mapView.changeMarkers([]);
 		this.renderMarkerSlider([0]);
 		this.renderEditingArea();
 		this.$el.find('.action-btn').prop('disabled', true);
@@ -312,7 +312,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	setZero: function(){
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', []);
+		this.mapView.changeMarkers([]);
 		this.renderMarkerSlider([0]);
 		this.appendToEditingArea();
 		this.$el.find('.action-btn').prop('disabled', true);
@@ -320,7 +320,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	setValues: function(n){
 		this.renderMarkerSlider(n);
-		Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(n));
+		this.mapView.changeMarkers(this.relativeIndex2Real(n));
 		this.appendToEditingArea(n);
 		this.$el.find('.action-btn').prop('disabled', false);
 	},
@@ -358,7 +358,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 				this.coordinates = this.editMarkers[this.editMarkersIndex].coordinates;
 				this.calculateRelativeCoorDict();
 				this.mapView.showMarkers(this.relativeIndex2Real(indexes));
-				Backbone.pubSub.trigger('event-slider-changed-on-edit', this.relativeIndex2Real(indexes));
+				this.mapView.changeMarkers(this.relativeIndex2Real(indexes));
 				this.renderMarkerSlider(indexes);
 				break;
 		}
