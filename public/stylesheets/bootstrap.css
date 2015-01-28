@@ -3885,9 +3885,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-brand {
   float: left;
   height: 50px;
-  padding: 15px 15px;
+  padding: 15px 10px;
   font-size: 18px;
-  line-height: 20px;
+  line-height: 15px;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -4106,9 +4106,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-brand {
   font-family: times, Times New Roman, times-roman, georgia, serif;
   color: #ffffff;
-  padding: 0px 10px 0px 20px;
-  font-size: 25px;
-  line-height: 48px;
+  padding: 0px 10px 0px 25px;
+  font-size: 28px;
+  line-height: 52px;
   letter-spacing: -2px;
   font-weight: bold;
 }
