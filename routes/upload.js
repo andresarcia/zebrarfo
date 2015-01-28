@@ -174,8 +174,13 @@ function takeCoordStats(coord){
 	coordinate.powerMax = Number(powerMax.toFixed(5));
 	powerAvg = powerAvg / numberPowerFrequency;
 	coordinate.powerAvg = Number(powerAvg.toFixed(5));
-	powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/numberPowerFrequency)/(numberPowerFrequency - 1));
-	coordinate.powerSD = Number(powerSD_X.toFixed(5));
+
+	if(coord.data.length > 1){
+		powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/numberPowerFrequency)/(numberPowerFrequency - 1));
+		coordinate.powerSD = Number(powerSD_X.toFixed(5));
+
+	} else
+		coordinate.powerSD = 0;
 
 	return {
 		coordinate: coordinate,
@@ -231,7 +236,6 @@ function saveNewCoordInPlace(coord, newPlace){
 			if(newPlace.distaceMax < distance)
 				newPlace.distaceMax = distance;
 		}
-
 	}
 }
 
@@ -253,7 +257,7 @@ function takePlaceStats(newPlace){
 	if(newPlace.coordinates.length > 1)
 		newPlace.distaceAvg = newPlace.totalDistance/newPlace.countSamplesDistance;
 	else 
-		newPlace.totalDistance = newPlace.distaceAvg = newPlace.distaceMin = distaceMax = 0;
+		newPlace.totalDistance = newPlace.distaceAvg = newPlace.distaceMin = newPlace.distaceMax = 0;
 
 	/* -- delete vars for take stats -- */
 	delete newPlace.placePowerSD_X;
