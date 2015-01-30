@@ -54,6 +54,7 @@ function reduceCommonGps(place,callback){
 	newPlace.distaceAvg = 0;
 	newPlace.distaceMax = null;
 	newPlace.distaceMin = null;
+	newPlace.powerMode = {};
 
     /* -- vars for take stats -- */
 	newPlace.placePowerSD_X = null;
@@ -116,6 +117,10 @@ function reduceCommonGps(place,callback){
 			        break;
 			}
 			data.push({ frequency: Number(key), power:operation });	
+			if(newPlace.powerMode[operation])
+				newPlace.powerMode[operation] += 1;
+			else
+				newPlace.powerMode[operation] = 1;
 		});
 
 		var coord = takeCoordStats({
