@@ -238,22 +238,14 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		this.heatmap = new google.maps.visualization.HeatmapLayer({
     		data: this.heatmapData,
     		radius: 60,
-    		// gradient: [
-				// 'rgba(0, 255, 255, 0)',
-				// 'rgba(0, 255, 255, 1)',
-				// 'rgba(0, 191, 255, 1)',
-				// 'rgba(0, 127, 255, 1)',
-				// 'rgba(0, 63, 255, 1)',
-				// 'rgba(0, 0, 255, 1)',
-				// 'rgba(0, 0, 223, 1)',
-				// 'rgba(0, 0, 191, 1)',
-				// 'rgba(0, 0, 159, 1)',
-				// 'rgba(0, 0, 127, 1)',
-				// 'rgba(63, 0, 91, 1)',
-				// 'rgba(127, 0, 63, 1)',
-				// 'rgba(191, 0, 31, 1)',
-				// 'rgba(255, 0, 0, 1)'
-			// ]
+    		opacity: 0.85,
+    		gradient: [
+      			'rgba(0, 0, 0, 0)',
+      			'#00013E',
+      			'#63328D',
+      			'#145DF5',
+      			'#00DADD',
+			]
   		});
 
   		this.heatmap.setMap(this.map);
