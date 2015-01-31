@@ -44,6 +44,19 @@ app.router.AppRouter = Backbone.Router.extend({
 		'hotspots/upload': 'uploadHotspots'
 	},
 
+	setChannelsInRange: function(frequencyMin,frequencyMax){
+  		var data = [];
+  		_.each(window.appSettings.channels, function(item){
+    		var aux = [];
+    		_.each(item, function(channel){
+      			if(frequencyMin < channel.to && frequencyMax > channel.from)
+        			aux.push(channel);
+    		});
+    		data.push(aux);
+  		});
+  		return data;
+	},
+
 	/*-------------------------------------------------------------------*/
 	fetchPlacesData: function(callback){
 		if(this.currentData.data === null || this.currentData.id != 'places'){
@@ -128,7 +141,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.currentData.innerData = {};
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
-		window.appSettings.fixedChannels = app.util.SetChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
+		window.appSettings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
