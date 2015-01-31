@@ -18,10 +18,21 @@ app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+if (app.get('env') === 'development') {
+	app.use(express.static(path.join(__dirname, 'public')));
+
+} else if (app.get('env') === 'production') {
+	app.use(express.static(path.join(__dirname, 'public/build')));
+}
 
 app.get('/', function (req,res){
-  res.sendfile(__dirname + '/index.html');
+	if (app.get('env') === 'development') {
+		res.sendfile(__dirname + '/index_development.html');
+	
+	} else if (app.get('env') === 'production') {
+		res.sendfile(__dirname + '/index_production.html');
+	}
 });
 
 var routes = require('./routes/index');
