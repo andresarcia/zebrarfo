@@ -15,12 +15,12 @@ exports.list = function(req,res){
 		}
 	}).success(function(docs){
 		if(docs)
-			res.send(docs);
+			res.status(200).send(docs);
 		else
 			res.status(200).send('Sorry, we cannot find that!');
 	})
 	.error(function(err){
-		res.status(500).send({ error: err });
+		res.status(404).send({ error: err });
 	});
 };
 
@@ -35,20 +35,23 @@ exports.getPlace = function(req,res){
 			}
 		}).success(function(place){
 			if(place)
-				res.send(place);
+				res.status(200).send(place);
 			else
-				res.status(200).send('Sorry, we cannot find that!');
+				res.status(404).send('Sorry, we cannot find that!');
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
 	} else
-		res.status(200).send('Sorry, we cannot find that!');
+		res.status(404).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
 exports.updatePlace = function(req,res){
-	console.log("hola");
+	if(isNumber(req.params.id)){
+	
+	} else
+		res.status(404).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
@@ -69,13 +72,13 @@ exports.deletePlace = function(req,res){
 					res.status(500).send({ error: err });
 				});
 			else
-				res.status(200).send('Sorry, we cannot find that!');
+				res.status(404).send('Sorry, we cannot find that!');
 		}).error(function(err){
 			res.status(500).send({ error: err });
 		});
 	
 	} else
-		res.status(200).send('Sorry, we cannot find that!');
+		res.status(404).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
@@ -114,20 +117,20 @@ exports.getCoordinates = function(req,res){
 					placeObject.total = result.count;
 					placeObject.currentPage = result.count;
 					placeObject.coordinates = result.rows;
-					res.send(placeObject);
+					res.status(200).send(placeObject);
 				}).error(function(err){
 					res.status(500).send({ error: err });
 				});
 
 			} else
-				res.status(200).send('Sorry, we cannot find that!');
+				res.status(404).send('Sorry, we cannot find that!');
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
 	
 	} else
-		res.status(200).send('Sorry, we cannot find that!');
+		res.status(404).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
@@ -144,20 +147,20 @@ exports.getPowerFrequency = function(req, res){
 				var query = 'select frequency, power from (select id from Coordinates where PlaceId = '+req.params.idPlace+' and id = '+req.params.id+' ) as aux, PowerFrequencies where CoordinateId = aux.id';
 				db.sequelize
 				.query(query).success(function(response) {	
-  					res.send(response);
+  					res.status(200).send(response);
 				})
 				.error(function(err){
 					res.status(500).send({ error: err });
 				});
 			} else
-				res.status(200).send('Sorry, we cannot find that!');
+				res.status(404).send('Sorry, we cannot find that!');
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
 
 	} else
-		res.status(200).send('Sorry, we cannot find that!');
+		res.status(404).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/
@@ -167,11 +170,11 @@ exports.getChartsData = function(req,res){
 
 		db.sequelize
 		.query(query).success(function(response) {
-			res.send({ data: response });
+			res.status(200).send({ data: response });
 		})
 		.error(function(err){
 			res.status(500).send({ error: err });
 		});
 	} else
-		res.status(200).send('Sorry, we cannot find that!');	
+		res.status(404).send('Sorry, we cannot find that!');	
 };

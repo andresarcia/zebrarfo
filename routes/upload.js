@@ -6,7 +6,7 @@ var UserIdentification = 1;
 
 exports.createPlace = function(req, res){
 	if(Object.keys(req.body).length === 0)
-		res.status(500).send({ error: 'something blew up' });
+		res.status(404).send({ error: 'something blew up' });
 	
 	else {
 		if(req.body.json){
