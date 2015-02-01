@@ -150,11 +150,15 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		this.model.on('progress', function(evt) { 
 			if (evt.lengthComputable) {
 		    	self.percentLoaded += Math.round((evt.loaded / evt.total) * 40);
-		    	self.updateProgressBar();
 
-		    	if(self.percentLoaded >= 80){
+		    	if(self.percentLoaded < 80)
+		    		self.updateProgressBar();
+
+		    	else {
 		    		$('.modal-footer').children().prop("disabled",true);
 		    		self.status.waitingForServer = true;
+		    		self.percentLoaded = 80;
+       				self.updateProgressBar();
 		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
 		    		self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
 		    		self.parentComponent.children().eq(3).addClass('active');
