@@ -145,6 +145,10 @@ app.view.EditPlaceView = Backbone.View.extend({
 				});
 			
 			this.$el.find('#su-list-coord-to-edit').html(html);
+			if(this.editMarkersIndex > 0)
+				this.$el.find('.save-btn').prop('disabled', false);
+			else
+				this.$el.find('.save-btn').prop('disabled', true);
 
 			_.each(data, function(item, index){
 				if(item.editable === false)
