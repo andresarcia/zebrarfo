@@ -22,35 +22,13 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 		this.data = options.data;
-		
-		this.render();
 
-		if(window.appRouter.currentData.innerData.coordinates) {
-			this.coordinates = window.appRouter.currentData.innerData.coordinates;
-			this.mapView = new app.view.GoogleMapBasicMarkersView({
-				idContainer: 'su-coord-markers-map'
-			});
-			this.renderMap();
-		
-		} else {
-			this.waitingView.render();
-			var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-			coordinates.fetch({
-				success: function(e){
-					self.coordinates = coordinates.models[0].attributes.coordinates;
-					window.appRouter.currentData.innerData.coordinates = self.coordinates;
-					self.waitingView.closeView();
-			        self.mapView = new app.view.GoogleMapBasicMarkersView({
-						idContainer: 'su-coord-markers-map'
-					});
-			        self.renderMap();
-			     },
-			     error: function(e){  
-			     	self.waitingView.closeView();
-			     	self.errorView.render(['Sorry, we cannot find that!']);
-			     }
-			});
-		}
+		this.render();
+		this.coordinates = this.data.attributes.coordinates;
+		this.mapView = new app.view.GoogleMapBasicMarkersView({
+			idContainer: 'su-coord-markers-map'
+		});
+		this.renderMap();
 
 		Backbone.pubSub.on('event-marker-selected-on-google-map-main', function(res){
 			self.renderCoordinateResume(res);

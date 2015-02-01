@@ -15,10 +15,11 @@ app.view.EditPlaceView = Backbone.View.extend({
 		'click .su-delete-coord': '_deleteCoord',
 		'click .su-select-first-coord': '_selectFirstCoord',
 		'click .su-select-last-coord': '_selectLastCoord',
+		'click .su-save-save': 'save',
+		'click .su-save-save-as': 'saveAs',
 	},
 
 	initialize: function(options){
-		var self = this;
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -27,34 +28,11 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.editMarkersIndex = 0;
 
 		this.render();
-
-		if(window.appRouter.currentData.innerData.coordinates) {
-			this.coordinates = window.appRouter.currentData.innerData.coordinates;
-			this.calculateRealCoorDict();
-			this.calculateRelativeCoorDict();
-
-			self.renderAfterLoad();
+		this.coordinates = this.data.attributes.coordinates;
+		this.calculateRealCoorDict();
+		this.calculateRelativeCoorDict();
+		this.renderAfterLoad();
 		
-		} else {
-			this.waitingView.render();
-			var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-			coordinates.fetch({
-				success: function(e){
-					self.coordinates = coordinates.models[0].attributes.coordinates;
-					window.appRouter.currentData.innerData.coordinates = self.coordinates;
-					self.calculateRealCoorDict();
-					self.calculateRelativeCoorDict();
-
-					self.waitingView.closeView();
-					self.renderAfterLoad();
-				},
-				error: function(e){  
-					self.waitingView.closeView();
-					self.errorView.render(['Sorry, we cannot find that!']);
-				}
-			});
-		}
-
 		Backbone.pubSub.on('event-marker-selected-on-google-map-edit', function(markers){
 			this.changeSliderByMarkers(markers);
 		}, this);
@@ -440,30 +418,14 @@ app.view.EditPlaceView = Backbone.View.extend({
 			this.$el.find('.su-select-last-coord').addClass('active');
 	},
 
-	deleteCoordinates: function(evt){
-		// var self = this;
-		// this.waitingView.render();
-
-		// var coordinates = new app.collection.Coordinates({idPlace:this.data.id});
-		// for (var i = this.editMarkers[this.editMarkersIndex].from.index; i <= this.editMarkers[this.editMarkersIndex].to.index; i++) {
-
-		// 	var id = this.coordinates[i].id;
-		// 	var index = this.coordinates[i].index;
-		// 	console.log(id);
-		// 	var coordinate = new app.model.Coordinate({id:id});
-		// 	coordinate.urlRoot = '/api/places/'+this.data.id+'/coordinates/';
-		// 	coordinate.destroy({
-		// 		success: function(model, response) {
-		// 			self.coordinates.models[0].attributes.coordinates.splice(index, 1);
-		// 		},
-		// 		error: function(e){
-		// 			self.waitingView.closeView();
-		// 			self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
-		// 		}
-		// 	});
-		// }
-
-		// this.removeEditionRange();
+	save: function(){
+		this.data.attributes.coordinates = this.coordinates;
+		this.data.save();
+		
 	},
+
+	saveAs: function(){
+		console.log("save as");
+	}
 
 });
