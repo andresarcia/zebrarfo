@@ -2775,9 +2775,9 @@ fieldset[disabled] .btn {
   opacity: .65;
 }
 .btn-default {
-  color: #333;
+  color: #0088CC;
   background-color: #fff;
-  border-color: #ccc;
+  border-color: #A6A6A6;
 }
 .btn-default:hover,
 .btn-default:focus,
@@ -2817,7 +2817,7 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #fff;
-  background-color: #428bca;
+  background-color: #0088CC;
   border-color: #357ebd;
 }
 .btn-primary:hover,
