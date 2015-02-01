@@ -28,7 +28,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.editMarkersIndex = 0;
 
 		this.render();
-		this.coordinates = this.data.attributes.coordinates;
+		this.coordinates = _.clone(this.data.attributes.coordinates);
 		this.calculateRealCoorDict();
 		this.calculateRelativeCoorDict();
 		this.renderAfterLoad();
@@ -419,9 +419,19 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	save: function(){
+		var self = this;
 		this.data.attributes.coordinates = this.coordinates;
-		this.data.save();
-		
+
+		this.waitingView.render();
+		this.data.save({
+			success: function(e){  
+				self.waitingView.closeView();
+		    },
+		    error: function(e){  
+		     	self.waitingView.closeView();
+		     	self.errorView.render(['Occurred an error retrieving the place']);
+		    }
+		});
 	},
 
 	saveAs: function(){
