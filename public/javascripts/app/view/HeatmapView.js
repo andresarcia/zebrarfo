@@ -12,7 +12,7 @@ app.view.HeatmapView = Backbone.View.extend({
         markers: [],
         settings: {
             dataFunction: 'avg',
-            opacity: 70,
+            opacity: 80,
             radius: 15,
             currentMarkerItem: 0,
             markersCount: 0,

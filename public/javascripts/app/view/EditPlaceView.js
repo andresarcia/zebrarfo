@@ -183,15 +183,17 @@ app.view.EditPlaceView = Backbone.View.extend({
 		}
 
 		var markersRange = [];
-		if(markers.length === 0)
-			markersRange = [0];
-		else if(markers.length == 1)
+		if(markers.length === 0){
+			this.setZero();
+			return;
+		
+		} else if(markers.length == 1)
 			markersRange = [markers[0].id];
 		else if(markers.length == 2)
 			markersRange = [markers[0].id, markers[1].id];
 
 		markersRange = this.realIndex2Relative(markersRange);
-
+		
 		this.renderMarkerSlider(markersRange);
 		this.appendToEditingArea(markersRange);
 		this.checkPositionButtons();
