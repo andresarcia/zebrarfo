@@ -47,6 +47,11 @@ exports.getPlace = function(req,res){
 };
 
 /*-------------------------------------------------------------------*/
+exports.updatePlace = function(req,res){
+	console.log("hola");
+};
+
+/*-------------------------------------------------------------------*/
 exports.deletePlace = function(req,res){
 	if(isNumber(req.params.id)){
 		db.Place.find({
@@ -123,52 +128,6 @@ exports.getCoordinates = function(req,res){
 	
 	} else
 		res.status(200).send('Sorry, we cannot find that!');
-};
-
-/*-------------------------------------------------------------------*/
-exports.deleteCoordinate = function(req, res){
-	console.log(req.params.id);
-	res.status(200).send({ id:req.params.id});
-
-	// if(isNumber(req.params.idPlace) && isNumber(req.params.id)){
-	// 	db.Place.find({
-	// 		where: {
-	// 			UserId:UserIdentification,
-	// 			id: req.params.idPlace,
-	// 			visible: true
-	// 		}
-	// 	}).success(function(place){
-	// 		if(place){
-	// 			db.Coordinate.find({
-	// 				where: {
-	// 					PlaceId:req.params.idPlace,
-	// 					id: req.params.id
-	// 				}
-	// 			}).success(function(coord){
-	// 				coord.destroy()
-	// 				.success(function() {
-	// 					place.numberCoordinates = place.numberCoordinates - 1;
-	// 					place.save().success(function(){
-	// 						res.status(200).send({ msg: 'Coor '+req.params.id+ ' deleted' });
-	// 					})
-	// 					.error(function(err){
-	// 						res.status(500).send({ error: err });
-	// 					});
-	// 				}).error(function(err){
-	// 					res.status(500).send({ error: err });
-	// 				});
-	// 			}).error(function(err){
-	// 				res.status(500).send({ error: err });
-	// 			});
-
-	// 		} else
-	// 			res.status(200).send('Sorry, we cannot find that!');
-	// 	}).error(function(err){
-	// 		res.status(500).send({ error: err });
-	// 	});
-	// }
-	// else
-	// 	res.status(200).send('Sorry, we cannot find that!');
 };
 
 /*-------------------------------------------------------------------*/

@@ -21,6 +21,9 @@ router.route('/places/:id')
 	.get(places.getPlace);
 
 router.route('/places/:id')
+	.put(places.updatePlace);
+
+router.route('/places/:id')
 	.delete(places.deletePlace);
 
 router.route('/places/:id/coordinates')
@@ -28,9 +31,6 @@ router.route('/places/:id/coordinates')
 
 router.route('/places/:idPlace/coordinates/:id')
 	.get(places.getPowerFrequency);
-
-router.route('/places/:idPlace/coordinates/:id')
-	.delete(places.deleteCoordinate);
 
 router.route('/places/:id/charts')
 	.get(places.getChartsData);
