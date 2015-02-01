@@ -130,7 +130,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			    },
 			    error: function(e){  
 			     	self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render(['Occurred an error retrieving the places']);
+			     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
 			    }
 			});
 		} else
@@ -153,7 +153,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			},
 			error: function(e){  
 				self.helperViews.waitingView.closeView();
-		     	self.helperViews.errorView.render(['Occurred an error retrieving the places']);
+		     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
 		     	callback();
 			}
 		});
