@@ -194,14 +194,16 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			Backbone.pubSub.trigger('event-server-error');
 		} 
 		else if (this.status.done) {
+			var self = this;
 			var newModelData = this.model.attributes;
 			delete newModelData.json;
 			delete newModelData.gpsFunction;
 			delete newModelData.coordinates;
 			var newModel = new app.model.Place(newModelData, {parse: true});
 			
-			window.appRouter.setPlaceData(newModel);
-			window.location.hash = '#places/'+this.model.id;
+			window.appRouter.setPlaceData(newModel, function(){
+				window.location.hash = '#places/'+self.model.id;
+			});
 		}
 	}
 
