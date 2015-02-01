@@ -18,12 +18,6 @@ module.exports = function(grunt) {
         ]
       },
 
-      images: {
-        files: [
-          {expand: true, flatten: true, src: ['public/images/**'], dest: 'public/build/images/', filter: 'isFile'}
-        ]
-      },
-
       css: {
         files: [
           {expand: true, flatten: true, src: ['public/stylesheets/**'], dest: 'public/build/stylesheets/all/', filter: 'isFile'},
@@ -107,6 +101,20 @@ module.exports = function(grunt) {
       }
     },
 
+    imagemin: {
+      dynamic: { 
+        options: {                      
+          optimizationLevel: 3,
+        },
+        files: [{
+          expand: true,                  
+          cwd: 'public/images/',         
+          src: ['**/*.{png,jpg,gif}'],   
+          dest: 'public/build/images/'   
+        }]
+      }
+    },
+
     watch: {
       js: {
         files: ['assets/js/app/**/*.js','assets/js/vendor/*.js'],
@@ -126,8 +134,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-imagemin');
 
-  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','clean:after']);
+  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','clean:after']);
   grunt.registerTask('dev', ['clean','copy','concat','uglify','cssmin']);
 
 };
