@@ -1,7 +1,7 @@
 var async = require('async');
 var _ = require('underscore');
 var newPlaceBuilder = require('./utils/NewPlaceBuilder');
-var placeUtils = require('./utils/placeUtils');
+var placeUtils = require('./utils/PlaceUtils');
 var db = require('../models');
 
 var UserIdentification = 1;
