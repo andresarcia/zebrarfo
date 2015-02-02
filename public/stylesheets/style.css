@@ -33,6 +33,28 @@ hr {
   color: #353535;
 }
 
+.navbar-default .navbar-brand {
+  font-family: times, Times New Roman, times-roman, georgia, serif;
+  color: #ffffff;
+  padding: 0px 10px 0px 25px;
+  font-size: 28px;
+  line-height: 44px;
+  letter-spacing: -2px;
+  font-weight: bold;
+}
+
+.navbar-default .navbar-brand-sub {
+  clear: left;
+  float: left;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: times, Times New Roman, times-roman, georgia, serif;
+  margin-top: -16px!important;
+  padding-left: 20px;
+  letter-spacing: 1px;
+  font-weight: 100;
+}
+
 .btn-without-corners {
   border-radius: 0;
 }
