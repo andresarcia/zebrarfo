@@ -1,6 +1,7 @@
 var async = require('async');
 var _ = require('underscore');
 var newPlaceBuilder = require('./utils/NewPlaceBuilder');
+var placeUtils = require('./utils/placeUtils');
 var db = require('../models');
 
 var UserIdentification = 1;
@@ -65,7 +66,10 @@ var saveInDB = function(place, callback){
 			    	if (err)
 						return callback(err,null);
 					
-					callback(null,doc);
+					// placeUtils.takePowerModeFromPlace(doc.id, function(err){
+					// 	console.log("listo");
+						callback(null,doc);
+					// });
 			    });
 			})
 			.error(function(err){
@@ -80,11 +84,11 @@ var saveInDB = function(place, callback){
 		    	if (err)
 					return callback(err,null);
 
-				takeStatistics(doc,place,function(err,placeWithStatistics){
+				placeUtils.takeStatisticsFromOldPlace(doc.id,place,function(err,n){
 					if (err)
 						return callback(err,null);
 
-					callback(null,placeWithStatistics);
+					callback(null,n);
 				});
 		    });
 		}
@@ -161,70 +165,3 @@ function insertPowerFrequency(data,coordinateId,callback){
 }
 
 /*--------------------------------------------------------------------------------------------------------------*/
-function insertPowerMode(data,placeId,callback){
-	// var v = [];
-
-	// _.each(_.keys(data), function(key){
-	// 	v.push({
-	// 		power: key,
-	// 		frequency: data[key],
-	// 		PlaceId: placeId
-	// 	});
-	// });
-			    
- //    db.PowerMode.bulkCreate(v)
-	// .success(function() { 
-	// 	callback();
-	// }).error(function(err){
-	// 	return callback(err);
-	// });
-}
-
-/*--------------------------------------------------------------------------------------------------------------*/
-var takeStatistics = function(placeReturned, place, callback){	
-
-	db.Coordinate.count({ where: {PlaceId:placeReturned.id} })
-	.success(function(count){
-		if(count != placeReturned.numberCoordinates){
-
-	  		placeReturned.numberCoordinates = count;	
-			if(placeReturned.powerMin > place.powerMin)
-				placeReturned.powerMin = place.powerMin;
-			if(placeReturned.powerMax < place.powerMax)
-				placeReturned.powerMax = place.powerMax;
-
-			placeReturned.powerAvg = (placeReturned.powerAvg + place.powerAvg)/2;
-			placeReturned.avgPowerSD = (placeReturned.avgPowerSD + place.avgPowerSD)/2;
-
-			if(count > 1){
-				var sdPowerAvg_M = placeReturned.powerAvg + place.powerAvg;
-				var sdPowerAvg_X = (placeReturned.powerAvg * placeReturned.powerAvg) + (place.powerAvg * place.powerAvg);
-				sdPowerAvg_X = Math.sqrt((sdPowerAvg_X - (sdPowerAvg_M*sdPowerAvg_M)/count)/(count - 1));
-				placeReturned.sdPowerAvg = Number(sdPowerAvg_X.toFixed(5));
-
-				placeReturned.totalDistance = placeReturned.totalDistance + place.totalDistance;
-				placeReturned.distaceAvg = (placeReturned.distaceAvg + place.distaceAvg)/2;
-
-				if(placeReturned.distaceMin > place.distaceMin)
-					placeReturned.distaceMin = place.distaceMin;
-				if(placeReturned.distaceMax < place.distaceMax)
-					placeReturned.distaceMax = place.distaceMax;
-
-			} else
-				placeReturned.sdPowerAvg = 0;
-
-			placeReturned.save().success(function(){
-				callback(null,placeReturned);
-			})
-			.error(function(err){
-				return callback(err,null);
-			});
-
-	  	} else
-	  		callback(null,placeReturned);
-	})
-	.error(function(err){
-		return callback(err,null);
-	});
-
-};
