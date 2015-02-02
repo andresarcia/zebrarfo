@@ -48,8 +48,8 @@ exports.getPlace = function(req,res){
 
 /*-------------------------------------------------------------------*/
 exports.updatePlace = function(req,res){
-	if(isNumber(req.params.id)){
-	
+	if(isNumber(req.body.id)){
+		console.log(req.body);
 	} else
 		res.status(404).send('Sorry, we cannot find that!');
 };

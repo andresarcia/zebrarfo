@@ -1,4 +1,4 @@
-// models/place.js
+// models/Place.js
 
 module.exports = function(sequelize, DataTypes) {
   var Place = sequelize.define('Place', {

@@ -20,7 +20,6 @@ exports.build = function(place, callback) {
 	n.distaceAvg = 0;
 	n.distaceMax = null;
 	n.distaceMin = null;
-	n.powerMode = {};
 
     /* -- vars for take stats -- */
 	n.placePowerSD_X = null;
@@ -89,10 +88,6 @@ function reduceCommonGps(o,n,callback){
 			        break;
 			}
 			data.push({ frequency: Number(key), power:operation });	
-			if(n.powerMode[operation])
-				n.powerMode[operation] += 1;
-			else
-				n.powerMode[operation] = 1;
 		});
 	
 		var coord = takeCoordStats({

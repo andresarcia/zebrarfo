@@ -1,4 +1,4 @@
-// models/coordinate.js
+// models/Coordinate.js
 
 module.exports = function(sequelize, DataTypes) {
   var Coordinate = sequelize.define('Coordinate', {

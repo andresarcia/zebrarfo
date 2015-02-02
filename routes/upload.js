@@ -1,4 +1,5 @@
 var async = require('async');
+var _ = require('underscore');
 var newPlaceBuilder = require('./utils/NewPlaceBuilder');
 var db = require('../models');
 
@@ -42,6 +43,9 @@ var saveInDB = function(place, callback){
 	}).success(function(doc, created){
 
 		if(created) {
+			console.log('');
+			console.log('*CREATING NEW PLACE*');
+
 			doc.numberCoordinates = place.numberCoordinates;
 			doc.powerMin = place.powerMin;
 			doc.powerMax = place.powerMax;
@@ -70,6 +74,8 @@ var saveInDB = function(place, callback){
 		}
 
 		else {
+			console.log('');
+			console.log('*UPDATING OLD PLACE*');
 			insertCoordinates(place, doc, function(err){
 		    	if (err)
 					return callback(err,null);
@@ -90,7 +96,6 @@ var saveInDB = function(place, callback){
 };
 
 /*--------------------------------------------------------------------------------------------------------------*/
-
 function insertCoordinates(data,place,callback){
 	async.each(data.coordinates, function(coordinate, callback) {
 		insertCoordinate(coordinate,place.id,function(err){
@@ -145,7 +150,7 @@ function insertPowerFrequency(data,coordinateId,callback){
 	}, function(err){	    
 	    if(err) 
 	    	return callback(err);
-	    
+
     	db.PowerFrequency.bulkCreate(data)
 		.success(function() { 
 			callback();
@@ -153,6 +158,26 @@ function insertPowerFrequency(data,coordinateId,callback){
 			return callback(err);
 		});
 	});
+}
+
+/*--------------------------------------------------------------------------------------------------------------*/
+function insertPowerMode(data,placeId,callback){
+	// var v = [];
+
+	// _.each(_.keys(data), function(key){
+	// 	v.push({
+	// 		power: key,
+	// 		frequency: data[key],
+	// 		PlaceId: placeId
+	// 	});
+	// });
+			    
+ //    db.PowerMode.bulkCreate(v)
+	// .success(function() { 
+	// 	callback();
+	// }).error(function(err){
+	// 	return callback(err);
+	// });
 }
 
 /*--------------------------------------------------------------------------------------------------------------*/

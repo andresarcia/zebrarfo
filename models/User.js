@@ -1,4 +1,4 @@
-// models/user.js
+// models/User.js
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
