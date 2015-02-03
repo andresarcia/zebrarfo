@@ -72,12 +72,41 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	render: function(){
-		
 		var html = this.template(this.data);
     	this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
 		this.$el.find("#upload-gps-position-function").select2();
+		this.$el.find(".upload-measures-info-help").popover({
+	        title: 'Files Format',
+	        placement: 'left',
+	        container: $('body'),
+	        html: 'true',
+	        content: "<small>" +
+	        			"The format of the file must be of the form<br>" +
+	        			"<div class='well well-sm'>" + 
+	        				"frequency \\t power<br>" + 
+	        				"...<br>" + 
+	        				"latitude<br>" + 
+	        				"longitude<br>" + 
+	        				"capture date" + 
+	        			"</div>" + 
+	        			"<b>Android device</b><br>" + 
+	        			"If you are using the android application to take the data, " + 
+	        			"you can download the following script in python  " + 
+	        			"<a href='javascript:void(0)' id='download-android-parser'>android parser</a>, " + 
+	        			"open the terminal, go to the folder where is the data and " + 
+	        			"paste inside the downloaded file and run " + 
+	        			"<div class='well well-sm'>python android_parser.py</div>" + 
+	        			"This generate a folder <b>parsed</b> parsed with the files " + 
+	        			"already formatted, ready to be uploaded to the system</small>",
+	    
+	    }).on('shown.bs.popover', function (eventShown) {
+    		var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
+    		$popup.find('#download-android-parser').click(function (e) {
+        		$.fileDownload('/downloads/android_parser.py');
+    		});
+		});
 
 		return this;
 	},
@@ -241,5 +270,5 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			});
 		}
 	},
-	
+
 });
