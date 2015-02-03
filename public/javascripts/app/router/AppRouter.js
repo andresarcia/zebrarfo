@@ -41,7 +41,9 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/:id/upload' : 'showSinglePlaceUpload',
 		
 		'hotspots': 'showHotspots',
-		'hotspots/upload': 'uploadHotspots'
+		'hotspots/upload': 'uploadHotspots',
+
+		'downloads/:id': 'downloads',
 	},
 
 	setChannelsInRange: function(frequencyMin,frequencyMax){
@@ -244,6 +246,12 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.navViews.verticalNav.changeActiveClass({
 			index: [1,0]
 		});
-	}
+	},
+
+	/*-------------------------------------------------------------------*/
+	downloads: function(id){
+		$.fileDownload('/downloads/'+id);
+		history.back();
+	},
 
 });
