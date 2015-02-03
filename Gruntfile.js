@@ -47,7 +47,8 @@ module.exports = function(grunt) {
               'public/javascripts/vendor/highcharts.js',
               'public/javascripts/vendor/highcharts_exporting.js',
               'public/javascripts/vendor/jquery.nouislider.all.js',
-              'public/javascripts/vendor/select2.js'],
+              'public/javascripts/vendor/select2.js',
+              'public/javascripts/vendor/jquery.fileDownload.js'],
         
         dest: 'public/build/javascripts/all/1_vendors.js'
       },
