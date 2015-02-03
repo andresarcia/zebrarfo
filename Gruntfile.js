@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     clean: {
+      downloads: ['public/build/downloads/'],
       fonts: ['public/build/fonts/'],
       images: ['public/build/images/'],
       css: ['public/build/stylesheets/'],
@@ -12,6 +13,13 @@ module.exports = function(grunt) {
     },
 
     copy: {
+
+      downloads: {
+        files: [
+          {expand: true, flatten: true, src: ['public/downloads/**'], dest: 'public/build/downloads/', filter: 'isFile'}
+        ]
+      },
+
       fonts: {
         files: [
           {expand: true, flatten: true, src: ['public/fonts/**'], dest: 'public/build/fonts/', filter: 'isFile'}
