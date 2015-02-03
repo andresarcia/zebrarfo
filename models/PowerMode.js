@@ -21,6 +21,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
 
+  }, {
+
+    associate: function(models) {
+      PowerMode.belongsTo(models.Place);
+    }
+
   });
  
   return PowerMode;

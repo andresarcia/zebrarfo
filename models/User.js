@@ -12,7 +12,13 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     password: { type: DataTypes.STRING },
+    
+  }, {
+      associate: function(models) {
+        User.hasMany(models.Place);      
+      }
   });
+
  
   return User;
 };

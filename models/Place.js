@@ -74,6 +74,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
 
+  },{
+    associate: function(models) {
+      Place.hasMany(models.Coordinate);
+      Place.belongsTo(models.User);
+    },
   });
  
   return Place;

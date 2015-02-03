@@ -49,6 +49,11 @@ module.exports = function(sequelize, DataTypes) {
 
   }, {
 
+    associate: function(models) {
+      Coordinate.belongsTo(models.Place);
+      Coordinate.hasMany(models.PowerFrequency);            
+    },
+
     validate: {
       bothCoordsOrNone: function() {
         if ((this.latitude === null) || (this.longitude === null)) {
