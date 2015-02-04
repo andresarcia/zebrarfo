@@ -145,20 +145,24 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
 		window.appSettings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
-
-		var coordinates = new app.collection.Coordinates({idPlace:this.currentData.data.id});
-		coordinates.fetch({
-			success: function(e){
-				self.helperViews.waitingView.closeView();
-				self.currentData.data.attributes.coordinates = coordinates.models[0].attributes.coordinates;
-				callback();
-			},
-			error: function(e){  
-				self.helperViews.waitingView.closeView();
-		     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
-		     	callback();
-			}
-		});
+		if(this.currentData.data.attributes.coordinates){
+			self.helperViews.waitingView.closeView();
+			callback();
+		} else {
+			var coordinates = new app.collection.Coordinates({idPlace:this.currentData.data.id});
+			coordinates.fetch({
+				success: function(e){
+					self.helperViews.waitingView.closeView();
+					self.currentData.data.attributes.coordinates = coordinates.models[0].attributes.coordinates;
+					callback();
+				},
+				error: function(e){  
+					self.helperViews.waitingView.closeView();
+			     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
+			     	callback();
+				}
+			});
+		}
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
