@@ -9,7 +9,14 @@ module.exports = function(grunt) {
       images: ['public/build/images/'],
       css: ['public/build/stylesheets/'],
       js: ['public/build/javascripts/'],
-      after: ['public/build/javascripts/all','public/build/javascripts/concat.js','public/build/stylesheets/all','public/build/stylesheets/concat.css'],
+      after: [
+              'public/build/javascripts/all',
+              'public/build/javascripts/concat.js',
+              'public/build/stylesheets/all',
+              'public/build/stylesheets/concat.css',
+              // 'public/build/stylesheets/main.min.css',
+              // 'public/build/javascripts/main.min.js'
+            ],
     },
 
     copy: {
@@ -124,6 +131,36 @@ module.exports = function(grunt) {
       }
     },
 
+    compress: {
+      css: {
+        options: {
+          mode: 'gzip'
+        },
+        files: [
+          {
+            expand: true, 
+            src: ['public/build/stylesheets/main.min.css'], 
+            dest: './', 
+            ext: '.gz.css'
+          }
+        ]
+      },
+
+      js: {
+        options: {
+          mode: 'gzip'
+        },
+        files: [
+          {
+            expand: true, 
+            src: ['public/build/javascripts/main.min.js'], 
+            dest: './', 
+            ext: '.gz.js'
+          }
+        ]
+      }
+    },
+
     watch: {
       js: {
         files: ['assets/js/app/**/*.js','assets/js/vendor/*.js'],
@@ -142,10 +179,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
 
-  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','clean:after']);
+  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','compress','clean:after']);
   grunt.registerTask('dev', ['clean','copy','concat','uglify','cssmin']);
 
 };
