@@ -32,7 +32,10 @@ exports.getPlace = function(req,res){
 				UserId:UserIdentification,
 				id: req.params.id,
 				visible: true
-			}
+			},
+			include: [
+    			{ model: db.Coordinate }
+  			]
 		}).success(function(place){
 			if(place)
 				res.status(200).send(place);
