@@ -1,9 +1,12 @@
 var utils = require('./Utils');
 var _ = require("underscore");
 
-exports.build = function(place, callback) {
+exports.create = function(place, callback) {
 	var o = place;
 	var n = {};
+
+	if(o.name === null || o.name === undefined || o.name === "")
+		callback("Name of the place cannot be empty or null",null);
 
 	n.name = o.name;
 	n.coordinates = [];
@@ -20,6 +23,7 @@ exports.build = function(place, callback) {
 	n.distaceAvg = 0;
 	n.distaceMax = null;
 	n.distaceMin = null;
+	n.mode = {};
 
     /* -- vars for take stats -- */
 	n.placePowerSD_X = null;
@@ -28,7 +32,12 @@ exports.build = function(place, callback) {
 	/* ------------------------- */
 
 	reduceCommonGps(o,n,function(){
-		callback(n);
+		checkPlaceAttributes(n,function(err){
+			if(err)
+				callback(err,null);
+
+			callback(null,n);
+		})
 	});
 }
 
@@ -88,6 +97,11 @@ function reduceCommonGps(o,n,callback){
 			        break;
 			}
 			data.push({ frequency: Number(key), power:operation });	
+
+			if(n.mode[operation])
+				n.mode[operation] += 1;
+			else
+				n.mode[operation] = 1;
 		});
 	
 		var coord = takeCoordStats({
@@ -97,7 +111,7 @@ function reduceCommonGps(o,n,callback){
 			createdDate: samplesObj[key][0].createdDate
 		});
 
-		saveNewCoordInPlace(coord, n);
+		saveCoord(coord, n);
 	});
 
 	takePlaceStats(n);
@@ -163,7 +177,7 @@ function takeCoordStats(coord){
 }
 
 
-function saveNewCoordInPlace(coord, n){
+function saveCoord(coord, n){
 	n.coordinates.push(coord.coordinate);
 	n.numberCoordinates += 1;
 	n.powerAvg += coord.coordinate.powerAvg;	
@@ -236,4 +250,47 @@ function takePlaceStats(n){
 	delete n.placePowerSD_M;
 	delete n.countSamplesDistance;
 	/* -------------------------------- */
+}
+
+function checkPlaceAttributes(n, callback){
+	if(n.length == 0 || n.numberCoordinates == 0)
+		callback("There must be at least one sample");
+
+	if(n.powerMin === null || n.powerMin === undefined)
+		callback("We could not calculate the power min of the place");
+
+	if(n.powerMax === null || n.powerMax === undefined)
+		callback("We could not calculate the power max of the place");
+
+	if(n.powerAvg === null || n.powerAvg === undefined)
+		callback("We could not calculate the power avg of the place");
+
+	if(n.sdPowerAvg === null || n.sdPowerAvg === undefined || n.avgPowerSD === null || n.avgPowerSD === undefined)
+		callback("We could not calculate the power standard deviation of the place");
+
+	if(n.numberPowerFrequency < 1)
+		callback("There must be at least one frequency and power in the samples");
+	
+	if(n.frequencyMin === null || n.frequencyMin === undefined)
+		callback("We could not calculate the frequency min of the place");
+
+	if(n.frequencyMax === null || n.frequencyMax === undefined)
+		callback("We could not calculate the frequency max of the place");
+
+	if(n.totalDistance === null || n.totalDistance === undefined)
+		callback("We could not calculate the total distance of the place");
+
+	if(n.distaceAvg === null || n.distaceAvg === undefined)
+		callback("We could not calculate the avg distance of the place");
+
+	if(n.distaceMax === null || n.distaceMax === undefined)
+		callback("We could not calculate the max distance of the place");
+
+	if(n.distaceMin === null || n.distaceMin === undefined)
+		callback("We could not calculate the total min of the place");
+
+	if(Object.keys(n.mode).length === 0)
+		callback("We could not calculate the power mode of the place");
+
+	callback(null);
 }
