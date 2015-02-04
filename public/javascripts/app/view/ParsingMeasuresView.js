@@ -168,7 +168,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		});
 
 		this.model.save(this.model.attributes,{
-       		success: function(model, response, options){
+       		success: function(){
        			self.status.done = true;
        			$('.modal-footer').children().prop("disabled",false);
        			self.percentLoaded = 100;

@@ -69,13 +69,13 @@ app.router.AppRouter = Backbone.Router.extend({
 			this.currentData.id = 'places';
 			this.currentData.data = new app.collection.Places();
 			this.currentData.data.fetch({
-				success: function(e){  
+				success: function(){  
 					self.helperViews.waitingView.closeView();
 					callback();
 			    },
-			    error: function(e){  
+			    error: function(model, xhr, options){
 			     	self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render(['Occurred an error retrieving the places']);
+			     	self.helperViews.errorView.render([xhr.responseText]);
 			    }
 			});
 		} else
@@ -125,14 +125,14 @@ app.router.AppRouter = Backbone.Router.extend({
 
 			var data = new app.model.Place({id:id});
 			data.fetch({
-				success: function(e){  
+				success: function(){  
 					self.setPlaceData(data,function(){
 						callback();
 					});
 			    },
-			    error: function(e){  
+			    error: function(model, xhr, options){
 			     	self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
+			     	self.helperViews.errorView.render([xhr.responseText]);
 			    }
 			});
 		} else
@@ -151,14 +151,14 @@ app.router.AppRouter = Backbone.Router.extend({
 		} else {
 			var coordinates = new app.collection.Coordinates({idPlace:this.currentData.data.id});
 			coordinates.fetch({
-				success: function(e){
+				success: function(){
 					self.helperViews.waitingView.closeView();
 					self.currentData.data.attributes.coordinates = coordinates.models[0].attributes.coordinates;
 					callback();
 				},
-				error: function(e){  
+				error: function(model, xhr, options){
 					self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render(['Occurred an error retrieving the place']);
+			     	self.helperViews.errorView.render([xhr.responseText]);
 			     	callback();
 				}
 			});

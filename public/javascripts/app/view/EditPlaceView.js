@@ -424,13 +424,13 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		this.waitingView.render();
 		this.data.save({
-			success: function(e){  
+			success: function(){  
 				self.waitingView.closeView();
 		    },
-		    error: function(e){  
-		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the place']);
-		    }
+		    error: function(model, xhr, options){
+	     		self.waitingView.closeView();
+	     		self.errorView.render([xhr.responseText]);
+	    	}
 		});
 	},
 

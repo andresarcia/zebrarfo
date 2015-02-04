@@ -41,14 +41,15 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			self.waitingView.render();
 			var place = new app.model.Place({id:self.data.id});
 			place.destroy({
-				success: function(model, response) {
+				success: function() {
 	  				self.waitingView.closeView();
 	  				window.location.hash = '#places';
 				},
-				error: function(e){
-					self.waitingView.closeView();
-			     	self.errorView.render(['Sorry, something went wrong try again in a few seconds!']);
-				}
+				error: function(model, xhr, options){
+					console.log('entro donde no era');
+		     		self.waitingView.closeView();
+		     		self.errorView.render([xhr.responseText]);
+		    	}
 			});
 		};
 
@@ -103,13 +104,13 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 		this.waitingView.render();
 		this.currentPowerFrequencies.data.fetch({
-			success: function(e){         
+			success: function(){
 				self.waitingView.closeView();
 		       	self.renderPowerFrequencies();
 		    },
-		    error: function(e){  
+		    error: function(model, xhr, options){
 		     	self.waitingView.closeView();
-		     	self.errorView.render(['Occurred an error retrieving the sample']);
+		     	self.errorView.render([xhr.responseText]);
 		    }
 		});
     },

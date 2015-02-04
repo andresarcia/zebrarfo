@@ -103,14 +103,14 @@ app.view.ChartsView = Backbone.View.extend({
 			var self = this;
 			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
-				success: function(e){
+				success: function(){
 					window.appRouter.currentData.innerData.charts.data = self.currentData;
 					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
 						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
 				},
-				error: function(e){  
-				 	self.errorView.render(['Occurred an error retrieving the data']);
-				}
+				error: function(model, xhr, options){
+		     		self.errorView.render([xhr.responseText]);
+		    	}
 			});
 		}
 	},
@@ -133,14 +133,14 @@ app.view.ChartsView = Backbone.View.extend({
 			var self = this;
 			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
 			this.currentData.fetch({
-				success: function(e){
+				success: function(){
 					window.appRouter.currentData.innerData.charts.data = self.currentData;
 					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
 						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
 				},
-				error: function(e){  
-				 	self.errorView.render(['Occurred an error retrieving the data']);
-				}
+				error: function(model, xhr, options){
+		     		self.errorView.render([xhr.responseText]);
+		    	}
 			});
 		}
 	},
