@@ -83,23 +83,35 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	        container: $('body'),
 	        html: 'true',
 	        content: "<small>" +
-	        			"The format of the file must be of the form<br>" +
+	        			"A measurement campaign defines what we call a Place. This is regularly composed of many individual text files captured by a single device. We provide scripts that can process the data in the raw format (the one provided by the device alone) and convert it to Zebra RFO input format<br>" +
+	        			"<br>" + 
+	        			"Zebra RFO uses data formatted as follows. A single text file contains a location (LAT and LON) with a set of frequencies out of a bandwidth:<br>" +
+	        			"<br>" + 
 	        			"<div class='well well-sm'>" + 
-	        				"frequency \\t power<br>" + 
+	        				"frequency_1 \\t power_1<br>" + 
+	        				"frequency_2 \\t power_2<br>" + 
 	        				"...<br>" + 
+	        				"frequency_n \\t power_n<br>" + 
 	        				"latitude<br>" + 
 	        				"longitude<br>" + 
-	        				"capture date" + 
+	        				"date of capture" + 
 	        			"</div>" + 
-	        			"<b>Android device</b><br>" + 
-	        			"If you are using the android application to take the data, " + 
-	        			"you can download the following script in python  " + 
-	        			"<a href='javascript:void(0)' id='download-android-parser'>android parser</a>, " + 
-	        			"open the terminal, go to the folder where is the data and " + 
-	        			"paste inside the downloaded file and run " + 
+	        			"Please download the script according to your input device:<br><br>" +
+	        			"<b>Android device</b><br><br>" + 
+	        			"If you are using the android application to capture the spectrum activity (with RFExplorer), you can download the following script in python (" + 
+	        			"<a href='javascript:void(0)' id='download-android-parser'>android parser</a>" + 
+	        			"), copy the script into the folder where your captured data is located. Then run the script as follows:<br><br>" + 
 	        			"<div class='well well-sm'>python android_parser.py</div>" + 
-	        			"This generate a folder <b>parsed</b> parsed with the files " + 
-	        			"already formatted, ready to be uploaded to the system</small>",
+	        			"As a result, the script generate a folder of parsed data in Zebra RFO format, ready to be uploaded (and consumed) by the system. Then proceed as follows:<br><br>" + 
+	        			"<ol>" +
+	        				"<li>Name the zone</li>" +
+	        				"<li>Select all the parsed files (*.txt) which are numbered from 1 to N</li>" +
+	        				"<li>Select the common unit of the frequency sample (for Android should be Hertz) </li>" +
+	        				"<li>Click on Synchronise</li>" +
+	        			"</ol>" +
+	        			"Wait for the processing.<br><br>" +
+	        			"Now you can visualise your data…<br><br>" +
+	        			"Enjoy!</small>",
 	    
 	    }).on('shown.bs.popover', function (eventShown) {
     		var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
