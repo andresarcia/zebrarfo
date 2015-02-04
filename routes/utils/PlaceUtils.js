@@ -1,6 +1,47 @@
 var db = require('../../models');
+var utils = require('./Utils');
 
 var UserIdentification = 1;
+
+/*-----------------------------------------------------------------*/
+exports.getOccupationHetmapData = function(req,res){
+	if(utils.isNumber(req.params.id)){
+		
+		var query = 
+			'select ' +
+				'aux.id, aux.lat, aux.lng, frequency, power ' +
+			'from (' + 
+				'select ' + 
+					'Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id ' +
+				'from (' +
+					'select ' +
+						'id ' +
+					'from Places ' +
+					'where id = '+req.params.id+' and UserId = '+ UserIdentification+'' +
+				') as aux, Coordinates ' +
+				'where Coordinates.PlaceId = aux.id' +
+			') as aux, Captures ' +
+			'where Captures.CoordinateId = aux.id order by frequency';
+
+		db.sequelize
+		.query(query).success(function(response) {
+			if(response.length == 0){
+				res.status(404).send('Sorry, we cannot find that!');
+				return;
+			}
+
+			res.status(200).send({ data: response });
+		})
+		.error(function(err){
+			if (process.env.NODE_ENV === 'development')
+				res.status(500).send(err);
+			else if (process.env.NODE_ENV === 'production')
+				res.status(500).send('something blew up');
+		});
+	} else
+		res.status(404).send('Sorry, we cannot find that!');	
+};
+
 
 /*-----------------------------------------------------------------*/
 exports.takeStatisticsFromOldPlace = function(id, n, callback){	
@@ -63,22 +104,58 @@ exports.takeStatisticsFromOldPlace = function(id, n, callback){
 
 /*--------------------------------------------------------------------------------------------------------------*/
 exports.takePowerModeFromPlace = function(id, callback){	
-	db.Place.find({
-		where: {
-			id: id,
-			UserId: UserIdentification,
-			visible: true
-		},
-		include: [
-    		{ model: db.Coordinate }
-  		]
-	}).success(function(place){
-		console.log(place);
+	
+	// db.PowerFrequency.findAll({
+	// 	attributes: ['frequency', 'power'],
+	// 	include: [{
+	// 		model: db.Coordinate,
+	// 		attributes: ['latitude', 'longitude', 'id'],
+	// 		where: {
+	// 			visible: true
+	// 		},
+	// 		include: [{
+	// 			model: db.Place,
+	// 			attributes: [],
+	// 			where: {
+	// 				UserId:UserIdentification,
+	// 				visible: true,
+	// 				id: id
+	// 			}
+	// 		}]
+	// 	}]
+	// }).success(function(data){
+	// 	data = JSON.stringify(data);
+	// 	data = JSON.parse(data);
+	// 	// console.log(data);
 		callback();
-	})
-	.error(function(err){
-		return callback(err,null);
-	});
+	// }).error(function(err){
+	// 	return callback(err,null);
+	// });
+
+
+
+
+	// db.Place.find({
+	// 	where: {
+	// 		id: id,
+	// 		UserId: UserIdentification,
+	// 		visible: true
+	// 	},
+	// 	include: [
+ //    		{ model: db.Coordinate, include: [{ model: db.PowerFrequency }] }
+ //  		]
+	// })
+	// .success(function(place){
+	// 	var mode = {};
+		
+
+
+
+	// 	callback();
+	// })
+	// .error(function(err){
+	// 	return callback(err,null);
+	// });
 
 	// var v = [];
 
@@ -96,4 +173,4 @@ exports.takePowerModeFromPlace = function(id, callback){
 	// }).error(function(err){
 	// 	return callback(err);
 	// });
-}
+};

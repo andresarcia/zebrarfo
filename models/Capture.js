@@ -1,7 +1,7 @@
-// models/PowerFrequency.js
+// models/Capture.js
 
 module.exports = function(sequelize, DataTypes) {
-  var PowerFrequency = sequelize.define('PowerFrequency', {
+  var Capture = sequelize.define('Capture', {
     
     frequency: { 
       type: DataTypes.DECIMAL(10,2),
@@ -24,10 +24,10 @@ module.exports = function(sequelize, DataTypes) {
   }, {
 
     associate: function(models) {
-      PowerFrequency.belongsTo(models.Coordinate);
+      Capture.belongsTo(models.Coordinate);
     }
 
   });
  
-  return PowerFrequency;
+  return Capture;
 };

@@ -51,7 +51,7 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Coordinate.belongsTo(models.Place);
-      Coordinate.hasMany(models.PowerFrequency);            
+      Coordinate.hasMany(models.Capture);            
     },
 
     validate: {

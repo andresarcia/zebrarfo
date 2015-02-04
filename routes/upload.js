@@ -66,10 +66,11 @@ var saveInDB = function(place, callback){
 			    	if (err)
 						return callback(err,null);
 					
-					// placeUtils.takePowerModeFromPlace(doc.id, function(err){
+					placeUtils.takePowerModeFromPlace(doc.id, function(err){
 					// 	console.log("listo");
 						callback(null,doc);
-					// });
+					});
+
 			    });
 			})
 			.error(function(err){
@@ -155,7 +156,7 @@ function insertPowerFrequency(data,coordinateId,callback){
 	    if(err) 
 	    	return callback(err);
 
-    	db.PowerFrequency.bulkCreate(data)
+    	db.Capture.bulkCreate(data)
 		.success(function() { 
 			callback();
 		}).error(function(err){
