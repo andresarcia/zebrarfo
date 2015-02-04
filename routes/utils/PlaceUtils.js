@@ -45,6 +45,8 @@ exports.getOccupationHetmapData = function(req,res){
 
 /*-----------------------------------------------------------------*/
 exports.takeStatisticsFromOldPlace = function(id, n, callback){	
+	console.log('* UPDATING PLACE STATS *');
+
 	db.Place.find({
 		where: {
 			id: id,
@@ -155,22 +157,5 @@ exports.takePowerModeFromPlace = function(id, callback){
 	// })
 	// .error(function(err){
 	// 	return callback(err,null);
-	// });
-
-	// var v = [];
-
-	// _.each(_.keys(data), function(key){
-	// 	v.push({
-	// 		power: key,
-	// 		frequency: data[key],
-	// 		PlaceId: placeId
-	// 	});
-	// });
-			    
- //    db.PowerMode.bulkCreate(v)
-	// .success(function() { 
-	// 	callback();
-	// }).error(function(err){
-	// 	return callback(err);
 	// });
 };

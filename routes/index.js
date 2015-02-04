@@ -6,7 +6,6 @@ var places = require('./places');
 var coordinates = require('./coordinates');
 var captures = require('./captures');
 var placeUtils = require('./utils/PlaceUtils');
-var upload = require('./upload');
 
 /*-------------------------------------------------------------------*/
 router.route('/users')
@@ -14,7 +13,7 @@ router.route('/users')
 
 /*-------------------------------------------------------------------*/
 router.route('/places/upload')
-	.post(upload.createPlace);
+	.post(places.create);
 
 router.route('/places')
 	.get(places.list);

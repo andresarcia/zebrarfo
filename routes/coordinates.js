@@ -1,7 +1,49 @@
 var db = require('../models');
+var async = require('async');
 var utils = require('./utils/Utils');
+var coordinate = require('./coordinates');
+var capture = require('./captures');
 
 var UserIdentification = 1;
+
+/*-------------------------------------------------------------------*/
+exports.save = function(id,coordinates,callback){
+	console.log('* SAVING COORDINATES *');	
+
+	async.each(coordinates, function(coord, callbackInner) {
+		
+		db.Coordinate.findOrCreate({
+			latitude: coord.latitude,
+			longitude: coord.longitude,
+			powerMin: coord.powerMin,
+			powerMax : coord.powerMax,
+			powerAvg : coord.powerAvg,
+			powerSD : coord.powerSD,
+			createdDate: coord.createdDate,
+			PlaceId: id,
+
+		}).success(function(coordinate, created){
+			if(created){
+				capture.save(coordinate.id, coord.data, function(err){
+					if(err) 
+	    				return callback(err);
+
+					callbackInner();
+				});
+			} else 
+				callbackInner();
+		})
+		.error(function(err){
+			return callback(err);
+		});
+	  
+	}, function(err){	    
+	    if(err) 
+	    	return callback(err);
+	    
+	    callback(null);
+	});
+}
 
 /*-------------------------------------------------------------------*/
 exports.get = function(req,res){
