@@ -34,7 +34,7 @@ exports.get = function(req, res){
 			}
 		}).success(function(place){
 			if(!place){
-				res.status(404).send('Sorry, we cannot find that!');
+				next(httpError(404));
 				return;
 			}
 
@@ -45,7 +45,7 @@ exports.get = function(req, res){
 				}
 			}).success(function(coord){
 				if(coord.length == 0){
-					res.status(404).send('Sorry, we cannot find that!');
+					next(httpError(404));
 					return;
 				}
 
@@ -53,33 +53,24 @@ exports.get = function(req, res){
 					attributes: ['frequency', 'power'],
 				}).success(function(data){
 					if(data.length == 0){
-						res.status(404).send('Sorry, we cannot find that!');
+						next(httpError(404));
 						return;
 					}
 
 					res.status(200).send(data);
 
 				}).error(function(err){
-					if (process.env.NODE_ENV === 'development')
-						res.status(500).send(err);
-					else if (process.env.NODE_ENV === 'production')
-						res.status(500).send('something blew up');
+					next(httpError(err));
 				});
 
 			}).error(function(err){
-				if (process.env.NODE_ENV === 'development')
-					res.status(500).send(err);
-				else if (process.env.NODE_ENV === 'production')
-					res.status(500).send('something blew up');
+				next(httpError(err));
 			});
 
 		}).error(function(err){
-			if (process.env.NODE_ENV === 'development')
-				res.status(500).send(err);
-			else if (process.env.NODE_ENV === 'production')
-				res.status(500).send('something blew up');
+			next(httpError(err));
 		});
 
 	} else
-		res.status(404).send('Sorry, we cannot find that!');
+		next(httpError(404));
 };

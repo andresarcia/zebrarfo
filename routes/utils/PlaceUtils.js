@@ -4,7 +4,7 @@ var utils = require('./Utils');
 var UserIdentification = 1;
 
 /*-----------------------------------------------------------------*/
-exports.getOccupationHetmapData = function(req,res){
+exports.getOccupationHetmapData = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		
 		var query = 
@@ -17,34 +17,31 @@ exports.getOccupationHetmapData = function(req,res){
 					'select ' +
 						'id ' +
 					'from Places ' +
-					'where id = '+req.params.id+' and UserId = '+ UserIdentification+'' +
+					'where id = '+req.params.id+' and UserId = '+ UserIdentification+' and visible = 1' +
 				') as aux, Coordinates ' +
-				'where Coordinates.PlaceId = aux.id' +
+				'where Coordinates.PlaceId = aux.id and Coordinates.visible = 1' +
 			') as aux, Captures ' +
 			'where Captures.CoordinateId = aux.id order by frequency';
 
 		db.sequelize
 		.query(query).success(function(response) {
 			if(response.length == 0){
-				res.status(404).send('Sorry, we cannot find that!');
+				next(httpError(404));
 				return;
 			}
 
 			res.status(200).send({ data: response });
 		})
 		.error(function(err){
-			if (process.env.NODE_ENV === 'development')
-				res.status(500).send(err);
-			else if (process.env.NODE_ENV === 'production')
-				res.status(500).send('something blew up');
+			next(httpError(err));
 		});
 	} else
-		res.status(404).send('Sorry, we cannot find that!');	
+		next(httpError(404));
 };
 
 
 /*-----------------------------------------------------------------*/
-exports.takeStatisticsFromOldPlace = function(id, n, callback){	
+exports.takeStatsComparingPlace = function(id, n, callback){	
 	console.log('* UPDATING PLACE STATS *');
 
 	db.Place.find({
@@ -104,6 +101,42 @@ exports.takeStatisticsFromOldPlace = function(id, n, callback){
 	});
 };
 
+/*--------------------------------------------------------------------------------------------------------------*/
+exports.retakeStats = function(id, callback){
+	db.Place.find({
+		where: {
+			id: id,
+			UserId: UserIdentification,
+			visible: true
+		}
+	}).success(function(place){
+		// place.getCoordinates().
+		// success(function(coords){
+
+		// 	_.each(coords, function(coord){
+				
+		// 	})
+
+
+
+
+		// }).error(function(err){
+		// 	return callback(err,null);
+		// });
+
+
+		place.numberCoordinates = 12312312;
+		place.save().success(function(){
+			callback(null,place);
+		}).error(function(err){
+			return callback(err,null);
+		});
+	
+	}).error(function(err){
+		return callback(err,null);
+	});
+};
+	
 /*--------------------------------------------------------------------------------------------------------------*/
 exports.takePowerModeFromPlace = function(id, callback){	
 	

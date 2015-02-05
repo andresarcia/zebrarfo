@@ -1,4 +1,6 @@
 var db = require('../models');
+var async = require('async');
+var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var builder = require('./utils/NewPlaceBuilder');
 var placeUtils = require('./utils/PlaceUtils');
@@ -8,16 +10,16 @@ var mode = require('./power_mode');
 var UserIdentification = 1;
 
 /*-------------------------------------------------------------------*/
-exports.create = function(req,res){
+exports.create = function(req,res,next){
 	if(Object.keys(req.body).length === 0)
-		res.status(404).send('something blew up with your browser, try to update it');
+		next(httpError(404,'something blew up with your browser, try to update it'));
 	
 	else {
 		if(req.body.json){
 			console.log('* CREATING NEW PLACE *');
 			builder.create(req.body, function(err, place){
 				if(err)
-					res.status(404).send(err);
+					next(httpError(404,err));
 
 				db.Place.findOrCreate({
 					UserId:UserIdentification,
@@ -44,36 +46,33 @@ exports.create = function(req,res){
 						.success(function(){
 							coordinate.save(n.id,place.coordinates,function(err){
 								if(err)
-									res.status(500).send(err);
+									next(httpError(err));
 
 								mode.save(n.id,place.mode,true,function(err){
 									if(err)
-										res.status(500).send(err);
+										next(httpError(err));
 									
 									res.status(200).send(n);
 								});
 							});
 
 						}).error(function(err){
-							if (process.env.NODE_ENV === 'development')
-								res.status(500).send(err);
-							else if (process.env.NODE_ENV === 'production')
-								res.status(500).send('something blew up');
+							next(httpError(err));
 						});
 					
 					} else {
 						console.log('* UPDATING OLD PLACE *');
 						coordinate.save(n.id,place.coordinates,function(err){
 							if(err)
-								res.status(500).send(err);
+								next(httpError(err));
 
 							mode.save(n.id,place.mode,false,function(err){
 								if(err)
-									res.status(500).send(err);
+									next(httpError(err));
 								
-								placeUtils.takeStatisticsFromOldPlace(n.id,place,function(err,n){
+								placeUtils.takeStatsComparingPlace(n.id,place,function(err,n){
 									if (err)
-										res.status(500).send(err);
+										next(httpError(err));
 
 									res.status(200).send(n);
 								});
@@ -83,20 +82,27 @@ exports.create = function(req,res){
 					}
 
 				}).error(function(err){
-					if (process.env.NODE_ENV === 'development')
-						res.status(500).send(err);
-					else if (process.env.NODE_ENV === 'production')
-						res.status(500).send('something blew up');
+					next(httpError(err));
 				});
 			});
 		
 		} else	
-			res.status(404).send('please update your browser!!');
+			next(httpError(404,'please update your browser!!'));
 	}
 };
 
 /*-------------------------------------------------------------------*/
-exports.list = function(req,res){
+exports.save = function(place, callback){
+	place.save()
+	.success(function(){
+		callback(null)
+	}).error(function(err){
+		callback(err);
+	});
+};
+
+/*-------------------------------------------------------------------*/
+exports.list = function(req,res,next){
 	db.Place.findAll({
 		where: {
 			UserId:UserIdentification,
@@ -106,15 +112,12 @@ exports.list = function(req,res){
 		res.status(200).send(places);
 	})
 	.error(function(err){
-		if (process.env.NODE_ENV === 'development')
-			res.status(500).send(err);
-		else if (process.env.NODE_ENV === 'production')
-			res.status(500).send('something blew up');
+		next(httpError(err));
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.get = function(req,res){
+exports.get = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
@@ -130,41 +133,70 @@ exports.get = function(req,res){
     		}]
 		}).success(function(place){
 			if(!place){
-				res.status(404).send('Sorry, we cannot find that!');
+				next(httpError(404));
 				return;
 			}
 			
 			res.status(200).send(place);	
 		
 		}).error(function(err){
-			if (process.env.NODE_ENV === 'development')
-				res.status(500).send(err);
-			else if (process.env.NODE_ENV === 'production')
-				res.status(500).send('something blew up');
+			next(httpError(err));
 		});
 	} else
-		res.status(404).send('Sorry, we cannot find that!');
+		next(httpError(404));
 };
 
 /*-------------------------------------------------------------------*/
-exports.update = function(req,res){
+exports.update = function(req,res,next){
 	if(utils.isNumber(req.body.id)){
 
+		async.each(req.body.coordinates, function(coord, callback) {
+			db.Coordinate.find({
+				where: {
+					id: coord.id,
+					PlaceId: req.body.id,
+					visible: true
+				}
+			}).success(function(coordinate){
+				if(!coordinate){
+					next(httpError(404));
+					return;
+				}
 
+				if(coord.action === "delete"){
+					coordinate.dataValues.visible = false;
+					coordinate.save()
+					.success(function(){
+						callback();
+					}).error(function(err){
+						callback(err);
+					});
+				}
+			})
+			.error(function(err){
+				next(httpError(err));
+			});
+		  
+		}, function(err){	    
+		    if(err) {
+		    	next(httpError(err));
+		    }
+		    
+		    placeUtils.retakeStats(req.body.id, function(err, n){
+		    	if(err) {
+			    	next(httpError(err));
+			    }
 
-
-
-
-
-
+			    res.status(200).send(n);
+		    });
+		});
 		
-		console.log(req.body);
 	} else
-		res.status(404).send('Sorry, we cannot find that!');
+		next(httpError(404));
 };
 
 /*-------------------------------------------------------------------*/
-exports.delete = function(req,res){
+exports.delete = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
@@ -174,7 +206,7 @@ exports.delete = function(req,res){
 			}
 		}).success(function(place){
 			if(!place){
-				res.status(404).send('Sorry, we cannot find that!');
+				next(httpError(404));
 				return;
 			}
 
@@ -182,19 +214,13 @@ exports.delete = function(req,res){
 			.success(function() {
 				res.status(200).send({ msg:'Place '+req.params.id+ ' deleted' });
 			}).error(function(err){
-				if (process.env.NODE_ENV === 'development')
-					res.status(500).send(err);
-				else if (process.env.NODE_ENV === 'production')
-					res.status(500).send('something blew up');
+				next(httpError(err));
 			});
 
 		}).error(function(err){
-			if (process.env.NODE_ENV === 'development')
-				res.status(500).send(err);
-			else if (process.env.NODE_ENV === 'production')
-				res.status(500).send('something blew up');
+			next(httpError(err));
 		});
 	
 	} else
-		res.status(404).send('Sorry, we cannot find that!');
+		next(httpError(404));
 };
