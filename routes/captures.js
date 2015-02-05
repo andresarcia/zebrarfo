@@ -24,7 +24,7 @@ exports.save = function(id,captures,callback){
 	});
 };
 /*-------------------------------------------------------------------*/
-exports.get = function(req, res){
+exports.get = function(req, res, next){
 	if(utils.isNumber(req.params.idPlace) && utils.isNumber(req.params.id)){
 		
 		db.Place.find({

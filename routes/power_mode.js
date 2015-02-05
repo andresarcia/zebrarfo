@@ -17,8 +17,6 @@ exports.save = function(id,modes,isNew,callback){
 			});
 		});
 
-		console.log(id);
-
 		if(isNew){
 			console.log('* SAVING POWER MODE *');
 		    db.PowerMode.bulkCreate(v)
