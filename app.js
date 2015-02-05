@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var compress = require('compression');
 
 var app = express();
 
@@ -12,6 +13,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(compress());
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser({limit: '50mb'}));
