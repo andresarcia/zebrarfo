@@ -29,6 +29,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		this.render();
 		this.coordinates = _.clone(this.data.attributes.coordinates);
+		this.editedCoords = [];
 		this.calculateRealCoorDict();
 		this.calculateRelativeCoorDict();
 		this.renderAfterLoad();
@@ -316,14 +317,24 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		this.mapView.hideMarkers(this.relativeIndex2Real(this.getMarkersIndex()));
 
+		var edited = [];
 		var v = this.getMarkersIndex();
-		if(v.length == 1)
+		if(v.length == 1){
+			var coord = _.clone(this.coordinates[v[0]]);
+			coord.action = 'delete';
+			edited.push(coord)
 			this.coordinates.splice(v[0], 1);
 
-		else {
-			for (var i = v[1]; i >= v[0]; i--)
+		} else {
+			for (var i = v[1]; i >= v[0]; i--){
+				var coord = _.clone(this.coordinates[i]);
+				coord.action = 'delete';
+				edited.push(coord)
 				this.coordinates.splice(i, 1);
+			}
 		}
+
+		this.editedCoords.push(edited);
 
 		this.renderMarkerSlider(0);
 		this.addEditionRange();
@@ -334,7 +345,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 	restore: function(){
 		this.removeEditionRange();
 		this.editMarkers[this.editMarkersIndex].editable = true;
-
+		this.editedCoords.pop();
 		var indexes = this.getMarkersIndex();
 
 		switch (this.editMarkers[this.editMarkersIndex].action) {
@@ -420,12 +431,17 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	save: function(){
 		var self = this;
-		this.data.attributes.coordinates = this.coordinates;
+		var edited = _.flatten(this.editedCoords);
+		this.data.attributes.coordinates = edited;
 
 		this.waitingView.render();
-		this.data.save({
-			success: function(){  
+		this.data.save(this.data.attributes, {
+			success: function(model){
+				self.data = model;
+				self.data.attributes.coordinates = self.coordinates;
+				window.appRouter.currentData.innerData.charts = undefined;
 				self.waitingView.closeView();
+				window.location.hash = '#places/'+ model.id;
 		    },
 		    error: function(model, xhr, options){
 	     		self.waitingView.closeView();
