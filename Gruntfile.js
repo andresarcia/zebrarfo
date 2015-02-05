@@ -14,8 +14,6 @@ module.exports = function(grunt) {
               'public/build/javascripts/concat.js',
               'public/build/stylesheets/all',
               'public/build/stylesheets/concat.css',
-              // 'public/build/stylesheets/main.min.css',
-              // 'public/build/javascripts/main.min.js'
             ],
     },
 
@@ -183,7 +181,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
 
-  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','compress','clean:after']);
+  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','clean:after']);
   grunt.registerTask('dev', ['clean','copy','concat','uglify','cssmin']);
 
 };
