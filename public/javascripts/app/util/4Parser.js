@@ -88,7 +88,7 @@ app.util.Parser.prototype = {
 		this.coordinateStats({
 			latitude: latitude,
 			longitude: longitude,
-		 	data: arrayFrequencyPower,
+		 	captures: arrayFrequencyPower,
 			createdDate: String(arrayCoordinate[2])
 		});
 	},
@@ -102,7 +102,7 @@ app.util.Parser.prototype = {
 		var powerMin = new app.util.Stats();
 		var powerMax = new app.util.Stats();
 		
-		_.each(coord.data,function(item){
+		_.each(coord.captures,function(item){
 			powerMin.min(item.power);
 			powerMax.max(item.power);
 			frequencyMin.min(item.frequency);
