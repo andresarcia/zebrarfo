@@ -1,8 +1,9 @@
 var db = require('../models');
 var async = require('async');
 var httpError = require('build-http-error');
+var _ = require('underscore');
 var utils = require('./utils/Utils');
-var builder = require('./utils/NewPlaceBuilder');
+var builder = require('./utils/PlaceBuilder');
 var placeUtils = require('./utils/PlaceUtils');
 var coordinate = require('./coordinates');
 var mode = require('./power_mode');
@@ -18,7 +19,7 @@ exports.create = function(req,res,next){
 		if(req.body.json){
 			console.log('* CREATING NEW PLACE *');
 			builder.create(req.body, function(err, place){
-				if(err)
+				if(err) 
 					next(httpError(404,err));
 
 				db.Place.findOrCreate({
@@ -187,7 +188,41 @@ exports.update = function(req,res,next){
 			    	next(httpError(err));
 			    }
 
-			    res.status(200).send(n);
+			    mode.save(req.body.id,n.mode,false,function(err){
+					if(err)
+						next(httpError(err));
+					
+					db.Place.find({
+						where: {
+							UserId:UserIdentification,
+							id: req.params.id,
+							visible: true
+						}
+					}).success(function(o){
+						o.numberCoordinates = n.numberCoordinates;
+						o.powerMin = n.powerMin;
+						o.powerMax = n.powerMax;
+						o.powerAvg = n.powerAvg;
+						o.sdPowerAvg = n.sdPowerAvg;
+						o.avgPowerSD = n.avgPowerSD;
+						o.numberPowerFrequency = n.numberPowerFrequency;
+						o.frequencyMin = n.frequencyMin;
+						o.frequencyMax = n.frequencyMax;
+						o.totalDistance = n.totalDistance;
+						o.distaceAvg = n.distaceAvg;
+						o.distaceMin = n.distaceMin;
+						o.distaceMax = n.distaceMax;
+
+						o.save()
+						.success(function(){
+							res.status(200).send(n);
+						}).error(function(err){
+							next(httpError(err));
+						});
+					}).error(function(err){
+						next(httpError(err));
+					});
+				});
 		    });
 		});
 		

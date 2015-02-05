@@ -1,5 +1,8 @@
+var i = require('./PlaceUtils')
 var db = require('../../models');
 var utils = require('./Utils');
+var builder = require('./PlaceBuilder');
+var httpError = require('build-http-error');
 
 var UserIdentification = 1;
 
@@ -39,6 +42,34 @@ exports.getOccupationHetmapData = function(req,res,next){
 		next(httpError(404));
 };
 
+/*-----------------------------------------------------------------*/
+exports.getFullPlace = function(id,callback){
+	db.Place.find({
+		where: {
+			id: id,
+			UserId: UserIdentification,
+			visible: true
+		},
+		include: [{ 
+			model: db.Coordinate, 
+			where: {
+				visible: true
+			},
+			include: [{ 
+				model: db.Capture 
+			}] 
+    	}]
+	})
+	.success(function(place){
+		place = JSON.stringify(place);
+		place = JSON.parse(place);
+		
+		callback(null,place);
+	})
+	.error(function(err){
+		return callback(err,null);
+	});
+};
 
 /*-----------------------------------------------------------------*/
 exports.takeStatsComparingPlace = function(id, n, callback){	
@@ -103,92 +134,14 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 
 /*--------------------------------------------------------------------------------------------------------------*/
 exports.retakeStats = function(id, callback){
-	db.Place.find({
-		where: {
-			id: id,
-			UserId: UserIdentification,
-			visible: true
-		}
-	}).success(function(place){
-		// place.getCoordinates().
-		// success(function(coords){
-
-		// 	_.each(coords, function(coord){
-				
-		// 	})
-
-
-
-
-		// }).error(function(err){
-		// 	return callback(err,null);
-		// });
-
-
-		place.numberCoordinates = 12312312;
-		place.save().success(function(){
-			callback(null,place);
-		}).error(function(err){
+	i.getFullPlace(id, function(err,place){
+		if(err) 
 			return callback(err,null);
+
+		builder.create(place, function(err, n){
+			delete n.coordinates;
+			callback(null,n);
 		});
-	
-	}).error(function(err){
-		return callback(err,null);
-	});
-};
-	
-/*--------------------------------------------------------------------------------------------------------------*/
-exports.takePowerModeFromPlace = function(id, callback){	
-	
-	// db.PowerFrequency.findAll({
-	// 	attributes: ['frequency', 'power'],
-	// 	include: [{
-	// 		model: db.Coordinate,
-	// 		attributes: ['latitude', 'longitude', 'id'],
-	// 		where: {
-	// 			visible: true
-	// 		},
-	// 		include: [{
-	// 			model: db.Place,
-	// 			attributes: [],
-	// 			where: {
-	// 				UserId:UserIdentification,
-	// 				visible: true,
-	// 				id: id
-	// 			}
-	// 		}]
-	// 	}]
-	// }).success(function(data){
-	// 	data = JSON.stringify(data);
-	// 	data = JSON.parse(data);
-	// 	// console.log(data);
-		callback();
-	// }).error(function(err){
-	// 	return callback(err,null);
-	// });
-
-
-
-
-	// db.Place.find({
-	// 	where: {
-	// 		id: id,
-	// 		UserId: UserIdentification,
-	// 		visible: true
-	// 	},
-	// 	include: [
- //    		{ model: db.Coordinate, include: [{ model: db.PowerFrequency }] }
- //  		]
-	// })
-	// .success(function(place){
-	// 	var mode = {};
 		
-
-
-
-	// 	callback();
-	// })
-	// .error(function(err){
-	// 	return callback(err,null);
-	// });
+	});
 };

@@ -1,5 +1,6 @@
 var db = require('../models');
 var utils = require('./utils/Utils');
+var httpError = require('build-http-error');
 var async = require('async');
 
 var UserIdentification = 1;
