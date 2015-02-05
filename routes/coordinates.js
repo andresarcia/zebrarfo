@@ -1,5 +1,6 @@
 var db = require('../models');
 var async = require('async');
+var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
 var capture = require('./captures');
@@ -24,7 +25,7 @@ exports.save = function(id,coordinates,callback){
 
 		}).success(function(coordinate, created){
 			if(created){
-				capture.save(coordinate.id, coord.data, function(err){
+				capture.save(coordinate.id, coord.captures, function(err){
 					if(err) 
 	    				return callback(err);
 

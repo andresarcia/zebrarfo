@@ -51,14 +51,14 @@ function reduceCommonGps(o,n,callback){
 		var union = [];
 	
 		_.each(samplesToReduce, function(item){
-			union = union.concat(item.data);
+			union = union.concat(item.captures);
 		});
 
 		var groupByFrequencies = _.groupBy(union, function(item){
 			return item.frequency;
 		});
 		
-		var data = [];
+		var captures = [];
 		var frequencies = _.keys(groupByFrequencies);
 		_.each(frequencies, function(key){
 			var operation;
@@ -95,8 +95,12 @@ function reduceCommonGps(o,n,callback){
 			    case 'last':
 			        operation = groupByFrequencies[key][groupByFrequencies[key].length - 1].power;
 			        break;
+
+			    default:
+			    	operation = groupByFrequencies[key][0].power;
+			    	break;
 			}
-			data.push({ frequency: Number(key), power:operation });	
+			captures.push({ frequency: Number(key), power:operation });	
 
 			if(n.mode[operation])
 				n.mode[operation] += 1;
@@ -107,7 +111,7 @@ function reduceCommonGps(o,n,callback){
 		var coord = takeCoordStats({
 			latitude: samplesObj[key][0].latitude,
 			longitude: samplesObj[key][0].longitude,
-			data: data,
+			captures: captures,
 			createdDate: samplesObj[key][0].createdDate
 		});
 
@@ -133,7 +137,7 @@ function takeCoordStats(coord){
 	var powerSD_X = null;
 	var powerSD_M = null;
 
-	_.each(coord.data,function(item){
+	_.each(coord.captures,function(item){
 		if(powerMin === null && frequencyMin === null){
 			powerMin = powerMax = item.power;
 			frequencyMin = frequencyMax = item.frequency;
@@ -161,7 +165,7 @@ function takeCoordStats(coord){
 	powerAvg = powerAvg / numberPowerFrequency;
 	coordinate.powerAvg = Number(powerAvg.toFixed(5));
 
-	if(coord.data.length > 1){
+	if(coord.captures.length > 1){
 		powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/numberPowerFrequency)/(numberPowerFrequency - 1));
 		coordinate.powerSD = Number(powerSD_X.toFixed(5));
 
