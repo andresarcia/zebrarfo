@@ -4,7 +4,6 @@ app.view = app.view || {};
 app.view.VerticalNavView = Backbone.View.extend({
 
 	el: '#vertical-nav',
-	template: Handlebars.compile($("#vertical-nav-template").html()),	
 	currentSubMenuId: null,
 
 	initialize: function(options){
@@ -17,7 +16,8 @@ app.view.VerticalNavView = Backbone.View.extend({
 	},
 
 	render: function(){
-		this.$el.html(this.template);
+		var template = Zebra.tmpl['vertical_nav'];
+		this.$el.html(template);
 		return this;
 	},
 
@@ -26,8 +26,8 @@ app.view.VerticalNavView = Backbone.View.extend({
 			return;
 
 		this.currentSubMenuId = containerId;
-
-		var template = Handlebars.compile($('#'+containerId).html());
+		var template = Zebra.tmpl[containerId];
+		
 		if(id)
 			this.$el.find('.list-group-item').eq(parentIndex).find('.children').html(template({id:id}));
 		else

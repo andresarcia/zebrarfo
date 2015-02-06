@@ -4,7 +4,6 @@ app.view = app.view || {};
 app.view.UploadMeasuresView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	template: Handlebars.compile($("#upload-measures-template").html()),
 	viewContainers: null,
 
 	options: {
@@ -72,7 +71,8 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.data);
+		var template = Zebra.tmpl['upload_measures'];
+		var html = template(this.data);
     	this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});

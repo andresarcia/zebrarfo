@@ -1,0 +1,31 @@
+<ol class="breadcrumb">
+	<li><a href="#places">Places</a></li>
+	<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+	<li class="active">Edit place</li>
+</ol>
+<div class="row">
+	<div id="su-list-coord-to-edit" class="col-md-3"></div>
+  	<div class="col-md-9">
+  		<div id="su-edit-place-controls" class="col-xs-12 col-sm-12 col-md-12">
+  			<div class="btn-group">
+				<button type="button" class="btn action-btn su-delete-coord" aria-label="Left Align" disabled>
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+				</button>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn select-btn su-select-first-coord" aria-label="Left Align">
+						first
+				</button>
+				<button type="button" class="btn select-btn su-select-last-coord" aria-label="Left Align">
+						last
+				</button>
+			</div>
+		</div>
+  		<div class="col-xs-11 col-sm-11 col-md-11">
+			<div id="map_canvas_coordinates" style="height:450px;"></div>
+		</div>
+		<div class="col-xs-1 col-sm-1 col-md-1" id="markers-slider-edit-place">
+			<div class="markers-slider" style="height:450px;"></div>
+		</div>
+  	</div>
+</div>

@@ -7,7 +7,6 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	coordinates: null,
 	mapView: null,
 	currentPowerFrequencies: {},
-	template: Handlebars.compile($("#single-place-template").html()),
 
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
@@ -75,7 +74,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
     renderCoordinateResume: function(res){
     	var self = this;
-    	var template = Handlebars.compile($("#su-coordinate-resume-template").html());
+    	var template = Zebra.tmpl['su_coordinate_resume'];
 		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
@@ -138,7 +137,8 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.data);
+		var template = Zebra.tmpl['single_place'];
+		var html = template(this.data);
     	this.$el.html(html);	
 
     	this.$el.find("#allocation-channel").select2();

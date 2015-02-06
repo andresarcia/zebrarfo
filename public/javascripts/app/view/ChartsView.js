@@ -4,7 +4,6 @@ app.view = app.view || {};
 app.view.ChartsView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	template: Handlebars.compile($("#charts-template").html()),
 	currentData: null,
 	currentChart: null,
 
@@ -146,7 +145,8 @@ app.view.ChartsView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.data);
+		var template = Zebra.tmpl['charts'];
+		var html = template(this.data);
 		this.$el.html(html);	
 
 		return this;

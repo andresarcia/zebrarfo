@@ -1,0 +1,18 @@
+<div class="ws-error">
+	<div class="ws-error-message">
+		<div class="ws-error-glyphicon pull-left">
+			<span class="glyphicon glyphicon-2x glyphicon-warning-sign"></span>
+		</div>
+		<ul class="list-inline">
+		  	<li><h3>{{title}}</h3></li>
+		  	<li>
+		  		<ul class="list-unstyled">
+				  	{{#each message}}
+				  		<li><h4><em>{{ this }}</em></h4></li>
+				  	{{/each}}
+				</ul>
+		  	</li>
+		</ul>
+		<button id="error-button" type="button" class="btn ws-error-button btn-lg">Got it</button>
+	</div>
+</div>

@@ -1,0 +1,56 @@
+{{#if data}}
+	{{#if hidden}}
+		<div class="ws-blue pull-right">
+				<small>Hidden restore stack</small>
+				<span class="ws-dark-gray"><small>{{hiddenNumber}}</small></span>
+			</div>
+	{{/if}}
+	<h2><small>Edit list</small></h2>
+
+	{{#each data}}
+		<a href="javascript:void(0)" class="su-coord-to-edit">
+			<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
+					<small>remove from list</small>
+				</span> 
+			<div class="ws-blue">
+					<small>From</small>
+					<span class="ws-dark-gray"><small>{{from.index}}</small></span>
+				</div>
+				{{#if from.latitude}}
+					<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+				{{/if}}
+			
+			{{#if to}}
+				<div class="ws-blue">
+						<small>To</small>
+						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
+					</div>
+					{{#if to.latitude}}
+						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+					{{/if}}
+
+					<div class="ws-blue">
+						<small>Distance</small>
+						<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
+					</div>
+				{{/if}}
+
+				{{#unless to}}
+					<small>You can select two markers for make a range</small>
+			{{/unless}}
+		</a>
+	{{/each}}
+	{{#if create}}
+		<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
+			<h3>Click <small>to create a new edition range</small></h3>
+		</a>
+	{{/if}}
+
+	<button type="button" class="btn btn-default btn-sm btn-block save-btn su-save-save">Save</button>
+	<button type="button" class="btn btn-default btn-sm btn-block save-btn su-save-save-as">Save as</button>
+{{/if}}
+{{#unless data}}
+	<div class="page-header">
+		<h1>Click <small>on any marker or drag slider to start editing</small></h1>
+	</div>
+{{/unless}}

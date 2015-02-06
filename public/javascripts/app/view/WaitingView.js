@@ -4,13 +4,13 @@ app.view = app.view || {};
 app.view.WaitingView = Backbone.View.extend({
 
 	el: '#waiting',
-	template: Handlebars.compile($("#waiting-template").html()),
 	
 	initialize: function(options){
 	},
 
 	render: function(){
-		this.$el.html(this.template);
+		var template = Zebra.tmpl['waiting'];
+		this.$el.html(template);
 		this.$el.show();
 		return this;
 	},

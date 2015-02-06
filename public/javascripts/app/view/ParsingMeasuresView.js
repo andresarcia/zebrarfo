@@ -7,7 +7,6 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	model: null,
 	files: null,
 	html5: null,
-	template: Handlebars.compile($("#modal-parsing-measures-template").html()),
 
 	modal: null,
 	progressBar: null,
@@ -76,7 +75,8 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template({numFiles: this.files.length});
+		var template = Zebra.tmpl['modal_parsing_measures'];
+		var html = template({numFiles: this.files.length});
         this.$el.html(html);
 
 		return this;

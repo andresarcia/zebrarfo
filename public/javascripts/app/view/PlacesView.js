@@ -5,7 +5,6 @@ app.view.PlacesView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	places: null,
-	template: Handlebars.compile($("#places-template").html()),
 	
 	initialize: function(options){
 		var self = this;
@@ -18,7 +17,8 @@ app.view.PlacesView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.data);
+		var template = Zebra.tmpl['places'];
+		var html = template(this.data);
     	this.$el.html(html);	
 
 		return this;

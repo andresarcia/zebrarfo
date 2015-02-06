@@ -4,7 +4,6 @@ app.view = app.view || {};
 app.view.EditPlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	template: Handlebars.compile($("#su-edit-place-template").html()),
 	currentData: null,
 	currentMap: null,
 
@@ -58,7 +57,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template(this.data);
+		var template = Zebra.tmpl['su_edit_place'];
+		var html = template(this.data);
 		this.$el.html(html);
 
 		return this;
@@ -94,7 +94,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	renderEditingArea: function(){
 		var self = this;
-		var template = Handlebars.compile($("#su-list-coord-to-edit-template").html());
+		var template = Zebra.tmpl['su_list_coord_to_edit'];
 		var html;
 
 		if(this.editMarkers.length > 0){

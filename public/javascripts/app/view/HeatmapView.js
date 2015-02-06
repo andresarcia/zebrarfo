@@ -3,7 +3,6 @@ app.view = app.view || {};
 
 app.view.HeatmapView = Backbone.View.extend({
 
-	template: Handlebars.compile($("#heatmap-template").html()),
     heatmap: {
         map: null,
         bounds: null,
@@ -455,7 +454,8 @@ app.view.HeatmapView = Backbone.View.extend({
     },
 
     render: function(){
-        var html = this.template();
+        var template = Zebra.tmpl['heatmap'];
+        var html = template();
         this.$el.html(html);
 
         this.$el.find('.heatmap-settings').addClass('disable-container');

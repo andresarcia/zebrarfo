@@ -1,0 +1,66 @@
+<form>
+	<div class="input-group form-group has-feedback">
+      	<div class="input-group-btn">
+        	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Pick a zone <span class="caret"></span></button>
+        	<ul class="dropdown-menu" role="menu">
+        		{{#each this.models}}
+				<li><a class="item-zone-name" href="#upload">{{attributes.name}}</a></li>
+				{{/each}}
+				{{#unless this.models}}
+					<li class="divider"></li>
+					<li><a href="#">You have not uploaded any place</a></li>
+				{{/unless}}
+        	</ul>
+      	</div>
+		<label class="control-label sr-only" for="inputSuccess5">Hidden label</label>
+		<input id='upload-measures-name' type="text" class="form-control" placeholder="or type one">	
+		<span class="feedback-icon-container glyphicon form-control-feedback"></span>
+		<div class="input-group-btn">
+			<button type="button" class="btn btn-warning upload-measures-info-help">help
+        		<span class="glyphicon glyphicon-info-sign"></span>
+        	</button>
+		</div>
+    </div>
+
+	<div class="ws-dragandrophandler">
+		<h1>Drag files here</h1>
+		<div>Or, if you prefer...</div>
+		<br />
+		<input id='upload-measures-file' type="file" multiple='multiple' name='data'>
+	</div>
+	
+	<div class="form-group has-feedback">
+		<label for="upload-measures-unit">Please select the unit for frequency</label>
+		<select class="form-control" id="upload-measures-unit">
+			<option></option>
+			<option value="Hz">Hertz - Hz</option>
+			<option value="kHz">Kilohertz - kHz</option>
+			<option value="MHz">Megahertz - MHz</option>
+			<option value="GHz">Gigahertz - GHz</option>
+		</select>
+	</div>
+
+	<div class="form-group has-feedback">
+		<label for="upload-gps-position-function">Please select the function for calculating representative samples of a common GPS position</label>
+		<select class="form-control" id="upload-gps-position-function">
+			<option value="avg">Average</option>
+			<option value="max">Maximum</option>
+			<option value="min">Minimum</option>
+			<option value="first">First</option>
+			<option value="last">Last</option>
+		</select>
+	</div>
+
+	<ul id="upload-measures-files-info" class="list-group">
+		<div class="well well-sm">
+			Files to upload 
+			<span class="badge">0</span>
+			<hr>
+			Weight of files to upload 
+			<span class="badge">0 Bytes</span>
+		</div>
+	</ul>
+
+	<button id='upload-measures-button-delete' type="button" class="btn btn-warning btn-sm pull-left">Delete selected files</button>
+	<button id='upload-measures-button' type="button" class="btn btn-primary btn-lg pull-right">Synchronize</button>
+</form>

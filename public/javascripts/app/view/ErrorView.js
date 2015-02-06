@@ -4,7 +4,6 @@ app.view = app.view || {};
 app.view.ErrorView = Backbone.View.extend({
 
 	el: '#error',
-	template: Handlebars.compile($("#error-template").html()),
 	message: '',
 
 	events : {
@@ -24,7 +23,8 @@ app.view.ErrorView = Backbone.View.extend({
 			errorTitle = 'Error:';
 
 		this.message = msg;
-		var html = this.template({message: this.message, title: errorTitle});
+		var template = Zebra.tmpl['error'];
+		var html = template({message: this.message, title: errorTitle});
 		this.$el.html(html);
 		this.$el.show();
 

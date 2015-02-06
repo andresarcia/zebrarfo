@@ -83,7 +83,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	renderVerticalNavMenuPlaces: function(index){
-		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place-upload');
+		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place_upload');
 		this.navViews.verticalNav.showSubMenuWithClass(0,'upload-menu-item');
 
 		this.navViews.verticalNav.changeActiveClass({
@@ -166,7 +166,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
-		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place',id);
 		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
 
 		this.navViews.verticalNav.changeActiveClass({

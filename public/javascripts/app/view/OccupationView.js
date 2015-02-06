@@ -3,8 +3,6 @@ app.view = app.view || {};
 
 app.view.OccupationView = Backbone.View.extend({
 
-	template: Handlebars.compile($("#occupation-template").html()),
-
 	events: {
 		'change .slider':'updateChart',
 		'change #allocation-channel':'changeAllocationChannel',
@@ -215,7 +213,8 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var html = this.template();
+		var template = Zebra.tmpl['occupation'];
+		var html = template();
     	this.$el.html(html);	
 
     	this.$el.find("#allocation-channel").select2();

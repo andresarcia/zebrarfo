@@ -1,0 +1,53 @@
+<ul id="su-places-container" class="list-group">
+	{{#each this.models}}
+		<a href="#places/{{attributes.id}}" class="list-group-item">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<h1 class="col-md-12">{{this.attributes.name}}</h1>
+		  		<table class="table table-striped table-condensed">
+			    	<tr>
+				  		<td>Total number of samples</td>
+				  		<td>{{attributes.numberCoordinates}}</td>
+				  	</tr>
+				  	<tr>
+				  		<td>Total distance</td>
+				  		<td>{{attributes.totalDistance}} <small><b>km</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Total number of frequencies</td>
+				  		<td>{{attributes.numberPowerFrequency}}</td>
+				  	</tr>
+				  	<tr>
+				  		<td>Frequencies bandwidth</td>
+				  		<td>[{{attributes.frequencyMin}}-{{attributes.frequencyMax}}] <small><b>MHz</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Minimum power</td>
+				  		<td>{{attributes.powerMin}} <small><b>dBm</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Maximum power</td>
+				  		<td>{{attributes.powerMax}} <small><b>dBm</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Average power</td>
+				  		<td>{{attributes.powerAvg}} <small><b>dBm</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Standard deviation of power</td>
+				  		<td>{{attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
+				  	</tr>
+				  	<tr>
+				  		<td>Average of Standard deviation power</td>
+				  		<td>{{attributes.avgPowerSD}} <small><b>dBm</b></small></td>
+				  	</tr>
+			  	</table>
+			</div>
+			<div class="panel-footer">
+					<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
+					<br>
+				</div>
+		</div>
+		</a>
+		{{/each}}
+</ul>
