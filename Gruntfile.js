@@ -10,11 +10,25 @@ module.exports = function(grunt) {
       css: ['public/build/stylesheets/'],
       js: ['public/build/javascripts/'],
       after: [
-              'public/build/javascripts/all',
-              'public/build/javascripts/concat.js',
-              'public/build/stylesheets/all',
-              'public/build/stylesheets/concat.css',
-            ],
+        'public/build/javascripts/all',
+        'public/build/javascripts/concat.js',
+        'public/build/stylesheets/all',
+        'public/build/stylesheets/concat.css',
+      ],
+    },
+
+    handlebars: {
+      all: {
+        options: {
+          namespace: 'Zebra.tmpl',
+          processName: function(filePath) {
+              return filePath.replace(/^public\//, '').replace(/^templates\//, '').replace(/\.hbs$/, '');
+          }
+        },
+        files: {
+          "public/javascripts/templates/templates.js": ["templates/**/*.hbs"]
+        }
+      }
     },
 
     copy: {
@@ -35,7 +49,7 @@ module.exports = function(grunt) {
         files: [
           {expand: true, flatten: true, src: ['public/stylesheets/**'], dest: 'public/build/stylesheets/all/', filter: 'isFile'},
         ]
-      }
+      },
     },
 
     concat: {
@@ -47,7 +61,7 @@ module.exports = function(grunt) {
               'public/javascripts/vendor/jquery-scrolltofixed-min.js',
               'public/javascripts/vendor/moment.min.js',
               'public/javascripts/vendor/underscore-min.js',
-              'public/javascripts/vendor/handlebars.min.js',
+              'public/javascripts/vendor/handlebars.runtime-v2.0.0.js',
               'public/javascripts/vendor/backbone-min.js',
               'public/javascripts/vendor/highcharts.js',
               'public/javascripts/vendor/highcharts_exporting.js',
@@ -58,34 +72,39 @@ module.exports = function(grunt) {
         dest: 'public/build/javascripts/all/1_vendors.js'
       },
 
+      templates: {
+        src: ['public/javascripts/templates/*.js'],
+        dest: 'public/build/javascripts/all/2_templates.js'
+      },
+
       app_utils: {
         src: ['public/javascripts/app/util/*.js'],
-        dest: 'public/build/javascripts/all/2_utils.js'
+        dest: 'public/build/javascripts/all/3_utils.js'
       },
 
       app_models: {
         src: ['public/javascripts/app/model/*.js'],
-        dest: 'public/build/javascripts/all/3_models.js'
+        dest: 'public/build/javascripts/all/4_models.js'
       },
 
       app_collections: {
         src: ['public/javascripts/app/collection/*.js'],
-        dest: 'public/build/javascripts/all/4_collections.js'
+        dest: 'public/build/javascripts/all/5_collections.js'
       },
 
       app_views: {
         src: ['public/javascripts/app/view/*.js'],
-        dest: 'public/build/javascripts/all/5_views.js'
+        dest: 'public/build/javascripts/all/6_views.js'
       },
 
       app_router: {
         src: ['public/javascripts/app/router/*.js'],
-        dest: 'public/build/javascripts/all/6_router.js'
+        dest: 'public/build/javascripts/all/7_router.js'
       },
 
       app_main: {
         src: ['public/javascripts/app/app.js'],
-        dest: 'public/build/javascripts/all/7_main.js'
+        dest: 'public/build/javascripts/all/8_main.js'
       },
 
       all: {
@@ -180,8 +199,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
 
-  grunt.registerTask('default', ['clean','copy','concat','uglify','cssmin','imagemin','clean:after']);
+  grunt.registerTask('default', ['clean','handlebars','copy','concat','uglify','cssmin','imagemin','clean:after']);
   grunt.registerTask('dev', ['clean','copy','concat','uglify','cssmin']);
 
 };
