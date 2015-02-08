@@ -10,6 +10,19 @@ this["Zebra"]["tmpl"]["charts"] = Handlebars.template({"compiler":[6,">= 2.0.0-b
     + "</a></li>\n	<li class=\"active\">Charts</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"charts-tabs\">\n	<li class=\"active\"><a href=\"#occupation-tab\" role=\"tab\" data-toggle=\"tab\">Occupation</a></li>\n	<li><a href=\"#heatmap-tab\" role=\"tab\" data-toggle=\"tab\">Heatmap</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"occupation-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"heatmap-tab\"></div>\n</div>";
 },"useData":true});
 
+this["Zebra"]["tmpl"]["edit_coordinates"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"row\">\n	<div id=\"su-list-coord-to-edit\" class=\"col-md-3\"></div>\n  	<div class=\"col-md-9\">\n  		<div id=\"su-edit-place-controls\" class=\"col-xs-12 col-sm-12 col-md-12\">\n  			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn action-btn su-delete-coord\" aria-label=\"Left Align\" disabled>\n						<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>\n				</button>\n			</div>\n			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn select-btn su-select-first-coord\" aria-label=\"Left Align\">\n						first\n				</button>\n				<button type=\"button\" class=\"btn select-btn su-select-last-coord\" aria-label=\"Left Align\">\n						last\n				</button>\n			</div>\n		</div>\n  		<div class=\"col-xs-11 col-sm-11 col-md-11\">\n			<div id=\"map_canvas_coordinates\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-xs-1 col-sm-1 col-md-1\" id=\"markers-slider-edit-place\">\n			<div class=\"markers-slider\" style=\"height:450px;\"></div>\n		</div>\n  	</div>\n</div>";
+  },"useData":true});
+
+this["Zebra"]["tmpl"]["edit_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li><a href=\"#places/"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</a></li>\n	<li class=\"active\">Edit place</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"edit-tabs\">\n	<li class=\"active\"><a href=\"#edit-coord-tab\" role=\"tab\" data-toggle=\"tab\">Coordinates</a></li>\n	<li><a href=\"#edit-outlayer-tab\" role=\"tab\" data-toggle=\"tab\">Outlayers</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"edit-coord-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"edit-outlayer-tab\"></div>\n</div>";
+},"useData":true});
+
 this["Zebra"]["tmpl"]["error"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var lambda=this.lambda, escapeExpression=this.escapeExpression;
   return "				  		<li><h4><em>"
@@ -121,15 +134,6 @@ this["Zebra"]["tmpl"]["su_coordinate_resume"] = Handlebars.template({"compiler":
     + "</b></small></h5> \n		      		</td>\n		      	</tr>\n		   	</tbody>\n		</table>\n		<div class=\"chart_power_frequency\"></div>\n		<div class=\"chart_tooltip\">\n			<p style=\"margin:0\">default</p>\n		</div>\n	</li>\n</ul>";
 },"useData":true});
 
-this["Zebra"]["tmpl"]["su_edit_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li><a href=\"#places/"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\">"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></li>\n	<li class=\"active\">Edit place</li>\n</ol>\n<div class=\"row\">\n	<div id=\"su-list-coord-to-edit\" class=\"col-md-3\"></div>\n  	<div class=\"col-md-9\">\n  		<div id=\"su-edit-place-controls\" class=\"col-xs-12 col-sm-12 col-md-12\">\n  			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn action-btn su-delete-coord\" aria-label=\"Left Align\" disabled>\n						<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>\n				</button>\n			</div>\n			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn select-btn su-select-first-coord\" aria-label=\"Left Align\">\n						first\n				</button>\n				<button type=\"button\" class=\"btn select-btn su-select-last-coord\" aria-label=\"Left Align\">\n						last\n				</button>\n			</div>\n		</div>\n  		<div class=\"col-xs-11 col-sm-11 col-md-11\">\n			<div id=\"map_canvas_coordinates\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-xs-1 col-sm-1 col-md-1\" id=\"markers-slider-edit-place\">\n			<div class=\"markers-slider\" style=\"height:450px;\"></div>\n		</div>\n  	</div>\n</div>";
-},"useData":true});
-
 this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.hidden : depth0), {"name":"if","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
@@ -222,7 +226,7 @@ this["Zebra"]["tmpl"]["vertical_nav_sub_menu_single_place"] = Handlebars.templat
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "\" class=\"child item\">\n		<span class=\"glyphicon glyphicon-map-marker\"></span>\n		<span> Coordinates</span>\n	</a>\n</li>\n<li class=\"list-group-item single-place-menu-item\">\n	<a href=\"#places/"
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
-    + "/edit\" class=\"child item\">\n		<span class=\"glyphicon glyphicon-pencil\"></span>\n		<span> Edit place</span>\n	</a>\n</li>\n<li class=\"list-group-item single-place-menu-item\">\n	<a href=\"#places/"
+    + "/edit?type=coordinates\" class=\"child item\">\n		<span class=\"glyphicon glyphicon-pencil\"></span>\n		<span> Edit place</span>\n	</a>\n</li>\n<li class=\"list-group-item single-place-menu-item\">\n	<a href=\"#places/"
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "/charts?type=occupation\" class=\"child item\">\n		<span class=\"glyphicon glyphicon-stats\"></span>\n		<span> Occupation</span>\n	</a>\n</li>";
 },"useData":true});
