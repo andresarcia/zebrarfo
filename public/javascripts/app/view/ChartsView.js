@@ -8,7 +8,7 @@ app.view.ChartsView = Backbone.View.extend({
 	currentChart: null,
 
 	events: {
-		'click a[data-toggle="tab"]': 'changeChart'
+		'click a[data-toggle="tab"]': 'change'
 	},
 
 	initialize: function(options){
@@ -29,14 +29,14 @@ app.view.ChartsView = Backbone.View.extend({
 		this.waitingView.closeView();
 
 		if(window.appRouter.currentData.innerData.charts.tab)
-			this.changeChart(null,window.appRouter.currentData.innerData.charts.tab);
+			this.change(null,window.appRouter.currentData.innerData.charts.tab);
 		else if(options.type !== undefined)
-			this.changeChart(null,options.type);
+			this.change(null,options.type);
 		else
-			this.changeChart(null,0);
+			this.change(null,0);
 
 		Backbone.pubSub.on('single-place-change-to-heatmap', function(){
-			self.changeChart(null,1);
+			self.change(null,1);
 		});
 
 		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
@@ -47,7 +47,7 @@ app.view.ChartsView = Backbone.View.extend({
 
 	},
 
-	changeChart: function(evt,index){
+	change: function(evt,index){
 		var self = this;
 
 		if(index === undefined)
@@ -85,63 +85,57 @@ app.view.ChartsView = Backbone.View.extend({
 		}
 	},
 
-	renderOccupation: function(){
-		window.appRouter.currentData.innerData.charts.occupation.view = new app.view.OccupationView({
-			waitingView: this.waitingView,
-			errorView : this.errorView,
-			place: this.data,
-			channels: window.appRouter.currentData.innerData.charts.channels
-		});
-
-		this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
-
-		if(window.appRouter.currentData.innerData.charts.data) 
-			window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(window.appRouter.currentData.innerData.charts.data);
-			
-		else {
+	fetchData: function(callback){
+		if(!this.data.attributes.charts){
 			var self = this;
-			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
-			this.currentData.fetch({
+			var data = new app.model.ChartsData({idPlace:this.data.id});
+			data.fetch({
 				success: function(){
-					window.appRouter.currentData.innerData.charts.data = self.currentData;
-					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
-						window.appRouter.currentData.innerData.charts.occupation.view.renderComponents(self.currentData);
+					self.data.attributes.charts = data.attributes.data;
+					callback();
 				},
 				error: function(model, xhr, options){
 		     		self.errorView.render([xhr.responseText]);
 		    	}
 			});
-		}
+
+		} else
+			callback();
+	},
+
+	renderOccupation: function(){
+		var self = this;
+		window.appRouter.currentData.innerData.charts.occupation.view = new app.view.OccupationView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+			data: this.data,
+			channels: window.appRouter.currentData.innerData.charts.channels
+		});
+
+		this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
+
+		this.fetchData(function(){
+			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
+				window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
+		});
 	},
 
 	renderHeatmap: function(){
+		var self = this;
 		window.appRouter.currentData.innerData.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			place: this.data,
+			data: this.data,
 			frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
 			channels: window.appRouter.currentData.innerData.charts.channels
 		});
 
 		this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
 
-		if(window.appRouter.currentData.innerData.charts.data) 
-			window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(window.appRouter.currentData.innerData.charts.data);
-
-		else {
-			var self = this;
-			this.currentData = new app.model.ChartsData({idPlace:this.data.id});
-			this.currentData.fetch({
-				success: function(){
-					window.appRouter.currentData.innerData.charts.data = self.currentData;
-					if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
-						window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents(self.currentData);
-				},
-				error: function(model, xhr, options){
-		     		self.errorView.render([xhr.responseText]);
-		    	}
-			});
-		}
+		this.fetchData(function(){
+			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
+				window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
+		});
 	},
 
 	render: function(){

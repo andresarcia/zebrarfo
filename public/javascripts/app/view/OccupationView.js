@@ -17,8 +17,8 @@ app.view.OccupationView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
-		this.place = options.place.attributes;
-		this.threshold = this.place.powerAvg;
+		this.data = options.data.attributes;
+		this.threshold = this.data.powerAvg;
 
 		this.chart = new app.view.PowerFrequenciesView({
 			selector: '#chart_canvas_occupation',
@@ -68,7 +68,7 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		this.clearChannels();
 		this.renderChart();
 		this.renderChannelInput();
@@ -90,12 +90,12 @@ app.view.OccupationView = Backbone.View.extend({
         	self.renderChart();
         }, 200);
 
-		this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
-		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		
 		if((this.channels === undefined || this.channels.length < 1) && data.frequencyBy === 'channels'){
             this.channels = [];
-            this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
+            this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
         
         } else if(this.channels === undefined)
         	this.channels = [];
@@ -137,9 +137,8 @@ app.view.OccupationView = Backbone.View.extend({
 		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
 	},
 
-	renderComponents: function(data){
+	renderComponents: function(){
 		var self = this;
-		this.occupation = data.attributes.data;
 
 		setTimeout(function(){
 			self.renderSlider();
@@ -152,11 +151,11 @@ app.view.OccupationView = Backbone.View.extend({
 		var self = this;
 
 		this.slider = this.$el.find('.slider').noUiSlider({
-			start: this.place.powerAvg,
+			start: this.data.powerAvg,
 			step: 1,
 			range: {
-				'min': self.place.powerMin,
-				'max': self.place.powerMax
+				'min': self.data.powerMin,
+				'max': self.data.powerMax
 			},
 			format: wNumb({
                 decimals: 0
@@ -174,7 +173,7 @@ app.view.OccupationView = Backbone.View.extend({
 
 	renderChannelInput: function(){
         var channelData = [];
-        _.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
+        _.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
             channelData.push({
                 id: channel.from + '-' + channel.to,
                 text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
@@ -193,7 +192,7 @@ app.view.OccupationView = Backbone.View.extend({
 		var self = this;
 		var data = [];
 
-		var dataGrouped = _.groupBy(this.occupation, function(sample){
+		var dataGrouped = _.groupBy(this.data.charts, function(sample){
             return sample.frequency;
         });
 
@@ -218,7 +217,7 @@ app.view.OccupationView = Backbone.View.extend({
     	this.$el.html(html);	
 
     	this.$el.find("#allocation-channel").select2();
-    	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+    	this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
     	this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;

@@ -3,15 +3,6 @@ app.router = app.router || {};
 
 app.router.AppRouter = Backbone.Router.extend({
 
-	helperViews: {
-		errorView: null,
-		waitingView: null
-	},
-
-	navViews : {
-		verticalNav: null
-	},
-
 	currentView: null,
 	currentData: {
 		data: null,
@@ -20,10 +11,10 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	initialize: function(options){
-		this.navViews.verticalNav = new app.view.VerticalNavView();
+		this.verticalNav = new app.view.VerticalNavView();
 
-		this.helperViews.errorView = new app.view.ErrorView();
-		this.helperViews.waitingView = new app.view.WaitingView();
+		this.errorView = new app.view.ErrorView();
+		this.waitingView = new app.view.WaitingView();
 	},
 
 	clearViews: function(){
@@ -36,7 +27,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/upload': 'uploadPlace',
 
 		'places/:id' : 'showSinglePlace',
-		'places/:id/edit' : 'showEditPlace',
+		'places/:id/edit?type=:type' : 'showEditPlace',
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
 		'places/:id/upload' : 'showSinglePlaceUpload',
 		
@@ -48,7 +39,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	setChannelsInRange: function(frequencyMin,frequencyMax){
   		var data = [];
-  		_.each(window.appSettings.channels, function(item){
+  		_.each(window.settings.channels, function(item){
     		var aux = [];
     		_.each(item, function(channel){
       			if(frequencyMin < channel.to && frequencyMax > channel.from)
@@ -63,19 +54,19 @@ app.router.AppRouter = Backbone.Router.extend({
 	fetchPlacesData: function(callback){
 		if(this.currentData.data === null || this.currentData.id != 'places'){
 			var self = this;
-			this.helperViews.waitingView.render();
+			this.waitingView.render();
 
 			this.currentData.innerData = {};
 			this.currentData.id = 'places';
 			this.currentData.data = new app.collection.Places();
 			this.currentData.data.fetch({
 				success: function(){  
-					self.helperViews.waitingView.closeView();
+					self.waitingView.closeView();
 					callback();
 			    },
 			    error: function(model, xhr, options){
-			     	self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render([xhr.responseText]);
+			     	self.waitingView.closeView();
+			     	self.errorView.render([xhr.responseText]);
 			    }
 			});
 		} else
@@ -83,10 +74,10 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	renderVerticalNavMenuPlaces: function(index){
-		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place_upload');
-		this.navViews.verticalNav.showSubMenuWithClass(0,'upload-menu-item');
+		this.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place_upload');
+		this.verticalNav.showSubMenuWithClass(0,'upload-menu-item');
 
-		this.navViews.verticalNav.changeActiveClass({
+		this.verticalNav.changeActiveClass({
 			index: index,
 		});
 	},
@@ -96,8 +87,8 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.clearViews();
 		this.fetchPlacesData(function(){
   			self.currentView = new app.view.PlacesView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data
 			});
 			self.renderVerticalNavMenuPlaces([0]);
@@ -109,8 +100,8 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.clearViews();
 		this.fetchPlacesData(function(){
   			self.currentView = new app.view.UploadMeasuresView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data
 			});
 			self.renderVerticalNavMenuPlaces([0,0]);
@@ -121,7 +112,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	fetchSinglePlaceData: function(id,callback){
 		if(this.currentData.data === null || this.currentData.id != 'singlePlace'){
 			var self = this;
-			this.helperViews.waitingView.render();
+			this.waitingView.render();
 
 			var data = new app.model.Place({id:id});
 			data.fetch({
@@ -131,8 +122,8 @@ app.router.AppRouter = Backbone.Router.extend({
 					});
 			    },
 			    error: function(model, xhr, options){
-			     	self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render([xhr.responseText]);
+			     	self.waitingView.closeView();
+			     	self.errorView.render([xhr.responseText]);
 			    }
 			});
 		} else
@@ -144,21 +135,21 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.currentData.innerData = {};
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
-		window.appSettings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
+		window.settings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
 		if(this.currentData.data.attributes.coordinates){
-			self.helperViews.waitingView.closeView();
+			self.waitingView.closeView();
 			callback();
 		} else {
 			var coordinates = new app.collection.Coordinates({idPlace:this.currentData.data.id});
 			coordinates.fetch({
 				success: function(){
-					self.helperViews.waitingView.closeView();
+					self.waitingView.closeView();
 					self.currentData.data.attributes.coordinates = coordinates.models[0].attributes.coordinates;
 					callback();
 				},
 				error: function(model, xhr, options){
-					self.helperViews.waitingView.closeView();
-			     	self.helperViews.errorView.render([xhr.responseText]);
+					self.waitingView.closeView();
+			     	self.errorView.render([xhr.responseText]);
 			     	callback();
 				}
 			});
@@ -166,10 +157,10 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	renderVerticalNavMenuSinglePlace: function(index,id){
-		this.navViews.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place',id);
-		this.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
+		this.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place',id);
+		this.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
 
-		this.navViews.verticalNav.changeActiveClass({
+		this.verticalNav.changeActiveClass({
 			index: index,
 		});
 	},
@@ -179,31 +170,36 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.SinglePlaceView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data
 			});
 			self.renderVerticalNavMenuSinglePlace([0,0],id);
 		});
 	},
 
-	showEditPlace: function(id){
-		var self = this;
+	showEditPlace: function(id,type){
 		this.clearViews();
+		var self = this;
+		var editType;
+
+		if(type === 'coordinates') 
+			editType = 0;
+		else if(type === 'outlayers') 
+			editType = 1;
+
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.EditPlaceView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data,
+				type: editType
 			});
 			self.renderVerticalNavMenuSinglePlace([0,1],id);
 		});
 	},
 
 	showChartsOfPlace: function(id,type){
-		if(this.currentView !== null && this.currentView.id == 'placeChart')
-			return;
-
 		this.clearViews();
 		var self = this;
 		var chartType;
@@ -215,8 +211,8 @@ app.router.AppRouter = Backbone.Router.extend({
 
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.ChartsView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data,
 				type: chartType
 			});
@@ -229,25 +225,25 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.clearViews();
 		this.fetchSinglePlaceData(id,function(){
   			self.currentView = new app.view.UploadMeasuresView({
-				waitingView: self.helperViews.waitingView,
-				errorView : self.helperViews.errorView,
+				waitingView: self.waitingView,
+				errorView : self.errorView,
 				data: self.currentData.data
 			});
 
-			self.navViews.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
-			self.navViews.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
+			self.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+			self.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
 		});
 	},
 
 	/*-------------------------------------------------------------------*/
 	showHotspots: function(){
-		this.navViews.verticalNav.changeActiveClass({
+		this.verticalNav.changeActiveClass({
 			index: [1]
 		});
 	},
 
 	uploadHotspots: function(){
-		this.navViews.verticalNav.changeActiveClass({
+		this.verticalNav.changeActiveClass({
 			index: [1,0]
 		});
 	},

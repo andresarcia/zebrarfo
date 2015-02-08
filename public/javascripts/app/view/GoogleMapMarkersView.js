@@ -23,16 +23,16 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 	toggleMarker: function(id){
 		if(this.lastMarkerToggle !== null && id !== this.lastMarkerToggle){
 			this.markers[this.lastMarkerToggle].setAnimation(null);
-			this.markers[this.lastMarkerToggle].setIcon(window.appSettings.markers.iconIdle);
+			this.markers[this.lastMarkerToggle].setIcon(window.settings.markers.iconIdle);
 		}
 
 		if (this.markers[id].getAnimation() !== null) {
         	this.markers[id].setAnimation(null);
-        	this.markers[id].setIcon(window.appSettings.markers.iconIdle);
+        	this.markers[id].setIcon(window.settings.markers.iconIdle);
 		
 		} else {
         	this.markers[id].setAnimation(google.maps.Animation.BOUNCE);
-        	this.markers[id].setIcon(window.appSettings.markers.iconHover);
+        	this.markers[id].setIcon(window.settings.markers.iconHover);
         	this.lastMarkerToggle = id;
       	}
 	},
@@ -59,20 +59,20 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
   			var marker = new google.maps.Marker({
 			    position: latLng,
 		      	map: map,
-		      	icon: window.appSettings.markers.iconIdle,
+		      	icon: window.settings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
 		      	index: index,
 		  	});
 
 		  	google.maps.event.addListener(marker, 'mouseover', function() {
-		    	marker.setIcon(window.appSettings.markers.iconHover);
+		    	marker.setIcon(window.settings.markers.iconHover);
 		    	infowindow.open(map, marker);
 			});
 
 			google.maps.event.addListener(marker, 'mouseout', function() {
 		    	if(marker.getAnimation() === null)
-		    		marker.setIcon(window.appSettings.markers.iconIdle);
+		    		marker.setIcon(window.settings.markers.iconIdle);
 		    	infowindow.close();
 			});
 

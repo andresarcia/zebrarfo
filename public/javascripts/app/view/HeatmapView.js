@@ -39,14 +39,14 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
         
-        this.place = options.place.attributes;
+        this.data = options.data.attributes;
 
-        var tail = Math.round((this.place.frequencyMax - this.place.frequencyMin) * 0.10);
+        var tail = Math.round((this.data.frequencyMax - this.data.frequencyMin) * 0.10);
 
         this.boundaries = [];
         this.boundaries.push({
-            from: this.place.frequencyMin + tail,
-            to: this.place.frequencyMax - tail
+            from: this.data.frequencyMin + tail,
+            to: this.data.frequencyMax - tail
         });
 
         this.heatmapDataProcessor = new app.util.HeatmapDataProcessor();
@@ -58,10 +58,10 @@ app.view.HeatmapView = Backbone.View.extend({
             this.channels = [];
 	},
 
-    renderComponents: function(data){
+    renderComponents: function(){
         this.heatmapDataProcessor.require({
-            place: this.place,
-            data: data.attributes.data
+            place: this.data,
+            data: this.data.charts
         });
 
         this.$el.find('.heatmap-settings').removeClass('disable-container');
@@ -72,7 +72,7 @@ app.view.HeatmapView = Backbone.View.extend({
     renderMap: function(){
         var self = this;
         
-        if(window.appSettings.googleMapApi)
+        if(window.settings.googleMapApi)
             self._renderMap();
         else 
             Backbone.pubSub.on('event-loaded-google-map-api', function(){
@@ -129,8 +129,8 @@ app.view.HeatmapView = Backbone.View.extend({
                 decimals: 0
             }),
             range: {
-                'min': this.place.frequencyMin,
-                'max': this.place.frequencyMax
+                'min': this.data.frequencyMin,
+                'max': this.data.frequencyMax
             }
         });
 
@@ -149,13 +149,13 @@ app.view.HeatmapView = Backbone.View.extend({
         });
 
         this.$el.find("#allocation-channel").select2();
-        this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+        this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
 
         this.$el.find('.heatmap-select-channels').hide();
 
-        // console.log(this.place.distaceMin);
-        // console.log(this.place.distaceAvg); 
-        // console.log(this.place.distaceMax);
+        // console.log(this.data.distaceMin);
+        // console.log(this.data.distaceAvg); 
+        // console.log(this.data.distaceMax);
 
         this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
             start: this.heatmap.settings.distance,
@@ -196,7 +196,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
     renderMaxIntensitySlider: function(){
         this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
-            start: this.place.powerMax,
+            start: this.data.powerMax,
             step: 1,
             format: wNumb({
                 decimals: 0
@@ -207,7 +207,7 @@ app.view.HeatmapView = Backbone.View.extend({
             }
         }, true);
 
-        this.maxIntensitySlider.val(this.place.powerMax);
+        this.maxIntensitySlider.val(this.data.powerMax);
         this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
             $(this).html(
                 '<strong>' + value + ' dBm</strong>'
@@ -217,7 +217,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
     renderChannelInput: function(){
         var channelData = [];
-        _.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
+        _.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
             channelData.push({
                 id: channel.from + '-' + channel.to,
                 text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
@@ -231,7 +231,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
         if(this.channels === undefined || this.channels.length < 1){
             this.channels = [];
-            this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
+            this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
         }
 
         this.$el.find('#select-channels').select2('val', this.channels);
@@ -279,14 +279,14 @@ app.view.HeatmapView = Backbone.View.extend({
     updateDataByTab: function(options){
         this.frequencyBy = options.frequencyBy;
         this.channels = options.channels;
-        this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+        this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
         this.changeFrequencyBy(this.frequencyBy,true);
     },
 
     changeAllocationChannel: function(){
-        window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+        window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
         this.channels = [];
-        this.channels.push(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].from + '-' + window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation][0].to);
+        this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
         this.renderChannelInput();
         this.changeChannelRange();
     },
@@ -415,7 +415,7 @@ app.view.HeatmapView = Backbone.View.extend({
                 var marker = new google.maps.Marker({
                     position: location,
                     map: self.heatmap.map,
-                    icon: window.appSettings.markers.iconNormal,
+                    icon: window.settings.markers.iconNormal,
                     index: index,
                 });
 
@@ -434,7 +434,7 @@ app.view.HeatmapView = Backbone.View.extend({
                 self.heatmap.bounds.extend(marker.position);
             });
             
-            this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.place.powerMax);
+            this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
             this.renderMaxIntensitySlider();
             this.renderMarkersSlider(data.data.length - 1);
 

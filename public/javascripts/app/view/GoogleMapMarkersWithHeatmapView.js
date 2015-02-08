@@ -91,20 +91,20 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			if(o[0].index < n[0].index){
 				for(var i = o[0].index; i < n[0].index; i++)
-					this.markers[i].setIcon(window.appSettings.markers.iconIdle);
+					this.markers[i].setIcon(window.settings.markers.iconIdle);
 			}  
 
 			if(o[1].index > n[1].index){
 				for(var j = n[1].index + 1; j <= o[1].index; j++)
-					this.markers[j].setIcon(window.appSettings.markers.iconIdle);
+					this.markers[j].setIcon(window.settings.markers.iconIdle);
 			}
 		
 		} else {
 			for(var k = o[0].index; k <= o[1].index; k++)
-				this.markers[k].setIcon(window.appSettings.markers.iconIdle);
+				this.markers[k].setIcon(window.settings.markers.iconIdle);
 
 			if(n.length == 1)
-				this.markers[n[0].index].setIcon(window.appSettings.markers.iconHover);
+				this.markers[n[0].index].setIcon(window.settings.markers.iconHover);
 		}
 	},
 
@@ -113,11 +113,11 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			return;
 
 		else if(n.length == 1)
-			this.markers[n[0].index].setIcon(window.appSettings.markers.iconHover);
+			this.markers[n[0].index].setIcon(window.settings.markers.iconHover);
 
 		else if(n.length == 2){
 			for(var i = n[0].index + 1; i < n[1].index; i++)
-				this.markers[i].setIcon(window.appSettings.markers.iconHover);
+				this.markers[i].setIcon(window.settings.markers.iconHover);
 		}
 	},
 
@@ -125,7 +125,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		if(n.length === 0){
 			_.each(o,function(item){
 				item.setAnimation(null);
-				item.setIcon(window.appSettings.markers.iconIdle);
+				item.setIcon(window.settings.markers.iconIdle);
 			});
 		
 		} else {
@@ -137,13 +137,13 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 					item.setAnimation(null);
 
 				if(item.index < n[0].index || n.length == 1)
-					item.setIcon(window.appSettings.markers.iconIdle);
+					item.setIcon(window.settings.markers.iconIdle);
 				if(n[1] !== undefined && item.index > n[1].index)
-					item.setIcon(window.appSettings.markers.iconIdle);
+					item.setIcon(window.settings.markers.iconIdle);
 			});
 
 			_.each(n, function(item){
-				item.setIcon(window.appSettings.markers.iconHover);
+				item.setIcon(window.settings.markers.iconHover);
 				if(item.animation === null)
 					item.setAnimation(google.maps.Animation.BOUNCE);
 			});
@@ -213,7 +213,7 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
   			var marker = new google.maps.Marker({
 			    position: latLng,
 		      	map: self.map,
-		      	icon: window.appSettings.markers.iconIdle,
+		      	icon: window.settings.markers.iconIdle,
 		      	animation: null,
 		      	id: coordinate.id,
 		      	index: index,

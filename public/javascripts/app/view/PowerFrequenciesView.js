@@ -21,7 +21,7 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 	appendChannels: function(chart){
 		var self = this;
 		
-		_.each(window.appSettings.fixedChannels[window.appSettings.currentChannelAllocation], function(channel){
+		_.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
 			channel.id = channel.from + '-' + channel.to;
 			channel.events = {
 				mouseover: function(e){

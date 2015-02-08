@@ -68,7 +68,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.appSettings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		this.renderPowerFrequencies();
     },
 
@@ -128,7 +128,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	renderMap: function(){
 		var self = this;
 
-		if(window.appSettings.googleMapApi)
+		if(window.settings.googleMapApi)
 			this.mapView.render(this.coordinates);
 		else 
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
@@ -142,7 +142,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
     	this.$el.html(html);	
 
     	this.$el.find("#allocation-channel").select2();
-    	this.$el.find("#allocation-channel").select2("val", window.appSettings.currentChannelAllocation);
+    	this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
     
 		return this;
 	},
