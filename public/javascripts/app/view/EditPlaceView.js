@@ -74,6 +74,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	renderEditOutlayers: function(){
 		var self = this;
+		this.waitingView.render();
 		this.fetchOutlayers(function(){
 			var editOutlayers = new app.view.EditOutlayersView({
 				waitingView: self.waitingView,
@@ -81,6 +82,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 				data: self.data,
 			});
 			self.$el.find('#edit-outlayer-tab').html(editOutlayers.render().el);
+			self.waitingView.closeView();
 		});
 	},
 

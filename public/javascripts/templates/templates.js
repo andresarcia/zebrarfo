@@ -160,13 +160,13 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
   return buffer + "\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn su-save-save\">Save</button>\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn su-save-save-as\">Save as</button>\n";
 },"2":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "		<div class=\"ws-blue pull-right\">\n				<small>Hidden restore stack</small>\n				<span class=\"ws-dark-gray\"><small>"
+  return "		<br>\n		<div class=\"ws-blue pull-right\">\n			<small>Hidden restore stack</small>\n			<span class=\"ws-dark-gray\"><small>"
     + escapeExpression(((helper = (helper = helpers.hiddenNumber || (depth0 != null ? depth0.hiddenNumber : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"hiddenNumber","hash":{},"data":data}) : helper)))
-    + "</small></span>\n			</div>\n";
+    + "</small></span>\n		</div>\n";
 },"4":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "		<a href=\"javascript:void(0)\" class=\"su-coord-to-edit\">\n			<span href=\"javascript:void(0)\" class=\"pull-right ws-red su-edit-remove-from-list\">\n					<small>remove from list</small>\n				</span> \n			<div class=\"ws-blue\">\n					<small>From</small>\n					<span class=\"ws-dark-gray\"><small>"
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "		<a href=\"javascript:void(0)\" class=\"su-coord-to-edit\">\n			<span href=\"javascript:void(0)\" class=\"pull-right ws-red su-edit-remove-from-list\">\n				<small>remove from list</small>\n			</span> \n			<div class=\"ws-blue\">\n				<small>From</small>\n				<span class=\"ws-dark-gray\"><small>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.index : stack1), depth0))
-    + "</small></span>\n				</div>\n";
+    + "</small></span>\n			</div>\n";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "			\n";
@@ -178,29 +178,29 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
   return buffer + "		</a>\n";
 },"5":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "					<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "				<div class=\"ws-gray\"><small><b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), depth0))
     + " <b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.longitude : stack1), depth0))
     + "</small></div>\n";
 },"7":function(depth0,helpers,partials,data) {
-  var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing, buffer = "				<div class=\"ws-blue\">\n						<small>To</small>\n						<span class=\"ws-dark-gray\"><small>"
+  var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing, buffer = "				<div class=\"ws-blue\">\n					<small>To</small>\n					<span class=\"ws-dark-gray\"><small>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.index : stack1), depth0))
-    + "</small></span>\n					</div>\n";
+    + "</small></span>\n				</div>\n";
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "\n					<div class=\"ws-blue\">\n						<small>Distance</small>\n						<span class=\"ws-dark-gray\"><small>"
+  return buffer + "\n				<div class=\"ws-blue\">\n					<small>Distance</small>\n					<span class=\"ws-dark-gray\"><small>"
     + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
-    + " Km</small></span>\n					</div>\n";
+    + " Km</small></span>\n				</div>\n";
 },"8":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "						<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "					<div class=\"ws-gray\"><small><b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), depth0))
     + " <b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.longitude : stack1), depth0))
     + "</small></div>\n";
 },"10":function(depth0,helpers,partials,data) {
-  return "					<small>You can select two markers for make a range</small>\n";
+  return "				<small>You can select two markers for make a range</small>\n";
   },"12":function(depth0,helpers,partials,data) {
   return "		<a href=\"javascript:void(0)\" class=\"su-create-new-edition-range ws-dark-gray\">\n			<h3>Click <small>to create a new edition range</small></h3>\n		</a>\n";
   },"14":function(depth0,helpers,partials,data) {

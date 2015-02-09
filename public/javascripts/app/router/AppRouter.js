@@ -6,8 +6,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	currentView: null,
 	currentData: {
 		data: null,
-		id: null,
-		innerData: {},
+		id: null
 	},
 
 	initialize: function(options){
@@ -56,7 +55,6 @@ app.router.AppRouter = Backbone.Router.extend({
 			var self = this;
 			this.waitingView.render();
 
-			this.currentData.innerData = {};
 			this.currentData.id = 'places';
 			this.currentData.data = new app.collection.Places();
 			this.currentData.data.fetch({
@@ -132,7 +130,6 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	setPlaceData: function(data,callback){
 		var self = this;
-		this.currentData.innerData = {};
 		this.currentData.id = 'singlePlace';
 		this.currentData.data = data;
 		window.settings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
@@ -200,6 +197,9 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showChartsOfPlace: function(id,type){
+		if(this.currentView !== null && this.currentView.id == 'placeChart')
+			return;
+
 		this.clearViews();
 		var self = this;
 		var chartType;

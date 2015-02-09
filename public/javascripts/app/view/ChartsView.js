@@ -19,17 +19,15 @@ app.view.ChartsView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
-		if(!window.appRouter.currentData.innerData.charts){
-			window.appRouter.currentData.innerData.charts = {};
-			window.appRouter.currentData.innerData.charts.occupation = {};
-			window.appRouter.currentData.innerData.charts.heatmap = {};
-		}
+		window.settings.charts = window.settings.charts || {};
+		window.settings.charts.occupation = window.settings.charts.occupation || {};
+		window.settings.charts.heatmap = window.settings.charts.heatmap || {};
 
 		this.render();
 		this.waitingView.closeView();
 
-		if(window.appRouter.currentData.innerData.charts.tab)
-			this.change(null,window.appRouter.currentData.innerData.charts.tab);
+		if(window.settings.charts.tab)
+			this.change(null,window.settings.charts.tab);
 		else if(options.type !== undefined)
 			this.change(null,options.type);
 		else
@@ -40,11 +38,10 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
-			window.appRouter.currentData.innerData.charts.channels = channels;
-			if(window.appRouter.currentData.innerData.charts.channels.length > 0)
-				window.appRouter.currentData.innerData.charts.heatmap.frequencyBy = 'channels';
+			window.settings.charts.channels = channels;
+			if(window.settings.charts.channels.length > 0)
+				window.settings.charts.heatmap.frequencyBy = 'channels';
 		});
-
 	},
 
 	change: function(evt,index){
@@ -55,30 +52,31 @@ app.view.ChartsView = Backbone.View.extend({
 		else 
 			$('#charts-tabs li:eq('+index+') a').tab('show');
 
-		window.appRouter.currentData.innerData.charts.tab = index;
+		window.settings.charts.tab = index;
 
 		var isEmpty;
 		switch (index) {
 			case 0:
 				window.location.hash = '#places/'+this.data.id+'/charts?type=occupation';
 				isEmpty = this.$el.find('#occupation-tab').is(':empty');
+
 				if(isEmpty)
 					self.renderOccupation();
-				else
-					window.appRouter.currentData.innerData.charts.occupation.view.updateDataByTab({
-						channels: window.appRouter.currentData.innerData.charts.channels
+				else 
+					window.settings.charts.occupation.view.updateDataByTab({
+						channels: window.settings.charts.channels
 					});
-
 				break;
+				
 			case 1:
 				window.location.hash = '#places/'+this.data.id+'/charts?type=heatmap';
 				isEmpty = this.$el.find('#heatmap-tab').is(':empty');
 				if(isEmpty)
 					self.renderHeatmap();
 				else
-					window.appRouter.currentData.innerData.charts.heatmap.view.updateDataByTab({
-						frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
-						channels: window.appRouter.currentData.innerData.charts.channels
+					window.settings.charts.heatmap.view.updateDataByTab({
+						frequencyBy: window.settings.charts.heatmap.frequencyBy,
+						channels: window.settings.charts.channels
 					});
 
 				break;
@@ -105,36 +103,36 @@ app.view.ChartsView = Backbone.View.extend({
 
 	renderOccupation: function(){
 		var self = this;
-		window.appRouter.currentData.innerData.charts.occupation.view = new app.view.OccupationView({
+		window.settings.charts.occupation.view = new app.view.OccupationView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			data: this.data,
-			channels: window.appRouter.currentData.innerData.charts.channels
+			channels: window.settings.charts.channels
 		});
 
-		this.$el.find('#occupation-tab').html(window.appRouter.currentData.innerData.charts.occupation.view.render().el);
+		this.$el.find('#occupation-tab').html(window.settings.charts.occupation.view.render().el);
 
 		this.fetchData(function(){
 			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
-				window.appRouter.currentData.innerData.charts.occupation.view.renderComponents();
+				window.settings.charts.occupation.view.renderComponents();
 		});
 	},
 
 	renderHeatmap: function(){
 		var self = this;
-		window.appRouter.currentData.innerData.charts.heatmap.view = new app.view.HeatmapView({
+		window.settings.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			data: this.data,
-			frequencyBy: window.appRouter.currentData.innerData.charts.heatmap.frequencyBy,
-			channels: window.appRouter.currentData.innerData.charts.channels
+			frequencyBy: window.settings.charts.heatmap.frequencyBy,
+			channels: window.settings.charts.channels
 		});
 
-		this.$el.find('#heatmap-tab').html(window.appRouter.currentData.innerData.charts.heatmap.view.render().el);
+		this.$el.find('#heatmap-tab').html(window.settings.charts.heatmap.view.render().el);
 
 		this.fetchData(function(){
 			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
-				window.appRouter.currentData.innerData.charts.heatmap.view.renderComponents();
+				window.settings.charts.heatmap.view.renderComponents();
 		});
 	},
 

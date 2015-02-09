@@ -32,12 +32,12 @@ app.view.HeatmapView = Backbone.View.extend({
         'change .spread-distance-slider':'changeSpreadDistance',
         'change #allocation-channel':'changeAllocationChannel',
     },
-	
-	initialize: function(options){
-		var self = this;
-		this.errorView = options.errorView;
-		this.errorView.closeView();
-		this.waitingView = options.waitingView;
+    
+    initialize: function(options){
+        var self = this;
+        this.errorView = options.errorView;
+        this.errorView.closeView();
+        this.waitingView = options.waitingView;
         
         this.data = options.data.attributes;
 
@@ -56,7 +56,7 @@ app.view.HeatmapView = Backbone.View.extend({
             this.channels = options.channels;
         else
             this.channels = [];
-	},
+    },
 
     renderComponents: function(){
         this.heatmapDataProcessor.require({
@@ -360,7 +360,7 @@ app.view.HeatmapView = Backbone.View.extend({
         marker.setVisible(false);
     },
 
-	_renderMap: function(){
+    _renderMap: function(){
         var self = this;
 
         var myOptions = {
@@ -381,7 +381,7 @@ app.view.HeatmapView = Backbone.View.extend({
         });
 
         this.waitingView.closeView();
-	},
+    },
 
     renderHeatmap: function(updateData,center){
         var self = this;
