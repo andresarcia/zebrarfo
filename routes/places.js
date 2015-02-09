@@ -150,80 +150,92 @@ exports.get = function(req,res,next){
 /*-------------------------------------------------------------------*/
 exports.update = function(req,res,next){
 	if(utils.isNumber(req.body.id)){
+		db.Place.find({
+			where: {
+				UserId:UserIdentification,
+				id: req.params.id,
+				visible: true
+			},
+		}).success(function(place){
+			if(!place){
+				next(httpError(404));
+				return;
+			}
 
-		async.each(req.body.coordinates, function(coord, callback) {
-			db.Coordinate.find({
-				where: {
-					id: coord.id,
-					PlaceId: req.body.id,
-					visible: true
-				}
-			}).success(function(coordinate){
-				if(!coordinate){
-					next(httpError(404));
-					return;
-				}
+			async.each(req.body.coordinates, function(coord, callback) {
+				place.getCoordinates({
+					where: {
+						id: coord.id
+					}
+				}).success(function(coordinate){
+					if(!coordinate){
+						next(httpError(404));
+						return;
+					}
+					if(coord.action === "delete"){
+						coordinate[0].dataValues.visible = false;
+						coordinate[0].save()
+						.success(function(){
+							callback();
+						}).error(function(err){
+							callback(err);
+						});
+					}
 
-				if(coord.action === "delete"){
-					coordinate.dataValues.visible = false;
-					coordinate.save()
-					.success(function(){
-						callback();
-					}).error(function(err){
-						callback(err);
-					});
-				}
-			})
-			.error(function(err){
-				next(httpError(err));
-			});
-		  
-		}, function(err){	    
-		    if(err) {
-		    	next(httpError(err));
-		    }
-		    
-		    placeUtils.retakeStats(req.body.id, function(err, n){
-		    	if(err) {
+				}).error(function(err){
+					next(httpError(err));
+				});
+
+			}, function(err){	    
+				if(err) {
 			    	next(httpError(err));
 			    }
 
-			    mode.save(req.body.id,n.mode,false,function(err){
-					if(err)
-						next(httpError(err));
-					
-					db.Place.find({
-						where: {
-							UserId:UserIdentification,
-							id: req.params.id,
-							visible: true
-						}
-					}).success(function(o){
-						o.numberCoordinates = n.numberCoordinates;
-						o.powerMin = n.powerMin;
-						o.powerMax = n.powerMax;
-						o.powerAvg = n.powerAvg;
-						o.sdPowerAvg = n.sdPowerAvg;
-						o.avgPowerSD = n.avgPowerSD;
-						o.numberPowerFrequency = n.numberPowerFrequency;
-						o.frequencyMin = n.frequencyMin;
-						o.frequencyMax = n.frequencyMax;
-						o.totalDistance = n.totalDistance;
-						o.distaceAvg = n.distaceAvg;
-						o.distaceMin = n.distaceMin;
-						o.distaceMax = n.distaceMax;
+			    placeUtils.retakeStats(req.body.id, function(err, n){
+			    	if(err) {
+				    	next(httpError(err));
+				    }
 
-						o.save()
-						.success(function(){
-							res.status(200).send(n);
+				    mode.save(req.body.id,n.mode,false,function(err){
+						if(err)
+							next(httpError(err));
+						
+						db.Place.find({
+							where: {
+								UserId:UserIdentification,
+								id: req.params.id,
+								visible: true
+							}
+						}).success(function(o){
+							o.numberCoordinates = n.numberCoordinates;
+							o.powerMin = n.powerMin;
+							o.powerMax = n.powerMax;
+							o.powerAvg = n.powerAvg;
+							o.sdPowerAvg = n.sdPowerAvg;
+							o.avgPowerSD = n.avgPowerSD;
+							o.numberPowerFrequency = n.numberPowerFrequency;
+							o.frequencyMin = n.frequencyMin;
+							o.frequencyMax = n.frequencyMax;
+							o.totalDistance = n.totalDistance;
+							o.distaceAvg = n.distaceAvg;
+							o.distaceMin = n.distaceMin;
+							o.distaceMax = n.distaceMax;
+
+							o.save()
+							.success(function(){
+								res.status(200).send(n);
+							}).error(function(err){
+								next(httpError(err));
+							});
 						}).error(function(err){
 							next(httpError(err));
 						});
-					}).error(function(err){
-						next(httpError(err));
 					});
-				});
-		    });
+			    });
+			});
+
+		}).error(function(err){
+			next(httpError(err));
 		});
 		
 	} else
