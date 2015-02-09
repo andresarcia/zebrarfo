@@ -14,6 +14,20 @@ this["Zebra"]["tmpl"]["edit_coordinates"] = Handlebars.template({"compiler":[6,"
   return "<div class=\"row\">\n	<div id=\"su-list-coord-to-edit\" class=\"col-md-3\"></div>\n  	<div class=\"col-md-9\">\n  		<div id=\"su-edit-place-controls\" class=\"col-xs-12 col-sm-12 col-md-12\">\n  			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn action-btn su-delete-coord\" aria-label=\"Left Align\" disabled>\n						<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>\n				</button>\n			</div>\n			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn select-btn su-select-first-coord\" aria-label=\"Left Align\">\n						first\n				</button>\n				<button type=\"button\" class=\"btn select-btn su-select-last-coord\" aria-label=\"Left Align\">\n						last\n				</button>\n			</div>\n		</div>\n  		<div class=\"col-xs-11 col-sm-11 col-md-11\">\n			<div id=\"map_canvas_coordinates\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-xs-1 col-sm-1 col-md-1\" id=\"markers-slider-edit-place\">\n			<div class=\"markers-slider\" style=\"height:450px;\"></div>\n		</div>\n  	</div>\n</div>";
   },"useData":true});
 
+this["Zebra"]["tmpl"]["edit_outlayers"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "				<tr>\n					<td>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.power : stack1), depth0))
+    + "</td>\n					<td>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequency : stack1), depth0))
+    + "</td>\n					<td>\n						<button class=\"btn btn-danger btn-xs btn-delete-outlayer\">\n							<span class=\"glyphicon glyphicon-trash\"></span>\n						</button>\n					</td>\n				</tr>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-12 text-center\">\n		<table class=\"table table-striped table-hover table-condensed table-bordered\">\n			<thead>\n			    <tr>\n			        <th class=\"text-center\">Power (dBm)</th>\n			        <th class=\"text-center\">Occurrence frequency</th>\n			        <th class=\"text-center\">Remove</th>\n			    </tr>\n		    </thead>\n		    <tbody>\n";
+  stack1 = helpers.each.call(depth0, depth0, {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "			</tbody>\n		</table>\n	</div>\n</div>";
+},"useData":true});
+
 this["Zebra"]["tmpl"]["edit_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
   return "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li><a href=\"#places/"

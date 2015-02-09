@@ -45,7 +45,6 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	  				window.location.hash = '#places';
 				},
 				error: function(model, xhr, options){
-					console.log('entro donde no era');
 		     		self.waitingView.closeView();
 		     		self.errorView.render([xhr.responseText]);
 		    	}

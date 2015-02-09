@@ -73,7 +73,33 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	renderEditOutlayers: function(){
-		console.log("render outlayers")
+		var self = this;
+		this.fetchOutlayers(function(){
+			var editOutlayers = new app.view.EditOutlayersView({
+				waitingView: self.waitingView,
+				errorView : self.errorView,
+				data: self.data,
+			});
+			self.$el.find('#edit-outlayer-tab').html(editOutlayers.render().el);
+		});
+	},
+
+	fetchOutlayers: function(callback){
+		if(!this.data.attributes.outlayers){
+			var self = this;
+			var data = new app.collection.Outlayers({idPlace:this.data.id});
+			data.fetch({
+				success: function(){
+					self.data.attributes.outlayers = data.models;
+					callback();
+				},
+				error: function(model, xhr, options){
+		     		self.errorView.render([xhr.responseText]);
+		    	}
+			});
+
+		} else
+			callback();
 	},
 
 	render: function(){

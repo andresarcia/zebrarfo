@@ -428,6 +428,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			success: function(model){
 				self.data = model;
 				self.data.attributes.coordinates = self.coordinates;
+				self.data.attributes.outlayers = undefined;
 				window.appRouter.currentData.innerData.charts = undefined;
 				self.waitingView.closeView();
 				window.location.hash = '#places/'+ model.id;
