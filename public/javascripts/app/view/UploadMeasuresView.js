@@ -106,7 +106,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	        			"<ol>" +
 	        				"<li>Name the zone</li>" +
 	        				"<li>Select all the parsed files (*.txt) which are numbered from 1 to N</li>" +
-	        				"<li>Select the common unit of the frequency sample (for Android should be Hertz) </li>" +
+	        				"<li>Select the common unit of the frequency sample (for Android should be kilohertz) </li>" +
 	        				"<li>Click on Synchronise</li>" +
 	        			"</ol>" +
 	        			"Wait for the processing.<br><br>" +
