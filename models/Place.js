@@ -77,6 +77,7 @@ module.exports = function(sequelize, DataTypes) {
   },{
     associate: function(models) {
       Place.hasMany(models.Coordinate);
+      Place.hasMany(models.PowerMode);
       Place.belongsTo(models.User);
     },
   });

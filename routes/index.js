@@ -4,7 +4,7 @@ var router = express.Router();
 var users = require('./users');
 var places = require('./places');
 var coordinates = require('./coordinates');
-var captures = require('./captures');
+var power_mode = require('./power_mode');
 var placeUtils = require('./utils/PlaceUtils');
 
 /*-------------------------------------------------------------------*/
@@ -29,11 +29,18 @@ router.route('/places/:id')
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:id/coordinates')
-	.get(coordinates.get);
+	.get(coordinates.list);
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:idPlace/coordinates/:id')
-	.get(captures.get);
+	.get(coordinates.get);
+
+/*-------------------------------------------------------------------*/
+router.route('/places/:id/outlayers')
+	.get(power_mode.list);
+
+router.route('/places/:idPlace/outlayers/:id')
+	.delete(power_mode.delete);
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:id/charts')
