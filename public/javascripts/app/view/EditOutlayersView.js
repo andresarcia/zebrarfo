@@ -52,6 +52,7 @@ app.view.EditOutlayersView = Backbone.View.extend({
 		var template = Zebra.tmpl['edit_outlayers'];
 		var html = template(this.data.attributes.outlayers);
 		this.$el.html(html);
+		this.waitingView.closeView();
 
 		return this;
 	},

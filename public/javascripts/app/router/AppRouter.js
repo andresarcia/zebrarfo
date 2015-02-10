@@ -176,6 +176,9 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showEditPlace: function(id,type){
+		if(this.currentView !== null && this.currentView.id == 'edit-place')
+			return;
+
 		this.clearViews();
 		var self = this;
 		var editType;
@@ -197,7 +200,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	showChartsOfPlace: function(id,type){
-		if(this.currentView !== null && this.currentView.id == 'placeChart')
+		if(this.currentView !== null && this.currentView.id == 'place-charts')
 			return;
 
 		this.clearViews();

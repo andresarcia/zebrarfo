@@ -13,6 +13,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
+		this.id = 'edit-place';
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;
@@ -81,8 +82,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 				errorView : self.errorView,
 				data: self.data,
 			});
-			self.$el.find('#edit-outlayer-tab').html(editOutlayers.render().el);
-			self.waitingView.closeView();
+			self.$el.find('#edit-outlayer-tab').html(editOutlayers.render().el);			
 		});
 	},
 

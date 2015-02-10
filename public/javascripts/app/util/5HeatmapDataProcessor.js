@@ -17,10 +17,12 @@ app.util.HeatmapDataProcessor.prototype = {
         this.data = options.data;
     },
 
-    process: function(boundaries, functionName,distance){
+    process: function(boundaries, functionName, distance, unit){
         var self = this;
 
-        if (distance)
+        if(unit == "m")
+            this.spreadDistance = distance / 1000;
+        else if(unit == "km")
             this.spreadDistance = distance;
         else
             this.spreadDistance = 0;

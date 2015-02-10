@@ -51,18 +51,30 @@
 			<div class="markers-slider" style="height:400px;"></div>
 		</div>
 
-		<div class="col-md-12 heatmap-slider-container">
-			<div class="slider"></div>
-			<div class="slider-value"></div>
-		</div>
-		<div class="col-md-12 heatmap-select-channels">
-			<label for="select-channels">Please select the channels to observe</label>
-			<input class="form-control" id="select-channels" type="hidden" />
-		</div>
+		<div class="col-md-11 col-md-offset-0 heatmap-controllers-container">
+			<div class="col-md-12 heatmap-slider-container">
+				<div class="slider"></div>
+				<div class="slider-value"></div>
+			</div>
+			<div class="col-md-12 heatmap-select-channels">
+				<label for="select-channels">Please select the channels to observe</label>
+				<input class="form-control" id="select-channels" type="hidden" />
+			</div>
 		
-		<div class="col-md-12 heatmap-select-spread-distance">
-			<label for="spread-distance-slider">Please select the distance between each point</label>
-			<div class="spread-distance-slider"></div>
+			<div class="heatmap-select-spread-distance">
+				<h5 class="col-md-12">Please select the unit and distance between each point</h5>
+				<div class="col-md-3">
+					<label for="upload-measures-unit">Unit</label>
+					<select class="form-control" id="spread-distance-unit-slider">
+						<option value="m">Meters - m</option>
+						<option value="km">Kilometers - km</option>
+					</select>
+				</div>
+				<div class="col-md-9">
+					<label for="spread-distance-slider">Distance</label>
+					<div class="spread-distance-slider"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -13,7 +13,7 @@ app.view.ChartsView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
-		this.id = 'placeChart';
+		this.id = 'place-charts';
 		this.errorView = options.errorView;
 		this.errorView.closeView();
 		this.waitingView = options.waitingView;

@@ -16,6 +16,7 @@ app.view.HeatmapView = Backbone.View.extend({
             currentMarkerItem: 0,
             markersCount: 0,
             distance: 0,
+            distanceUnit: 'm',
         },
     },
 
@@ -30,6 +31,7 @@ app.view.HeatmapView = Backbone.View.extend({
         'change .radius-slider':'changeRadius',
         'slide .markers-slider':'changeMarker',
         'change .spread-distance-slider':'changeSpreadDistance',
+        'change .spread-distance-unit-slider':'changeSpreadDistance',
         'change #allocation-channel':'changeAllocationChannel',
     },
     
@@ -81,6 +83,7 @@ app.view.HeatmapView = Backbone.View.extend({
     },
 
     renderSettings: function(){
+        var self = this;
         this.$el.find("#select-function-operate").select2();
     
         this.opacitySlider = this.$el.find('.opacity-slider').noUiSlider({
@@ -134,17 +137,15 @@ app.view.HeatmapView = Backbone.View.extend({
             }
         });
 
-        this.$el.find('.slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_up"></div>', function(value) {
+        this.$el.find('.slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
             $(this).html(
-                '<strong>Value: </strong>' +
-                '<span>' + value + ' MHz</span>'
+                '<strong>' + value + ' MHz</strong>'
             );
         });
 
-        this.$el.find('.slider').Link('upper').to('-inline-<div class="slider_tooltip slider_tooltip_down"></div>', function(value) {
+        this.$el.find('.slider').Link('upper').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
             $(this).html(
-                '<strong>Value: </strong>' +
-                '<span>' + value + ' MHz</span>'
+                '<strong>' + value + ' MHz</strong>'
             );
         });
 
@@ -153,27 +154,26 @@ app.view.HeatmapView = Backbone.View.extend({
 
         this.$el.find('.heatmap-select-channels').hide();
 
-        // console.log(this.data.distaceMin);
-        // console.log(this.data.distaceAvg); 
-        // console.log(this.data.distaceMax);
+
+        this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
 
         this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
             start: this.heatmap.settings.distance,
-            step: 0.1,
             connect: "lower",
             format: wNumb({
                 decimals: 1
             }),
             range: {
-                'min': 0,
-                'max': 5
+                'min': [ 0 ],
+                '40%': [ 10, 10],
+                '75%': [ 100, 100 ],
+                'max': [ 1000 ]
             }
         });
 
-        this.$el.find('.spread-distance-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down"></div>', function(value) {
-            $(this).html(
-                '<strong>'+ value + ' Km: </strong>'
-            );
+        this.$el.find('.spread-distance-slider').noUiSlider_pips({
+            mode: 'range',
+            density: 3
         });
 
         this.changeFrequencyBy(this.frequencyBy,false);
@@ -192,6 +192,8 @@ app.view.HeatmapView = Backbone.View.extend({
                 'max': max
             }
         }, true);
+
+        this.$el.find('.heatmap-controllers-container').slideDown(100);
     },
 
     renderMaxIntensitySlider: function(){
@@ -327,6 +329,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
     changeSpreadDistance: function(){
         this.heatmap.settings.distance = this.spreadSlider.val();
+        this.heatmap.settings.distanceUnit = this.$el.find("#spread-distance-unit-slider").select2("val");
         this.renderHeatmap(true);
     },
 
@@ -393,7 +396,8 @@ app.view.HeatmapView = Backbone.View.extend({
             var data = this.heatmapDataProcessor.process(
                 this.boundaries, 
                 this.heatmap.settings.dataFunction,
-                this.heatmap.settings.distance
+                this.heatmap.settings.distance,
+                this.heatmap.settings.distanceUnit
             );
 
             this.disableMarker();
