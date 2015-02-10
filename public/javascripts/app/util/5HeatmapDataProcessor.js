@@ -76,7 +76,7 @@ app.util.HeatmapDataProcessor.prototype = {
                 }
             });
 
-            self.saveItem({
+            self.checkDistance({
                 lat: itemsSameId[0].lat, 
                 lng: itemsSameId[0].lng, 
                 count: self.dataStat.getResult(),
@@ -92,32 +92,38 @@ app.util.HeatmapDataProcessor.prototype = {
         return this.dataProcessed;
     },
 
-    saveItem: function(item){
-        var distance = 0;
+    checkDistance: function(item){
+        var distance;
         var lastSaved = this.dataProcessed.data[this.dataProcessed.data.length - 1];
-
-        if (lastSaved !== undefined)
+        if (lastSaved)
             distance = app.util.GetDistanceFromLatLonInKm(lastSaved.lat,lastSaved.lng,item.lat,item.lng);
-        else
-            this.distanceStat.max(item.count);
-
-        if(distance < this.spreadDistance && lastSaved !== undefined){
-            this.distanceStat.max(item.count);
+        else {
+            this.saveItem(item);
             return;
         }
+
+        if(distance && distance < this.spreadDistance)
+            this.distanceStat.max(item.count);
         
-        item.count = this.distanceStat.getResult();
-        this.distanceStat.reset();
+        else {
+            this.distanceStat.max(item.count);
+            this.saveItem({
+                lat: item.lat,
+                lng: item.lng,
+                count: this.distanceStat.getResult()
+            });
+            this.distanceStat.reset();
+        } 
+    },
 
-        this.dataProcessed.data.push(item);
-
+    saveItem: function(item){
         this.statsMax.max(item.count);
         this.statsMin.min(item.count);
+        this.dataProcessed.data.push(item);
     },
 
     normalize: function(){
         var self = this;
-
         _.each(this.dataProcessed.data, function(item){
             item.count = self.normalizeValue(item.count);
             self.normalizeMin.min(item.count);
