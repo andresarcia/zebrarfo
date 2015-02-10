@@ -104,7 +104,7 @@ this["Zebra"]["tmpl"]["places"] = Handlebars.template({"1":function(depth0,helpe
 
 this["Zebra"]["tmpl"]["single_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<ol class=\"breadcrumb\">\n		<li><a href=\"#places\">Places</a></li>\n		<li class=\"active\">"
+  return "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li class=\"active\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
     + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default su-sample-info\">\n			<div class=\"panel-body\">\n				<a href=\"#places/"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
