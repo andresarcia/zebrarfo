@@ -147,7 +147,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	launchEditPlace: function(){
-		window.location.hash = '#places/'+this.data.id+'/edit';
+		window.location.hash = '#places/'+this.data.id+'/edit?type=coordinates';
 	}
 
 });
