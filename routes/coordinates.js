@@ -31,8 +31,15 @@ exports.save = function(id,coordinates,callback){
 
 					callbackInner();
 				});
-			} else 
-				callbackInner();
+			} else {
+				coordinate.dataValues.visible = true;
+				coordinate.save()
+				.success(function(){
+					callbackInner();	
+				}).error(function(err){
+					callbackInner(err);
+				});
+			}
 		})
 		.error(function(err){
 			callbackInner(err);
