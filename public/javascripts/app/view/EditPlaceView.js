@@ -53,10 +53,10 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 				break;
 			case 1:
-				window.location.hash = '#places/'+this.data.id+'/edit?type=outlayers';
-				isEmpty = this.$el.find('#edit-outlayer-tab').is(':empty');
+				window.location.hash = '#places/'+this.data.id+'/edit?type=outliers';
+				isEmpty = this.$el.find('#edit-outliers-tab').is(':empty');
 				if(isEmpty)
-					self.renderEditOutlayers();
+					self.renderEditOutliers();
 
 				break;
 		}
@@ -74,26 +74,26 @@ app.view.EditPlaceView = Backbone.View.extend({
 		editCoordinates.renderComponents();
 	},
 
-	renderEditOutlayers: function(){
+	renderEditOutliers: function(){
 		var self = this;
 		this.waitingView.render();
-		this.fetchOutlayers(function(){
-			var editOutlayers = new app.view.EditOutlayersView({
+		this.fetchOutliers(function(){
+			var editOutliers = new app.view.EditOutliersView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
 				data: self.data,
 			});
-			self.$el.find('#edit-outlayer-tab').html(editOutlayers.render().el);			
+			self.$el.find('#edit-outliers-tab').html(editOutliers.render().el);			
 		});
 	},
 
-	fetchOutlayers: function(callback){
-		if(!this.data.attributes.outlayers){
+	fetchOutliers: function(callback){
+		if(!this.data.attributes.outliers){
 			var self = this;
-			var data = new app.collection.Outlayers({idPlace:this.data.id});
+			var data = new app.collection.Outliers({idPlace:this.data.id});
 			data.fetch({
 				success: function(){
-					self.data.attributes.outlayers = data.models;
+					self.data.attributes.outliers = data.models;
 					callback();
 				},
 				error: function(model, xhr, options){

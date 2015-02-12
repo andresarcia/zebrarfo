@@ -432,7 +432,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			success: function(model){
 				self.data = model;
 				self.data.attributes.coordinates = self.coordinates;
-				self.data.attributes.outlayers = undefined;
+				self.data.attributes.outliers = undefined;
 				self.data.attributes.charts = undefined;
 				window.settings.place = {};
 				self.waitingView.closeView();

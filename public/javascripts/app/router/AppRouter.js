@@ -185,7 +185,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 		if(type === 'coordinates') 
 			editType = 0;
-		else if(type === 'outlayers') 
+		else if(type === 'outliers') 
 			editType = 1;
 
 		this.fetchSinglePlaceData(id,function(){

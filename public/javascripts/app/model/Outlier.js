@@ -1,7 +1,7 @@
 var app = app || {};
 app.model = app.model || {};
 
-app.model.Outlayer = Backbone.Model.extend({
+app.model.Outlier = Backbone.Model.extend({
 
 	parse: function(model){
 

@@ -1,10 +1,10 @@
 var app = app || {};
 app.view = app.view || {};
 
-app.view.EditOutlayersView = Backbone.View.extend({
+app.view.EditOutliersView = Backbone.View.extend({
 
 	events: {
-		'click .btn-delete-outlayer' : 'delete'
+		'click .btn-delete-outlier' : 'delete'
 	},
 
 	initialize: function(options){
@@ -16,12 +16,12 @@ app.view.EditOutlayersView = Backbone.View.extend({
 
 	delete: function(evt){
 		var self = this;
-		var index = $('.btn-delete-outlayer').index(evt.currentTarget);
+		var index = $('.btn-delete-outlier').index(evt.currentTarget);
 
 		var deleteFunction = function(){
 			self.waitingView.render();
-			var outlayer = self.data.attributes.outlayers[index];
-			outlayer.destroy({
+			var outlier = self.data.attributes.outliers[index];
+			outlier.destroy({
 				success: function() {
 	  				self.waitingView.closeView();
 	  				window.location.hash = '#places/'+ self.data.id;
@@ -34,7 +34,7 @@ app.view.EditOutlayersView = Backbone.View.extend({
 		};
 
 		bootbox.dialog({
-	  		message: '<h4>Are you sure to delete captures with <b> power ' + this.data.attributes.outlayers[index].attributes.power + ' dBm</b>?</h4>',
+	  		message: '<h4>Are you sure to delete captures with <b> power ' + this.data.attributes.outliers[index].attributes.power + ' dBm</b>?</h4>',
 	  		buttons: {
 	  			main: {
 	      			label: "Cancel",
@@ -49,8 +49,8 @@ app.view.EditOutlayersView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['edit_outlayers'];
-		var html = template(this.data.attributes.outlayers);
+		var template = Zebra.tmpl['edit_outliers'];
+		var html = template(this.data.attributes.outliers);
 		this.$el.html(html);
 		this.waitingView.closeView();
 
