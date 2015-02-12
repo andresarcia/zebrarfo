@@ -331,6 +331,9 @@ app.view.HeatmapView = Backbone.View.extend({
     },
 
     changeSpreadDistance: function(){
+        this.disableMarker();
+        this.heatmap.settings.currentMarkerItem = 0;
+        this.markersSlider.val(0);
         this.heatmap.settings.distance = this.spreadSlider.val();
         this.heatmap.settings.distanceUnit = this.$el.find("#spread-distance-unit-slider").select2("val");
         this.renderHeatmap(true);
