@@ -3,21 +3,21 @@ app.view = app.view || {};
 
 app.view.HeatmapView = Backbone.View.extend({
 
-    heatmap: {
-        map: null,
-        bounds: null,
-        heatmap: null,
-        data: [],
-        markers: [],
-        settings: {
-            dataFunction: 'avg',
-            opacity: 80,
-            radius: 15,
-            currentMarkerItem: 0,
-            markersCount: 0,
-            distance: 0,
-            distanceUnit: 'm',
-        },
+    reset: function(){
+        this.heatmap = {};
+        this.heatmap.map = null;
+        this.heatmap.bounds = null;
+        this.heatmap.heatmap = null;
+        this.heatmap.data = [];
+        this.heatmap.markers = [];
+        this.heatmap.settings = {};
+        this.heatmap.settings.dataFunction = "avg";
+        this.heatmap.settings.opacity = 80;
+        this.heatmap.settings.radius = 15;
+        this.heatmap.settings.currentMarkerItem = 0;
+        this.heatmap.settings.markersCount = 0;
+        this.heatmap.settings.distance = 0;
+        this.heatmap.settings.distanceUnit = "m";
     },
 
     events: {
@@ -37,6 +37,7 @@ app.view.HeatmapView = Backbone.View.extend({
     
     initialize: function(options){
         var self = this;
+        this.reset();
         this.errorView = options.errorView;
         this.errorView.closeView();
         this.waitingView = options.waitingView;
@@ -415,7 +416,7 @@ app.view.HeatmapView = Backbone.View.extend({
                 });
 
                 var infowindow = new google.maps.InfoWindow({
-                    content: 'Latitude: ' + item.lat + '<br>Longitude: ' + item.lng + '<br>Weight: ' + self.heatmapDataProcessor.denormalizeValue(item.count) + ' dBm',
+                    content: 'Latitude: ' + item.lat + '<br>Longitude: ' + item.lng + '<br>Power: ' + self.heatmapDataProcessor.denormalizeValue(item.count) + ' dBm',
                 });
 
                 var marker = new google.maps.Marker({
