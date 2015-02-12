@@ -230,8 +230,12 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			self.heatmapData.push(latLng);
   		});
 
-  		this.map.fitBounds(bounds);
-  		this.renderHeatmap();
+  		google.maps.event.addListenerOnce(self.map, 'idle', function(){
+            google.maps.event.trigger(self.map, 'resize');
+            self.map.fitBounds(bounds);
+  			self.renderHeatmap();
+        });
+        
 	},
 
 	renderHeatmap: function(){
