@@ -52,6 +52,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
 		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
 
+		Backbone.pubSub.off('event-server-error');
 		Backbone.pubSub.on('event-server-error', self.enableForm, self);
 		
 		if(window.appRouter.currentData.id == 'singlePlace'){

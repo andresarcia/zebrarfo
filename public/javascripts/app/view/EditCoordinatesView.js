@@ -30,10 +30,12 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.calculateRealCoorDict();
 		this.calculateRelativeCoorDict();
 		
+		Backbone.pubSub.off('event-marker-selected-on-google-map-edit');
 		Backbone.pubSub.on('event-marker-selected-on-google-map-edit', function(markers){
 			this.changeSliderByMarkers(markers);
 		}, this);
 
+		Backbone.pubSub.off('event-glass-pane-clicked');
 		Backbone.pubSub.on('event-glass-pane-clicked', this.restore, this);
 	},
 
@@ -75,10 +77,12 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 		if(window.settings.googleMapApi)
 			this.mapView.render(this.coordinates);
-		else 
+		else {
+			Backbone.pubSub.off('event-loaded-google-map-api');
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
 				self.mapView.render(self.coordinates);
 			});
+		}
 	},
 
 	renderEditingArea: function(){

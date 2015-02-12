@@ -29,9 +29,10 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		});
 		this.renderMap();
 
-		Backbone.pubSub.on('event-marker-selected-on-google-map-main', function(res){
+		Backbone.pubSub.off("event-marker-selected-on-google-map-main");
+		Backbone.pubSub.on("event-marker-selected-on-google-map-main", function(res){
 			self.renderCoordinateResume(res);
-		}, this);
+		});
 	},
 
 	deletePlace: function(){
@@ -129,10 +130,12 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 		if(window.settings.googleMapApi)
 			this.mapView.render(this.coordinates);
-		else 
+		else {
+			Backbone.pubSub.off('event-loaded-google-map-api');
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
 				self.mapView.render(self.coordinates);
 			});
+		}
 	},
 
 	render: function(){

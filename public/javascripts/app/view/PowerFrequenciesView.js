@@ -14,7 +14,9 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 
 		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
+		Backbone.pubSub.off('event-occupation-channel-select');
 		Backbone.pubSub.on('event-occupation-channel-select', this.selectChannel, this);
+		Backbone.pubSub.off('event-occupation-channel-deselect');
 		Backbone.pubSub.on('event-occupation-channel-deselect', this.deselectChannel, this);
 	},
 

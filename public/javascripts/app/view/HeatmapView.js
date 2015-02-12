@@ -76,10 +76,12 @@ app.view.HeatmapView = Backbone.View.extend({
         
         if(window.settings.googleMapApi)
             self._renderMap();
-        else 
+        else {
+            Backbone.pubSub.off('event-loaded-google-map-api');
             Backbone.pubSub.on('event-loaded-google-map-api', function(){
                 self._renderMap();
             });
+        }
     },
 
     renderSettings: function(){

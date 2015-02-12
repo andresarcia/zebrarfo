@@ -59,7 +59,9 @@ app.view.OccupationView = Backbone.View.extend({
 		else
 			this.channels = [];
 
+		Backbone.pubSub.off('event-power-frequencies-channel-select');
 		Backbone.pubSub.on('event-power-frequencies-channel-select', this.pushChannelsFromGraph, this);
+		Backbone.pubSub.off('event-power-frequencies-channel-deselect');
 		Backbone.pubSub.on('event-power-frequencies-channel-deselect', this.popChannelsFromGraph, this);
 	},
 
