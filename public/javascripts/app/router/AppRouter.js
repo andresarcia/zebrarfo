@@ -111,7 +111,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		if(this.currentData.data === null || this.currentData.id != 'singlePlace'){
 			var self = this;
 			this.waitingView.render();
-
+			window.settings.place = {};
 			var data = new app.model.Place({id:id});
 			data.fetch({
 				success: function(){  
@@ -165,7 +165,6 @@ app.router.AppRouter = Backbone.Router.extend({
 	showSinglePlace: function(id){  		
 		var self = this;
 		this.clearViews();
-		window.settings.place = {};
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.SinglePlaceView({
 				waitingView: self.waitingView,
