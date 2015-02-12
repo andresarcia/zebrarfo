@@ -19,13 +19,14 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
-		window.settings.editPlace = window.settings.editPlace || {};
+		window.settings.place = window.settings.place || {};
+		window.settings.place.editPlace = window.settings.place.editPlace || {};
 
 		this.render();
 		this.waitingView.closeView();
 
-		if(window.settings.editPlace.tab)
-			this.change(null,window.settings.editPlace.tab);
+		if(window.settings.place.editPlace.tab)
+			this.change(null,window.settings.place.editPlace.tab);
 		else if(options.type !== undefined)
 			this.change(null,options.type);
 		else
@@ -40,7 +41,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		else 
 			$('#edit-tabs li:eq('+index+') a').tab('show');
 
-		window.settings.editPlace.tab = index;
+		window.settings.place.editPlace.tab = index;
 
 		var isEmpty;
 		switch (index) {

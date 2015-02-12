@@ -200,7 +200,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			delete newModelData.gpsFunction;
 			delete newModelData.coordinates;
 			var newModel = new app.model.Place(newModelData, {parse: true});
-			
+			window.settings.place = {};
 			window.appRouter.setPlaceData(newModel, function(){
 				window.location.hash = '#places/'+self.model.id;
 			});

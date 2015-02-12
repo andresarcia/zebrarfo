@@ -165,6 +165,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	showSinglePlace: function(id){  		
 		var self = this;
 		this.clearViews();
+		window.settings.place = {};
 		this.fetchSinglePlaceData(id,function(){
 			self.currentView = new app.view.SinglePlaceView({
 				waitingView: self.waitingView,

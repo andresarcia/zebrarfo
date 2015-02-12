@@ -19,15 +19,16 @@ app.view.ChartsView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
-		window.settings.charts = window.settings.charts || {};
-		window.settings.charts.occupation = window.settings.charts.occupation || {};
-		window.settings.charts.heatmap = window.settings.charts.heatmap || {};
+		window.settings.place = window.settings.place || {};
+		window.settings.place.charts = window.settings.place.charts || {};
+		window.settings.place.charts.occupation = window.settings.place.charts.occupation || {};
+		window.settings.place.charts.heatmap = window.settings.place.charts.heatmap || {};
 
 		this.render();
 		this.waitingView.closeView();
 
-		if(window.settings.charts.tab)
-			this.change(null,window.settings.charts.tab);
+		if(window.settings.place.charts.tab)
+			this.change(null,window.settings.place.charts.tab);
 		else if(options.type !== undefined)
 			this.change(null,options.type);
 		else
@@ -40,9 +41,9 @@ app.view.ChartsView = Backbone.View.extend({
 
 		Backbone.pubSub.off('single-place-charts-change-channels');
 		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
-			window.settings.charts.channels = channels;
-			if(window.settings.charts.channels.length > 0)
-				window.settings.charts.heatmap.frequencyBy = 'channels';
+			window.settings.place.charts.channels = channels;
+			if(window.settings.place.charts.channels.length > 0)
+				window.settings.place.charts.heatmap.frequencyBy = 'channels';
 		});
 	},
 
@@ -54,7 +55,7 @@ app.view.ChartsView = Backbone.View.extend({
 		else 
 			$('#charts-tabs li:eq('+index+') a').tab('show');
 
-		window.settings.charts.tab = index;
+		window.settings.place.charts.tab = index;
 
 		var isEmpty;
 		switch (index) {
@@ -65,8 +66,8 @@ app.view.ChartsView = Backbone.View.extend({
 				if(isEmpty)
 					self.renderOccupation();
 				else 
-					window.settings.charts.occupation.view.updateDataByTab({
-						channels: window.settings.charts.channels
+					window.settings.place.charts.occupation.view.updateDataByTab({
+						channels: window.settings.place.charts.channels
 					});
 				break;
 				
@@ -76,9 +77,9 @@ app.view.ChartsView = Backbone.View.extend({
 				if(isEmpty)
 					self.renderHeatmap();
 				else
-					window.settings.charts.heatmap.view.updateDataByTab({
-						frequencyBy: window.settings.charts.heatmap.frequencyBy,
-						channels: window.settings.charts.channels
+					window.settings.place.charts.heatmap.view.updateDataByTab({
+						frequencyBy: window.settings.place.charts.heatmap.frequencyBy,
+						channels: window.settings.place.charts.channels
 					});
 
 				break;
@@ -105,36 +106,36 @@ app.view.ChartsView = Backbone.View.extend({
 
 	renderOccupation: function(){
 		var self = this;
-		window.settings.charts.occupation.view = new app.view.OccupationView({
+		window.settings.place.charts.occupation.view = new app.view.OccupationView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			data: this.data,
-			channels: window.settings.charts.channels
+			channels: window.settings.place.charts.channels
 		});
 
-		this.$el.find('#occupation-tab').html(window.settings.charts.occupation.view.render().el);
+		this.$el.find('#occupation-tab').html(window.settings.place.charts.occupation.view.render().el);
 
 		this.fetchData(function(){
 			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
-				window.settings.charts.occupation.view.renderComponents();
+				window.settings.place.charts.occupation.view.renderComponents();
 		});
 	},
 
 	renderHeatmap: function(){
 		var self = this;
-		window.settings.charts.heatmap.view = new app.view.HeatmapView({
+		window.settings.place.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 			data: this.data,
-			frequencyBy: window.settings.charts.heatmap.frequencyBy,
-			channels: window.settings.charts.channels
+			frequencyBy: window.settings.place.charts.heatmap.frequencyBy,
+			channels: window.settings.place.charts.channels
 		});
 
-		this.$el.find('#heatmap-tab').html(window.settings.charts.heatmap.view.render().el);
+		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);
 
 		this.fetchData(function(){
 			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
-				window.settings.charts.heatmap.view.renderComponents();
+				window.settings.place.charts.heatmap.view.renderComponents();
 		});
 	},
 
