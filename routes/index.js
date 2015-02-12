@@ -36,10 +36,10 @@ router.route('/places/:idPlace/coordinates/:id')
 	.get(coordinates.get);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/:id/outlayers')
+router.route('/places/:id/outliers')
 	.get(power_mode.list);
 
-router.route('/places/:idPlace/outlayers/:id')
+router.route('/places/:idPlace/outliers/:id')
 	.delete(power_mode.delete);
 
 /*-------------------------------------------------------------------*/
