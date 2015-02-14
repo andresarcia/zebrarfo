@@ -3,6 +3,7 @@ var db = require('../../models');
 var utils = require('./Utils');
 var builder = require('./PlaceBuilder');
 var httpError = require('build-http-error');
+var outliers = require('../outliers');
 
 var UserIdentification = 1;
 
@@ -144,4 +145,50 @@ exports.retakeStats = function(id, callback){
 		});
 		
 	});
+};
+
+/*--------------------------------------------------------------------------------------------------------------*/
+exports.retakeStatsAndSave = function(id, callback){
+	i.retakeStats(id, function(err, n){
+    	if(err) {
+	    	next(httpError(err));
+	    }
+
+	    outliers.save(id,n.outliers,false,function(err){
+			if(err)
+				next(httpError(err));
+			
+			db.Place.find({
+				where: {
+					UserId:UserIdentification,
+					id: id,
+					visible: true
+				}
+			}).success(function(o){
+				o.numberCoordinates = n.numberCoordinates;
+				o.powerMin = n.powerMin;
+				o.powerMax = n.powerMax;
+				o.powerAvg = n.powerAvg;
+				o.sdPowerAvg = n.sdPowerAvg;
+				o.avgPowerSD = n.avgPowerSD;
+				o.numberPowerFrequency = n.numberPowerFrequency;
+				o.frequencyMin = n.frequencyMin;
+				o.frequencyMax = n.frequencyMax;
+				o.totalDistance = n.totalDistance;
+				o.distaceAvg = n.distaceAvg;
+				o.distaceMin = n.distaceMin;
+				o.distaceMax = n.distaceMax;
+
+				o.save()
+				.success(function(){
+					callback(null,n);
+
+				}).error(function(err){
+					next(httpError(err));
+				});
+			}).error(function(err){
+				next(httpError(err));
+			});
+		});
+    });
 };
