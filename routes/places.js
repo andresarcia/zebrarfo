@@ -16,6 +16,9 @@ exports.create = function(req,res,next){
 		next(httpError(404,'something blew up with your browser, try to update it'));
 	
 	else {
+		// ========================
+		var start = new Date().getTime();
+		// ========================
 		if(req.body.json){
 			console.log('* CREATING NEW PLACE *');
 			builder.create(req.body, function(err, place){
@@ -53,6 +56,10 @@ exports.create = function(req,res,next){
 									if(err)
 										next(httpError(err));
 									
+									// ========================
+									var end = new Date().getTime();
+									console.log("Time ms:" + (end - start));
+									// ========================
 									res.status(200).send(n);
 								});
 							});
@@ -75,6 +82,10 @@ exports.create = function(req,res,next){
 									if (err)
 										next(httpError(err));
 
+									// ========================
+									var end = new Date().getTime();
+									console.log("Time ms:" + (end - start));
+									// ========================
 									res.status(200).send(n);
 								});
 								
@@ -178,8 +189,10 @@ exports.update = function(req,res,next){
 						coordinate[0].save()
 						.success(function(){
 							callback();
-						}).error(function(err){
+						})
+						.error(function(err){
 							callback(err);
+							next(httpError(err));
 						});
 					}
 

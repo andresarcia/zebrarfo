@@ -1,9 +1,10 @@
 var db = require('../models');
-var async = require('async');
 var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
 var capture = require('./captures');
+
+var _ = require("underscore");
 
 var UserIdentification = 1;
 
@@ -11,8 +12,7 @@ var UserIdentification = 1;
 exports.save = function(id,coordinates,callback){
 	console.log('* SAVING COORDINATES *');	
 
-	async.each(coordinates, function(coord, callbackInner) {
-		
+	_.each(coordinates, function(coord){
 		db.Coordinate.findOrCreate({
 			latitude: coord.latitude,
 			longitude: coord.longitude,
@@ -28,29 +28,21 @@ exports.save = function(id,coordinates,callback){
 				capture.save(coordinate.id, coord.captures, function(err){
 					if(err) 
 	    				return callback(err);
-
-					callbackInner();
 				});
 			} else {
 				coordinate.dataValues.visible = true;
 				coordinate.save()
-				.success(function(){
-					callbackInner();	
-				}).error(function(err){
-					callbackInner(err);
+				.error(function(err){
+					return callback(err);
 				});
 			}
 		})
 		.error(function(err){
-			callbackInner(err);
+			return callback(err);
 		});
-	  
-	}, function(err){	    
-	    if(err) 
-	    	return callback(err);
-	    
-	    callback(null);
 	});
+	
+	callback(null);
 }
 
 /*-------------------------------------------------------------------*/
