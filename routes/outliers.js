@@ -2,25 +2,26 @@ var _ = require('underscore');
 var db = require('../models');
 var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
+var placeUtils = require('./utils/PlaceUtils');
 var async = require('async');
 
 var UserIdentification = 1;
 
 /*-------------------------------------------------------------------*/
-exports.save = function(id,modes,isNew,callback){
+exports.save = function(id,outliers,isNew,callback){
 	if(utils.isNumber(id)){
 		var v = [];
-		_.each(_.keys(modes), function(key){
+		_.each(_.keys(outliers), function(key){
 			v.push({
 				power: key,
-				frequency: modes[key],
+				frequency: outliers[key],
 				PlaceId: id
 			});
 		});
 
 		if(isNew){
-			console.log('* SAVING POWER MODE *');
-		    db.PowerMode.bulkCreate(v)
+			console.log('* SAVING OUTLIERS *');
+		    db.Outlier.bulkCreate(v)
 			.success(function() { 
 				callback();
 			}).error(function(err){
@@ -28,9 +29,9 @@ exports.save = function(id,modes,isNew,callback){
 			});
 
 		} else {
-			console.log('* UPDATING POWER MODE *');	
+			console.log('* UPDATING OUTLIERS *');	
 
-			db.PowerMode.destroy({
+			db.Outlier.destroy({
 	    		where: {
 					PlaceId: id
 				}},
@@ -38,7 +39,7 @@ exports.save = function(id,modes,isNew,callback){
 					truncate: true
 				})
 			.success(function(){
-				db.PowerMode.bulkCreate(v)
+				db.Outlier.bulkCreate(v)
 				.success(function() { 
 					callback();
 				}).error(function(err){
@@ -67,7 +68,7 @@ exports.list = function(req,res,next){
 				return;
 			}
 		
-			place.getPowerModes({
+			place.getOutliers({
 				order: 'power DESC',
 			})	
 			.success(function(data){
@@ -90,19 +91,48 @@ exports.list = function(req,res,next){
 /*-------------------------------------------------------------------*/
 exports.delete = function(req,res,next){
 	if(utils.isNumber(req.params.idPlace) && utils.isNumber(req.params.id)){
-		db.PowerMode.find({
+		db.Place.find({
 			where: {
-				id: req.params.id
+				UserId:UserIdentification,
+				id: req.params.idPlace,
+				visible: true
 			},
-			raw: true
-		}).success(function(outlayer){
-			
-			db.Capture.findAll({
+		}).success(function(place){
+			if(!place){
+				next(httpError(404));
+				return;
+			}
+
+			place.getOutliers({
 				where: {
-					power: outlayer.dataValues.power
+					id: req.params.id
 				}
-			}).success(function(captures){
-				console.log(captures);
+			}).success(function(outlayer){
+				if(outlayer.length == 0){
+					next(httpError(404));
+					return;
+				}
+
+				db.Capture.destroy({
+		    		where: {
+						power: outlayer[0].dataValues.power
+					}
+				})
+					// },
+					// {
+					// 	truncate: true
+					// })
+				.success(function(){
+					// placeUtils.retakeStatsAndSave(req.params.idPlace, function(err, n){
+				 //    	if(err) {
+		   //  				next(httpError(err));
+		   //  			}
+				    	
+				 //    	res.status(200).send(n);
+				 //    });
+				}).error(function(err){
+					next(httpError(err));
+				});
 
 			}).error(function(err){
 				next(httpError(err));
@@ -111,6 +141,7 @@ exports.delete = function(req,res,next){
 		}).error(function(err){
 			next(httpError(err));
 		});
+		
 	} else
 		next(httpError(404));
 };

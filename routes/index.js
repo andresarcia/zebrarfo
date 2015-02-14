@@ -4,7 +4,7 @@ var router = express.Router();
 var users = require('./users');
 var places = require('./places');
 var coordinates = require('./coordinates');
-var power_mode = require('./power_mode');
+var outliers = require('./outliers');
 var placeUtils = require('./utils/PlaceUtils');
 
 /*-------------------------------------------------------------------*/
@@ -37,10 +37,10 @@ router.route('/places/:idPlace/coordinates/:id')
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:id/outliers')
-	.get(power_mode.list);
+	.get(outliers.list);
 
 router.route('/places/:idPlace/outliers/:id')
-	.delete(power_mode.delete);
+	.delete(outliers.delete);
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:id/charts')

@@ -6,7 +6,7 @@ var utils = require('./utils/Utils');
 var builder = require('./utils/PlaceBuilder');
 var placeUtils = require('./utils/PlaceUtils');
 var coordinate = require('./coordinates');
-var mode = require('./power_mode');
+var outliers = require('./outliers');
 
 var UserIdentification = 1;
 
@@ -49,7 +49,7 @@ exports.create = function(req,res,next){
 								if(err)
 									next(httpError(err));
 
-								mode.save(n.id,place.mode,true,function(err){
+								outliers.save(n.id,place.outliers,true,function(err){
 									if(err)
 										next(httpError(err));
 									
@@ -67,7 +67,7 @@ exports.create = function(req,res,next){
 							if(err)
 								next(httpError(err));
 
-							mode.save(n.id,place.mode,false,function(err){
+							outliers.save(n.id,place.outliers,false,function(err){
 								if(err)
 									next(httpError(err));
 								
@@ -150,10 +150,11 @@ exports.get = function(req,res,next){
 /*-------------------------------------------------------------------*/
 exports.update = function(req,res,next){
 	if(utils.isNumber(req.body.id)){
+
 		db.Place.find({
 			where: {
 				UserId:UserIdentification,
-				id: req.params.id,
+				id: req.body.id,
 				visible: true
 			},
 		}).success(function(place){
@@ -191,46 +192,12 @@ exports.update = function(req,res,next){
 			    	next(httpError(err));
 			    }
 
-			    placeUtils.retakeStats(req.body.id, function(err, n){
+			    placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
 			    	if(err) {
-				    	next(httpError(err));
-				    }
-
-				    mode.save(req.body.id,n.mode,false,function(err){
-						if(err)
-							next(httpError(err));
-						
-						db.Place.find({
-							where: {
-								UserId:UserIdentification,
-								id: req.params.id,
-								visible: true
-							}
-						}).success(function(o){
-							o.numberCoordinates = n.numberCoordinates;
-							o.powerMin = n.powerMin;
-							o.powerMax = n.powerMax;
-							o.powerAvg = n.powerAvg;
-							o.sdPowerAvg = n.sdPowerAvg;
-							o.avgPowerSD = n.avgPowerSD;
-							o.numberPowerFrequency = n.numberPowerFrequency;
-							o.frequencyMin = n.frequencyMin;
-							o.frequencyMax = n.frequencyMax;
-							o.totalDistance = n.totalDistance;
-							o.distaceAvg = n.distaceAvg;
-							o.distaceMin = n.distaceMin;
-							o.distaceMax = n.distaceMax;
-
-							o.save()
-							.success(function(){
-								res.status(200).send(n);
-							}).error(function(err){
-								next(httpError(err));
-							});
-						}).error(function(err){
-							next(httpError(err));
-						});
-					});
+	    				next(httpError(err));
+	    			}
+			    	
+			    	res.status(200).send(n);
 			    });
 			});
 

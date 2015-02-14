@@ -1,7 +1,7 @@
-// models/PowerFrequency.js
+// models/Outlier.js
 
 module.exports = function(sequelize, DataTypes) {
-  var PowerMode = sequelize.define('PowerMode', {
+  var Outlier = sequelize.define('Outlier', {
     power: { 
       type: DataTypes.DECIMAL(18,15),
       allowNull: false,
@@ -24,10 +24,10 @@ module.exports = function(sequelize, DataTypes) {
   }, {
 
     associate: function(models) {
-      PowerMode.belongsTo(models.Place);
+      Outlier.belongsTo(models.Place);
     }
 
   });
  
-  return PowerMode;
+  return Outlier;
 };

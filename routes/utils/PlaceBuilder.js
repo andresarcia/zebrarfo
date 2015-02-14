@@ -23,7 +23,7 @@ exports.create = function(place, callback) {
 	n.distaceAvg = 0;
 	n.distaceMax = null;
 	n.distaceMin = null;
-	n.mode = {};
+	n.outliers = {};
 
     /* -- vars for take stats -- */
 	n.placePowerSD_X = null;
@@ -102,10 +102,10 @@ function reduceCommonGps(o,n,callback){
 			}
 			captures.push({ frequency: Number(key), power:operation });	
 
-			if(n.mode[operation])
-				n.mode[operation] += 1;
+			if(n.outliers[operation])
+				n.outliers[operation] += 1;
 			else
-				n.mode[operation] = 1;
+				n.outliers[operation] = 1;
 		});
 	
 		var coord = takeCoordStats({
@@ -126,7 +126,7 @@ function reduceCommonGps(o,n,callback){
 function takeCoordStats(coord){
 
 	var coordinate = {};
-	coordiante = _.extend(coordinate, coord);
+	coordinate = _.extend(coordinate, coord);
 
 	var numberPowerFrequency = 0;
 	var frequencyMin = null;
@@ -138,6 +138,7 @@ function takeCoordStats(coord){
 	var powerSD_M = null;
 
 	_.each(coord.captures,function(item){
+
 		if(powerMin === null && frequencyMin === null){
 			powerMin = powerMax = item.power;
 			frequencyMin = frequencyMax = item.frequency;
@@ -293,8 +294,8 @@ function checkPlaceAttributes(n, callback){
 	if(n.distaceMin === null || n.distaceMin === undefined)
 		callback("We could not calculate the total min of the place");
 
-	if(Object.keys(n.mode).length === 0)
-		callback("We could not calculate the power mode of the place");
+	if(Object.keys(n.outliers).length === 0)
+		callback("We could not calculate the outliers of the place");
 
 	callback(null);
 }
