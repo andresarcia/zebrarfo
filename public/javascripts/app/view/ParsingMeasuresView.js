@@ -4,21 +4,16 @@ app.view = app.view || {};
 app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	el: '#modal-parsing-measures',
-	model: null,
-	files: null,
-	html5: null,
 
-	modal: null,
-	progressBar: null,
-	parentComponent: null,
-
-	status: {
-		waitingForServer: false,
-		done: false
+	reset: function(){
+		this.model = null;
+		this.files = null;
+		this.html5 = null;
+		this.stop = false;
+		this.status = {};
+		this.status.waitingForServer = false;
+		this.status.done = false;
 	},
-
-	errorView: null,
-	stop: false,
 
 	events: {
 		'click #ws-modal-parsing-measures-button' : 'cancelUpload'
@@ -26,7 +21,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
-
+		this.reset();
 		if (options.placeName && options.supportHtml5){
 			this.model = new app.model.PlaceUpload({
 				name:options.placeName,
@@ -48,8 +43,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		if (!options.unit) 
 			throw 'Any frequency unit';
 
-		if (options.errorView) 
-			this.errorView = options.errorView;
+		this.errorView = options.errorView;
 
 		this.render();
 		this.modal = $('#modal-parsing-measures-modal');
@@ -193,17 +187,10 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			this.model.clear();
 			Backbone.pubSub.trigger('event-server-error');
 		} 
-		else if (this.status.done) {
-			var self = this;
-			var newModelData = this.model.attributes;
-			delete newModelData.json;
-			delete newModelData.gpsFunction;
-			delete newModelData.coordinates;
-			var newModel = new app.model.Place(newModelData, {parse: true});
+		else if (this.status.done){
+			window.appRouter.currentData.data = null;
 			window.settings.place = {};
-			window.appRouter.setPlaceData(newModel, function(){
-				window.location.hash = '#places/'+self.model.id;
-			});
+			window.location.hash = '#places/'+this.model.id;
 		}
 	}
 
