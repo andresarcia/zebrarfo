@@ -22,9 +22,15 @@ app.view.EditOutliersView = Backbone.View.extend({
 			self.waitingView.render();
 			var outlier = self.data.attributes.outliers[index];
 			outlier.destroy({
-				success: function() {
-	  				self.waitingView.closeView();
-	  				window.location.hash = '#places/'+ self.data.id;
+				success: function(model) {
+					console.log(model);
+	  		// 		self.data = model;
+					// self.data.attributes.coordinates = self.coordinates;
+					// self.data.attributes.outliers = undefined;
+					// self.data.attributes.charts = undefined;
+					// window.settings.place = {};
+					self.waitingView.closeView();
+					// window.location.hash = '#places/'+ model.id;
 				},
 				error: function(model, xhr, options){
 		     		self.waitingView.closeView();
