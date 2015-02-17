@@ -168,15 +168,15 @@ app.view.HeatmapView = Backbone.View.extend({
             }),
             range: {
                 'min': [ 0 ],
-                '40%': [ 10, 10],
-                '75%': [ 100, 100 ],
+                '33.33%': [ 10, 10 ],
+                '66.33%': [ 100, 100 ],
                 'max': [ 1000 ]
             }
         });
 
         this.$el.find('.spread-distance-slider').noUiSlider_pips({
             mode: 'range',
-            density: 3
+            density: 3.33
         });
 
         this.changeFrequencyBy(this.frequencyBy,false);
