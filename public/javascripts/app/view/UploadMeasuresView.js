@@ -215,7 +215,38 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	renderFilesInfo: function(){
+		var self = this;
 		this.viewContainers.renderFilesInfoContainer(this.filesInfo.numFiles,this.filesInfo.sizeFiles);
+
+		if(this.options.supportHtml5){
+			var fr = new FileReader();
+			fr.readAsText(this.filesInfo.files[0]);
+			fr.onload = function(e){ 
+				var data = fr.result;
+				var lines = data.split('\n');
+				var frequency = Number(lines[0].split('\t')[0]);
+				var unit;
+				
+				if(frequency % 10 == frequency)
+					unit = "GHz";
+
+				else if(frequency % 10000 == frequency)
+					unit = "MHz";
+
+				else if(frequency % 1000000 == frequency)
+					unit = "kHz";
+
+				else if(frequency % 1000000000 == frequency)
+					unit = "Hz";
+
+				console.log();
+
+
+				self.$el.find('#upload-measures-unit').select2("val", unit);
+				self.filesInfo.unit = unit;
+				self.viewContainers.setGoodUnitContainer();
+			};
+		}
 	},
 
 	delateFiles: function(){
