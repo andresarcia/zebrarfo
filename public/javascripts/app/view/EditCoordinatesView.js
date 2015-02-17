@@ -13,6 +13,11 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		'click .su-delete-coord': '_deleteCoord',
 		'click .su-select-first-coord': '_selectFirstCoord',
 		'click .su-select-last-coord': '_selectLastCoord',
+		'click .su-select-left-coord': '_selectLeftCoords',
+		'click .su-select-right-coord': '_selectRightCoords',
+		'keydown #su-select-window-input': 'checkWindowSelectInput',
+		'keyup #su-select-window-input': 'changeWindowSelect',
+		'click .su-deselect-coord': '_deselectCoords',
 		'click .su-save-save': 'save',
 		'click .su-save-save-as': 'saveAs',
 	},
@@ -24,6 +29,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.data = options.data;
 		this.editMarkers = [];
 		this.editMarkersIndex = 0;
+		this.editMarkersWindow = 5;
 
 		this.coordinates = _.clone(this.data.attributes.coordinates);
 		this.editedCoords = [];
@@ -297,6 +303,18 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	setValues: function(n){
+		if(n[0] == 0)
+			this.$el.find(".su-select-first-coord").addClass('active');
+		else
+			this.$el.find(".su-select-first-coord").removeClass('active');
+
+		if(n.length == 2){
+			if(n[1] == this.coordinates.length - 1)
+				this.$el.find(".su-select-last-coord").addClass('active');
+			else
+				this.$el.find(".su-select-last-coord").removeClass('active');			
+		}
+
 		this.renderMarkerSlider(n);
 		this.mapView.changeMarkers(this.relativeIndex2Real(n));
 		this.appendToEditingArea(n);
@@ -379,7 +397,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	_selectLastCoord: function(evt){
 		var v = this.getSliderVal();
-		var last = this.coordinates.length - 1;
+		var last = this.coordinates.length - 1
 
 		if($(evt.currentTarget).hasClass('active')){
 			$(evt.currentTarget).removeClass('active');
@@ -397,6 +415,51 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 				this.setValues([v[0],last]);
 			else if(v.length == 2 && v[1] != last)
 				this.setValues([v[0],last]);
+		}
+	},
+
+	_selectLeftCoords: function(evt){
+		var v = this.getSliderVal();
+
+		if(v[0] == 0)
+			return;
+
+		if(v.length == 1 && v[0] - this.editMarkersWindow < 0)
+			this.setValues([0,v[0]]);
+
+		else if(v.length == 1 && v[0] - this.editMarkersWindow >= 0)
+			this.setValues([v[0] - this.editMarkersWindow,v[0]]);
+
+		else if(v.length == 2 && v[0] - this.editMarkersWindow < 0)
+			this.setValues([0,v[1]]);
+
+		else if(v.length == 2 && v[0] - this.editMarkersWindow >= 0)
+			this.setValues([v[0] - this.editMarkersWindow,v[1]]);
+	},
+
+	_selectRightCoords: function(evt){
+		var v = this.getSliderVal();
+		var last = this.coordinates.length - 1;
+
+		if(v.length == 1){
+			if(v[0] == last)
+				return;
+
+			if(v[0] + this.editMarkersWindow > last)
+				this.setValues([v[0],last]);
+
+			else if(v[0] + this.editMarkersWindow <= last)
+				this.setValues([v[0],v[0] + this.editMarkersWindow]);
+		
+		} else if(v.length == 2){
+			if(v[1] == last)
+				return;
+			
+			if(v[1] + this.editMarkersWindow > last)
+				this.setValues([v[0],last]);
+
+			else if(v[1] + this.editMarkersWindow <= last)
+				this.setValues([v[0],v[1] + this.editMarkersWindow]);
 		}
 	},
 
@@ -420,6 +483,31 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			this.$el.find('.su-select-last-coord').removeClass('active');
 		else if(v.length == 2 && v[1] == last)
 			this.$el.find('.su-select-last-coord').addClass('active');
+	},
+
+	checkWindowSelectInput: function(e){
+		if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            (e.keyCode == 65 && e.ctrlKey === true) || 
+            (e.keyCode >= 35 && e.keyCode <= 39))
+                 return;
+        
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105))
+            e.preventDefault();
+	},
+
+	changeWindowSelect: function(evt){
+		var val = this.$el.find("#su-select-window-input").val();
+		if(val == this.editMarkersWindow || val == "" || (val.length == 1 && val == "0")){
+			if(val == "" || (val.length == 1 && val == "0"))
+				this.$el.find("#su-select-window-input").val(this.editMarkersWindow);
+			return;
+		}
+
+		this.editMarkersWindow = val;
+	},
+
+	_deselectCoords: function(){
+		this.setZero();
 	},
 
 	save: function(){

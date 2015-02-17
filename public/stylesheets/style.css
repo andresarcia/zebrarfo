@@ -264,6 +264,18 @@ hr {
   color: #0088CC;
   background-color: #fff;
 }
+#su-select-window-input {
+  float: left;
+  display: inline-block;
+  margin-top: 5px;
+  height: 25px;
+  padding: 6px 6px;
+  text-align: center;
+}
+#su-select-window-input:disabled{
+  color: #C5C5C5;
+}
+
 .su-coord-to-edit{
   position: relative;
   display: block;

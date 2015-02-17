@@ -3,16 +3,26 @@
   	<div class="col-md-9">
   		<div id="su-edit-place-controls" class="col-xs-12 col-sm-12 col-md-12">
   			<div class="btn-group">
-				<button type="button" class="btn action-btn su-delete-coord" aria-label="Left Align" disabled>
-						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+				<button type="button" class="btn action-btn su-delete-coord" disabled>
+					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 				</button>
 			</div>
 			<div class="btn-group">
-				<button type="button" class="btn select-btn su-select-first-coord" aria-label="Left Align">
-						first
+				<button type="button" class="btn select-btn su-select-first-coord">
+					first
 				</button>
-				<button type="button" class="btn select-btn su-select-last-coord" aria-label="Left Align">
-						last
+				<button type="button" class="btn select-btn su-select-last-coord">
+					last
+				</button>
+				<button type="button" class="btn action-btn su-select-left-coord" disabled>
+					<span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+				</button>
+				<input type="input" class="action-btn" id="su-select-window-input" value="5" size="3" maxlength="3" disabled/>
+				<button type="button" class="btn action-btn su-select-right-coord" disabled>
+					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn action-btn su-deselect-coord">
+					deselect
 				</button>
 			</div>
 		</div>
