@@ -31,7 +31,7 @@ app.view.HeatmapView = Backbone.View.extend({
         'change .radius-slider':'changeRadius',
         'slide .markers-slider':'changeMarker',
         'change .spread-distance-slider':'changeSpreadDistance',
-        'change .spread-distance-unit-slider':'changeSpreadDistance',
+        'change #spread-distance-unit-slider':'changeSpreadDistance',
         'change #allocation-channel':'changeAllocationChannel',
     },
     
