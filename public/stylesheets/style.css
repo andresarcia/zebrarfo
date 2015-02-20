@@ -264,7 +264,8 @@ hr {
   color: #0088CC;
   background-color: #fff;
 }
-#su-select-window-input {
+#su-select-window-left-input,
+#su-select-window-right-input {
   float: left;
   display: inline-block;
   margin-top: 5px;
@@ -272,7 +273,8 @@ hr {
   padding: 6px 6px;
   text-align: center;
 }
-#su-select-window-input:disabled{
+#su-select-window-left-input:disabled, 
+#su-select-window-right-input:disabled {
   color: #C5C5C5;
 }
 
