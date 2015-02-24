@@ -4,13 +4,12 @@ app.util = app.util || {};
 app.util.Parser = function(){};
 
 app.util.Parser.prototype = {
-	numFilesParser: 0,
+	numFilesParsed: 0,
 	numFiles: 0,
 	unitFactor: 1,
 
 	initialize: function(files,place,unit,callbackNumFilesProcessed,callback){
 		var self = this;
-		
 		if(place)
 			this.place = place;
 		else
@@ -19,8 +18,10 @@ app.util.Parser.prototype = {
 		this.numFiles = files.length;
 		this.chooseUnitFactor(unit);
 
-		this.frequencyMin = new app.util.Stats();
-		this.frequencyMax = new app.util.Stats();
+		this.place.frequencies = {};
+		this.place.frequencies.unit = unit;
+		this.place.frequencies.values = [];
+
 		this.powerMin = new app.util.Stats();
 		this.powerMax = new app.util.Stats();
 
@@ -28,17 +29,13 @@ app.util.Parser.prototype = {
    			var fr = new FileReader();
 		    fr.onload = function(e) { 
 		    	self.parser(place,fr.result);
-		    	self.numFilesParser += 1;
-		    	callbackNumFilesProcessed(self.numFilesParser);
+		    	self.numFilesParsed += 1;
+		    	callbackNumFilesProcessed(self.numFilesParsed);
 		        
-		        if (self.numFilesParser == self.numFiles){
-		        	self.place.numberCoordinates = self.powerMin.getCount();
+		        if (self.numFilesParsed == self.numFiles){
 					self.place.powerMin = self.powerMin.getResult();
 					self.place.powerMax = self.powerMax.getResult();
-					self.place.frequencyMin = self.frequencyMin.getResult();
-					self.place.frequencyMax = self.frequencyMax.getResult();
-		        
-		        	callback(self.place);
+					callback(self.place);
 		        }
 		    };
 		    fr.readAsText(file);
@@ -65,22 +62,23 @@ app.util.Parser.prototype = {
 	parser: function(place,data){
 		var self = this;
 		var arrayCoordinate = [];
-		var arrayFrequencyPower = [];
+		var arrayPower = [];
 
 		var lines = data.split('\n');
-		        
-        _.each(lines, function(line){
-        	lineSplit = line.split('\t');	
+		
+		_.each(lines, function(line){
+			lineSplit = line.split('\t');
 			if(lineSplit.length == 2){
-				var newFrequency = Number(lineSplit[0]) * self.unitFactor;
-				var newPower = Number(lineSplit[1]);
-				arrayFrequencyPower.push({ frequency: newFrequency, power:newPower });
+				if(self.numFilesParsed == 0)
+					self.place.frequencies.values.push(Number(lineSplit[0]) * self.unitFactor)
+
+				arrayPower.push(Number(lineSplit[1]));
 			
 			} else if(lineSplit.length == 1)
 				arrayCoordinate.push(lineSplit);
-        });
+		});
 
-        var latitude = Number(arrayCoordinate[0]);
+		var latitude = Number(arrayCoordinate[0]);
 		var longitude = Number(arrayCoordinate[1]);
 		if(isNaN(latitude) || isNaN(longitude))
 			return;
@@ -88,7 +86,7 @@ app.util.Parser.prototype = {
 		this.coordinateStats({
 			latitude: latitude,
 			longitude: longitude,
-		 	captures: arrayFrequencyPower,
+		 	captures: arrayPower,
 			createdDate: String(arrayCoordinate[2])
 		});
 	},
@@ -97,33 +95,23 @@ app.util.Parser.prototype = {
 		var coordinate = {};
 		coordiante = _.extend(coordinate, coord);
 
-		var frequencyMin = new app.util.Stats();
-		var frequencyMax = new app.util.Stats();
 		var powerMin = new app.util.Stats();
 		var powerMax = new app.util.Stats();
 		
 		_.each(coord.captures,function(item){
-			powerMin.min(item.power);
-			powerMax.max(item.power);
-			frequencyMin.min(item.frequency);
-			frequencyMax.max(item.frequency);
+			powerMin.min(item);
+			powerMax.max(item);
 		});
 
-		coordinate.powerMin = Number(powerMin.getResult().toFixed(5));
-		coordinate.powerMax = Number(powerMax.getResult().toFixed(5));
+		var min = Number(powerMin.getResult().toFixed(5));
+		var max = Number(powerMax.getResult().toFixed(5));
 
-		this.saveInPlace(coordinate,frequencyMin.getResult(),frequencyMax.getResult(),powerMin.getCount());
+		this.saveInPlace(coordinate,min,max);
 	},
 
-	saveInPlace: function(coordinate,frequencyMin,frequencyMax,numberPowerFrequency){
+	saveInPlace: function(coordinate, powerMin, powerMax){
 		this.place.coordinates.push(coordinate);
-
-		this.powerMin.min(coordinate.powerMin);
-		this.powerMax.max(coordinate.powerMax);
-		this.frequencyMin.min(frequencyMin);
-		this.frequencyMax.max(frequencyMax);
-
-		if(this.place.numberPowerFrequency === null)
-			this.place.numberPowerFrequency = numberPowerFrequency;
+		this.powerMin.min(powerMin);
+		this.powerMax.max(powerMax);
 	},
 };

@@ -123,9 +123,9 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		if(!this.stop){
 
 			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
-			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.numberCoordinates);
-			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.numberPowerFrequency);
-			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencyMin/1000+' - '+this.model.attributes.frequencyMax/1000+'] <small><b>MHz</b></small>');
+			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.coordinates.length);
+			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.frequencies.values.length);
+			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencies.values[0]/1000+' - '+this.model.attributes.frequencies.values[this.model.attributes.frequencies.values.length - 1]/1000+'] <small><b>MHz</b></small>');
 			$('#ws-modal-parsing-measures-data-table-powerMin').html(this.model.attributes.powerMin + ' <small><b>dBm</b></small>');
 			$('#ws-modal-parsing-measures-data-table-powerMax').html(this.model.attributes.powerMax + ' <small><b>dBm</b></small>');
 			

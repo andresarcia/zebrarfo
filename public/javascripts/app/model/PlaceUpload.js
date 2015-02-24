@@ -6,13 +6,9 @@ app.model.PlaceUpload = Backbone.Model.extend({
 	urlRoot: '/api/places/upload/',
 
 	defaults: {
-    	name: null,
-		numberCoordinates : 0,
+        name: null,
 		powerMin : null,
 		powerMax : null,
-        frequencyMin: null,
-        frequencyMax: null,
-        numberPowerFrequency: null,
 		coordinates : [],
 		json: false,
         gpsFunction: 'avg'
