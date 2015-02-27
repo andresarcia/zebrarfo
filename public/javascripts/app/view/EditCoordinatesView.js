@@ -11,6 +11,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		'click .su-edit-remove-from-list': 'setZero',
 		'click .su-create-new-edition-range': 'addEditionRange',
 		'click .su-delete-coord': '_deleteCoord',
+		'click .su-select-zoom-out-coord': '_zoomOut',
+		'click .su-select-zoom-to-fit-coord': '_zoom2Fit',
 		'click .su-select-first-coord': '_selectFirstCoord',
 		'click .su-select-last-coord': '_selectLastCoord',
 		'click .su-select-left-minus-coord': '_selectMinusLeftCoords',
@@ -20,7 +22,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		'keydown #su-select-window-left-input': 'checkWindowSelectInput',
 		'keydown #su-select-window-right-input': 'checkWindowSelectInput',
 		'change .spread-distance-slider':'changeSpreadDistance',
-        'change #spread-distance-unit-slider':'changeSpreadDistance',
+		'change #spread-distance-unit-slider':'changeSpreadDistance',
 		'click .su-deselect-coord': '_deselectCoords',
 		'click .su-save-save': 'save',
 		'click .su-save-save-as': 'saveAs',
@@ -437,6 +439,14 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 				break;
 		}
+	},
+
+	_zoom2Fit: function(){
+		this.mapView.zoom2Fit();
+	},
+
+	_zoomOut: function(){
+		this.mapView.zoomOut();
 	},
 
 	_selectFirstCoord: function(evt){

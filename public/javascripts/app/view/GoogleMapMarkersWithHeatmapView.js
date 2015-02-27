@@ -256,6 +256,28 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		});
 	},
 
+	zoom2Fit: function(){
+		if(this.selected.length < 1)
+			return;
+
+		var bounds = new google.maps.LatLngBounds();
+		if(this.selected.length == 1){
+			bounds.extend(this.selected[0].position);
+		} else if(this.selected.length == 2){
+			for(var i = this.selected[0].index; i <= this.selected[1].index; i++)
+				bounds.extend(this.markers[i].position);
+		}
+
+		this.map.fitBounds(bounds);
+	},
+
+	zoomOut: function(){
+		if(this.markers.length < 1)
+			return;
+
+		this.map.fitBounds(this.mapBounds);
+	},
+
 	render: function(data){
 		var self = this;
 		this.markers = [];
@@ -268,40 +290,39 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
   		};
 
   		this.map = new google.maps.Map(mapCanvas, mapOptions);  
-  		var bounds = new google.maps.LatLngBounds();
+  		this.mapBounds = new google.maps.LatLngBounds();
 
   		_.each(data, function(coordinate, index){
   			var infowindow = new google.maps.InfoWindow({
   				content: 'Latitude: ' + coordinate.latitude + '<br>Longitude: ' + coordinate.longitude,
   			});
-  			
-  			var latLng = new google.maps.LatLng(coordinate.latitude,coordinate.longitude);
-  			var marker = new google.maps.Marker({
-			    position: latLng,
-		      	map: self.map,
-		      	icon: window.settings.markers.iconIdle,
-		      	animation: null,
-		      	id: coordinate.id,
-		      	index: index,
-		      	visibleCount: 0,
-		  	});
+
+			var latLng = new google.maps.LatLng(coordinate.latitude,coordinate.longitude);
+			var marker = new google.maps.Marker({
+				position: latLng,
+				map: self.map,
+				icon: window.settings.markers.iconIdle,
+				animation: null,
+				id: coordinate.id,
+				index: index,
+				visibleCount: 0,
+			});
 
 			google.maps.event.addListener(marker, 'click', function() {
-		    	self.markerClick(marker.index);
+				self.markerClick(marker.index);
 			});
 
 			self.markers.push(marker);
-			bounds.extend(marker.position);
+			self.mapBounds.extend(marker.position);
 
 			self.heatmapData.push(latLng);
-  		});
+		});
 
-  		google.maps.event.addListenerOnce(self.map, 'idle', function(){
-            google.maps.event.trigger(self.map, 'resize');
-            self.map.fitBounds(bounds);
-  			self.renderHeatmap();
-        });
-        
+		google.maps.event.addListenerOnce(self.map, 'idle', function(){
+			google.maps.event.trigger(self.map, 'resize');
+			self.map.fitBounds(self.mapBounds);
+			self.renderHeatmap();
+		});
 	},
 
 	renderHeatmap: function(){
