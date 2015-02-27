@@ -65,6 +65,49 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		this.paintMarkers(n);
 	},
 
+	changeMarkersByDistance: function(distance,unit){
+		if(this.markers.length < 1)
+			return;
+
+		var self = this;
+		var spreadDistance;
+		if(unit == "m")
+			spreadDistance = distance / 1000;
+		else if(unit == "km")
+			spreadDistance = Number(distance);
+		else
+			spreadDistance = 0;
+
+		var ids = [];
+		var lastSaved = {};
+		lastSaved.lat = this.markers[0].position.k;
+		lastSaved.lng = this.markers[0].position.D;
+		_.each(this.markers, function(item, i){
+			if(item.visibleCount > 0)
+				return;
+
+			var lat = item.position.k;
+			var lng = item.position.D;
+
+			d = app.util.GetDistanceFromLatLonInKm(lastSaved.lat,lastSaved.lng,lat,lng);
+
+			if(d && d < spreadDistance && i != 0){
+				item.setIcon(window.settings.markers.iconHover);
+				item.setAnimation(google.maps.Animation.BOUNCE);
+				ids.push(item.id);
+			
+			} else {
+				item.setIcon(window.settings.markers.iconIdle);
+				item.setAnimation(null);
+			}
+
+			lastSaved.lat = lat;
+			lastSaved.lng = lng;
+		});
+
+		return ids;
+	},
+
 	changeMarkers: function(v){
 		var self = this;
 		n = [];
@@ -150,44 +193,67 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		}
 	},
 
-	hideMarkers: function(v){
+	hideMarkers: function(v,range){
 		if(v.length === 0)
 			return;
 
-		else if(v.length == 1){
-			this.markers[v[0]].setVisible(false);
-			this.markers[v[0]].visibleCount += 1;
-		}
+		if(range){
+			if(v.length == 1){
+				this.markers[v[0]].setVisible(false);
+				this.markers[v[0]].visibleCount += 1;
 
-		else if(v.length == 2){
-			for(var i = v[0]; i <= v[1]; i++){
-				this.markers[i].setVisible(false);
-				this.markers[i].visibleCount += 1;
+			} else if(v.length == 2){
+				for(var i = v[0]; i <= v[1]; i++){
+					this.markers[i].setVisible(false);
+					this.markers[i].visibleCount += 1;
+				}
 			}
+		} else {
+			var self = this;
+			_.each(v, function(i){
+				self.markers[i].setVisible(false);
+				self.markers[i].visibleCount += 1;
+			});
 		}
 
 		this.reTakeHeatmapData();
 	},
 
-	showMarkers: function(v){
+	showMarkers: function(v, range){
 		if(v.length === 0)
 			return;
 
-		else if(v.length == 1){
-			this.markers[v[0]].visibleCount -= 1;
-			if(this.markers[v[0]].visibleCount === 0)
-				this.markers[v[0]].setVisible(true);
-		}
-
-		else if(v.length == 2){
-			for(var i = v[0]; i <= v[1]; i++){
-				this.markers[i].visibleCount -= 1;
-				if(this.markers[i].visibleCount === 0)
-					this.markers[i].setVisible(true);
+		if(range){
+			if(v.length == 1){
+				this.markers[v[0]].visibleCount -= 1;
+				if(this.markers[v[0]].visibleCount === 0)
+					this.markers[v[0]].setVisible(true);
 			}
+
+			else if(v.length == 2){
+				for(var i = v[0]; i <= v[1]; i++){
+					this.markers[i].visibleCount -= 1;
+					if(this.markers[i].visibleCount === 0)
+						this.markers[i].setVisible(true);
+				}
+			}
+		} else {
+			var self = this;
+			_.each(v, function(i){
+				self.markers[i].visibleCount -= 1;
+				if(self.markers[i].visibleCount === 0)
+					self.markers[i].setVisible(true);
+			});
 		}
 
 		this.reTakeHeatmapData();
+	},
+
+	cleanAllMarkers: function(){
+		_.each(this.markers, function(item){
+			item.setIcon(window.settings.markers.iconIdle);
+			item.setAnimation(null);
+		});
 	},
 
 	render: function(data){

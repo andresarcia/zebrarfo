@@ -8,7 +8,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	events: {
 		'slide .markers-slider':'addMarkersBySlider',
-		'click .su-edit-remove-from-list': 'removeEditionRange',
+		'click .su-edit-remove-from-list': 'setZero',
 		'click .su-create-new-edition-range': 'addEditionRange',
 		'click .su-delete-coord': '_deleteCoord',
 		'click .su-select-first-coord': '_selectFirstCoord',
@@ -19,6 +19,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		'click .su-select-right-plus-coord': '_selectPlusRightCoords',
 		'keydown #su-select-window-left-input': 'checkWindowSelectInput',
 		'keydown #su-select-window-right-input': 'checkWindowSelectInput',
+		'change .spread-distance-slider':'changeSpreadDistance',
+        'change #spread-distance-unit-slider':'changeSpreadDistance',
 		'click .su-deselect-coord': '_deselectCoords',
 		'click .su-save-save': 'save',
 		'click .su-save-save-as': 'saveAs',
@@ -66,19 +68,19 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	renderMarkerSlider: function(start){
 		this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
-            start: start.length > 0 ? start:0,
-            step: 1,
-            connect: start.length > 1 ? true : false,
-            behaviour: 'drag',
-            orientation: "vertical",
-            format: wNumb({
-                decimals: 0
-            }),
-            range: {
-                'min': 0,
-                'max': this.coordinates.length - 1
-            }
-        }, true);
+			start: start.length > 0 ? start:0,
+			step: 1,
+			connect: start.length > 1 ? true : false,
+			behaviour: 'drag',
+			orientation: "vertical",
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': 0,
+				'max': this.coordinates.length - 1
+			}
+		}, true);
 	},
 
 	renderMap: function(){
@@ -100,7 +102,6 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var html;
 
 		if(this.editMarkers.length > 0){
-			
 			var data;
 			var hidden = false;
 			if(this.editMarkersIndex < 2)
@@ -152,6 +153,29 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		restore.toggle();
 	},
 
+	renderSpreadComponents: function(){
+		this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
+
+		this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
+			start: 0,
+			connect: "lower",
+			format: wNumb({
+				decimals: 1
+			}),
+			range: {
+				'min': [ 0 ],
+				'33.33%': [ 10, 10 ],
+				'66.33%': [ 100, 100 ],
+				'max': [ 1000 ]
+			}
+		});
+
+		this.$el.find('.spread-distance-slider').noUiSlider_pips({
+			mode: 'range',
+			density: 3.33
+		});
+	},
+
 	renderComponents: function(){
 		this.mapView = new app.view.GoogleMapMarkersWithHeatmapView({
 			idContainer: 'map_canvas_coordinates'
@@ -159,6 +183,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.renderMarkerSlider(0);
 		this.renderMap();
 		this.renderEditingArea();
+		this.renderSpreadComponents();
 	},
 
 	changeSliderByMarkers: function(markers){
@@ -167,6 +192,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			return;
 		}
 
+		this.cleanSpread();
 		var markersRange = [];
 		if(markers.length === 0){
 			this.setZero();
@@ -197,6 +223,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			return;
 		}
 
+		this.cleanSpread();
 		var markersRange = this.getSliderVal();
 		this.mapView.changeMarkers(this.relativeIndex2Real(markersRange));
 		this.appendToEditingArea(markersRange);
@@ -262,12 +289,6 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			this.editMarkersIndex -= 1;
 		else 
 			this.editMarkersIndex = 0;
-			
-		this.mapView.changeMarkers([]);
-		this.renderMarkerSlider([0]);
-		this.renderEditingArea();
-		this.$el.find('.action-btn').prop('disabled', true);
-		this.$el.find('.select-btn').removeClass('active');
 	},
 
 	getMarkersIndex: function(){
@@ -280,8 +301,11 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		if(currentMarkers.to)
 			markersRange = [currentMarkers.from.index, currentMarkers.to.index];
 
-		else if(currentMarkers.from.index.constructor === Number)
+		else if(currentMarkers.from && currentMarkers.from.index.constructor === Number)
 			markersRange = [currentMarkers.from.index];
+
+		else if(currentMarkers.values && currentMarkers.values.length > 0)
+			markersRange = currentMarkers.values;
 
 		return markersRange;
 	},
@@ -290,15 +314,24 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		if(this.editMarkers.length !== 0)
 			this.editMarkersIndex += 1;
 		this.setZero();
-		this.appendToEditingArea();
 	},
 
 	setZero: function(){
 		this.mapView.changeMarkers([]);
 		this.renderMarkerSlider([0]);
+		this.cleanSpread();
 		this.appendToEditingArea();
+		this.$el.find('.select-btn').prop('disabled', false);
 		this.$el.find('.action-btn').prop('disabled', true);
 		this.$el.find('.2-action-btn').prop('disabled', true);
+	},
+
+	cleanSpread: function(){
+		if(this.spreadSlider.val() > 0)
+			this.mapView.cleanAllMarkers();
+
+		this.spreadSlider.val(0);
+		this.$el.find('.select-btn').prop('disabled', false);
 	},
 
 	setValues: function(n){
@@ -326,27 +359,44 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	_deleteCoord: function(){
+		if(this.spreadSlider.val() < 1)
+			this.editMarkers[this.editMarkersIndex].by = 'range';
+		else {
+			this.editMarkers[this.editMarkersIndex].by = 'distance';
+			this.editMarkers[this.editMarkersIndex].distance = this.spreadSlider.val();
+			this.editMarkers[this.editMarkersIndex].unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+		}
 		this.editMarkers[this.editMarkersIndex].action = 'delete';
 		this.editMarkers[this.editMarkersIndex].editable = false;
 		this.editMarkers[this.editMarkersIndex].coordinates = _.clone(this.coordinates);
 
-		this.mapView.hideMarkers(this.relativeIndex2Real(this.getMarkersIndex()));
-
-		var edited = [];
 		var v = this.getMarkersIndex();
-		if(v.length == 1){
-			var coord = _.clone(this.coordinates[v[0]]);
-			coord.action = 'delete';
-			edited.push(coord)
-			this.coordinates.splice(v[0], 1);
+		var edited = [];
 
-		} else {
-			for (var i = v[1]; i >= v[0]; i--){
-				var coord = _.clone(this.coordinates[i]);
+		if(this.spreadSlider.val() < 1){
+			this.mapView.hideMarkers(this.relativeIndex2Real(v),true);
+			if(v.length == 1){
+				var coord = _.clone(this.coordinates[v[0]]);
 				coord.action = 'delete';
 				edited.push(coord)
-				this.coordinates.splice(i, 1);
+				this.coordinates.splice(v[0], 1);
+
+			} else {
+				for (var i = v[1]; i >= v[0]; i--){
+					var coord = _.clone(this.coordinates[i]);
+					coord.action = 'delete';
+					edited.push(coord)
+					this.coordinates.splice(i, 1);
+				}
 			}
+		} else {
+			this.mapView.hideMarkers(this.relativeIndex2Real(v),false);
+			for (var i = v.length - 1; i >= 0; i--) {
+				var coord = _.clone(this.coordinates[v[i]]);
+				coord.action = 'delete';
+				edited.push(coord);
+				this.coordinates.splice(v[i], 1);
+			};
 		}
 
 		this.editedCoords.push(edited);
@@ -367,14 +417,26 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			case 'delete':
 				this.coordinates = this.editMarkers[this.editMarkersIndex].coordinates;
 				this.calculateRelativeCoorDict();
-				this.mapView.showMarkers(this.relativeIndex2Real(indexes));
-				this.mapView.changeMarkers(this.relativeIndex2Real(indexes));
-				this.renderMarkerSlider(indexes);
+
+				var relative = this.relativeIndex2Real(indexes);
+				if(this.editMarkers[this.editMarkersIndex].by == "range"){
+					this.mapView.showMarkers(relative,true);
+					this.mapView.changeMarkers(relative);
+					this.renderMarkerSlider(indexes);
+					this.renderEditingArea();
+					this.$el.find('.action-btn').prop('disabled', false);
+				
+				} else if(this.editMarkers[this.editMarkersIndex].by == "distance"){
+					this.mapView.showMarkers(relative,false);
+					var distance = this.editMarkers[this.editMarkersIndex].distance;
+					var unit = this.editMarkers[this.editMarkersIndex].unit;
+					var ids = this.mapView.changeMarkersByDistance(distance,unit);
+					this.spreadSlider.val(distance);
+					this.renderEditingAreaSpread(ids,distance,unit);
+				}
+
 				break;
 		}
-
-		this.$el.find('.action-btn').prop('disabled', false);
-		this.renderEditingArea();
 	},
 
 	_selectFirstCoord: function(evt){
@@ -550,6 +612,37 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	_deselectCoords: function(){
 		this.setZero();
+	},
+
+	changeSpreadDistance: function(){
+		this.$el.find('.action-btn').prop('disabled', true);
+		this.$el.find('.2-action-btn').prop('disabled', true);
+		this.renderMarkerSlider([0]);
+		
+		var distance = this.spreadSlider.val();
+		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+		var ids = this.mapView.changeMarkersByDistance(distance,unit);
+		this.renderEditingAreaSpread(ids,distance,unit);
+	},
+
+	renderEditingAreaSpread: function(ids,distance,unit){
+		if(ids.length < 1){
+			this.setZero();
+			return;
+		}
+
+		var index = this.realIndex2Relative(ids);
+		this.editMarkers[this.editMarkersIndex] = {
+			values: index,
+			count: index.length,
+			distance: distance,
+			unit: unit
+		};
+		this.renderEditingArea();
+
+		this.$el.find('.select-btn').prop('disabled', true);
+		this.$el.find('.su-delete-coord').prop('disabled', false);
+		this.$el.find('.su-deselect-coord').prop('disabled', false);
 	},
 
 	save: function(){

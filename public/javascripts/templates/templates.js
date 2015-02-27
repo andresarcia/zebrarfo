@@ -11,7 +11,7 @@ this["Zebra"]["tmpl"]["charts"] = Handlebars.template({"compiler":[6,">= 2.0.0-b
 },"useData":true});
 
 this["Zebra"]["tmpl"]["edit_coordinates"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"row\">\n	<div id=\"su-list-coord-to-edit\" class=\"col-md-3\"></div>\n  	<div class=\"col-md-9\">\n  		<div id=\"su-edit-place-controls\" class=\"col-xs-12 col-sm-12 col-md-12\">\n  			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn action-btn su-delete-coord\" disabled>\n					<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>\n				</button>\n			</div>\n			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn select-btn su-select-first-coord\">\n					first\n				</button>\n				<button type=\"button\" class=\"btn select-btn su-select-last-coord\">\n					last\n				</button>\n\n				<button type=\"button\" class=\"btn action-btn su-select-left-plus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n				</button>\n				<input type=\"input\" class=\"action-btn\" id=\"su-select-window-left-input\" value=\"5\" size=\"3\" maxlength=\"3\" disabled/>\n				<button type=\"button\" class=\"btn 2-action-btn su-select-left-minus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span>\n				</button>\n\n				<button type=\"button\" class=\"btn 2-action-btn su-select-right-minus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span>\n				</button>\n				<input type=\"input\" class=\"2-action-btn\" id=\"su-select-window-right-input\" value=\"5\" size=\"3\" maxlength=\"3\" disabled/>\n				<button type=\"button\" class=\"btn 2-action-btn su-select-right-plus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n				</button>\n\n				<button type=\"button\" class=\"btn action-btn su-deselect-coord\">\n					deselect\n				</button>\n			</div>\n		</div>\n  		<div class=\"col-xs-11 col-sm-11 col-md-11\">\n			<div id=\"map_canvas_coordinates\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-xs-1 col-sm-1 col-md-1\" id=\"markers-slider-edit-place\">\n			<div class=\"markers-slider\" style=\"height:450px;\"></div>\n		</div>\n  	</div>\n</div>";
+  return "<div class=\"row\">\n	<div id=\"su-list-coord-to-edit\" class=\"col-md-3\"></div>\n  	<div class=\"col-md-9\">\n  		<div id=\"su-edit-place-controls\" class=\"col-xs-12 col-sm-12 col-md-12\">\n  			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn action-btn su-delete-coord\" disabled>\n					<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span>\n				</button>\n			</div>\n			<div class=\"btn-group\">\n				<button type=\"button\" class=\"btn select-btn su-select-first-coord\">\n					first\n				</button>\n				<button type=\"button\" class=\"btn select-btn su-select-last-coord\">\n					last\n				</button>\n\n				<button type=\"button\" class=\"btn action-btn su-select-left-plus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n				</button>\n				<input type=\"input\" class=\"action-btn\" id=\"su-select-window-left-input\" value=\"5\" size=\"3\" maxlength=\"3\" disabled/>\n				<button type=\"button\" class=\"btn 2-action-btn su-select-left-minus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span>\n				</button>\n\n				<button type=\"button\" class=\"btn 2-action-btn su-select-right-minus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span>\n				</button>\n				<input type=\"input\" class=\"2-action-btn\" id=\"su-select-window-right-input\" value=\"5\" size=\"3\" maxlength=\"3\" disabled/>\n				<button type=\"button\" class=\"btn 2-action-btn su-select-right-plus-coord\" disabled>\n					<span class=\"glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span>\n				</button>\n\n				<button type=\"button\" class=\"btn action-btn su-deselect-coord\">\n					deselect\n				</button>\n			</div>\n		</div>\n  		<div class=\"col-xs-11 col-sm-11 col-md-11\">\n			<div id=\"map_canvas_coordinates\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-xs-1 col-sm-1 col-md-1\" id=\"markers-slider-edit-place\">\n			<div class=\"markers-slider\" style=\"height:450px;\"></div>\n		</div>\n		<div class=\"col-md-11 col-md-offset-0\">\n			<br>\n			<div class=\"col-md-3\">\n				<select class=\"form-control\" id=\"spread-distance-unit-slider\">\n					<option value=\"m\">Meters - m</option>\n					<option value=\"km\">Kilometers - km</option>\n				</select>\n			</div>\n			<div class=\"col-md-9\">\n				<div class=\"spread-distance-slider\"></div>\n			</div>\n		</div>\n  	</div>\n</div>";
   },"useData":true});
 
 this["Zebra"]["tmpl"]["edit_outliers"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -155,7 +155,7 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
   buffer += "	<h2><small>Edit list</small></h2>\n\n";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"each","hash":{},"fn":this.program(4, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.create : depth0), {"name":"if","hash":{},"fn":this.program(12, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.create : depth0), {"name":"if","hash":{},"fn":this.program(16, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn su-save-save\">Save</button>\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn su-save-save-as\">Save as</button>\n";
 },"2":function(depth0,helpers,partials,data) {
@@ -164,52 +164,74 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
     + escapeExpression(((helper = (helper = helpers.hiddenNumber || (depth0 != null ? depth0.hiddenNumber : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"hiddenNumber","hash":{},"data":data}) : helper)))
     + "</small></span>\n		</div>\n";
 },"4":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "		<a href=\"javascript:void(0)\" class=\"su-coord-to-edit\">\n			<span href=\"javascript:void(0)\" class=\"pull-right ws-red su-edit-remove-from-list\">\n				<small>remove from list</small>\n			</span> \n			<div class=\"ws-blue\">\n				<small>From</small>\n				<span class=\"ws-dark-gray\"><small>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.index : stack1), depth0))
-    + "</small></span>\n			</div>\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  buffer += "			\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.to : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
+  var stack1, buffer = "		<a href=\"javascript:void(0)\" class=\"su-coord-to-edit\">\n			<span href=\"javascript:void(0)\" class=\"pull-right ws-red su-edit-remove-from-list\">\n				<small>remove from list</small>\n			</span> \n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.from : depth0), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "\n";
-  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.to : depth0), {"name":"unless","hash":{},"fn":this.program(10, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.from : depth0), {"name":"unless","hash":{},"fn":this.program(13, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "		</a>\n";
 },"5":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "				<div class=\"ws-blue\">\n					<small>From</small>\n					<span class=\"ws-dark-gray\"><small>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.index : stack1), depth0))
+    + "</small></span>\n				</div>\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "				\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.to : depth0), {"name":"if","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "\n";
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.to : depth0), {"name":"unless","hash":{},"fn":this.program(11, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"6":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "				<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "					<div class=\"ws-gray\"><small><b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), depth0))
     + " <b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.longitude : stack1), depth0))
     + "</small></div>\n";
-},"7":function(depth0,helpers,partials,data) {
-  var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing, buffer = "				<div class=\"ws-blue\">\n					<small>To</small>\n					<span class=\"ws-dark-gray\"><small>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.index : stack1), depth0))
-    + "</small></span>\n				</div>\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "\n				<div class=\"ws-blue\">\n					<small>Distance</small>\n					<span class=\"ws-dark-gray\"><small>"
-    + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
-    + " Km</small></span>\n				</div>\n";
 },"8":function(depth0,helpers,partials,data) {
+  var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing, buffer = "					<div class=\"ws-blue\">\n						<small>To</small>\n						<span class=\"ws-dark-gray\"><small>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.index : stack1), depth0))
+    + "</small></span>\n					</div>\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), {"name":"if","hash":{},"fn":this.program(9, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\n					<div class=\"ws-blue\">\n						<small>Distance</small>\n						<span class=\"ws-dark-gray\"><small>"
+    + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
+    + " km</small></span>\n					</div>\n";
+},"9":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "					<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "						<div class=\"ws-gray\"><small><b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), depth0))
     + " <b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.longitude : stack1), depth0))
     + "</small></div>\n";
-},"10":function(depth0,helpers,partials,data) {
-  return "				<small>You can select two markers for make a range</small>\n";
-  },"12":function(depth0,helpers,partials,data) {
+},"11":function(depth0,helpers,partials,data) {
+  return "					<small>You can select two markers for make a range</small>\n";
+  },"13":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.values : depth0), {"name":"if","hash":{},"fn":this.program(14, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"14":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "					<div class=\"ws-blue\">\n						<small>Distance</small>\n						<span class=\"ws-dark-gray\"><small>"
+    + escapeExpression(((helper = (helper = helpers.distance || (depth0 != null ? depth0.distance : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"distance","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.unit || (depth0 != null ? depth0.unit : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"unit","hash":{},"data":data}) : helper)))
+    + "</small></span>\n					</div>\n					<div class=\"ws-blue\">\n						<small>Count</small>\n						<span class=\"ws-dark-gray\"><small>"
+    + escapeExpression(((helper = (helper = helpers.count || (depth0 != null ? depth0.count : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"count","hash":{},"data":data}) : helper)))
+    + "</small></span>\n					</div>\n";
+},"16":function(depth0,helpers,partials,data) {
   return "		<a href=\"javascript:void(0)\" class=\"su-create-new-edition-range ws-dark-gray\">\n			<h3>Click <small>to create a new edition range</small></h3>\n		</a>\n";
-  },"14":function(depth0,helpers,partials,data) {
+  },"18":function(depth0,helpers,partials,data) {
   return "	<div class=\"page-header\">\n		<h1>Click <small>on any marker or drag slider to start editing</small></h1>\n	</div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"unless","hash":{},"fn":this.program(14, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"unless","hash":{},"fn":this.program(18, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer;
 },"useData":true});

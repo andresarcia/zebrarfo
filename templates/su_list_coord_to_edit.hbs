@@ -13,31 +13,46 @@
 			<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
 				<small>remove from list</small>
 			</span> 
-			<div class="ws-blue">
-				<small>From</small>
-				<span class="ws-dark-gray"><small>{{from.index}}</small></span>
-			</div>
-			{{#if from.latitude}}
-				<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
-			{{/if}}
-			
-			{{#if to}}
+			{{#if from}}
 				<div class="ws-blue">
-					<small>To</small>
-					<span class="ws-dark-gray"><small>{{to.index}}</small></span>
+					<small>From</small>
+					<span class="ws-dark-gray"><small>{{from.index}}</small></span>
 				</div>
-				{{#if to.latitude}}
-					<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+				{{#if from.latitude}}
+					<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+				{{/if}}
+				
+				{{#if to}}
+					<div class="ws-blue">
+						<small>To</small>
+						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
+					</div>
+					{{#if to.latitude}}
+						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+					{{/if}}
+
+					<div class="ws-blue">
+						<small>Distance</small>
+						<span class="ws-dark-gray"><small>{{distance}} km</small></span>
+					</div>
 				{{/if}}
 
-				<div class="ws-blue">
-					<small>Distance</small>
-					<span class="ws-dark-gray"><small>{{distance}} Km</small></span>
-				</div>
+				{{#unless to}}
+					<small>You can select two markers for make a range</small>
+				{{/unless}}
 			{{/if}}
 
-			{{#unless to}}
-				<small>You can select two markers for make a range</small>
+			{{#unless from}}
+				{{#if values}}
+					<div class="ws-blue">
+						<small>Distance</small>
+						<span class="ws-dark-gray"><small>{{distance}} {{unit}}</small></span>
+					</div>
+					<div class="ws-blue">
+						<small>Count</small>
+						<span class="ws-dark-gray"><small>{{count}}</small></span>
+					</div>
+				{{/if}}
 			{{/unless}}
 		</a>
 	{{/each}}
