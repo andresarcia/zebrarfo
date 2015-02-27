@@ -69,7 +69,7 @@ hr {
 }
 
 .glass-pane {
-  position: fixed;
+  position: absolute;
   background-color:rgba(0,0,0,0.433);
   z-index: 10;
   display: none;

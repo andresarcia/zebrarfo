@@ -17,18 +17,16 @@ app.view.GlassPaneView = Backbone.View.extend({
 				html = '<div class="glass-pane"><a class="glass-icon"><span class="glyphicon '+options.icon+' glyphicon-'+options.iconSize+'x "></span></a></div>';
 		}
 
-		this.container.append(html);
-
 		var width = this.container.outerWidth();
 		var height = this.container.outerHeight();
-		var position = this.container.offset();
+		var position = this.container.parent().position();
 
-		this.container.find('.glass-pane').css({
+		$(html).css({
 			'width': width,
 			'height': height,
-			'top': position.top,
+			'top': 0,
 			'left': position.left,
-		});
+		}).appendTo(this.container);
 
 		this.container.find('.glass-icon').click(this.clickOverGlass);
 	},
