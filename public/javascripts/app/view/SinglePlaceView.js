@@ -46,9 +46,9 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	  				window.location.hash = '#places';
 				},
 				error: function(model, xhr, options){
-		     		self.waitingView.closeView();
-		     		self.errorView.render([xhr.responseText]);
-		    	}
+			 		self.waitingView.closeView();
+			 		self.errorView.render([xhr.responseText]);
+				}
 			});
 		};
 
@@ -56,13 +56,13 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	  		message: '<h4>Are you sure to delete <b>' + this.data.attributes.name + '</b>?</h4>',
 	  		buttons: {
 	  			main: {
-	      			label: "Cancel",
-	    		},
-	    		danger: {
-	      			label: "Delete!",
-	      			className: "btn-danger",
-	      			callback: deleteFunction
-	    		},
+		  			label: "Cancel",
+				},
+				danger: {
+		  			label: "Delete!",
+		  			className: "btn-danger",
+		  			callback: deleteFunction
+				},
 	  		}
 		});
 	},
@@ -70,28 +70,28 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	changeAllocationChannel: function(){
 		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		this.renderPowerFrequencies();
-    },
+	},
 
-    renderCoordinateResume: function(res){
-    	var self = this;
-    	var template = Zebra.tmpl['su_coordinate_resume'];
+	renderCoordinateResume: function(res){
+		var self = this;
+		var template = Zebra.tmpl['su_coordinate_resume'];
 		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
 		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
 			idPlace: this.data.id,
-    		idCoord: res.id
+			idCoord: res.id
 		});
 
 		this.currentPowerFrequencies.options = {
 			yAxis: {
-	            plotLines:[{
-			        value: this.coordinates[res.index].powerAvg,
-			        color: '#ff0000',
-			        width:1,
-			        zIndex:4,
-			        label:{text:'Average power'}
-			    }]
+				plotLines:[{
+					value: this.coordinates[res.index].powerAvg,
+					color: '#ff0000',
+					width:1,
+					zIndex:4,
+					label:{text:'Average power'}
+				}]
 			},
 			tooltip: {
 				positioner: {
@@ -105,24 +105,24 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.currentPowerFrequencies.data.fetch({
 			success: function(){
 				self.waitingView.closeView();
-		       	self.renderPowerFrequencies();
-		    },
-		    error: function(model, xhr, options){
-		     	self.waitingView.closeView();
-		     	self.errorView.render([xhr.responseText]);
-		    }
+			   	self.renderPowerFrequencies();
+			},
+			error: function(model, xhr, options){
+			 	self.waitingView.closeView();
+			 	self.errorView.render([xhr.responseText]);
+			}
 		});
-    },
+	},
 
-    renderPowerFrequencies: function(){
-    	var view = new app.view.PowerFrequenciesView({
+	renderPowerFrequencies: function(){
+		var view = new app.view.PowerFrequenciesView({
 			selector: '#su-selected-coordinate-map',
 			tooltipTop: 260
 		});
 		view.render(this.currentPowerFrequencies.data.attributes,this.currentPowerFrequencies.options);
-       	$('html, body').stop().animate({  
-	        scrollTop: $('.chart_power_frequency').offset().top
-	    }, 1000);
+	   	$('html, body').stop().animate({  
+			scrollTop: $('.chart_power_frequency').offset().top
+		}, 1000);
 	},
 
 	renderMap: function(){
@@ -141,11 +141,11 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	render: function(){
 		var template = Zebra.tmpl['single_place'];
 		var html = template(this.data);
-    	this.$el.html(html);	
+		this.$el.html(html);	
 
-    	this.$el.find("#allocation-channel").select2();
-    	this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-    
+		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+	
 		return this;
 	},
 
