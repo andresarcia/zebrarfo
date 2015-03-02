@@ -25,7 +25,7 @@ exports.create = function(place, callback) {
 	n.distaceMin = null;
 	n.outliers = {};
 
-    /* -- vars for take stats -- */
+	/* -- vars for take stats -- */
 	n.placePowerSD_X = null;
 	n.placePowerSD_M = null;
 	n.countSamplesDistance = 0;
@@ -42,11 +42,11 @@ exports.create = function(place, callback) {
 }
 
 function reduceCommonGps(o,n,callback){	
-	var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
-		return sample.latitude + sample.longitude;
-	});
-
 	if(o.frequencies == undefined){
+		var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
+			return sample.latitude + sample.longitude;
+		});
+
 		_.each(_.keys(groupByCoordinate), function(key){
 			var samplesToReduce = groupByCoordinate[key];
 			var union = [];
@@ -64,42 +64,42 @@ function reduceCommonGps(o,n,callback){
 			_.each(frequencies, function(key){
 				var operation;
 				switch (o.gpsFunction) {
-				    case 'avg':
-				        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+					case 'avg':
+						operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
 							return memo + item.power; 
 						}, 0);
 						operation /= groupByFrequencies[key].length;
-				        break;
+						break;
 
-				    case 'max':
-				        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
-				        	if(memo < item.power)
+					case 'max':
+						operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+							if(memo < item.power)
 								return item.power;
 							else
 								return memo;
 						}, groupByFrequencies[key][0].power);
-				        break;
+						break;
 
-				    case 'min':
-				        operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
-				        	if(memo > item.power)
+					case 'min':
+						operation = _.reduce(groupByFrequencies[key], function(memo, item){ 
+							if(memo > item.power)
 								return item.power;
 							else
 								return memo;
 						}, groupByFrequencies[key][0].power);
-				        break;
+						break;
 
-				    case 'first':
-				        operation = groupByFrequencies[key][0].power;
-				        break;
+					case 'first':
+						operation = groupByFrequencies[key][0].power;
+						break;
 
-				    case 'last':
-				        operation = groupByFrequencies[key][groupByFrequencies[key].length - 1].power;
-				        break;
+					case 'last':
+						operation = groupByFrequencies[key][groupByFrequencies[key].length - 1].power;
+						break;
 
-				    default:
-				    	operation = groupByFrequencies[key][0].power;
-				    	break;
+					default:
+						operation = groupByFrequencies[key][0].power;
+						break;
 				}
 				captures.push({ frequency: Number(key), power:operation });	
 
@@ -120,48 +120,52 @@ function reduceCommonGps(o,n,callback){
 		});
 	
 	} else {
+		var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
+			return sample.lat + sample.lng;
+		});
+
 		_.each(_.keys(groupByCoordinate), function(key){
 			var item = groupByCoordinate[key];
 			var captures = [];
 
-			for (var i = 0; i < item[0].captures.length; i++) {
+			for (var i = 0; i < item[0].cap.length; i++) {
 				var operation;
 				switch (o.gpsFunction) {
 					case 'avg':
 						operation = _.reduce(item, function(memo, item){ 
-							return memo + item.captures[i]; 
+							return memo + item.cap[i]; 
 						}, 0);
 						operation /= item.length;
 						break;
 
 					case 'max':
 						operation = _.reduce(item, function(memo, item){ 
-							if(memo < item.captures[i])
-								return item.captures[i];
+							if(memo < item.cap[i])
+								return item.cap[i];
 							else
 								return memo;
-						}, item[0].captures[i]);
+						}, item[0].cap[i]);
 						break;
 
 					case 'min':
 						operation = _.reduce(item, function(memo, item){ 
-							if(memo > item.captures[i])
-								return item.captures[i];
+							if(memo > item.cap[i])
+								return item.cap[i];
 							else
 								return memo;
-						}, item[0].captures[i]);
+						}, item[0].cap[i]);
 						break;
 
 					case 'first':
-						operation = item[0].captures[i];
+						operation = item[0].cap[i];
 				 		break;
 
 					case 'last':
-						operation = item[item.length - 1].captures[i];
+						operation = item[item.length - 1].cap[i];
 						break;
 
 					default:
-						operation = item[0].captures[i];
+						operation = item[0].cap[i];
 						break;
 				}
 
@@ -173,10 +177,10 @@ function reduceCommonGps(o,n,callback){
 			}
 		
 			var coord = takeCoordStats({
-				latitude: item[0].latitude,
-				longitude: item[0].longitude,
+				latitude: item[0].lat,
+				longitude: item[0].lng,
 				captures: captures,
-				createdDate: item[0].createdDate
+				createdDate: item[0].date
 			});
 
 			saveCoord(coord, n);
