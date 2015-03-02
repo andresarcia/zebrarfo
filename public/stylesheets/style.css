@@ -381,7 +381,8 @@ hr {
   font-weight: normal;
 }
 
-#ws-modal-parsing-measures-data-table {
+#ws-modal-parsing-measures-data-table,
+#ws-modal-parsing-measures-data-table-heading {
   display: none;
 }
 

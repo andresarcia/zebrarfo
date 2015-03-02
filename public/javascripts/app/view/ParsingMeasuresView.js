@@ -71,7 +71,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	render: function(){
 		var template = Zebra.tmpl['modal_parsing_measures'];
 		var html = template({numFiles: this.files.length});
-        this.$el.html(html);
+		this.$el.html(html);
 
 		return this;
 	},
@@ -125,13 +125,13 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
 			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.coordinates.length);
 			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.frequencies.values.length);
-			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencies.values[0]/1000+' - '+this.model.attributes.frequencies.values[this.model.attributes.frequencies.values.length - 1]/1000+'] <small><b>MHz</b></small>');
-			$('#ws-modal-parsing-measures-data-table-powerMin').html(this.model.attributes.powerMin + ' <small><b>dBm</b></small>');
-			$('#ws-modal-parsing-measures-data-table-powerMax').html(this.model.attributes.powerMax + ' <small><b>dBm</b></small>');
-			
+			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencies.values[0]+' - '+this.model.attributes.frequencies.values[this.model.attributes.frequencies.values.length - 1]+'] <small><b>'+this.model.attributes.frequencies.unit+'</b></small>');
+
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
+
+			$('#ws-modal-parsing-measures-data-table-heading').show();
 			$('#ws-modal-parsing-measures-data-table').fadeIn(800);
-			
+
 			this.uploadDataToServer();
 		}
 	},
@@ -143,39 +143,39 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 		this.model.on('progress', function(evt) { 
 			if (evt.lengthComputable) {
-		    	self.percentLoaded += Math.round((evt.loaded / evt.total) * 40);
+				self.percentLoaded += Math.round((evt.loaded / evt.total) * 40);
 
-		    	if(self.percentLoaded < 80)
-		    		self.updateProgressBar();
+				if(self.percentLoaded < 80)
+					self.updateProgressBar();
 
-		    	else {
-		    		$('.modal-footer').children().prop("disabled",true);
-		    		self.status.waitingForServer = true;
-		    		self.percentLoaded = 80;
-       				self.updateProgressBar();
-		    		self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
-		    		self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
-		    		self.parentComponent.children().eq(3).addClass('active');
-		    		self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).show();
-		    	}
-		    }
+				else {
+					$('.modal-footer').children().prop("disabled",true);
+					self.status.waitingForServer = true;
+					self.percentLoaded = 80;
+	   				self.updateProgressBar();
+					self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
+					self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
+					self.parentComponent.children().eq(3).addClass('active');
+					self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).show();
+				}
+			}
 		});
 
 		this.model.save(this.model.attributes,{
-       		success: function(){
-       			self.status.done = true;
-       			$('.modal-footer').children().prop("disabled",false);
-       			self.percentLoaded = 100;
-       			self.updateProgressBar();
-            	self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
-            	$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
-            	self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
-       		},
-       		error: function(model, xhr, options){
-       			$('.modal-footer').children().prop("disabled",false);
-       			self.modal.modal('hide');
-       			Backbone.pubSub.trigger('event-server-error');
-               	self.errorView.render([xhr.responseText]);
+	   		success: function(){
+	   			self.status.done = true;
+	   			$('.modal-footer').children().prop("disabled",false);
+	   			self.percentLoaded = 100;
+	   			self.updateProgressBar();
+				self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
+				$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
+				self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
+	   		},
+	   		error: function(model, xhr, options){
+	   			$('.modal-footer').children().prop("disabled",false);
+	   			self.modal.modal('hide');
+	   			Backbone.pubSub.trigger('event-server-error');
+			   	self.errorView.render([xhr.responseText]);
 			} 
 		});
 
