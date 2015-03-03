@@ -45,9 +45,9 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		this.data = options.data;
 
 		this.waitingView.closeView();
-        this.render();
-        this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
-   	    $(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
+		this.render();
+		this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
+   		$(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
 		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
@@ -66,59 +66,29 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		this.viewContainers.setGoodGpsFunctionContainer();
 
 		if (window.File && window.FileReader && window.FileList && window.Blob)
-            this.options.supportHtml5 = true;
+			this.options.supportHtml5 = true;
 		else 
-        	this.options.supportHtml5 = false;	
+			this.options.supportHtml5 = false;	
 	},
 
 	render: function(){
 		var template = Zebra.tmpl['upload_measures'];
 		var html = template(this.data);
-    	this.$el.html(html);
+		this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
 		this.$el.find("#upload-gps-position-function").select2();
 		this.$el.find(".upload-measures-info-help").popover({
-	        title: 'Files Format',
-	        placement: 'left',
-	        container: $('body'),
-	        html: 'true',
-	        content: "<small>" +
-	        			"A measurement campaign defines what we call a Place. This is regularly composed of many individual text files captured by a single device. We provide scripts that can process the data in the raw format (the one provided by the device alone) and convert it to Zebra RFO input format<br>" +
-	        			"<br>" + 
-	        			"Zebra RFO uses data formatted as follows. A single text file contains a location (LAT and LON) with a set of frequencies out of a bandwidth:<br>" +
-	        			"<br>" + 
-	        			"<div class='well well-sm'>" + 
-	        				"frequency_1 \\t power_1<br>" + 
-	        				"frequency_2 \\t power_2<br>" + 
-	        				"...<br>" + 
-	        				"frequency_n \\t power_n<br>" + 
-	        				"latitude<br>" + 
-	        				"longitude<br>" + 
-	        				"date of capture" + 
-	        			"</div>" + 
-	        			"Please download the script according to your input device:<br><br>" +
-	        			"<b>Android device</b><br><br>" + 
-	        			"If you are using the android application to capture the spectrum activity (with RFExplorer), you can download the following script in python (" + 
-	        			"<a href='javascript:void(0)' id='download-android-parser'>android parser</a>" + 
-	        			"), copy the script into the folder where your captured data is located. Then run the script as follows:<br><br>" + 
-	        			"<div class='well well-sm'>python android_parser.py</div>" + 
-	        			"As a result, the script generate a folder of parsed data in Zebra RFO format, ready to be uploaded (and consumed) by the system. Then proceed as follows:<br><br>" + 
-	        			"<ol>" +
-	        				"<li>Name the zone</li>" +
-	        				"<li>Select all the parsed files (*.txt) which are numbered from 1 to N</li>" +
-	        				"<li>Select the common unit of the frequency sample (for Android should be kilohertz) </li>" +
-	        				"<li>Click on Synchronise</li>" +
-	        			"</ol>" +
-	        			"Wait for the processing.<br><br>" +
-	        			"Now you can visualise your data…<br><br>" +
-	        			"Enjoy!</small>",
-	    
-	    }).on('shown.bs.popover', function (eventShown) {
-    		var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
-    		$popup.find('#download-android-parser').click(function (e) {
-        		$.fileDownload('/downloads/android_parser.py');
-    		});
+			title: 'Files Format',
+			placement: 'left',
+			container: $('body'),
+			html: 'true',
+			content: Zebra.tmpl['upload_help_info'],
+		}).on('shown.bs.popover', function (eventShown) {
+			var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
+			$popup.find('#download-android-parser').click(function (e) {
+				$.fileDownload('/downloads/android_parser.py');
+			});
 		});
 
 		return this;
@@ -149,15 +119,15 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			this.filesInfo.files = evt.target.files;
 		}
 		
-        if(this.viewContainers.getFilesContainerVal() !== ''){
+		if(this.viewContainers.getFilesContainerVal() !== ''){
 			this.options.fillFiles = true;
 			this.viewContainers.setGoodFilesContainer();
-        } else {
-        	this.options.fillFiles = false;
-        	this.viewContainers.setBadFilesContainer();
-        }
+		} else {
+			this.options.fillFiles = false;
+			this.viewContainers.setBadFilesContainer();
+		}
 
-        this.fillFilesInfo();
+		this.fillFilesInfo();
 	},
 
 	changeUnit: function(evt){
@@ -171,28 +141,28 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 
 	dragEnterEvent: function(evt){
 		evt.stopPropagation();
-    	evt.preventDefault();
+		evt.preventDefault();
 	},
 
 	dragOverEvent: function(evt){
 		evt.stopPropagation();
-    	evt.preventDefault();
-    	this.viewContainers.setDragFilesContainerOver();
+		evt.preventDefault();
+		this.viewContainers.setDragFilesContainerOver();
 	},
 
 	dragLeaveEvent: function(evt){
 		evt.stopPropagation();
-    	evt.preventDefault();
-    	this.viewContainers.setDragFilesContainerLeave();
+		evt.preventDefault();
+		this.viewContainers.setDragFilesContainerLeave();
 	},
 
 	dropEvent: function(evt){
 		evt.stopPropagation();
-    	evt.preventDefault();
-    	this.filesInfo.files = null;
-    	this.filesInfo.files = evt.originalEvent.dataTransfer.files;
-    	this.options.fillFiles = true;
-    	this.viewContainers.setDragFilesContainerDrop();
+		evt.preventDefault();
+		this.filesInfo.files = null;
+		this.filesInfo.files = evt.originalEvent.dataTransfer.files;
+		this.options.fillFiles = true;
+		this.viewContainers.setDragFilesContainerDrop();
 		this.fillFilesInfo();
 	},
 
@@ -202,7 +172,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		var filesBadType = [];
 		_.each(this.filesInfo.files, function(file){
 			if (file.name.split('.')[file.name.split('.').length - 1].toLowerCase() != 'txt') 
-        		filesBadType.push(file);
+				filesBadType.push(file);
 			sizeFiles += file.size;
 		});
 
