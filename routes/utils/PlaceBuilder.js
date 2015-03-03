@@ -29,6 +29,7 @@ exports.create = function(place, callback) {
 	n.placePowerSD_X = null;
 	n.placePowerSD_M = null;
 	n.countSamplesDistance = 0;
+	n.frequencyUnitFactor = 1;
 	/* ------------------------- */
 
 	reduceCommonGps(o,n,function(){
@@ -101,7 +102,11 @@ function reduceCommonGps(o,n,callback){
 						operation = groupByFrequencies[key][0].power;
 						break;
 				}
-				captures.push({ frequency: Number(key), power:operation });	
+
+				captures.push({ 
+					frequency: Number(key), 
+					power:operation 
+				});
 
 				if(n.outliers[operation])
 					n.outliers[operation] += 1;
@@ -120,6 +125,23 @@ function reduceCommonGps(o,n,callback){
 		});
 	
 	} else {
+		// Change the frequencies values to common unit (kHz)
+		switch (o.frequencies.unit) {
+			case 'Hz':
+				n.frequencyUnitFactor = 1/1000;
+				break;
+			case 'kHz':
+				n.frequencyUnitFactor = 1;
+				break;
+			case 'MHz':
+				n.frequencyUnitFactor = 1000;
+				break;
+			case 'GHz':
+				n.frequencyUnitFactor = 1000000;
+				break;
+		}
+		/* ------------------------------------------------ */
+
 		var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
 			return sample.lat + sample.lng;
 		});
@@ -168,8 +190,12 @@ function reduceCommonGps(o,n,callback){
 						operation = item[0].cap[i];
 						break;
 				}
+				var fq = o.frequencies.values[i] * n.frequencyUnitFactor;
+				captures.push({ 
+					frequency: fq, 
+					power:operation 
+				});
 
-				captures.push({ frequency: o.frequencies.values[i], power:operation });
 				if(n.outliers[operation])
 					n.outliers[operation] += 1;
 				else
@@ -323,6 +349,7 @@ function takePlaceStats(n){
 	delete n.placePowerSD_X;
 	delete n.placePowerSD_M;
 	delete n.countSamplesDistance;
+	delete n.frequencyUnitFactor;
 	/* -------------------------------- */
 }
 
