@@ -43,6 +43,9 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		if (!options.unit) 
 			throw 'Any frequency unit';
 
+		if (!options.ext) 
+			throw 'Any extension files';
+
 		this.errorView = options.errorView;
 
 		this.render();
@@ -59,11 +62,11 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		if(this.html5){
 			var parser = new app.util.Parser();
 
-			parser.initialize(this.files, this.model.attributes, options.unit,
+			parser.initialize(this.files, this.model.attributes, options.unit, options.ext,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
 			}, function(){
-				
+
 			});
 		}
 	},
@@ -152,7 +155,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 					$('.modal-footer').children().prop("disabled",true);
 					self.status.waitingForServer = true;
 					self.percentLoaded = 80;
-	   				self.updateProgressBar();
+					self.updateProgressBar();
 					self.parentComponent.children().eq(2).removeClass('active').addClass('list-group-item-success');
 					self.parentComponent.children().eq(2).find($('.glyphicon-refresh-animate')).hide();
 					self.parentComponent.children().eq(3).addClass('active');
@@ -162,21 +165,21 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		});
 
 		this.model.save(this.model.attributes,{
-	   		success: function(){
-	   			self.status.done = true;
-	   			$('.modal-footer').children().prop("disabled",false);
-	   			self.percentLoaded = 100;
-	   			self.updateProgressBar();
+			success: function(){
+				self.status.done = true;
+				$('.modal-footer').children().prop("disabled",false);
+				self.percentLoaded = 100;
+				self.updateProgressBar();
 				self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
 				$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
 				self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
-	   		},
-	   		error: function(model, xhr, options){
-	   			$('.modal-footer').children().prop("disabled",false);
-	   			self.modal.modal('hide');
-	   			Backbone.pubSub.trigger('event-server-error');
-			   	self.errorView.render([xhr.responseText]);
-			} 
+				},
+			error: function(model, xhr, options){
+				$('.modal-footer').children().prop("disabled",false);
+				self.modal.modal('hide');
+				Backbone.pubSub.trigger('event-server-error');
+				self.errorView.render([xhr.responseText]);
+			}
 		});
 
 	},

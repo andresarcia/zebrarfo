@@ -8,7 +8,7 @@ app.util.Parser.prototype = {
 	numFiles: 0,
 	unitFactor: 1,
 
-	initialize: function(files,place,unit,callbackNumFilesProcessed,callback){
+	initialize: function(files,place,unit,ext,callbackNumFilesProcessed,callback){
 		var self = this;
 		if(place)
 			this.place = place;
@@ -16,18 +16,30 @@ app.util.Parser.prototype = {
 			throw 'Any Place';
 
 		this.numFiles = files.length;
-		this.chooseUnitFactor(unit);
-
+		this.place.coordinates = [];
 		this.place.frequencies = {};
-		this.place.frequencies.unit = unit;
 		this.place.frequencies.values = [];
+		self.place.frequencies.unit = unit;
+
+		this.chooseUnitFactor(unit);
 
 		_.each(files, function(file){
 			var fr = new FileReader();
 			fr.onload = function(e) { 
-				self.parser(place,fr.result);
-				self.numFilesParsed += 1;
-				callbackNumFilesProcessed(self.numFilesParsed);
+				if(ext == 'txt'){
+					self.parser(place,fr.result);
+					self.numFilesParsed += 1;
+					callbackNumFilesProcessed(self.numFilesParsed);
+				} else if(ext == 'json'){
+					var data = JSON.parse(fr.result);
+					self.place.coordinates = self.place.coordinates.concat(data.coordinates);
+					_.each(data.frequencies.values, function(fq){
+						if(!_.contains(self.place.frequencies.values, fq))
+							self.place.frequencies.values.push(fq);
+					});
+					self.numFilesParsed += 1;
+					callbackNumFilesProcessed(self.numFilesParsed);
+				}
 
 				if (self.numFilesParsed == self.numFiles)
 					callback(self.place);

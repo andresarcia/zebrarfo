@@ -23,6 +23,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		numFiles: 0,
 		numFilesParser: 0,
 		unit: null,
+		ext: null,
 		gpsFunction: null
 	},
 
@@ -33,7 +34,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		'change #upload-measures-unit' : 'changeUnit',
 		'change #upload-gps-position-function' : 'changeGpsFunction',
 		'click #upload-measures-button' : 'uploadData',
-		'click #upload-measures-button-delete' : 'delateFiles',
+		'click #upload-measures-button-delete' : 'deleteFiles',
 	},
 	
 	initialize: function(options){
@@ -68,7 +69,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		if (window.File && window.FileReader && window.FileList && window.Blob)
 			this.options.supportHtml5 = true;
 		else 
-			this.options.supportHtml5 = false;	
+			this.options.supportHtml5 = false;
 	},
 
 	render: function(){
@@ -167,20 +168,33 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	fillFilesInfo: function(){
+		var self = this;
 		this.filesInfo.numFiles = this.filesInfo.files.length;
 		var sizeFiles = 0;
 		var filesBadType = [];
-		_.each(this.filesInfo.files, function(file){
-			if (file.name.split('.')[file.name.split('.').length - 1].toLowerCase() != 'txt') 
-				filesBadType.push(file);
+
+		_.find(this.filesInfo.files, function(file,i){
+			var ext = file.name.split('.')[file.name.split('.').length - 1].toLowerCase();
+			if(i == 0)
+				self.filesInfo.ext = ext;
+
+			if(ext != 'txt' && ext != 'json'){
+				filesBadType.push('Only .txt and .json files are allowed');
+				return;
+			} else {
+				if(self.filesInfo.ext != ext){
+					filesBadType.push('All files must have the same extension');
+					return;
+				}
+			}
 			sizeFiles += file.size;
 		});
 
 		this.filesInfo.sizeFiles = app.util.FormatSizeUnits(sizeFiles);
 		if(filesBadType.length > 0){
-			this.delateFiles();
-			this.errorView.render(['Only .txt files are allowed']);
-		} else 
+			this.deleteFiles();
+			this.errorView.render(filesBadType);
+		} else
 			this.renderFilesInfo();
 	},
 
@@ -193,10 +207,17 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			fr.readAsText(this.filesInfo.files[0]);
 			fr.onload = function(e){ 
 				var data = fr.result;
-				var lines = data.split('\n');
-				var frequency = Number(lines[0].split('\t')[0]);
+				var frequency;
+
+				if(self.filesInfo.ext == 'txt'){
+					var lines = data.split('\n');
+					frequency = Number(lines[0].split('\t')[0]);
+				} else if(self.filesInfo.ext == 'json'){
+					var json = JSON.parse(data);
+					frequency = json.frequencies.values[0];
+				}
+
 				var unit;
-				
 				if(frequency % 10 == frequency)
 					unit = "GHz";
 
@@ -209,9 +230,6 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 				else if(frequency % 1000000000 == frequency)
 					unit = "Hz";
 
-				console.log();
-
-
 				self.$el.find('#upload-measures-unit').select2("val", unit);
 				self.filesInfo.unit = unit;
 				self.viewContainers.setGoodUnitContainer();
@@ -219,12 +237,12 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		}
 	},
 
-	delateFiles: function(){
+	deleteFiles: function(){
 		this.filesInfo.sizeFiles= '0 Byte';
 		this.filesInfo.numFiles= 0;
 		this.filesInfo.numFilesParser= 0;
 		this.filesInfo.files = [];
-		this.renderFilesInfo();
+		// this.renderFilesInfo();
 		this.options.fillFiles = false;
 		this.viewContainers.setDeleteFilesContainerDefault();
 	},
@@ -278,6 +296,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 				placeName:this.placeName,
 				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,
+				ext: this.filesInfo.ext,
 				unit: this.filesInfo.unit,
 				gpsFunction: this.filesInfo.gpsFunction,
 				errorView:this.errorView
