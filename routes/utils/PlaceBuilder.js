@@ -43,7 +43,7 @@ exports.create = function(place, callback) {
 
 function reduceCommonGps(o,n,callback){	
 	if(o.frequencies == undefined){
-		var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
+		var groupByCoordinate = _.groupBy(o.Coordinates, function(sample){
 			return sample.latitude + sample.longitude;
 		});
 
@@ -52,7 +52,7 @@ function reduceCommonGps(o,n,callback){
 			var union = [];
 		
 			_.each(samplesToReduce, function(item){
-				union = union.concat(item.captures);
+				union = union.concat(item.Captures);
 			});
 
 			var groupByFrequencies = _.groupBy(union, function(item){

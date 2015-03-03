@@ -25,75 +25,72 @@ exports.create = function(req,res,next){
 				if(err) 
 					next(httpError(404,err));
 
-				db.Place.findOrCreate({
-					UserId:UserIdentification,
-					name: place.name, 
-
-				}).success(function(n, created){
-					if(created) {
+				db.Place.findOrInitialize({
+					where: {
+						UserId:UserIdentification,
+						name: place.name,
+					},
+				}).then(function(n){
+					if(n[0].isNewRecord){
 						console.log('* SAVING PLACE *');
-						n.numberCoordinates = place.numberCoordinates;
-						n.powerMin = place.powerMin;
-						n.powerMax = place.powerMax;
-						n.powerAvg = place.powerAvg;
-						n.sdPowerAvg = place.sdPowerAvg;
-						n.avgPowerSD = place.avgPowerSD;
-						n.frequencyMin = place.frequencyMin;
-						n.frequencyMax = place.frequencyMax;
-						n.numberPowerFrequency = place.numberPowerFrequency;
-						n.totalDistance = place.totalDistance;
-						n.distaceAvg = place.distaceAvg;
-						n.distaceMin = place.distaceMin;
-						n.distaceMax = place.distaceMax;
-
-						n.save()
-						.success(function(){
-							coordinate.save(n.id,place.coordinates,function(err){
+						n[0].numberCoordinates = place.numberCoordinates;
+						n[0].powerMin = place.powerMin;
+						n[0].powerMax = place.powerMax;
+						n[0].powerAvg = place.powerAvg;
+						n[0].sdPowerAvg = place.sdPowerAvg;
+						n[0].avgPowerSD = place.avgPowerSD;
+						n[0].frequencyMin = place.frequencyMin;
+						n[0].frequencyMax = place.frequencyMax;
+						n[0].numberPowerFrequency = place.numberPowerFrequency;
+						n[0].totalDistance = place.totalDistance;
+						n[0].distaceAvg = place.distaceAvg;
+						n[0].distaceMin = place.distaceMin;
+						n[0].distaceMax = place.distaceMax;
+						
+						n[0].save()
+						.then(function(){
+							coordinate.save(n[0].id,place.coordinates,function(err){
 								if(err)
 									next(httpError(err));
 
-								outliers.save(n.id,place.outliers,true,function(err){
+								outliers.save(n[0].id,place.outliers,true,function(err){
 									if(err)
 										next(httpError(err));
-									
 									// ========================
 									var end = new Date().getTime();
 									console.log("Time ms:" + (end - start));
 									// ========================
-									res.status(200).send(n);
+									res.status(200).send(n[0]);
 								});
 							});
-
-						}).error(function(err){
+						}).catch(function(err) {
 							next(httpError(err));
 						});
-					
+
 					} else {
 						console.log('* UPDATING OLD PLACE *');
-						coordinate.save(n.id,place.coordinates,function(err){
+						coordinate.save(n[0].id,place.coordinates,function(err){
 							if(err)
 								next(httpError(err));
 
-							outliers.save(n.id,place.outliers,false,function(err){
+							outliers.save(n[0].id,place.outliers,false,function(err){
 								if(err)
 									next(httpError(err));
 								
-								placeUtils.takeStatsComparingPlace(n.id,place,function(err,n){
+								placeUtils.takeStatsComparingPlace(n[0].id,place,function(err,n){
 									if (err)
 										next(httpError(err));
-
 									// ========================
 									var end = new Date().getTime();
 									console.log("Time ms:" + (end - start));
 									// ========================
 									res.status(200).send(n);
 								});
-								
 							});
 						});
 					}
 
-				}).error(function(err){
+				}).catch(function(err) {
 					next(httpError(err));
 				});
 			});
@@ -104,26 +101,15 @@ exports.create = function(req,res,next){
 };
 
 /*-------------------------------------------------------------------*/
-exports.save = function(place, callback){
-	place.save()
-	.success(function(){
-		callback(null)
-	}).error(function(err){
-		callback(err);
-	});
-};
-
-/*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
 	db.Place.findAll({
 		where: {
 			UserId:UserIdentification,
 			visible: true
 		}
-	}).success(function(places){
+	}).then(function(places){
 		res.status(200).send(places);
-	})
-	.error(function(err){
+	}).catch(function(err) {
 		next(httpError(err));
 	});
 };
@@ -142,8 +128,8 @@ exports.get = function(req,res,next){
 				where: {
 					visible: true
 				} 
-    		}]
-		}).success(function(place){
+			}]
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -151,7 +137,7 @@ exports.get = function(req,res,next){
 			
 			res.status(200).send(place);	
 		
-		}).error(function(err){
+		}).catch(function(err) {
 			next(httpError(err));
 		});
 	} else
@@ -168,7 +154,7 @@ exports.update = function(req,res,next){
 				id: req.body.id,
 				visible: true
 			},
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -179,7 +165,7 @@ exports.update = function(req,res,next){
 					where: {
 						id: coord.id
 					}
-				}).success(function(coordinate){
+				}).then(function(coordinate){
 					if(!coordinate){
 						next(httpError(404));
 						return;
@@ -187,34 +173,34 @@ exports.update = function(req,res,next){
 					if(coord.action === "delete"){
 						coordinate[0].dataValues.visible = false;
 						coordinate[0].save()
-						.success(function(){
+						.then(function(){
 							callback();
 						})
-						.error(function(err){
+						.catch(function(err){
 							callback(err);
 							next(httpError(err));
 						});
 					}
 
-				}).error(function(err){
+				}).catch(function(err){
 					next(httpError(err));
 				});
 
-			}, function(err){	    
+			}, function(err){		
 				if(err) {
-			    	next(httpError(err));
-			    }
+					next(httpError(err));
+				}
 
-			    placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
-			    	if(err) {
-	    				next(httpError(err));
-	    			}
-			    	
-			    	res.status(200).send(n);
-			    });
+				placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+					if(err) {
+						next(httpError(err));
+					}
+					
+					res.status(200).send(n);
+				});
 			});
 
-		}).error(function(err){
+		}).catch(function(err){
 			next(httpError(err));
 		});
 		
@@ -231,20 +217,20 @@ exports.delete = function(req,res,next){
 				id: req.params.id,
 				visible: true
 			}
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
 			}
 
 			place.destroy()
-			.success(function() {
+			.then(function() {
 				res.status(200).send({ msg:'Place '+req.params.id+ ' deleted' });
-			}).error(function(err){
+			}).catch(function(err){
 				next(httpError(err));
 			});
 
-		}).error(function(err){
+		}).catch(function(err){
 			next(httpError(err));
 		});
 	

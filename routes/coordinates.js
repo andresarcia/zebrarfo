@@ -13,31 +13,37 @@ exports.save = function(id,coordinates,callback){
 	console.log('* SAVING COORDINATES *');	
 
 	_.each(coordinates, function(coord){
-		db.Coordinate.findOrCreate({
-			latitude: coord.latitude,
-			longitude: coord.longitude,
-			powerMin: coord.powerMin,
-			powerMax : coord.powerMax,
-			powerAvg : coord.powerAvg,
-			powerSD : coord.powerSD,
-			createdDate: coord.createdDate,
-			PlaceId: id,
-
-		}).success(function(coordinate, created){
-			if(created){
-				capture.save(coordinate.id, coord.captures, function(err){
-					if(err) 
-	    				return callback(err);
+		db.Coordinate.findOrInitialize({
+			where: {
+				latitude: coord.latitude,
+				longitude: coord.longitude,
+				powerMin: coord.powerMin,
+				powerMax : coord.powerMax,
+				powerAvg : coord.powerAvg,
+				powerSD : coord.powerSD,
+				createdDate: coord.createdDate,
+				PlaceId: id
+			}
+		}).then(function(coordinate,created){
+			if(coordinate[0].isNewRecord){
+				coordinate[0].save()
+				.then(function(){
+					capture.save(coordinate[0].id, coord.captures, function(err){
+						if(err) 
+							return callback(err);
+					});
+				}).catch(function(err) {
+					next(httpError(err));
 				});
 			} else {
-				coordinate.dataValues.visible = true;
-				coordinate.save()
-				.error(function(err){
+				coordinate[0].dataValues.visible = true;
+				coordinate[0].save()
+				.catch(function(err) {
 					return callback(err);
 				});
 			}
 		})
-		.error(function(err){
+		.catch(function(err) {
 			return callback(err);
 		});
 	});
@@ -54,7 +60,7 @@ exports.list = function(req,res,next){
 				id: req.params.id,
 				visible: true
 			}
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -80,18 +86,18 @@ exports.list = function(req,res,next){
 				};
 
   			db.Coordinate.findAndCountAll(options)
-			.success(function(result) {
+			.then(function(result) {
 				var placeObject = {};
 				placeObject.total = result.count;
 				placeObject.currentPage = result.count;
 				placeObject.coordinates = result.rows;
 				res.status(200).send(placeObject);
 				
-			}).error(function(err){
+			}).catch(function(err){
 				next(httpError(err));
 			});
 		})
-		.error(function(err){
+		.catch(function(err){
 			next(httpError(err));
 		});
 	
@@ -109,7 +115,7 @@ exports.get = function(req, res, next){
 				id: req.params.idPlace,
 				visible: true
 			}
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -120,7 +126,7 @@ exports.get = function(req, res, next){
 					id: req.params.id,
 					visible: true
 				}
-			}).success(function(coord){
+			}).then(function(coord){
 				if(coord.length == 0){
 					next(httpError(404));
 					return;
@@ -128,23 +134,21 @@ exports.get = function(req, res, next){
 
 				coord[0].getCaptures({
 					attributes: ['frequency', 'power'],
-				}).success(function(data){
+				}).then(function(data){
 					if(data.length == 0){
 						next(httpError(404));
 						return;
 					}
-
 					res.status(200).send(data);
-
-				}).error(function(err){
+				}).catch(function(err){
 					next(httpError(err));
 				});
 
-			}).error(function(err){
+			}).catch(function(err){
 				next(httpError(err));
 			});
 
-		}).error(function(err){
+		}).catch(function(err){
 			next(httpError(err));
 		});
 

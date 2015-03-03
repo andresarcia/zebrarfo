@@ -12,9 +12,9 @@ exports.save = function(id,captures,callback){
 	});
 	
 	db.Capture.bulkCreate(captures)
-	.success(function() { 
+	.then(function() { 
 		callback();
-	}).error(function(err){
+	}).catch(function(err){
 		return callback(err);
 	});
 };

@@ -22,9 +22,9 @@ exports.save = function(id,outliers,isNew,callback){
 		if(isNew){
 			console.log('* SAVING OUTLIERS *');
 		    db.Outlier.bulkCreate(v)
-			.success(function() { 
+			.then(function() { 
 				callback();
-			}).error(function(err){
+			}).catch(function(err){
 				callback(err);
 			});
 
@@ -38,14 +38,14 @@ exports.save = function(id,outliers,isNew,callback){
 				{
 					truncate: true
 				})
-			.success(function(){
+			.then(function(){
 				db.Outlier.bulkCreate(v)
-				.success(function() { 
+				.then(function() { 
 					callback();
-				}).error(function(err){
+				}).catch(function(err){
 					callback(err);
 				});
-			}).error(function(err){
+			}).catch(function(err){
 				callback(err)
 			});
 		}
@@ -62,7 +62,7 @@ exports.list = function(req,res,next){
 				id: req.params.id,
 				visible: true
 			},
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -71,17 +71,17 @@ exports.list = function(req,res,next){
 			place.getOutliers({
 				order: 'power DESC',
 			})	
-			.success(function(data){
+			.then(function(data){
 				if(data.length === 0)
 					return next(httpError(404));
 
 				res.status(200).send(data);
 
-			}).error(function(err){
+			}).catch(function(err){
 				next(httpError(err));
 			});
 		
-		}).error(function(err){
+		}).catch(function(err){
 			next(httpError(err));
 		});
 	} else
@@ -97,7 +97,7 @@ exports.delete = function(req,res,next){
 				id: req.params.idPlace,
 				visible: true
 			},
-		}).success(function(place){
+		}).then(function(place){
 			if(!place){
 				next(httpError(404));
 				return;
@@ -107,7 +107,7 @@ exports.delete = function(req,res,next){
 				where: {
 					id: req.params.id
 				}
-			}).success(function(outlayer){
+			}).then(function(outlayer){
 				if(outlayer.length == 0){
 					next(httpError(404));
 					return;
@@ -122,7 +122,7 @@ exports.delete = function(req,res,next){
 					// {
 					// 	truncate: true
 					// })
-				.success(function(){
+				.then(function(){
 					// placeUtils.retakeStatsAndSave(req.params.idPlace, function(err, n){
 				 //    	if(err) {
 		   //  				next(httpError(err));
@@ -130,15 +130,15 @@ exports.delete = function(req,res,next){
 				    	
 				 //    	res.status(200).send(n);
 				 //    });
-				}).error(function(err){
+				}).catch(function(err){
 					next(httpError(err));
 				});
 
-			}).error(function(err){
+			}).catch(function(err){
 				next(httpError(err));
 			});
 
-		}).error(function(err){
+		}).catch(function(err){
 			next(httpError(err));
 		});
 		

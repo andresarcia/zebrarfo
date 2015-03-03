@@ -28,15 +28,15 @@ exports.getOccupationHetmapData = function(req,res,next){
 			'where Captures.CoordinateId = aux.id order by frequency';
 
 		db.sequelize
-		.query(query).success(function(response) {
-			if(response.length == 0){
+		.query(query).then(function(response) {
+			if(response[0].length == 0){
 				next(httpError(404));
 				return;
 			}
 
-			res.status(200).send({ data: response });
+			res.status(200).send({ data: response[0] });
 		})
-		.error(function(err){
+		.catch(function(err){
 			next(httpError(err));
 		});
 	} else
@@ -59,15 +59,15 @@ exports.getFullPlace = function(id,callback){
 			include: [{ 
 				model: db.Capture 
 			}] 
-    	}]
+		}]
 	})
-	.success(function(place){
+	.then(function(place){
 		place = JSON.stringify(place);
 		place = JSON.parse(place);
 		
 		callback(null,place);
 	})
-	.error(function(err){
+	.catch(function(err){
 		return callback(err,null);
 	});
 };
@@ -82,9 +82,9 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 			UserId: UserIdentification,
 			visible: true
 		}
-	}).success(function(o){
+	}).then(function(o){
 		db.Coordinate.count({ where: { PlaceId:id } })
-		.success(function(count){
+		.then(function(count){
 
 			if(count != o.numberCoordinates){
 				o.numberCoordinates = count;	
@@ -113,10 +113,10 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 				} else
 					o.sdPowerAvg = 0;
 
-				o.save().success(function(){
+				o.save().then(function(){
 					callback(null,o);
 				})
-				.error(function(err){
+				.catch(function(err){
 					return callback(err,null);
 				});
 
@@ -124,11 +124,11 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 	  			callback(null,o);
 
 		})
-		.error(function(err){
+		.catch(function(err){
 			return callback(err,null);
 		});
 	})
-	.error(function(err){
+	.catch(function(err){
 		return callback(err,null);
 	});
 };
@@ -143,20 +143,19 @@ exports.retakeStats = function(id, callback){
 			delete n.coordinates;
 			callback(null,n);
 		});
-		
 	});
 };
 
 /*--------------------------------------------------------------------------------------------------------------*/
 exports.retakeStatsAndSave = function(id, callback){
 	i.retakeStats(id, function(err, n){
-    	if(err) {
-	    	next(httpError(err));
-	    }
+		if(err) {
+			callback(err,null);
+		}
 
-	    outliers.save(id,n.outliers,false,function(err){
+		outliers.save(id,n.outliers,false,function(err){
 			if(err)
-				next(httpError(err));
+				callback(err,null);
 			
 			db.Place.find({
 				where: {
@@ -164,7 +163,7 @@ exports.retakeStatsAndSave = function(id, callback){
 					id: id,
 					visible: true
 				}
-			}).success(function(o){
+			}).then(function(o){
 				o.numberCoordinates = n.numberCoordinates;
 				o.powerMin = n.powerMin;
 				o.powerMax = n.powerMax;
@@ -180,15 +179,15 @@ exports.retakeStatsAndSave = function(id, callback){
 				o.distaceMax = n.distaceMax;
 
 				o.save()
-				.success(function(){
+				.then(function(){
 					callback(null,n);
 
-				}).error(function(err){
-					next(httpError(err));
+				}).catch(function(err){
+					callback(err,null);
 				});
-			}).error(function(err){
-				next(httpError(err));
+			}).catch(function(err){
+				callback(err,null);
 			});
 		});
-    });
+	});
 };
