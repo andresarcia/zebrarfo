@@ -6,7 +6,6 @@ app.util.Parser = function(){};
 app.util.Parser.prototype = {
 	numFilesParsed: 0,
 	numFiles: 0,
-	unitFactor: 1,
 
 	initialize: function(files,place,unit,ext,callbackNumFilesProcessed,callback){
 		var self = this;
@@ -20,8 +19,6 @@ app.util.Parser.prototype = {
 		this.place.frequencies = {};
 		this.place.frequencies.values = [];
 		self.place.frequencies.unit = unit;
-
-		this.chooseUnitFactor(unit);
 
 		_.each(files, function(file){
 			var fr = new FileReader();
@@ -48,23 +45,6 @@ app.util.Parser.prototype = {
 		});
 	},
 
-	chooseUnitFactor: function(unit){
-		switch (unit) {
-			case 'Hz':
-				this.unitFactor = 1/1000;
-				break;
-			case 'kHz':
-				this.unitFactor = 1;
-				break;
-			case 'MHz':
-				this.unitFactor = 1000;
-				break;
-			case 'GHz':
-				this.unitFactor = 1000000;
-				break;
-		}
-	},
-
 	parser: function(place,data){
 		var self = this;
 		var arrayCoordinate = [];
@@ -76,7 +56,7 @@ app.util.Parser.prototype = {
 			lineSplit = line.split('\t');
 			if(lineSplit.length == 2){
 				if(self.numFilesParsed == 0)
-					self.place.frequencies.values.push(Number(lineSplit[0]) * self.unitFactor)
+					self.place.frequencies.values.push(Number(lineSplit[0]))
 
 				arrayPower.push(Number(lineSplit[1]));
 			
