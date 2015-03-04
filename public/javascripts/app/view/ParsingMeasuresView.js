@@ -65,8 +65,16 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			parser.initialize(this.files, this.model.attributes, options.unit, options.ext,
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
-			}, function(){
-				self.showMeasuresData();
+			}, function(err,place){
+				if(err){
+					$('.modal-footer').children().prop("disabled",false);
+					self.modal.modal('hide');
+					Backbone.pubSub.trigger('event-server-error');
+					self.errorView.render(err);
+				} else {
+					self.model.attributes = place;
+					self.showMeasuresData();
+				}
 			});
 		}
 	},

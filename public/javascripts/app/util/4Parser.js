@@ -10,7 +10,7 @@ app.util.Parser.prototype = {
 	initialize: function(files,place,unit,ext,callbackNumFilesProcessed,callback){
 		var self = this;
 		if(place)
-			this.place = place;
+			this.place = _.clone(place);
 		else
 			throw 'Any Place';
 
@@ -38,8 +38,13 @@ app.util.Parser.prototype = {
 					callbackNumFilesProcessed(self.numFilesParsed);
 				}
 
-				if (self.numFilesParsed == self.numFiles)
-					callback(self.place);
+				if (self.numFilesParsed == self.numFiles){
+					var err = self.validate();
+					if(err.length > 0)
+						callback(err,null);
+					else
+						callback(null,self.place);
+				}
 			};
 			fr.readAsText(file);
 		});
@@ -75,5 +80,21 @@ app.util.Parser.prototype = {
 		 	cap: arrayPower,
 			date: String(arrayCoordinate[2])
 		});
+	},
+
+	validate: function(){
+		var err = [];
+		var n = this.place;
+
+		if(n.name === null || n.name === undefined || n.name === "")
+			err.push("Name of the place cannot be empty or null");
+
+		if(!n.coordinates || n.coordinates.length == 0)
+			err.push("There must be at least one sample");
+
+		if(!n.frequencies || !n.frequencies.values || n.frequencies.values.length == 0)
+			err.push("There must be at least one frequency and power in the samples");
+
+		return err;
 	},
 };
