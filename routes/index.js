@@ -12,7 +12,7 @@ router.route('/users')
 	.post(users.create);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/upload')
+router.route('/places')
 	.post(places.create);
 
 router.route('/places/:id/download')

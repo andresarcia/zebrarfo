@@ -3,7 +3,7 @@ app.model = app.model || {};
 
 app.model.PlaceUpload = Backbone.Model.extend({
 	
-	urlRoot: '/api/places/upload/',
+	urlRoot: '/api/places/',
 
 	defaults: {
 		name: null,
