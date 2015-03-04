@@ -66,7 +66,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			function(numFilesProcessed){
 				self.setNumberFilesParser(numFilesProcessed);
 			}, function(){
-
+				self.showMeasuresData();
 			});
 		}
 	},
@@ -107,18 +107,9 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	setNumberFilesParser: function(numFilesProcessed){
 		if(!this.stop){
-			var self = this;
-			this.timeToWait += this.timeBase;
-
-			setTimeout(function() {
-				self.parentComponent.children().first().children().text(numFilesProcessed+' / '+self.files.length);	
-				self.percentLoaded = (numFilesProcessed / self.files.length) * 40;
-				self.updateProgressBar();
-
-				if(self.files.length == numFilesProcessed)
-					self.showMeasuresData();
-
-			}, this.timeToWait);
+			this.parentComponent.children().first().children().text(numFilesProcessed+' / '+this.files.length);	
+			this.percentLoaded = (numFilesProcessed / this.files.length) * 40;
+			this.updateProgressBar();
 		}
 	},
 
