@@ -54,8 +54,11 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
 
 		Backbone.pubSub.off('event-server-error');
-		Backbone.pubSub.on('event-server-error', self.enableForm, self);
-		
+		Backbone.pubSub.on('event-server-error', function(){
+			self.enableForm();
+			self.deleteFiles();
+		}, self);
+
 		if(window.appRouter.currentData.id == 'singlePlace'){
 			this.options.fillName = true;
 			this.placeName = this.data.attributes.name;
@@ -217,6 +220,12 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 					frequency = json.frequencies.values[0];
 				}
 
+				if(frequency == null || frequency == undefined || frequency == 0){
+					self.deleteFiles();
+					self.errorView.render(["Error in files format"]);
+					return;
+				}
+
 				var unit;
 				if(frequency % 10 == frequency)
 					unit = "GHz";
@@ -242,7 +251,6 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		this.filesInfo.numFiles= 0;
 		this.filesInfo.numFilesParser= 0;
 		this.filesInfo.files = [];
-		// this.renderFilesInfo();
 		this.options.fillFiles = false;
 		this.viewContainers.setDeleteFilesContainerDefault();
 	},
