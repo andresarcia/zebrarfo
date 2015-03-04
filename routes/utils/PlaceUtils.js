@@ -4,6 +4,7 @@ var utils = require('./Utils');
 var builder = require('./PlaceBuilder');
 var httpError = require('build-http-error');
 var outliers = require('../outliers');
+var _ = require('underscore');
 
 var UserIdentification = 1;
 
@@ -191,3 +192,72 @@ exports.retakeStatsAndSave = function(id, callback){
 		});
 	});
 };
+
+exports.toJson = function(id,callback){
+	i.getFullPlace(id, function(err,place){
+		if(err) 
+			return callback(err,null);
+
+		if(place == null)
+			return callback(null,null);
+
+		place.frequencies = {};
+		place.frequencies.values = [];
+
+		delete place.id;
+		delete place.numberCoordinates;
+		delete place.powerMin;
+		delete place.powerMax;
+		delete place.powerAvg;
+		delete place.sdPowerAvg;
+		delete place.avgPowerSD;
+		delete place.numberPowerFrequency;
+		delete place.frequencyMin;
+		delete place.frequencyMax;
+		delete place.totalDistance;
+		delete place.distaceAvg;
+		delete place.distaceMin;
+		delete place.distaceMax;
+		delete place.visible;
+		delete place.UserId;
+		delete place.createdAt;
+		delete place.updatedAt;
+
+		place.coordinates = _.clone(place.Coordinates);
+		delete place.Coordinates;
+
+		_.each(place.coordinates, function(item, i){
+			delete item.id;
+			delete item.powerMin;
+			delete item.powerMax;
+			delete item.powerAvg;
+			delete item.powerSD;
+			delete item.visible;
+			delete item.PlaceId;
+			delete item.createdAt;
+			delete item.updatedAt;
+			item.cap = [];
+
+			_.each(item.Captures, function(cap,j){
+				if(i == 0)
+					place.frequencies.values.push(cap.frequency);
+
+				item.cap.push(cap.power);
+			});
+
+			item.lat = _.clone(item.latitude);
+			item.lng = _.clone(item.longitude);
+			item.date = _.clone(item.createdDate);
+
+			delete item.latitude;
+			delete item.longitude;
+			delete item.createdDate;
+			delete item.Captures;
+		});
+
+		var name = _.clone(place.name);
+		delete place.name;
+
+		return callback(null,place,name);
+	});
+}

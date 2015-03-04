@@ -15,6 +15,9 @@ router.route('/users')
 router.route('/places/upload')
 	.post(places.create);
 
+router.route('/places/:id/download')
+	.get(places.download);
+
 router.route('/places')
 	.get(places.list);
 

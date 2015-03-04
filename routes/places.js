@@ -2,6 +2,7 @@ var db = require('../models');
 var async = require('async');
 var httpError = require('build-http-error');
 var _ = require('underscore');
+var jf = require('jsonfile');
 var utils = require('./utils/Utils');
 var builder = require('./utils/PlaceBuilder');
 var placeUtils = require('./utils/PlaceUtils');
@@ -237,3 +238,21 @@ exports.delete = function(req,res,next){
 	} else
 		next(httpError(404));
 };
+
+/*-------------------------------------------------------------------*/
+exports.download = function(req,res,next){
+	if(utils.isNumber(req.params.id)){
+		placeUtils.toJson(req.params.id, function(err,data,name){
+			if(err) return next(httpError(err));
+			if(data == null) next(httpError(404));
+			
+			var path = '/tmp/' + name + '.json'
+			jf.writeFile(path, data, function(err) {
+				if(err) next(httpError(err));
+				res.download(path);
+			});
+		});
+
+	} else
+		next(httpError(404));
+}
