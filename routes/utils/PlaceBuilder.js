@@ -38,12 +38,12 @@ exports.create = function(place, callback) {
 				callback(err,null);
 
 			callback(null,n);
-		})
+		});
 	});
-}
+};
 
 function reduceCommonGps(o,n,callback){	
-	if(o.frequencies == undefined){
+	if(o.frequencies === undefined){
 		var groupByCoordinate = _.groupBy(o.Coordinates, function(sample){
 			return sample.latitude + sample.longitude;
 		});
@@ -354,7 +354,7 @@ function takePlaceStats(n){
 }
 
 function checkPlaceAttributes(n, callback){
-	if(n.length == 0 || n.numberCoordinates == 0)
+	if(n.length === 0 || n.numberCoordinates === 0)
 		callback("There must be at least one sample");
 
 	if(n.powerMin === null || n.powerMin === undefined)

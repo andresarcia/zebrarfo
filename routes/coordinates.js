@@ -3,6 +3,7 @@ var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
 var capture = require('./captures');
+var async = require('async');
 
 var _ = require("underscore");
 
@@ -10,9 +11,8 @@ var UserIdentification = 1;
 
 /*-------------------------------------------------------------------*/
 exports.save = function(id,coordinates,callback){
-	console.log('* SAVING COORDINATES *');	
-
-	_.each(coordinates, function(coord){
+	console.log('* SAVING COORDINATES *');
+	async.eachSeries(coordinates, function(coord, asyncCallback) {
 		db.Coordinate.findOrInitialize({
 			where: {
 				latitude: coord.latitude,
@@ -29,27 +29,33 @@ exports.save = function(id,coordinates,callback){
 				coordinate[0].save()
 				.then(function(){
 					capture.save(coordinate[0].id, coord.captures, function(err){
-						if(err) 
-							return callback(err);
+						if(err) asyncCallback(err);
+						asyncCallback();
 					});
 				}).catch(function(err) {
-					next(httpError(err));
+					asyncCallback(err);
 				});
 			} else {
 				coordinate[0].dataValues.visible = true;
 				coordinate[0].save()
-				.catch(function(err) {
-					return callback(err);
+				.then(function() {
+					asyncCallback();
+				}).catch(function(err) {
+					asyncCallback(err);
 				});
 			}
 		})
 		.catch(function(err) {
-			return callback(err);
+			asyncCallback(err);
 		});
+
+	}, function(err){
+		if( err )
+			callback(err)
+		else
+			callback();
 	});
-	
-	callback(null);
-}
+};
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
@@ -127,7 +133,7 @@ exports.get = function(req, res, next){
 					visible: true
 				}
 			}).then(function(coord){
-				if(coord.length == 0){
+				if(coord.length === 0){
 					next(httpError(404));
 					return;
 				}
@@ -135,7 +141,7 @@ exports.get = function(req, res, next){
 				coord[0].getCaptures({
 					attributes: ['frequency', 'power'],
 				}).then(function(data){
-					if(data.length == 0){
+					if(data.length === 0){
 						next(httpError(404));
 						return;
 					}
