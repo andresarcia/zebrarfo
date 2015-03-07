@@ -23,22 +23,22 @@ app.util.Parser.prototype = {
 		_.each(files, function(file){
 			var fr = new FileReader();
 			fr.onload = function(e) { 
-				if(ext == 'txt'){
+				if(ext == 'txt')
 					self.parser(place,fr.result);
-					self.numFilesParsed += 1;
-					callbackNumFilesProcessed(self.numFilesParsed);
-				} else if(ext == 'json'){
+
+				else if(ext == 'json'){
 					var data = JSON.parse(fr.result);
 					self.place.coordinates = self.place.coordinates.concat(data.coordinates);
 					_.each(data.frequencies.values, function(fq){
 						if(!_.contains(self.place.frequencies.values, fq))
 							self.place.frequencies.values.push(fq);
 					});
-					self.numFilesParsed += 1;
-					callbackNumFilesProcessed(self.numFilesParsed);
 				}
 
-				if (self.numFilesParsed == self.numFiles){
+				self.numFilesParsed += 1;
+				callbackNumFilesProcessed(self.numFilesParsed);
+
+				if(self.numFilesParsed == self.numFiles){
 					var err = self.validate();
 					if(err.length > 0)
 						callback(err,null);
@@ -51,34 +51,43 @@ app.util.Parser.prototype = {
 	},
 
 	parser: function(place,data){
+		if(data === null || data === undefined || data === "")
+			return;
+
 		var self = this;
-		var arrayCoordinate = [];
-		var arrayPower = [];
+		var info = [];
+		var captures = [];
+		var frequencies = [];
 
 		var lines = data.split('\n');
-		
-		_.each(lines, function(line){
+		_.each(lines, function(line, i){
 			lineSplit = line.split('\t');
 			if(lineSplit.length == 2){
-				if(self.numFilesParsed == 0)
-					self.place.frequencies.values.push(Number(lineSplit[0]))
-
-				arrayPower.push(Number(lineSplit[1]));
+				frequencies.push(Number(lineSplit[0]));
+				captures.push(Number(lineSplit[1]));
 			
 			} else if(lineSplit.length == 1)
-				arrayCoordinate.push(lineSplit);
+				info.push(lineSplit);
 		});
 
-		var lat = Number(arrayCoordinate[0]);
-		var lng = Number(arrayCoordinate[1]);
-		if(isNaN(lat) || isNaN(lng))
+		var lat = Number(info[0]);
+		var lng = Number(info[1]);
+		var date = String(info[2]);
+		if(isNaN(lat) || isNaN(lng) || captures.length === 0 || date === "")
 			return;
+
+		if(self.place.frequencies.values.length === 0)
+			self.place.frequencies.values = frequencies;
+		else {
+			if(self.place.frequencies.values.toString() != frequencies.toString())
+				return;
+		}
 
 		this.place.coordinates.push({
 			lat: lat,
 			lng: lng,
-		 	cap: arrayPower,
-			date: String(arrayCoordinate[2])
+		 	cap: captures,
+			date: date
 		});
 	},
 
@@ -89,11 +98,11 @@ app.util.Parser.prototype = {
 		if(n.name === null || n.name === undefined || n.name === "")
 			err.push("Name of the place cannot be empty or null");
 
-		if(!n.coordinates || n.coordinates.length == 0)
+		if(!n.coordinates || n.coordinates.length === 0)
 			err.push("There must be at least one sample");
 
-		if(!n.frequencies || !n.frequencies.values || n.frequencies.values.length == 0)
-			err.push("There must be at least one frequency and power in the samples");
+		if(!n.frequencies || !n.frequencies.values || n.frequencies.values.length === 0)
+			err.push("There must be at least one frequency in the samples");
 
 		return err;
 	},
