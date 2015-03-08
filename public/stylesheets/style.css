@@ -32,7 +32,10 @@ hr {
 .ws-dark-gray {
   color: #353535;
 }
-
+.glyphicon.glyphicon-zoom-in,
+.glyphicon.glyphicon-zoom-out {
+  font-size: 17px;
+}
 .navbar-default .navbar-brand {
   font-family: times, Times New Roman, times-roman, georgia, serif;
   color: #ffffff;

@@ -337,7 +337,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	setValues: function(n){
-		if(n[0] == 0)
+		if(n[0] === 0)
 			this.$el.find(".su-select-first-coord").addClass('active');
 		else
 			this.$el.find(".su-select-first-coord").removeClass('active');
@@ -380,7 +380,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			if(v.length == 1){
 				var coord = _.clone(this.coordinates[v[0]]);
 				coord.action = 'delete';
-				edited.push(coord)
+				edited.push(coord);
 				this.coordinates.splice(v[0], 1);
 
 			} else {
@@ -393,12 +393,12 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			}
 		} else {
 			this.mapView.hideMarkers(this.relativeIndex2Real(v),false);
-			for (var i = v.length - 1; i >= 0; i--) {
+			for (var i = v.length - 1; i >= 0; i--){
 				var coord = _.clone(this.coordinates[v[i]]);
 				coord.action = 'delete';
 				edited.push(coord);
 				this.coordinates.splice(v[i], 1);
-			};
+			}
 		}
 
 		this.editedCoords.push(edited);
@@ -473,7 +473,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	_selectLastCoord: function(evt){
 		var v = this.getSliderVal();
-		var last = this.coordinates.length - 1
+		var last = this.coordinates.length - 1;
 
 		if($(evt.currentTarget).hasClass('active')){
 			$(evt.currentTarget).removeClass('active');
@@ -518,7 +518,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.editMarkersLeftWindow = this.getLeftWindowSelect();
 		var v = this.getSliderVal();
 
-		if(v[0] == 0)
+		if(v[0] === 0)
 			return;
 
 		if(v.length == 1){
@@ -541,6 +541,9 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.editMarkersRightWindow = this.getRightWindowSelect();
 		var v = this.getSliderVal();
 
+		if(v.length == 1)
+			return;
+
 		if(v[0] == v[1])
 			return;
 
@@ -556,14 +559,26 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var v = this.getSliderVal();
 		var last = this.coordinates.length - 1;
 
-		if(v[1] == last)
-			return;
+		if(v.length == 1){
+			if(v[0] == last)
+				return;
 
-		if(v[1] + this.editMarkersRightWindow >= last)
-			this.setValues([v[0],last]);
+			if(v[0] + this.editMarkersRightWindow >= last)
+				this.setValues([v[0],last]);
 
-		else if(v[1] + this.editMarkersRightWindow < last)
-			this.setValues([v[0],v[1] + this.editMarkersRightWindow]);
+			else if(v[0] + this.editMarkersRightWindow < last)
+				this.setValues([v[0],v[0] + this.editMarkersRightWindow]);
+		
+		} else if(v.length == 2){
+			if(v[1] == last)
+				return;
+
+			if(v[1] + this.editMarkersRightWindow >= last)
+				this.setValues([v[0],last]);
+
+			else if(v[1] + this.editMarkersRightWindow < last)
+				this.setValues([v[0],v[1] + this.editMarkersRightWindow]);
+		}
 	},
 
 	checkPositionButtons: function(){
