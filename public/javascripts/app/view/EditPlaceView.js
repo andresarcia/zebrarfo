@@ -106,7 +106,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['edit_place'];
+		var template = Zebra.tmpl.edit_place;
 		var html = template(this.data);
 		this.$el.html(html);	
 

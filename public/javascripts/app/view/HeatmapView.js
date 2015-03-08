@@ -464,7 +464,7 @@ app.view.HeatmapView = Backbone.View.extend({
     },
 
     render: function(){
-        var template = Zebra.tmpl['heatmap'];
+        var template = Zebra.tmpl.heatmap;
         var html = template();
         this.$el.html(html);
 

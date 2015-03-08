@@ -23,7 +23,7 @@ app.view.ErrorView = Backbone.View.extend({
 			errorTitle = 'Error:';
 
 		this.message = msg;
-		var template = Zebra.tmpl['error'];
+		var template = Zebra.tmpl.error;
 		var html = template({message: this.message, title: errorTitle});
 		this.$el.html(html);
 		this.$el.show();

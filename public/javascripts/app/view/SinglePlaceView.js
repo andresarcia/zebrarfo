@@ -86,7 +86,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	renderCoordinateResume: function(res){
 		var self = this;
-		var template = Zebra.tmpl['su_coordinate_resume'];
+		var template = Zebra.tmpl.su_coordinate_resume;
 		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
@@ -151,7 +151,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['single_place'];
+		var template = Zebra.tmpl.single_place;
 		var html = template(this.data);
 		this.$el.html(html);	
 

@@ -233,7 +233,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				data: self.currentData.data
 			});
 
-			self.verticalNav.renderSubMenuWithId(0,'vertical-nav-template-sub-menu-single-place',id);
+			self.verticalNav.renderSubMenuWithId(0,'vertical_nav_sub_menu_single_place',id);
 			self.verticalNav.showSubMenuWithClass(0,'single-place-menu-item');
 		});
 	},

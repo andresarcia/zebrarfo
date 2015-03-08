@@ -140,7 +140,7 @@ app.view.ChartsView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['charts'];
+		var template = Zebra.tmpl.charts;
 		var html = template(this.data);
 		this.$el.html(html);	
 

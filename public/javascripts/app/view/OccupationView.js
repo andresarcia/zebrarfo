@@ -214,7 +214,7 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['occupation'];
+		var template = Zebra.tmpl.occupation;
 		var html = template();
     	this.$el.html(html);	
 

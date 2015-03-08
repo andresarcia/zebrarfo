@@ -100,7 +100,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	renderEditingArea: function(){
 		var self = this;
-		var template = Zebra.tmpl['su_list_coord_to_edit'];
+		var template = Zebra.tmpl.su_list_coord_to_edit;
 		var html;
 
 		if(this.editMarkers.length > 0){
@@ -698,7 +698,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['edit_coordinates'];
+		var template = Zebra.tmpl.edit_coordinates;
 		var html = template(this.data);
 		this.$el.html(html);
 

@@ -9,7 +9,7 @@ app.view.WaitingView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['waiting'];
+		var template = Zebra.tmpl.waiting;
 		this.$el.html(template);
 		this.$el.show();
 		return this;

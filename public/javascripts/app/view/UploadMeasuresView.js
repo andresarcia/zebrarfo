@@ -76,7 +76,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['upload_measures'];
+		var template = Zebra.tmpl.upload_measures;
 		var html = template(this.data);
 		this.$el.html(html);
 
@@ -87,7 +87,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			placement: 'left',
 			container: $('body'),
 			html: 'true',
-			content: Zebra.tmpl['upload_help_info'],
+			content: Zebra.tmpl.upload_help_info,
 		}).on('shown.bs.popover', function (eventShown) {
 			var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
 			$popup.find('#download-android-parser').click(function (e) {

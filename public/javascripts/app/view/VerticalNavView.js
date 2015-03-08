@@ -16,7 +16,7 @@ app.view.VerticalNavView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl['vertical_nav'];
+		var template = Zebra.tmpl.vertical_nav;
 		this.$el.html(template);
 		return this;
 	},
