@@ -10,7 +10,8 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
-		'click .delete-link-place': 'deletePlace',
+		'click #delete-link-place': 'deletePlace',
+		'click #download-link-place': 'downloadPlace',
 		'click #su-edit-place': 'launchEditPlace'
 	},
 
@@ -33,6 +34,17 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		Backbone.pubSub.on("event-marker-selected-on-google-map-main", function(res){
 			self.renderCoordinateResume(res);
 		});
+	},
+
+	downloadPlace: function(){
+		var self = this;
+		self.waitingView.render();
+		$.fileDownload('/api/places/'+ this.data.id +'/download')
+			.done(function () { self.waitingView.closeView(); })
+			.fail(function (res) { 
+				self.waitingView.closeView();
+				self.errorView.render([res]);
+			});
 	},
 
 	deletePlace: function(){
