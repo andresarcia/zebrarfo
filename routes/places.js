@@ -244,15 +244,17 @@ exports.download = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		placeUtils.toJson(req.params.id, function(err,data,name){
 			if(err) return next(httpError(err));
-			if(data == null) next(httpError(404));
+			if(data === null) next(httpError(404));
 			
-			var path = '/tmp/' + name + '.json'
+			var path = '/tmp/' + name + '.json';
 			jf.writeFile(path, data, function(err) {
 				if(err) next(httpError(err));
+
+				res.cookie('fileDownload', 'true', { path: '/' });
 				res.download(path);
 			});
 		});
 
 	} else
 		next(httpError(404));
-}
+};
