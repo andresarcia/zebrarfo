@@ -32,7 +32,6 @@ module.exports = function(grunt) {
     },
 
     copy: {
-
       downloads: {
         files: [
           {expand: true, flatten: true, src: ['public/downloads/**'], dest: 'public/build/downloads/', filter: 'isFile'}
@@ -50,6 +49,16 @@ module.exports = function(grunt) {
           {expand: true, flatten: true, src: ['public/stylesheets/**'], dest: 'public/build/stylesheets/all/', filter: 'isFile'},
         ]
       },
+
+      faviconConfig: {
+        files: [
+          {expand: true, flatten: true, src: ['public/images/*.ico'], dest: 'public/build/images/', filter: 'isFile'},
+
+          {expand: true, flatten: true, src: ['public/images/*.xml'], dest: 'public/build/images/', filter: 'isFile'},
+
+          {expand: true, flatten: true, src: ['public/images/*.json'], dest: 'public/build/images/', filter: 'isFile'}
+        ]
+      }
     },
 
     concat: {
