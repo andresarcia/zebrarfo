@@ -161,3 +161,48 @@ exports.get = function(req, res, next){
 	} else
 		next(httpError(404));
 };
+
+exports._delete = function(placeId, coordinates, callback){
+	db.Place.find({
+		where: {
+			id: placeId,
+			UserId: UserIdentification,
+			visible: true
+		},
+	})
+	.then(function(place){
+		if(place === null)
+			return callback("Sorry, we cannot find that!");
+
+		async.each(coordinates, function(coord, callbackInner) {
+			place.getCoordinates({
+				where: {
+					id: coord
+				}
+			}).then(function(coordinate){
+				if(!coordinate) return callbackInner("Sorry, we cannot find that!");
+
+				coordinate[0].dataValues.visible = false;
+				coordinate[0].save()
+				.then(function(){
+					callbackInner();
+				})
+				.catch(function(err){
+					callbackInner(err);
+				});
+
+			}).catch(function(err){
+				callbackInner(err);
+			});
+		}, function(err){
+			if(err) return callback(err);
+			callback();
+		});
+
+	}).catch(function(err){
+		return callback(err);
+	});
+};
+
+
+

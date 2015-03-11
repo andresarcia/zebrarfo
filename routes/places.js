@@ -136,7 +136,7 @@ exports.get = function(req,res,next){
 				return;
 			}
 			
-			res.status(200).send(place);	
+			res.status(200).send(place);
 		
 		}).catch(function(err) {
 			next(httpError(err));
@@ -149,62 +149,46 @@ exports.get = function(req,res,next){
 exports.update = function(req,res,next){
 	if(utils.isNumber(req.body.id)){
 
-		db.Place.find({
-			where: {
-				UserId:UserIdentification,
-				id: req.body.id,
-				visible: true
-			},
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
-			}
-
-			async.each(req.body.coordinates, function(coord, callback) {
-				place.getCoordinates({
-					where: {
-						id: coord.id
-					}
-				}).then(function(coordinate){
-					if(!coordinate){
-						next(httpError(404));
-						return;
-					}
-					if(coord.action === "delete"){
-						coordinate[0].dataValues.visible = false;
-						coordinate[0].save()
-						.then(function(){
-							callback();
-						})
-						.catch(function(err){
-							callback(err);
-							next(httpError(err));
-						});
-					}
-
-				}).catch(function(err){
-					next(httpError(err));
+		if(req.body.spacing){
+			async.eachSeries(_.keys(req.body.spacing), function(key, callback) {
+				placeUtils.saveCoordinateCapturesAvg(req.body.id, key, req.body.spacing[key], 
+				function(err){
+					if(err) next(httpError(err));
+					callback();
 				});
 
-			}, function(err){		
-				if(err) {
-					next(httpError(err));
+			}, function(err){
+				if(err)
+					return next(httpError(err));
+
+				if(req.body.edited){
+					coordinate._delete(req.body.id, req.body.edited, 
+					function(err){
+						if(err) next(httpError(err));
+						placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+							if(err) next(httpError(err));
+							res.status(200).send(n);
+						});
+					});
+				} else {
+					placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+						if(err) next(httpError(err));
+						res.status(200).send(n);
+					});
 				}
+			});
+		} else if(req.body.edited){
+			coordinate._delete(req.body.id, req.body.edited, 
+			function(err){
+				if(err) next(httpError(err));
 
 				placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
-					if(err) {
-						next(httpError(err));
-					}
-					
+					if(err) next(httpError(err));
 					res.status(200).send(n);
 				});
 			});
+		}
 
-		}).catch(function(err){
-			next(httpError(err));
-		});
-		
 	} else
 		next(httpError(404));
 };

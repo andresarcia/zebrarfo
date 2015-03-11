@@ -1,10 +1,12 @@
-var i = require('./PlaceUtils')
+var i = require('./PlaceUtils');
 var db = require('../../models');
 var utils = require('./Utils');
 var builder = require('./PlaceBuilder');
 var httpError = require('build-http-error');
 var outliers = require('../outliers');
 var _ = require('underscore');
+var async = require('async');
+var capturesModel = require('../captures');
 
 var UserIdentification = 1;
 
@@ -192,6 +194,88 @@ exports.retakeStatsAndSave = function(id, callback){
 		});
 	});
 };
+
+exports.saveCoordinateCapturesAvg = function(placeId, coordinateToSave, coordinates, callback){
+	var captures = [];
+	var coordSave = null;
+
+	coordinates.push(coordinateToSave);
+	db.Place.find({
+		where: {
+			id: placeId,
+			UserId: UserIdentification,
+			visible: true
+		},
+	})
+	.then(function(place){
+		if(place == null)
+			return callback("Sorry, we cannot find that!");
+
+		var i = 0;
+		async.eachSeries(coordinates, function(coord, callbackInner) {
+			place.getCoordinates({ 
+				where: {
+					id: coord,
+					visible: true
+				}
+			}).then(function(coord){
+				coord[0].getCaptures({
+					attributes: ['frequency','power','CoordinateId'],
+				}).then(function(data){
+					data = JSON.stringify(data);
+					data = JSON.parse(data);
+
+					_.each(data, function(item,i){
+						if(!captures[i]){
+							captures[i] = {
+								frequency: item.frequency,
+								power: item.power,
+							};
+						} else {
+							captures[i].power += item.power;
+						}
+					});
+
+					if(i < coordinates.length - 1){
+						coord[0].dataValues.visible = false;
+						coord[0].save()
+						.then(function(){
+							i += 1;
+							callbackInner();
+						})
+						.catch(function(err){
+							callbackInner(err);
+						});
+					} else {
+						callbackInner();
+					}
+
+				}).catch(function(err){
+					callbackInner(err);
+				});
+			}).catch(function(err){
+				callbackInner(err);
+			});
+		}, function(err){
+			if(err)
+				return callback(err);
+
+			_.each(captures, function(item){
+				item.power /= coordinates.length;
+			});
+
+			capturesModel.deleteAndSave(coordinates[coordinates.length - 1], captures,
+			function(err){
+				if(err) return callback(err);
+				callback();
+			});
+		});
+
+	}).catch(function(err){
+		return callback(err);
+	});
+};
+
 
 exports.toJson = function(id,callback){
 	i.getFullPlace(id, function(err,place){
