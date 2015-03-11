@@ -78,32 +78,48 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		else
 			spreadDistance = 0;
 
-		var ids = [];
-		var lastSaved = {};
-		lastSaved.lat = this.markers[0].position.k;
-		lastSaved.lng = this.markers[0].position.D;
-		_.each(this.markers, function(item, i){
-			if(item.visibleCount > 0)
-				return;
+		var ids = {};
+		var crr = _.find(this.markers, function(item){ return item.visibleCount === 0; });
+		var noSelected = _.clone(self.markers);
+		noSelected.splice(crr.index, 1);
 
-			var lat = item.position.k;
-			var lng = item.position.D;
+		do {
+			var inner = [];
+			var near = undefined;
+			var nearDistance;
+			var selected = [];
 
-			d = app.util.GetDistanceFromLatLonInKm(lastSaved.lat,lastSaved.lng,lat,lng);
-
-			if(d && d < spreadDistance && i != 0){
-				item.setIcon(window.settings.markers.iconHover);
-				item.setAnimation(google.maps.Animation.BOUNCE);
-				ids.push(item.id);
-			
-			} else {
+			_.each(noSelected, function(item){
 				item.setIcon(window.settings.markers.iconIdle);
-				item.setAnimation(null);
-			}
+				if(item.index == crr.index || item.visibleCount > 0)
+					return;
 
-			lastSaved.lat = lat;
-			lastSaved.lng = lng;
-		});
+				d = app.util.GetDistanceFromLatLonInKm(
+					crr.position.k,crr.position.D,
+					item.position.k,item.position.D);
+
+				if(d < spreadDistance){
+					inner.push(item.id);
+					item.setIcon(window.settings.markers.iconHover);
+
+				} else {
+					if(item.icon == window.settings.markers.iconIdle){
+						selected.push(item);
+
+						if(near === undefined || nearDistance > d){
+							nearDistance = d;
+							near = item;
+						}
+					}
+				}
+			});
+
+			if(inner.length > 0)
+				ids[crr.id] = inner;
+
+			crr = _.clone(near);
+			noSelected = _.clone(selected);
+		} while (noSelected.length !== 0);
 
 		return ids;
 	},
@@ -283,19 +299,19 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		this.markers = [];
 		this.heatmapData = [];
 
-    	var mapCanvas = document.getElementById(this.idContainer);
-  		var mapOptions = {
-    		scrollwheel: false,
-    		mapTypeId: google.maps.MapTypeId.ROADMAP
-  		};
+		var mapCanvas = document.getElementById(this.idContainer);
+		var mapOptions = {
+			scrollwheel: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
 
-  		this.map = new google.maps.Map(mapCanvas, mapOptions);  
-  		this.mapBounds = new google.maps.LatLngBounds();
+		this.map = new google.maps.Map(mapCanvas, mapOptions);  
+		this.mapBounds = new google.maps.LatLngBounds();
 
-  		_.each(data, function(coordinate, index){
-  			var infowindow = new google.maps.InfoWindow({
-  				content: 'Latitude: ' + coordinate.latitude + '<br>Longitude: ' + coordinate.longitude,
-  			});
+		_.each(data, function(coordinate, index){
+			var infowindow = new google.maps.InfoWindow({
+				content: 'Latitude: ' + coordinate.latitude + '<br>Longitude: ' + coordinate.longitude,
+			});
 
 			var latLng = new google.maps.LatLng(coordinate.latitude,coordinate.longitude);
 			var marker = new google.maps.Marker({
@@ -327,19 +343,19 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 	renderHeatmap: function(){
 		this.heatmap = new google.maps.visualization.HeatmapLayer({
-    		data: this.heatmapData,
-    		radius: 60,
-    		opacity: 0.85,
-    		gradient: [
-      			'rgba(0, 0, 0, 0)',
-      			'#00013E',
-      			'#63328D',
-      			'#145DF5',
-      			'#00DADD',
+			data: this.heatmapData,
+			radius: 60,
+			opacity: 0.85,
+			gradient: [
+				'rgba(0, 0, 0, 0)',
+				'#00013E',
+				'#63328D',
+				'#145DF5',
+				'#00DADD',
 			]
-  		});
+		});
 
-  		this.heatmap.setMap(this.map);
+		this.heatmap.setMap(this.map);
 	},
 
 	reTakeHeatmapData: function(){
