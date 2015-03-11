@@ -23,34 +23,31 @@ app.view.EditOutliersView = Backbone.View.extend({
 			var outlier = self.data.attributes.outliers[index];
 			outlier.destroy({
 				success: function(model) {
-					console.log(model);
-	  		// 		self.data = model;
-					// self.data.attributes.coordinates = self.coordinates;
-					// self.data.attributes.outliers = undefined;
-					// self.data.attributes.charts = undefined;
-					// window.settings.place = {};
+					var id = self.data.id;
+					window.appRouter.currentData.data = null;
+					window.settings.place = {};
 					self.waitingView.closeView();
-					// window.location.hash = '#places/'+ model.id;
+					window.location.hash = '#places/'+ id;
 				},
 				error: function(model, xhr, options){
-		     		self.waitingView.closeView();
-		     		self.errorView.render([xhr.responseText]);
-		    	}
+					self.waitingView.closeView();
+					self.errorView.render([xhr.responseText]);
+				}
 			});
 		};
 
 		bootbox.dialog({
-	  		message: '<h4>Are you sure to delete captures with <b> power ' + this.data.attributes.outliers[index].attributes.power + ' dBm</b>?</h4>',
-	  		buttons: {
-	  			main: {
-	      			label: "Cancel",
-	    		},
-	    		danger: {
-	      			label: "Delete!",
-	      			className: "btn-danger",
-	      			callback: deleteFunction
-	    		},
-	  		}
+			message: '<h4>Are you sure to delete captures with <b> power ' + this.data.attributes.outliers[index].attributes.power + ' dBm</b>?</h4>',
+			buttons: {
+				main: {
+					label: "Cancel",
+				},
+				danger: {
+					label: "Delete!",
+					className: "btn-danger",
+					callback: deleteFunction
+				},
+			}
 		});
 	},
 
