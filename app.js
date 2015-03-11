@@ -46,6 +46,8 @@ app.use('/api/', routes);
 // ERROR HANDLERS ------------------------------------------------------------
 if (app.get('env') === 'development') {
 	app.use(function(err, req, res, next) {
+		console.log(err.message);
+
 		if(err.status == 404)
 			res.status(err.status).send(err.message || "Sorry, we cannot find that!");
 		else 
