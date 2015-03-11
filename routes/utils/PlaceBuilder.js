@@ -105,13 +105,14 @@ function reduceCommonGps(o,n,callback){
 
 				captures.push({ 
 					frequency: Number(key), 
-					power:operation 
+					power:operation
 				});
 
-				if(n.outliers[operation])
-					n.outliers[operation] += 1;
+				var outlier = operation.toFixed(1);
+				if(n.outliers[outlier])
+					n.outliers[outlier] += 1;
 				else
-					n.outliers[operation] = 1;
+					n.outliers[outlier] = 1;
 			});
 		
 			var coord = takeCoordStats({
@@ -196,10 +197,11 @@ function reduceCommonGps(o,n,callback){
 					power:operation 
 				});
 
-				if(n.outliers[operation])
-					n.outliers[operation] += 1;
+				var outlier = operation.toFixed(1);
+				if(n.outliers[outlier])
+					n.outliers[outlier] += 1;
 				else
-					n.outliers[operation] = 1;
+					n.outliers[outlier] = 1;
 			}
 		
 			var coord = takeCoordStats({

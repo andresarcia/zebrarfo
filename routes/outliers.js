@@ -98,38 +98,47 @@ exports.delete = function(req,res,next){
 				visible: true
 			},
 		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
-			}
+			if(!place) return next(httpError(404));
 
 			place.getOutliers({
 				where: {
 					id: req.params.id
 				}
 			}).then(function(outlayer){
-				if(outlayer.length == 0){
-					next(httpError(404));
-					return;
-				}
+				if(outlayer.length === 0) return next(httpError(404));
+				var power = Number(outlayer[0].dataValues.power.toFixed(1));
+				place.getCoordinates({
+					where: {
+						visible: true
+					},
+					include: [{ 
+						model: db.Capture,
+					}]
+				}).then(function(coordinates){
+					async.eachSeries(coordinates, function(coord, callback) {
+						var found = _.find(coord.dataValues.Captures, function(cap){ 
+							var comp = Number(cap.dataValues.power.toFixed(1));
+							return comp == power; 
+						});
+						if(found){
+							coord.dataValues.visible = false;
+							coord.save()
+							.then(function(){
+								callback();
+							})
+							.catch(function(err){
+								callback(err);
+							});
+						} else
+							callback();
+					}, function(err){
+						if(err) return next(httpError(err));
+						placeUtils.retakeStatsAndSave(req.params.idPlace, function(err, n){
+							if(err) next(httpError(err));
+							res.status(200).send(n);
+						});
+					});
 
-				db.Capture.destroy({
-		    		where: {
-						power: outlayer[0].dataValues.power
-					}
-				})
-					// },
-					// {
-					// 	truncate: true
-					// })
-				.then(function(){
-					// placeUtils.retakeStatsAndSave(req.params.idPlace, function(err, n){
-				 //    	if(err) {
-		   //  				next(httpError(err));
-		   //  			}
-				    	
-				 //    	res.status(200).send(n);
-				 //    });
 				}).catch(function(err){
 					next(httpError(err));
 				});
