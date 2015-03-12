@@ -30,8 +30,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
 		'places/:id/upload' : 'showSinglePlaceUpload',
 		
-		'hotspots': 'showHotspots',
-		'hotspots/upload': 'uploadHotspots',
+		'help': 'showHelp',
 
 		'downloads/:id': 'downloads',
 	},
@@ -239,15 +238,9 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	showHotspots: function(){
+	showHelp: function(){
 		this.verticalNav.changeActiveClass({
 			index: [1]
-		});
-	},
-
-	uploadHotspots: function(){
-		this.verticalNav.changeActiveClass({
-			index: [1,0]
 		});
 	},
 

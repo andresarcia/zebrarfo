@@ -257,7 +257,7 @@ this["Zebra"]["tmpl"]["upload_measures"] = Handlebars.template({"1":function(dep
 },"useData":true});
 
 this["Zebra"]["tmpl"]["vertical_nav"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"ws-vertical-navbar\">\n	<ul class=\"list-group\">\n		<li class=\"list-group-item\">\n			<a href=\"#places\" class=\"parent item active\">\n				<span class=\"glyphicon glyphicon-globe\"></span>\n				<span> Places</span>\n			</a>\n\n			<ul class=\"list-group children\"></ul>\n		</li>\n\n		<li class=\"list-group-item\">\n			<a href=\"#hotspots\" class=\"parent item\">\n				<span class=\"glyphicon glyphicon-fire\"></span>\n				<span> Hotspots</span>\n			</a>\n\n			<ul class=\"list-group children\">\n				<li class=\"list-group-item\">\n  					<a href=\"#hotspots/upload\" class=\"child item\">\n						<span class=\"glyphicon glyphicon-floppy-open\"></span>\n						<span> Upload hotspot</span>\n					</a>\n  				</li>\n			</ul>\n		</li>\n	</ul>\n</div>";
+  return "<div class=\"ws-vertical-navbar\">\n	<ul class=\"list-group\">\n		<li class=\"list-group-item\">\n			<a href=\"#places\" class=\"parent item active\">\n				<span class=\"glyphicon glyphicon-globe\"></span>\n				<span> Places</span>\n			</a>\n\n			<ul class=\"list-group children\"></ul>\n		</li>\n\n		<li class=\"list-group-item\">\n			<a href=\"#help\" class=\"parent item\">\n				<span class=\"glyphicon glyphicon-question-sign\"></span>\n				<span> Help</span>\n			</a>\n\n			<ul class=\"list-group children\"></ul>\n		</li>\n	</ul>\n</div>";
   },"useData":true});
 
 this["Zebra"]["tmpl"]["vertical_nav_sub_menu_single_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
