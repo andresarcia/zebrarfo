@@ -3,7 +3,7 @@ app.view = app.view || {};
 
 app.view.ParsingMeasuresView = Backbone.View.extend({
 
-	el: '#modal-parsing-measures',
+	el: '#z-modal',
 
 	reset: function(){
 		this.model = null;

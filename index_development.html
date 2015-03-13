@@ -38,50 +38,10 @@
 		<!--[if lt IE 7]>
 			<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 		<![endif]-->
-		<div id="modal-parsing-measures"></div>
-
-		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-			<div class="container-fluid">
-				
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand navbar-brand-left-main" href="#">ZEBR<b>A</b></a>
-					<a class="navbar-brand-logo" href="#">
-						<img alt="Brand" src="images/logo.png">
-					</a>
-					<a class="navbar-brand navbar-brand-right-main" href="#"><b>R</b>FO</a>
-					<a class="navbar-brand-sub" href="#">RADIO FREQUENCY OBSERVER</a> 
-				</div>
-
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle divider-vertical" data-toggle="dropdown">
-								<span class="glyphicon glyphicon-user"></span>
-								Me 
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="#">Profile</a></li>
-								<li><a href="#">Account settings</a></li>
-								<li class="divider"></li>
-								<li><a href="#">Log Out</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-
-		<div class="ws-body">
-			<div class="col-xs-12 col-sm-3 col-md-2">
-				<div id="vertical-nav"></div>
-			</div>
+		<div id="navbar"></div>
+		<div id="z-body">
+			<div id="z-modal"></div>
+			<div id="main-menu" class="col-xs-12 col-sm-3 col-md-2"></div>
 			<div class="col-xs-12 col-sm-9 col-md-10 ws-modal">
 				<div id="waiting"></div>
 				<div id="error"></div>
@@ -122,10 +82,11 @@
 		<script type="text/javascript" src="javascripts/app/collection/Places.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Coordinates.js"></script>
 		<script type="text/javascript" src="javascripts/app/collection/Outliers.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/NavbarView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/ErrorView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/WaitingView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/GlassPaneView.js"></script>
-		<script type="text/javascript" src="javascripts/app/view/VerticalNavView.js"></script>
+		<script type="text/javascript" src="javascripts/app/view/MainMenuView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PaginationView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/PlacesView.js"></script>
 		<script type="text/javascript" src="javascripts/app/view/SinglePlaceView.js"></script>

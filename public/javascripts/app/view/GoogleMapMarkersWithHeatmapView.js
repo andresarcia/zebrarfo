@@ -91,6 +91,8 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			_.each(noSelected, function(item){
 				item.setIcon(window.settings.markers.iconIdle);
+				item.setAnimation(null);
+
 				if(item.index == crr.index || item.visibleCount > 0)
 					return;
 

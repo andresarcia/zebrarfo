@@ -54,7 +54,7 @@ app.view.PaginationView = Backbone.View.extend({
 		}
 		
 		$('html, body').stop().animate({  
-			scrollTop: $('.ws-body').offset().top  
+			scrollTop: $('#z-body').offset().top  
 		}, 600);
 	},
 
