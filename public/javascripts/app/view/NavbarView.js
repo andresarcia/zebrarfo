@@ -5,8 +5,16 @@ app.view.NavbarView = Backbone.View.extend({
 
 	el: '#navbar',
 
+	events: {
+		'click #toggle-main-menu': 'toggleMobileMenu'
+	},
+
 	initialize: function(options){
 		this.render();
+	},
+
+	toggleMobileMenu: function(){
+		Backbone.pubSub.trigger('event-toggle-main-menu-mobile');
 	},
 
 	render: function(){

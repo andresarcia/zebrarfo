@@ -19,7 +19,7 @@ app.view.PlacesView = Backbone.View.extend({
 	render: function(){
 		var template = Zebra.tmpl.places;
 		var html = template(this.data);
-    	this.$el.html(html);	
+    	this.$el.html(html);
 
 		return this;
 	},

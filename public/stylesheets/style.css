@@ -237,9 +237,11 @@ hr {
 }
 
 #main-menu {
+  position: relative;
+  opacity: 1;
   margin-left: -18px;
   font-size: 16px;
-  min-width: 200px;
+  padding-right: 0px;
 }
 #main-menu > ul > li > ul {
   margin-top: 5px;
@@ -265,6 +267,18 @@ hr {
 }
 #main-menu > ul > li > ul > li > a {
   font-size: 13px; 
+}
+#toggle-main-menu {
+  padding-top: 11px;
+}
+@media (max-width: 767px) {
+  #main-menu {
+    position: absolute!important;
+    opacity: 0!important;
+    background-color: #F2F2F2;
+    z-index: 1000;
+    display: none;
+  }
 }
 
 .ws-containter {
@@ -439,6 +453,48 @@ hr {
   animation-fill-mode: both;
 }
 
+.animated-fast {
+  -webkit-animation-duration: .6s;
+  animation-duration: .6s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    -ms-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
+}
+
+.fadeInLeft {
+  -webkit-animation-name: fadeInLeft;
+  animation-name: fadeInLeft;
+}
+
 @-webkit-keyframes shake {
   0%, 100% {
     -webkit-transform: translate3d(0, 0, 0);
@@ -474,6 +530,36 @@ hr {
     -ms-transform: translate3d(10px, 0, 0);
     transform: translate3d(10px, 0, 0);
   }
+}
+
+@-webkit-keyframes fadeOutLeft {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes fadeOutLeft {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    -ms-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.fadeOutLeft {
+  -webkit-animation-name: fadeOutLeft;
+  animation-name: fadeOutLeft;
 }
 
 .shake {

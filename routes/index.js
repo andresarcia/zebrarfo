@@ -51,8 +51,8 @@ router.route('/places/:id/charts')
 
 /*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {
- 	res.status(200).send({
-  		msg: 'Wellcome to API',
+	res.status(200).send({
+		msg: 'Wellcome to API',
 	});
 });
 
