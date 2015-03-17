@@ -1,55 +1,175 @@
- <small>
-	A measurement campaign defines what we call a Place. This is regularly composed of many individual text files captured by a single device. We provide scripts that can process the data in the raw format (the one provided by the device alone) and convert it to Zebra RFO input format
-	<br>
-	<br>
-	Zebra RFO uses data formatted as follows. A single text file contains a location (LAT and LON) with a set of frequencies out of a bandwidth:
-	<br>
-	<br>
-	<div class='well well-sm'>
-		frequency_1 \\t power_1
+<ul class="nav nav-tabs" role="tablist" id="help-tabs">
+	<li role="presentation" class="active">
+		<a href="#help-files-format-tab" role="tab" data-toggle="tab">Files Format</a>
+	</li>
+</ul>
+<div class="tab-content">
+	<div role="tabpanel" class="tab-pane fade in active" id="help-files-format-tab">
 		<br>
-		frequency_2 \\t power_2
-		<br>
-		...
-		<br>
-		frequency_n \\t power_n
-		<br>
-		latitude
-		<br>
-		longitude
-		<br>
-		date of capture
+		<p class="lead">
+				<small>
+				A measurement campaign defines what we call a Place. This is regularly composed of many individual text files captured by a single device. We provide scripts that can process the data in the raw format (the one provided by the device alone) and convert it to Zebra RFO input format.
+			</small>
+		</p>
+		<h4>Zebra RFO uses data formatted as follows.</h4>
+		<div class="col-xs-6 col-sm-6 col-md-6">
+			<h4>Json file</h4>
+			<p>
+				A structured json file contains a collection of pairs <b>property:value</b> in the following way
+			</p>
+			<div class='well well-sm'>
+				<small>
+					<code>
+						{
+						<br>
+						&emsp;&emsp;frequencies: {
+						<br>
+						&emsp;&emsp;&emsp;&emsp;values: [ fq_1, fq_2, ..., fq_n ]
+						<br>
+						&emsp;&emsp;},
+						<br>
+						&emsp;&emsp;coordinates: [
+						<br>
+						&emsp;&emsp;&emsp;&emsp;{
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;lat: lat_1,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;lng: lng_1,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;date: date of capture,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;cap: [ pw_1, pw_2, ..., pw_n ]
+						<br>
+						&emsp;&emsp;&emsp;&emsp;},
+						<br>
+						&emsp;&emsp;&emsp;&emsp;......
+						<br>
+						&emsp;&emsp;&emsp;&emsp;{
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;lat: lat_n,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;lng: lng_n,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;date: date of capture,
+						<br>
+						&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;cap: [ pw_1, pw_2, ..., pw_n ]
+						<br>
+						&emsp;&emsp;&emsp;&emsp;}
+						<br>
+						&emsp;&emsp;]
+						<br>
+						}
+					</code>
+				</small>
+			</div>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-6">
+			<h4>Txt files</h4>
+			<p>
+				A single text file contains a location (LAT and LON) with a set of frequencies out of a bandwidth:
+			</p>
+			<div class='well well-sm'>
+				<code>
+					<small>
+						frequency_1 \\t power_1
+						<br>
+						frequency_2 \\t power_2
+						<br>
+						frequency_3 \\t power_3
+						<br>
+						frequency_4 \\t power_4
+						<br>
+						...
+						<br>
+						frequency_n \\t power_n
+						<br>
+						latitude
+						<br>
+						longitude
+						<br>
+						date of capture
+					</small>
+				</code>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12">
+			<p class="lead">
+				<small>
+					Please download the script according to your input device:</h4>
+				</small>
+			</p>
+			<h4>Android device</h4>
+			<p class="lead">
+				<small>
+					If you are using the android application to capture the spectrum activity (with RFExplorer), you can download the following scripts in python (
+					<a href='javascript:void(0)' id='download-android-parser-json'>
+						android parser to json
+					</a>
+					or
+					<a href='javascript:void(0)' id='download-android-parser-txt'>
+						android parser to txt
+					</a>
+					), copy the script into the folder where your captured data is located. 
+					<br>
+					<br>
+					Then run the script as follows:
+				</small>
+			</p>
+			<div class="col-xs-6 col-sm-6 col-md-6">
+				<h4>Json</h4>
+				<div class='well well-sm'>
+					<code>
+						python android_parser_to_json.py
+					</code>
+				</div>
+				<p class="lead">
+					<small>
+						As a result, the script generate a folder with one or more folders inside depending on the variation of a set of frequencies in the original files, these folders contain the parsed data in Zebra RFO format, ready to be uploaded (and consumed) by the system.
+						<br>
+						<br>
+						Then proceed as follows:
+					</small>
+				</p>
+				<ol>
+					<li>Name the zone</li>
+					<li>Select the parsed file (*.json) inside any folder</li>
+					<li>Click on Synchronise</li>
+				</ol>
+			</div>
+			<div class="col-xs-6 col-sm-6 col-md-6">
+				<h4>Txt</h4>
+				<div class='well well-sm'>
+					<code>
+						python android_parser_to_txt.py
+					</code>
+				</div>
+				<p class="lead">
+					<small>
+						As a result, the script generate a folder of parsed data in Zebra RFO format, ready to be uploaded (and consumed) by the system.
+						<br>
+						<br>
+						Then proceed as follows:
+					</small>
+				</p>
+				<ol>
+					<li>Name the zone</li>
+					<li>Select all the parsed files (*.txt) which are numbered from 1 to N</li>
+					<li>Click on Synchronise</li>
+				</ol>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-12">
+				<p class="lead text-center">
+					<small>
+						Wait for the processing.
+						<br>
+						<br>
+						Now you can visualise your data…
+						<br>
+						<br>
+						<b>Enjoy!</b>
+					</small>
+				</p>
+			</div>
+		</div>
 	</div>
-	Please download the script according to your input device:
-	<br>
-	<br>
-	<b>Android device</b>
-	<br>
-	<br>
-	If you are using the android application to capture the spectrum activity (with RFExplorer), you can download the following script in python (
-	<a href='javascript:void(0)' id='download-android-parser-v1'>
-		android parser
-	</a>
-	), copy the script into the folder where your captured data is located. Then run the script as follows:
-	<br>
-	<br>
-	<div class='well well-sm'>
-		python android_parser.py
-	</div>
-	As a result, the script generate a folder of parsed data in Zebra RFO format, ready to be uploaded (and consumed) by the system. Then proceed as follows:
-	<br>
-	<br>
-	<ol>
-		<li>Name the zone</li>
-		<li>Select all the parsed files (*.txt) which are numbered from 1 to N</li>
-		<li>Select the common unit of the frequency sample (for Android should be kilohertz) </li>
-		<li>Click on Synchronise</li>
-	</ol>
-	Wait for the processing.
-	<br>
-	<br>
-	Now you can visualise your data…
-	<br>
-	<br>
-	Enjoy!
-</small>
+</div>

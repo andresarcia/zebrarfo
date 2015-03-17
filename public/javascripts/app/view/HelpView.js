@@ -6,8 +6,8 @@ app.view.HelpView = Backbone.View.extend({
 	el: '#ws-containter',
 
 	events: {
-		'click #download-android-parser-v1': 'downloadV1',
-		'click #download-android-parser-v2': 'downloadV2'
+		'click #download-android-parser-txt': 'downloadTxt',
+		'click #download-android-parser-json': 'downloadJson'
 	},
 
 	initialize: function(options){
@@ -18,12 +18,12 @@ app.view.HelpView = Backbone.View.extend({
 		this.render();
 	},
 
-	downloadV1: function(){
-		$.fileDownload('/downloads/android_parser.py');
+	downloadTxt: function(){
+		$.fileDownload('/downloads/android_parser_to_txt.py');
 	},
 
-	downloadV2: function(){
-
+	downloadJson: function(){
+		$.fileDownload('/downloads/android_parser_to_json.py');
 	},
 
 	render: function(){
