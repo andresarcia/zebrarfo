@@ -35,6 +35,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		'change #upload-gps-position-function' : 'changeGpsFunction',
 		'click #upload-measures-button' : 'uploadData',
 		'click #upload-measures-button-delete' : 'deleteFiles',
+		'click #upload-measures-info-help': 'help',
 	},
 	
 	initialize: function(options){
@@ -75,27 +76,8 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			this.options.supportHtml5 = false;
 	},
 
-	render: function(){
-		var template = Zebra.tmpl.upload_measures;
-		var html = template(this.data);
-		this.$el.html(html);
-
-		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
-		this.$el.find("#upload-gps-position-function").select2();
-		this.$el.find(".upload-measures-info-help").popover({
-			title: 'Files Format',
-			placement: 'left',
-			container: $('body'),
-			html: 'true',
-			content: Zebra.tmpl.upload_help_info,
-		}).on('shown.bs.popover', function (eventShown) {
-			var $popup = $('#' + $(eventShown.target).attr('aria-describedby'));
-			$popup.find('#download-android-parser').click(function (e) {
-				$.fileDownload('/downloads/android_parser.py');
-			});
-		});
-
-		return this;
+	help: function(){
+		window.location.hash = '#help';
 	},
 
 	pickName: function(evt){
@@ -311,5 +293,16 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			});
 		}
 	},
+
+	render: function(){
+		var template = Zebra.tmpl.upload_measures;
+		var html = template(this.data);
+		this.$el.html(html);
+
+		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
+		this.$el.find("#upload-gps-position-function").select2();
+
+		return this;
+	}
 
 });

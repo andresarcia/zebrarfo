@@ -72,7 +72,6 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	renderMenuPlaces: function(index){
 		this.menu.renderSubMenu(0,'main_menu_sub_upload');
-
 		this.menu.changeActive(index);
 	},
 
@@ -232,6 +231,11 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	/*-------------------------------------------------------------------*/
 	showHelp: function(){
+		this.clearViews();
+		this.currentView = new app.view.HelpView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+		});
 		this.menu.changeActive([1]);
 	},
 
