@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var compress = require('compression');
+var passport = require('passport');
+var session = require('express-session');
 
 var app = express();
 
@@ -20,6 +22,14 @@ app.use(bodyParser({limit: '99mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+// passport
+app.use(session({
+	secret: 'LiwzebraRFO8J9u13tg',
+	saveUninitialized: true,
+    resave: true,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // PUBLIC FOLDER -------------------------------------------------------------
 if (app.get('env') === 'development') {

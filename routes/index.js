@@ -1,34 +1,42 @@
 var express = require('express');
 var router = express.Router();
+var passport = require('passport');
 
 var users = require('../controllers/users');
+var auth = require('../controllers/auth');
 var places = require('./places');
 var coordinates = require('./coordinates');
 var outliers = require('./outliers');
 var placeUtils = require('./utils/PlaceUtils');
 
-/*-------------------------------------------------------------------*/
-router.route('/users')
-	.post(users.create);
+var auth = function(req, res, next){ 
+	if (!req.isAuthenticated()) res.send(401); 
+	else next(); 
+};
 
-/*-------------------------------------------------------------------*/
-router.route('/places')
-	.post(places.create);
+/* AUTH --------------------------------------------------------------*/
+router.post('/login', 
+	passport.authenticate('local'),
+	function(req, res) {
+		res.status(200).send(req.user);
+	});
 
-router.route('/places/:id/download')
-	.get(places.download);
+router.post('/logout', 
+	function(req, res){ 
+		req.logOut(); 
+		res.send(200); 
+	});
 
-router.route('/places')
-	.get(places.list);
+/* USERS -------------------------------------------------------------*/
+router.post('/users', users.create);
 
-router.route('/places/:id')
-	.get(places.get);
-
-router.route('/places/:id')
-	.put(places.update);
-
-router.route('/places/:id')
-	.delete(places.delete);
+/* PLACES ------------------------------------------------------------*/
+router.post('/places', places.create);
+router.get('/places', places.list);
+router.get('/places/:id', places.get);
+router.put('/places/:id', places.update);
+router.delete('/places/:id', places.delete);
+router.get('/places/:id/download', places.download);
 
 /*-------------------------------------------------------------------*/
 router.route('/places/:id/coordinates')
@@ -52,7 +60,7 @@ router.route('/places/:id/charts')
 /*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {
 	res.status(200).send({
-		msg: 'Wellcome to API',
+		message: 'Wellcome to API',
 	});
 });
 
