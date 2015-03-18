@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var users = require('./users');
+var users = require('../controllers/users');
 var places = require('./places');
 var coordinates = require('./coordinates');
 var outliers = require('./outliers');

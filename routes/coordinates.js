@@ -51,7 +51,7 @@ exports.save = function(id,coordinates,callback){
 
 	}, function(err){
 		if( err )
-			callback(err)
+			callback(err);
 		else
 			callback();
 	});
