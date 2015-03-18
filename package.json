@@ -18,6 +18,8 @@
     "line-reader": "^0.2.4",
     "mongoose": "^3.8.14",
     "morgan": "~1.0.0",
+    "passport": "^0.2.1",
+    "passport-http": "^0.2.2",
     "sequelize": "^2.0.3",
     "static-favicon": "~1.0.0"
   },
