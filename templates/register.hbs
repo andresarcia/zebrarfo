@@ -1,0 +1,43 @@
+<div class="modal fade" id="reg-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title text-skinny">Create your Zebra account</h1>
+      </div>
+      <div class="modal-body">
+        <form id="reg-form">
+          <p class="text-center text-skinny">
+            One account is all you need to access all Zebra RFO services.
+            <br>
+            Already have a Zebra account? 
+            <a href="javascript:void(0)" data-dismiss="modal">Sign in</a>
+          </p>
+          <br>
+          <div class="form-group">
+            <input type="email" class="form-control" id="reg-email" placeholder="name@example.com">
+          </div>
+          <br>
+          <div class="form-group">
+            <input type="password" class="form-control" id="reg-password" placeholder="password">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="reg-repeat-password" placeholder="repeat password">
+          </div>
+          <hr>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" checked> Zebra RFO News and Announcements
+              <br>
+              <small class="ws-gray">Keep me up to date with Zebra RFO news and the lastest information on products and services.</small>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <span class="divider-vertical"></span>
+        <button type="button" id="reg-submit" class="btn btn-primary" disabled>Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
