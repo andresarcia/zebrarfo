@@ -42,6 +42,12 @@ hr {
 .ws-dark-gray {
   color: #353535;
 }
+.text-skinny {
+  font-weight: 300;
+}
+.divider-vertical {
+  border-right: 1px solid #D2D2D2;
+}
 .glyphicon.glyphicon-zoom-in,
 .glyphicon.glyphicon-zoom-out {
   font-size: 17px;
@@ -235,6 +241,76 @@ hr {
 	color: #ffffff;
 	outline:0 !important;
 }
+
+#login-container {
+  width: 360px;
+  padding: 18px 18px;
+}
+#login-title {
+ font-family: "Code-Light"; 
+ font-size: 40px;
+ letter-spacing: -1px;
+}
+#login-form input[type="email"], 
+#login-form input[type="password"] {
+  background: rgba(255,255,255,0.75);
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.1);
+  height:48px;
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 27px;
+  padding-left:12px;
+  outline:none;
+}
+#login-form #login-email {
+  width: 100%;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+#login-form #login-password {
+  width: 286px;
+  height:52px;
+  line-height: 53px;
+  padding-top: -20px;
+  border-top: none;
+  border-right: none;
+  border-bottom-left-radius: 6px;
+}
+#login-form #login-submit {
+  background: rgba(255,255,255,0.75);
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-left: none;  
+  border-top: none;
+  border-bottom-right-radius: 6px;
+  padding-right: 12px;
+  height:52px;
+  line-height: 50px;
+  margin-left: -4px;
+  font-size: 19px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-image: none;
+  color: #2D302D;
+  background-color: transparent;
+  outline:none;
+}
+#login-form #login-submit:disabled {
+  color: #ACB6AC;
+}
+#login-form .checkbox {
+  padding-top: 6px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#reg-modal .modal-body {
+  padding: 70px 70px;
+}
+
 
 #main-menu {
   position: relative;

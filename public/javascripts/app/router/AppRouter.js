@@ -22,6 +22,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	routes: {
+		'': 'login',
 		'places': 'showPlaces',
 		'places/upload': 'uploadPlace',
 
@@ -35,6 +36,16 @@ app.router.AppRouter = Backbone.Router.extend({
 		'downloads/:id': 'downloads',
 	},
 
+	/*-------------------------------------------------------------------*/
+	login: function(){
+		// console.log(docCookies.hasItem('user'));
+		this.clearViews();
+		this.currentView = new app.view.LoginView({
+			waitingView: this.waitingView,
+		});
+	},
+
+	/*-------------------------------------------------------------------*/
 	setChannelsInRange: function(frequencyMin,frequencyMax){
 		var data = [];
 		_.each(window.settings.channels, function(item){
