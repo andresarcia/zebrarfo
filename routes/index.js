@@ -1,31 +1,18 @@
 var express = require('express');
 var router = express.Router();
-var passport = require('passport');
 
-var users = require('../controllers/users');
 var auth = require('../controllers/auth');
+var users = require('../controllers/users');
+var isAuth = auth.isAuth;
+
 var places = require('./places');
 var coordinates = require('./coordinates');
 var outliers = require('./outliers');
 var placeUtils = require('./utils/PlaceUtils');
 
-var auth = function(req, res, next){ 
-	if (!req.isAuthenticated()) res.send(401); 
-	else next(); 
-};
-
 /* AUTH --------------------------------------------------------------*/
-router.post('/login', 
-	passport.authenticate('local'),
-	function(req, res) {
-		res.status(200).send(req.user);
-	});
-
-router.post('/logout', 
-	function(req, res){ 
-		req.logOut(); 
-		res.send(200); 
-	});
+router.post('/login', auth.login);
+router.post('/logout', isAuth, auth.logout);
 
 /* USERS -------------------------------------------------------------*/
 router.post('/users', users.create);

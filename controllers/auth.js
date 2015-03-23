@@ -1,47 +1,38 @@
 // Load required packages
+var httpError = require('build-http-error');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var bcrypt = require('bcrypt-nodejs');
-var db = require('../models');
+var strategy = require('../config/passport');
 
-/* LOCAL -------------------------------------------------------------*/
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    db.User.findOne({
-      where: {
-        email: username
-      },
-    }).then(function(user){
-      // No user found with that email
-      if (!user) { return done(null, false, { message: 'Incorrect email.' }); }
 
-      // Make sure the password is correct
-      bcrypt.compare(password, user.toJSON().password, function(err, isMatch) {
-        if (err) return done(err);
+exports.isAuth = function(req, res, next){ 
+	if (!req.isAuthenticated()) 
+		next(httpError('You need to be Authenticated first!'));
+	else 
+		next(); 
+};
 
-        // Password did not match
-        if (!isMatch) { return done(null, false, { message: 'Incorrect password.' }); }
+// Create endpoint /api/login for POST
+exports.login = function(req, res, next) {
+	passport.authenticate('local', function(err, user, info) {
+		if (err) return next(httpError(err));
+		if (!user) {
+			return res.json(403, {
+				message: "no user found"
+			});
+		}
 
-        // Success
-        return done(null, user.toJSON());
-      });
+		req.login(user, function(err) {
+			if (err) return next(err);
+			return res.json({
+				message: 'user authenticated',
+			});
+		});
 
-    }).catch(function(err){
-      if (err) { return done(err); }
-    });
-  }
-));
+	})(req, res, next);
+};
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  db.User.findOne({
-    where: {
-      id: id
-    }
-  }).then(function(user){
-    done(null, user.toJSON());
-  });
-});
+// Create endpoint /api/logot for POST
+exports.logout = function(req, res) {
+	req.logout(); 
+	res.send(200); 
+};
