@@ -17,6 +17,7 @@ app.view.LoginView = Backbone.View.extend({
 
 	initialize: function(options){
 		this.waitingView = options.waitingView;
+		this.waitingView.closeView();
 
 		this.render();
 	},
@@ -96,6 +97,8 @@ app.view.LoginView = Backbone.View.extend({
 		})
 		.done(function( res ) {
 			self.waitingView.closeView();
+			localStorage.token = res.token;
+			window.location.hash = '#places';
 		})
 		.fail(function(err) {
 			self.enable();
@@ -105,6 +108,8 @@ app.view.LoginView = Backbone.View.extend({
 	},
 
 	createNewAccount: function(){
+		this.hideEmailFeedback();
+		this.hideAuthFeedback();
 		new app.view.RegisterView({
 			waitingView: this.waitingView,
 		});
