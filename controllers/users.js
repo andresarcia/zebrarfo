@@ -1,7 +1,10 @@
 // Load required packages
+var app = require('../app');
 var db = require('../models');
 var httpError = require('build-http-error');
 var bcrypt = require('bcrypt-nodejs');
+var jwt = require('jwt-simple');
+var moment = require('moment');
 
 // Create endpoint /api/users for POST
 exports.create = function(req, res, next) {
@@ -19,8 +22,21 @@ exports.create = function(req, res, next) {
         email: req.body.email,
         password: password
       })
-      .then(function(task) {
-        res.status(200).send({ message: 'new user added to the community!' });
+      .then(function(user) {
+        user = user.toJSON();
+        var expires = moment().add(7, 'days').valueOf();
+        delete user.password;
+
+        var token = jwt.encode({
+          iss: user.id,
+          exp: expires
+        }, app.get('jwtTokenSecret'));
+
+        res.json({
+          token : token,
+          expires: expires,
+          user: user
+        });
       })
       .catch(function(err){
         next(httpError(err));
