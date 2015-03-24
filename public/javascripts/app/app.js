@@ -1,4 +1,14 @@
 $(function(){
+    var backboneSync = Backbone.sync;
+    Backbone.sync = function (method, model, options) {
+        var token = localStorage.token;
+        if (token){
+            options.headers = { 'x-access-token': token };
+            backboneSync(method, model, options);
+        } else 
+            window.location.hash = '#';
+    };
+
 	Backbone.pubSub = _.extend({}, Backbone.Events);
 	loadGoogleMapApi();
 	window.appRouter = new app.router.AppRouter();
