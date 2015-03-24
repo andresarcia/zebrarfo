@@ -19,6 +19,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	clearViews: function(){
 		if(this.currentView) 
 			this.currentView.undelegateEvents();
+		this.errorView.closeView();
 	},
 
 	routes: {

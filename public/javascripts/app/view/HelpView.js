@@ -12,7 +12,6 @@ app.view.HelpView = Backbone.View.extend({
 
 	initialize: function(options){
 		this.errorView = options.errorView;
-		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
 		this.render();

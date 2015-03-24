@@ -14,7 +14,6 @@ app.view.OccupationView = Backbone.View.extend({
 	initialize: function(options){
 		var self = this;
 		this.errorView = options.errorView;
-		this.errorView.closeView();
 		this.waitingView = options.waitingView;
 
 		this.data = options.data.attributes;
