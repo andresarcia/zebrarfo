@@ -7,13 +7,15 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var compress = require('compression');
 var passport = require('passport');
-var session = require('express-session');
+var jwt = require('jwt-simple');
 
 var app = express();
+module.exports = app;
 
 // view engine setup ---------------------------------------------------------
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('jwtTokenSecret', 'LiwzebraRFO8J9u13tg');
 
 app.use(compress());
 app.use(favicon());
@@ -23,13 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 // passport
-app.use(session({
-	secret: 'LiwzebraRFO8J9u13tg',
-	saveUninitialized: true,
-    resave: true,
-}));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // PUBLIC FOLDER -------------------------------------------------------------
 if (app.get('env') === 'development') {
@@ -48,10 +44,6 @@ app.get('/', function (req,res){
 		res.sendfile(__dirname + '/index_production.html');
 	}
 });
-
-
-var routes = require('./routes/index');
-app.use('/api/', routes);
 
 // ERROR HANDLERS ------------------------------------------------------------
 if (app.get('env') === 'development') {
@@ -74,4 +66,5 @@ if (app.get('env') === 'development') {
 }
 
 // --------------------------------------------------------------------------
-module.exports = app;
+var routes = require('./routes/index');
+app.use('/api/', routes);
