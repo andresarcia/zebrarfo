@@ -22,7 +22,9 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	routes: {
-		'': 'login',
+		'': 'home',
+		'logout': 'logout',
+
 		'places': 'showPlaces',
 		'places/upload': 'uploadPlace',
 
@@ -37,11 +39,44 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
+	home: function(){
+		if(localStorage.token)
+			this.showPlaces();
+		else
+			this.login();
+	},
+
 	login: function(){
-		// console.log(docCookies.hasItem('user'));
 		this.clearViews();
 		this.currentView = new app.view.LoginView({
 			waitingView: this.waitingView,
+		});
+	},
+
+	logout: function(){
+		if(!localStorage.token){
+			window.location.hash = '#';
+			return;
+		}
+
+		var self = this;
+		$.ajax({
+			url: "api/logout",
+			type: "POST",
+			headers: {
+				"x-access-token":localStorage.token,
+			},
+			beforeSend: function() {
+				self.waitingView.render();
+			}
+		})
+		.done(function( res ) {
+			self.waitingView.closeView();
+			localStorage.removeItem('token');
+			window.location.hash = '#';
+		})
+		.fail(function(err) {
+			window.location.hash = '#';
 		});
 	},
 
@@ -61,7 +96,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	/*-------------------------------------------------------------------*/
 	fetchPlacesData: function(callback){
-		if(this.currentData.data === null || this.currentData.id != 'places'){
+		if(this.currentData.data === null || this.currentData.data.length === 0 || this.currentData.id != 'places'){
 			var self = this;
 			this.waitingView.render();
 
@@ -77,7 +112,7 @@ app.router.AppRouter = Backbone.Router.extend({
 					self.errorView.render([xhr.responseText]);
 				}
 			});
-		} else
+		} else 
 			callback();
 	},
 
@@ -114,7 +149,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	/*-------------------------------------------------------------------*/
 	fetchSinglePlaceData: function(id,callback){
-		if(this.currentData.data === null || this.currentData.id != 'singlePlace'){
+		if(this.currentData.data === null || this.currentData.data.length === 0 || this.currentData.id != 'singlePlace'){
 			var self = this;
 			this.waitingView.render();
 			window.settings.place = {};
