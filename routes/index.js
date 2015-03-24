@@ -18,31 +18,25 @@ router.post('/logout', isAuth, auth.logout);
 router.post('/users', users.create);
 
 /* PLACES ------------------------------------------------------------*/
-router.post('/places', places.create);
-router.get('/places', places.list);
-router.get('/places/:id', places.get);
-router.put('/places/:id', places.update);
-router.delete('/places/:id', places.delete);
-router.get('/places/:id/download', places.download);
+router.get('/places', isAuth, places.list);
+router.get('/places/:id', isAuth, places.get);
+router.put('/places/:id', isAuth, places.update);
+router.post('/places', isAuth, places.create);
+router.delete('/places/:id', isAuth, places.delete);
+router.get('/places/:id/download', isAuth, places.download);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/:id/coordinates')
-	.get(coordinates.list);
+router.get('/places/:id/coordinates', isAuth, coordinates.list);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/:idPlace/coordinates/:id')
-	.get(coordinates.get);
+router.get('/places/:idPlace/coordinates/:id', isAuth, coordinates.get);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/:id/outliers')
-	.get(outliers.list);
-
-router.route('/places/:idPlace/outliers/:id')
-	.delete(outliers.delete);
+router.get('/places/:id/outliers', isAuth, outliers.list);
+router.delete('/places/:idPlace/outliers/:id', isAuth, outliers.delete);
 
 /*-------------------------------------------------------------------*/
-router.route('/places/:id/charts')
-	.get(placeUtils.getOccupationHetmapData);
+router.get('/places/:id/charts', isAuth, placeUtils.getOccupationHetmapData);
 
 /*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {

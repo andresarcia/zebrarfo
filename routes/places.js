@@ -103,9 +103,6 @@ exports.create = function(req,res,next){
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
-
-	console.log(req.session.passport.user);
-
 	db.Place.findAll({
 		where: {
 			UserId:UserIdentification,
