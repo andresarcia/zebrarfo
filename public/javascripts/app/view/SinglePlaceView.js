@@ -38,12 +38,17 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	downloadPlace: function(){
 		var self = this;
 		self.waitingView.render();
-		$.fileDownload('/api/places/'+ this.data.id +'/download')
-			.done(function () { self.waitingView.closeView(); })
-			.fail(function (res) { 
-				self.waitingView.closeView();
-				self.errorView.render([res]);
-			});
+		$.fileDownload('/api/places/'+ this.data.id +'/download', {
+			data: {
+				"access_token": localStorage.token,
+			},
+			httpMethod: "POST"
+		})
+		.done(function () { self.waitingView.closeView(); })
+		.fail(function (res) { 
+			self.waitingView.closeView();
+			self.errorView.render([res]);
+		});
 	},
 
 	deletePlace: function(){
