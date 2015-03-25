@@ -20,14 +20,14 @@ exports.isAuth = function(req, res, next){
 				res.end('Access token has expired', 400);
 			}
 
-			req.user = decoded.iss;
+			req.user = decoded;
 			next();
 
 		} catch (err) {
-			next(httpError(err));
+			res.end(err, 500);
 		}
 	} else {
-		next(httpError('You need to be Authenticated first!'));
+		res.end('You need to be Authenticated first!', 400);
 	}
 };
 
@@ -43,6 +43,8 @@ exports.login = function(req, res, next) {
 		}
 
 		var expires = moment().add(7, 'days').valueOf();
+		// var expires = moment().add(1, 'm').valueOf();
+
 		var token = jwt.encode({
 			iss: user.id,
 			exp: expires
@@ -61,6 +63,6 @@ exports.login = function(req, res, next) {
 
 // Create endpoint /api/logot for POST
 exports.logout = function(req, res) {
-	req.logout(); 
+	console.log(req.user);
 	res.send(200); 
 };

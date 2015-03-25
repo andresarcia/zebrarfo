@@ -23,7 +23,7 @@ router.get('/places/:id', isAuth, places.get);
 router.put('/places/:id', isAuth, places.update);
 router.post('/places', isAuth, places.create);
 router.delete('/places/:id', isAuth, places.delete);
-router.get('/places/:id/download', isAuth, places.download);
+router.post('/places/:id/download', isAuth, places.download);
 
 /*-------------------------------------------------------------------*/
 router.get('/places/:id/coordinates', isAuth, coordinates.list);
