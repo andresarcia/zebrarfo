@@ -172,7 +172,12 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 				self.parentComponent.children().eq(3).removeClass('active').addClass('list-group-item-success');
 				$('.modal-footer').children().removeClass('btn-danger').addClass('btn-success').text('Success!');
 				self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
-				},
+
+				delete window.places;
+				delete window.place;
+				window.settings.place = {};
+				window.location.hash = '#places/'+self.model.id;
+			},
 			error: function(model, xhr, options){
 				if(xhr.responseJSON.message == "Access token has expired"){
 						localStorage.removeItem('token');
@@ -193,11 +198,6 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 			this.stop = true;
 			this.model.clear();
 			Backbone.pubSub.trigger('event-server-error');
-		} 
-		else if (this.status.done){
-			window.appRouter.currentData.data = null;
-			window.settings.place = {};
-			window.location.hash = '#places/'+this.model.id;
 		}
 	}
 

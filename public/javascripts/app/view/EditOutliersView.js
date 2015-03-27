@@ -10,7 +10,6 @@ app.view.EditOutliersView = Backbone.View.extend({
 	initialize: function(options){
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 	},
 
 	delete: function(evt){
@@ -19,11 +18,11 @@ app.view.EditOutliersView = Backbone.View.extend({
 
 		var deleteFunction = function(){
 			self.waitingView.render();
-			var outlier = self.data.attributes.outliers[index];
+			var outlier = window.place.attributes.outliers[index];
 			outlier.destroy({
 				success: function(model) {
-					var id = self.data.id;
-					window.appRouter.currentData.data = null;
+					var id = window.place.id;
+					delete window.place;
 					window.settings.place = {};
 					self.waitingView.closeView();
 					window.location.hash = '#places/'+ id;
@@ -41,7 +40,7 @@ app.view.EditOutliersView = Backbone.View.extend({
 		};
 
 		bootbox.dialog({
-			message: '<h4>Are you sure to delete captures with <b> power ' + this.data.attributes.outliers[index].attributes.power + ' dBm</b>?</h4>',
+			message: '<h4>Are you sure to delete captures with <b> power ' + window.place.attributes.outliers[index].attributes.power + ' dBm</b>?</h4>',
 			buttons: {
 				main: {
 					label: "Cancel",
@@ -57,7 +56,7 @@ app.view.EditOutliersView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.edit_outliers;
-		var html = template(this.data.attributes.outliers);
+		var html = template(window.place.attributes.outliers);
 		this.$el.html(html);
 		this.waitingView.closeView();
 

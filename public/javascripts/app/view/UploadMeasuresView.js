@@ -37,18 +37,17 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		'click #upload-measures-button-delete' : 'deleteFiles',
 		'click #upload-measures-info-help': 'help',
 	},
-	
+
 	initialize: function(options){
 		var self = this;
 
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 
 		this.waitingView.closeView();
 		this.render();
 		this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
-   		$(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
+		$(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
 		$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
 		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
 		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
@@ -59,9 +58,9 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			self.deleteFiles();
 		}, self);
 
-		if(window.appRouter.currentData.id == 'singlePlace'){
+		if(window.place){
 			this.options.fillName = true;
-			this.placeName = this.data.attributes.name;
+			this.placeName = window.place.attributes.name;
 			this.viewContainers.setNameContainerVal(this.placeName);
 			this.viewContainers.setGoodNameContainer();
 			this.viewContainers.disableNameContainer();
@@ -295,7 +294,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.upload_measures;
-		var html = template(this.data);
+		var html = template(window.places);
 		this.$el.html(html);
 
 		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});

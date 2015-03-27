@@ -16,7 +16,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 
-		this.data = options.data.attributes;
+		this.data = window.place.attributes;
 		this.threshold = this.data.powerAvg;
 
 		this.chart = new app.view.PowerFrequenciesView({
@@ -28,10 +28,10 @@ app.view.OccupationView = Backbone.View.extend({
 			chart: {
 				type: 'areaspline',
 				events: {
-            		load: function(event) {
-            			
-            		}
-         		},
+					load: function(event) {
+
+					}
+				},
 			},
 			tooltip: {
 				positioner: {
@@ -41,15 +41,15 @@ app.view.OccupationView = Backbone.View.extend({
 			},
 			yAxis: {
 				min: 0,
-            	max: 110,
-            	
-            	endOnTick: false,
-            	showLastLabel: false,
+				max: 110,
+				
+				endOnTick: false,
+				showLastLabel: false,
 
-            	tickInterval: 10,
-            	title: {
-	                text: 'Occupation (%)'
-	            }
+				tickInterval: 10,
+				title: {
+					text: 'Occupation (%)'
+				}
 			}
 		};
 
@@ -73,7 +73,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.clearChannels();
 		this.renderChart();
 		this.renderChannelInput();
-    },
+	},
 
 	updateChart: function(){
 		this.threshold = this.slider.val();
@@ -88,20 +88,20 @@ app.view.OccupationView = Backbone.View.extend({
 			this.chart.chart.destroy();
 
 		setTimeout(function(){
-        	self.renderChart();
-        }, 200);
+			self.renderChart();
+		}, 200);
 
 		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
 		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
 		
 		if((this.channels === undefined || this.channels.length < 1) && data.frequencyBy === 'channels'){
-            this.channels = [];
-            this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
-        
-        } else if(this.channels === undefined)
-        	this.channels = [];
+			this.channels = [];
+			this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+		
+		} else if(this.channels === undefined)
+			this.channels = [];
 
-        this.renderChannelInput();
+		this.renderChannelInput();
 	},
 
 	pushChannelsFromGraph: function(data){
@@ -144,8 +144,8 @@ app.view.OccupationView = Backbone.View.extend({
 		setTimeout(function(){
 			self.renderSlider();
 			self.renderChannelInput();
-        	self.renderChart();
-        }, 200);
+			self.renderChart();
+		}, 200);
 	},
 
 	renderSlider: function(){
@@ -159,43 +159,43 @@ app.view.OccupationView = Backbone.View.extend({
 				'max': self.data.powerMax
 			},
 			format: wNumb({
-                decimals: 0
-            }),
+				decimals: 0
+			}),
 		});
 
 		this.$el.find('.slider')
 		.Link('lower')
 		.to('-inline-<div class="slider_tooltip" style="top:-26px;left:-20px"></div>',function(value){
 			$(this).html(
-	        	'<strong>' + value + ' dBm</strong>'
-	    	);
+				'<strong>' + value + ' dBm</strong>'
+			);
 		});
 	},
 
 	renderChannelInput: function(){
-        var channelData = [];
-        _.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
-            channelData.push({
-                id: channel.from + '-' + channel.to,
-                text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
-        });
+		var channelData = [];
+		_.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
+			channelData.push({
+				id: channel.from + '-' + channel.to,
+				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
+		});
 
-        this.$el.find('#select-channels').select2({
-            placeholder: 'Select channels',
-            multiple: true,
-            data: channelData,
-        });
+		this.$el.find('#select-channels').select2({
+			placeholder: 'Select channels',
+			multiple: true,
+			data: channelData,
+		});
 
-        this.$el.find('#select-channels').select2('val', this.channels);
-    },
+		this.$el.find('#select-channels').select2('val', this.channels);
+	},
 
 	renderChart: function(){
 		var self = this;
 		var data = [];
 
 		var dataGrouped = _.groupBy(this.data.charts, function(sample){
-            return sample.frequency;
-        });
+			return sample.frequency;
+		});
 
 		_.each(dataGrouped, function(itemSameFrequency){
 			var passed = 0;
@@ -215,11 +215,11 @@ app.view.OccupationView = Backbone.View.extend({
 	render: function(){
 		var template = Zebra.tmpl.occupation;
 		var html = template();
-    	this.$el.html(html);	
+		this.$el.html(html);
 
-    	this.$el.find("#allocation-channel").select2();
-    	this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-    	this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;
 	},

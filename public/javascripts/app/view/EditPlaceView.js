@@ -16,7 +16,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 		this.id = 'edit-place';
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 
 		window.settings.place = window.settings.place || {};
 		window.settings.place.editPlace = window.settings.place.editPlace || {};
@@ -45,14 +44,14 @@ app.view.EditPlaceView = Backbone.View.extend({
 		var isEmpty;
 		switch (index) {
 			case 0:
-				window.location.hash = '#places/'+this.data.id+'/edit?type=coordinates';
+				window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
 				isEmpty = this.$el.find('#edit-coord-tab').is(':empty');
 				if(isEmpty)
 					self.renderEditCoordinates();
 
 				break;
 			case 1:
-				window.location.hash = '#places/'+this.data.id+'/edit?type=outliers';
+				window.location.hash = '#places/'+window.place.id+'/edit?type=outliers';
 				isEmpty = this.$el.find('#edit-outliers-tab').is(':empty');
 				if(isEmpty)
 					self.renderEditOutliers();
@@ -66,7 +65,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 		var editCoordinates = new app.view.EditCoordinatesView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			data: this.data,
 		});
 
 		this.$el.find('#edit-coord-tab').html(editCoordinates.render().el);
@@ -80,19 +78,18 @@ app.view.EditPlaceView = Backbone.View.extend({
 			var editOutliers = new app.view.EditOutliersView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.data,
 			});
 			self.$el.find('#edit-outliers-tab').html(editOutliers.render().el);			
 		});
 	},
 
 	fetchOutliers: function(callback){
-		if(!this.data.attributes.outliers){
+		if(!window.place.attributes.outliers){
 			var self = this;
-			var data = new app.collection.Outliers({idPlace:this.data.id});
+			var data = new app.collection.Outliers({idPlace:window.place.id});
 			data.fetch({
 				success: function(){
-					self.data.attributes.outliers = data.models;
+					window.place.attributes.outliers = data.models;
 					callback();
 				},
 				error: function(model, xhr, options){
@@ -106,8 +103,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.edit_place;
-		var html = template(this.data);
-		this.$el.html(html);	
+		var html = template(window.place);
+		this.$el.html(html);
 
 		return this;
 	},

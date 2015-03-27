@@ -16,7 +16,6 @@ app.view.ChartsView = Backbone.View.extend({
 		this.id = 'place-charts';
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 
 		window.settings.place.charts = window.settings.place.charts || {};
 		window.settings.place.charts.occupation = window.settings.place.charts.occupation || {};
@@ -58,7 +57,7 @@ app.view.ChartsView = Backbone.View.extend({
 		var isEmpty;
 		switch (index) {
 			case 0:
-				window.location.hash = '#places/'+this.data.id+'/charts?type=occupation';
+				window.location.hash = '#places/'+window.place.id+'/charts?type=occupation';
 				isEmpty = this.$el.find('#occupation-tab').is(':empty');
 
 				if(isEmpty)
@@ -70,7 +69,7 @@ app.view.ChartsView = Backbone.View.extend({
 				break;
 				
 			case 1:
-				window.location.hash = '#places/'+this.data.id+'/charts?type=heatmap';
+				window.location.hash = '#places/'+window.place.id+'/charts?type=heatmap';
 				isEmpty = this.$el.find('#heatmap-tab').is(':empty');
 				if(isEmpty)
 					self.renderHeatmap();
@@ -85,12 +84,12 @@ app.view.ChartsView = Backbone.View.extend({
 	},
 
 	fetchData: function(callback){
-		if(!this.data.attributes.charts){
+		if(!window.place.attributes.charts){
 			var self = this;
-			var data = new app.model.ChartsData({idPlace:this.data.id});
+			var data = new app.model.ChartsData({idPlace:window.place.id});
 			data.fetch({
 				success: function(){
-					self.data.attributes.charts = data.attributes.data;
+					window.place.attributes.charts = data.attributes.data;
 					callback();
 				},
 				error: function(model, xhr, options){
@@ -112,14 +111,13 @@ app.view.ChartsView = Backbone.View.extend({
 		window.settings.place.charts.occupation.view = new app.view.OccupationView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			data: this.data,
 			channels: window.settings.place.charts.channels
 		});
 
 		this.$el.find('#occupation-tab').html(window.settings.place.charts.occupation.view.render().el);
 
 		this.fetchData(function(){
-			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=occupation'))
+			if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=occupation'))
 				window.settings.place.charts.occupation.view.renderComponents();
 		});
 	},
@@ -129,7 +127,6 @@ app.view.ChartsView = Backbone.View.extend({
 		window.settings.place.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			data: this.data,
 			frequencyBy: window.settings.place.charts.heatmap.frequencyBy,
 			channels: window.settings.place.charts.channels
 		});
@@ -137,15 +134,15 @@ app.view.ChartsView = Backbone.View.extend({
 		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);
 
 		this.fetchData(function(){
-			if(app.util.CkeckUrl('#places/'+self.data.id+'/charts?type=heatmap'))
+			if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=heatmap'))
 				window.settings.place.charts.heatmap.view.renderComponents();
 		});
 	},
 
 	render: function(){
 		var template = Zebra.tmpl.charts;
-		var html = template(this.data);
-		this.$el.html(html);	
+		var html = template(window.place);
+		this.$el.html(html);
 
 		return this;
 	},

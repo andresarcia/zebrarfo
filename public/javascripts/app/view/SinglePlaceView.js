@@ -20,10 +20,9 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 
 		this.render();
-		this.coordinates = this.data.attributes.coordinates;
+		this.coordinates = window.place.attributes.coordinates;
 		this.mapView = new app.view.GoogleMapBasicMarkersView({
 			idContainer: 'su-coord-markers-map'
 		});
@@ -38,7 +37,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	downloadPlace: function(){
 		var self = this;
 		self.waitingView.render();
-		$.fileDownload('/api/places/'+ this.data.id +'/download', {
+		$.fileDownload('/api/places/'+ window.place.id +'/download', {
 			data: {
 				"access_token": localStorage.token,
 			},
@@ -55,31 +54,32 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var self = this;
 		var deleteFunction = function(){
 			self.waitingView.render();
-			var place = new app.model.Place({id:self.data.id});
+			var place = new app.model.Place({ id: window.place.id });
 			place.destroy({
 				success: function() {
-	  				self.waitingView.closeView();
-	  				window.location.hash = '#places';
+					self.waitingView.closeView();
+					delete window.places;
+					window.location.hash = '#places';
 				},
 				error: function(model, xhr, options){
-			 		self.waitingView.closeView();
-			 		self.errorView.render([xhr.responseText]);
+					self.waitingView.closeView();
+					self.errorView.render([xhr.responseText]);
 				}
 			});
 		};
 
 		bootbox.dialog({
-	  		message: '<h4>Are you sure to delete <b>' + this.data.attributes.name + '</b>?</h4>',
-	  		buttons: {
-	  			main: {
-		  			label: "Cancel",
+			message: '<h4>Are you sure to delete <b>' + window.place.attributes.name + '</b>?</h4>',
+			buttons: {
+				main: {
+					label: "Cancel",
 				},
 				danger: {
-		  			label: "Delete!",
-		  			className: "btn-danger",
-		  			callback: deleteFunction
+					label: "Delete!",
+					className: "btn-danger",
+					callback: deleteFunction
 				},
-	  		}
+			}
 		});
 	},
 
@@ -95,7 +95,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
 		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
-			idPlace: this.data.id,
+			idPlace: window.place.id,
 			idCoord: res.id
 		});
 
@@ -121,11 +121,11 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.currentPowerFrequencies.data.fetch({
 			success: function(){
 				self.waitingView.closeView();
-			   	self.renderPowerFrequencies();
+				self.renderPowerFrequencies();
 			},
 			error: function(model, xhr, options){
-			 	self.waitingView.closeView();
-			 	self.errorView.render([xhr.responseText]);
+				self.waitingView.closeView();
+				self.errorView.render([xhr.responseText]);
 			}
 		});
 	},
@@ -136,7 +136,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			tooltipTop: 260
 		});
 		view.render(this.currentPowerFrequencies.data.attributes,this.currentPowerFrequencies.options);
-	   	$('html, body').stop().animate({  
+		$('html, body').stop().animate({
 			scrollTop: $('.chart_power_frequency').offset().top
 		}, 1000);
 	},
@@ -156,17 +156,17 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.single_place;
-		var html = template(this.data);
+		var html = template(window.place);
 		this.$el.html(html);	
 
 		this.$el.find("#allocation-channel").select2();
 		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-	
+
 		return this;
 	},
 
 	launchEditPlace: function(){
-		window.location.hash = '#places/'+this.data.id+'/edit?type=coordinates';
+		window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
 	}
 
 });

@@ -96,30 +96,28 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	fetchPlacesData: function(callback){
-		if(this.currentData.data === null || this.currentData.data.length === 0 || this.currentData.id != 'places'){
-			var self = this;
-			this.waitingView.render();
+	fetchPlaces: function(callback){
+		if(window.places)
+			return callback();
 
-			this.currentData.id = 'places';
-			this.currentData.data = new app.collection.Places();
-			this.currentData.data.fetch({
-				success: function(){  
+		var self = this;
+		this.waitingView.render();
+		window.places = new app.collection.Places();
+		window.places.fetch({
+			success: function(){  
+				self.waitingView.closeView();
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
 					self.waitingView.closeView();
-					callback();
-				},
-				error: function(model, xhr, options){
-					if(xhr.responseJSON.message == "Access token has expired"){
-						localStorage.removeItem('token');
-						window.location.hash = '#';
-					} else {
-						self.waitingView.closeView();
-						self.errorView.render([xhr.responseText]);
-					}
+					self.errorView.render([xhr.responseText]);
 				}
-			});
-		} else 
-			callback();
+			}
+		});
 	},
 
 	renderMenuPlaces: function(index){
@@ -130,11 +128,10 @@ app.router.AppRouter = Backbone.Router.extend({
 	showPlaces: function(){
 		var self = this;
 		this.clearViews();
-		this.fetchPlacesData(function(){
+		this.fetchPlaces(function(){
 			self.currentView = new app.view.PlacesView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data
 			});
 			self.renderMenuPlaces([0]);
 		});
@@ -143,59 +140,54 @@ app.router.AppRouter = Backbone.Router.extend({
 	uploadPlace: function(){
 		var self = this;
 		this.clearViews();
-		this.fetchPlacesData(function(){
+		this.fetchPlaces(function(){
 			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data
 			});
 			self.renderMenuPlaces([0,0]);
 		});
 	},
 
 	/*-------------------------------------------------------------------*/
-	fetchSinglePlaceData: function(id,callback){
-		if(this.currentData.data === null || this.currentData.data.length === 0 || this.currentData.id != 'singlePlace'){
-			var self = this;
-			this.waitingView.render();
-			window.settings.place = {};
-			var data = new app.model.Place({id:id});
-			data.fetch({
-				success: function(){  
+	fetchSinglePlace: function(id,callback){
+		if(window.place)
+			return callback();
+
+		var self = this;
+		this.waitingView.render();
+		window.settings.place = {};
+		window.place = new app.model.Place({id:id});
+		window.place.fetch({
+			success: function(){  
+				self.waitingView.closeView();
+				window.settings.fixedChannels = self.setChannelsInRange(window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
 					self.waitingView.closeView();
-					self.currentData.id = 'singlePlace';
-					self.currentData.data = data;
-					window.settings.fixedChannels = self.setChannelsInRange(self.currentData.data.attributes.frequencyMin, self.currentData.data.attributes.frequencyMax);
-					callback();
-				},
-				error: function(model, xhr, options){
-					if(xhr.responseJSON.message == "Access token has expired"){
-						localStorage.removeItem('token');
-						window.location.hash = '#';
-					} else {
-						self.waitingView.closeView();
-						self.errorView.render([xhr.responseText]);
-					}
+					self.errorView.render([xhr.responseText]);
 				}
-			});
-		} else
-			callback();
+			}
+		});
 	},
 
 	renderMenuSinglePlace: function(index,id){
 		this.menu.renderSubMenu(0,'main_menu_sub_single_place',id);
-
 		this.menu.changeActive(index);
 	},
 
 	showSinglePlace: function(id){
 		var self = this;
 		this.clearViews();
-		this.fetchSinglePlaceData(id,function(){
+		this.fetchSinglePlace(id,function(){
 			self.currentView = new app.view.SinglePlaceView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data
 			});
 			self.renderMenuSinglePlace([0,0],id);
 		});
@@ -214,11 +206,10 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'outliers') 
 			editType = 1;
 
-		this.fetchSinglePlaceData(id,function(){
+		this.fetchSinglePlace(id,function(){
 			self.currentView = new app.view.EditPlaceView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data,
 				type: editType
 			});
 			self.renderMenuSinglePlace([0,1],id);
@@ -238,11 +229,10 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'heatmap') 
 			chartType = 1;
 
-		this.fetchSinglePlaceData(id,function(){
+		this.fetchSinglePlace(id,function(){
 			self.currentView = new app.view.ChartsView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data,
 				type: chartType
 			});
 			self.renderMenuSinglePlace([0,2],id);
@@ -252,11 +242,10 @@ app.router.AppRouter = Backbone.Router.extend({
 	showSinglePlaceUpload: function(id){
 		var self = this;
 		this.clearViews();
-		this.fetchSinglePlaceData(id,function(){
+		this.fetchSinglePlace(id,function(){
 			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
-				data: self.currentData.data
 			});
 
 			self.renderMenuSinglePlace([0],id);

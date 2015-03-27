@@ -31,13 +31,12 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	initialize: function(options){
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
-		this.data = options.data;
 		this.editMarkers = [];
 		this.editMarkersIndex = 0;
 		this.editMarkersLeftWindow = 5;
 		this.editMarkersRightWindow = 5;
 
-		this.coordinates = _.clone(this.data.attributes.coordinates);
+		this.coordinates = _.clone(window.place.attributes.coordinates);
 		this.editedCoords = [];
 		this.spacing = {};
 		this.crrSpacing = {};
@@ -701,18 +700,18 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	save: function(){
 		var self = this;
 		if(this.editedCoords.length > 0)
-			this.data.attributes.edited = 
+			window.place.attributes.edited = 
 				_.map(_.flatten(this.editedCoords), 
 					function(item){ return item.id; });
 
 		if(Object.keys(this.spacing).length > 0)
-			this.data.attributes.spacing = this.spacing;
+			window.place.attributes.spacing = this.spacing;
 
 		this.waitingView.render();
-		this.data.save(this.data.attributes, {
+		window.place.save(window.place.attributes, {
 			success: function(model){
-				var id = self.data.id;
-				window.appRouter.currentData.data = null;
+				var id = window.place.id;
+				delete window.place;
 				window.settings.place = {};
 				self.waitingView.closeView();
 				window.location.hash = '#places/'+ id;
@@ -735,7 +734,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.edit_coordinates;
-		var html = template(this.data);
+		var html = template(window.place);
 		this.$el.html(html);
 
 		return this;
