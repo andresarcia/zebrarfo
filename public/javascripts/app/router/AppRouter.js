@@ -40,8 +40,31 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
+	setChannelsInRange: function(frequencyMin,frequencyMax){
+		var data = [];
+		_.each(window.settings.channels, function(item){
+			var aux = [];
+			_.each(item, function(channel){
+				if(frequencyMin < channel.to && frequencyMax > channel.from)
+					aux.push(channel);
+			});
+			data.push(aux);
+		});
+		return data;
+	},
+
+	checkSession: function(){
+		if(!localStorage.token){
+			window.location.hash = '#';
+			return false;
+		}
+
+		return true;
+	},
+
+	/*-------------------------------------------------------------------*/
 	fetchPlaces: function(callback){
-		if(window.places)
+		if(window.places && this.checkSession())
 			return callback();
 
 		var self = this;
@@ -49,7 +72,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		window.places = new app.collection.Places();
 		window.places.fetch({
 			success: function(){  
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				callback();
 			},
 			error: function(model, xhr, options){
@@ -57,7 +80,7 @@ app.router.AppRouter = Backbone.Router.extend({
 					localStorage.removeItem('token');
 					window.location.hash = '#';
 				} else {
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					self.errorView.render([xhr.responseText]);
 				}
 			}
@@ -65,7 +88,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	fetchSinglePlace: function(id,callback){
-		if(window.place)
+		if(window.place && this.checkSession())
 			return callback();
 
 		var self = this;
@@ -74,7 +97,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		window.place = new app.model.Place({id:id});
 		window.place.fetch({
 			success: function(){  
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				window.settings.fixedChannels = self.setChannelsInRange(window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
 				callback();
 			},
@@ -83,7 +106,7 @@ app.router.AppRouter = Backbone.Router.extend({
 					localStorage.removeItem('token');
 					window.location.hash = '#';
 				} else {
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					self.errorView.render([xhr.responseText]);
 				}
 			}
@@ -91,7 +114,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	fetchChart: function(callback){
-		if(window.place.attributes.charts)
+		if(window.place.attributes.charts && this.checkSession())
 			return callback();
 
 		this.waitingView.show();
@@ -99,7 +122,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		var data = new app.model.ChartsData({idPlace:window.place.id});
 		data.fetch({
 			success: function(){
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				window.place.attributes.charts = data.attributes.data;
 				callback();
 			},
@@ -130,10 +153,8 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	logout: function(){
-		if(!localStorage.token){
-			window.location.hash = '#';
+		if(!this.checkSession())
 			return;
-		}
 
 		var self = this;
 		$.ajax({
@@ -147,27 +168,13 @@ app.router.AppRouter = Backbone.Router.extend({
 			}
 		})
 		.done(function( res ) {
-			self.waitingView.closeView();
+			self.waitingView.hide();
 			localStorage.removeItem('token');
 			window.location.hash = '#';
 		})
 		.fail(function(err) {
 			window.location.hash = '#';
 		});
-	},
-
-	/*-------------------------------------------------------------------*/
-	setChannelsInRange: function(frequencyMin,frequencyMax){
-		var data = [];
-		_.each(window.settings.channels, function(item){
-			var aux = [];
-			_.each(item, function(channel){
-				if(frequencyMin < channel.to && frequencyMax > channel.from)
-					aux.push(channel);
-			});
-			data.push(aux);
-		});
-		return data;
 	},
 
 	/*-------------------------------------------------------------------*/
