@@ -17,14 +17,14 @@ app.view.EditOutliersView = Backbone.View.extend({
 		var index = $('.btn-delete-outlier').index(evt.currentTarget);
 
 		var deleteFunction = function(){
-			self.waitingView.render();
+			self.waitingView.show();
 			var outlier = window.place.attributes.outliers[index];
 			outlier.destroy({
 				success: function(model) {
 					var id = window.place.id;
 					delete window.place;
 					window.settings.place = {};
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					window.location.hash = '#places/'+ id;
 				},
 				error: function(model, xhr, options){
@@ -32,7 +32,7 @@ app.view.EditOutliersView = Backbone.View.extend({
 						localStorage.removeItem('token');
 						window.location.hash = '#';
 					} else {
-						self.waitingView.closeView();
+						self.waitingView.hide();
 						self.errorView.render([xhr.responseText]);
 					}
 				}
@@ -58,7 +58,7 @@ app.view.EditOutliersView = Backbone.View.extend({
 		var template = Zebra.tmpl.edit_outliers;
 		var html = template(window.place.attributes.outliers);
 		this.$el.html(html);
-		this.waitingView.closeView();
+		this.waitingView.hide();
 
 		return this;
 	},

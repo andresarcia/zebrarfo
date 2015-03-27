@@ -44,7 +44,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 
-		this.waitingView.closeView();
+		this.waitingView.hide();
 		this.render();
 		this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
 		$(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));

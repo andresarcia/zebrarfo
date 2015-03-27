@@ -707,13 +707,13 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		if(Object.keys(this.spacing).length > 0)
 			window.place.attributes.spacing = this.spacing;
 
-		this.waitingView.render();
+		this.waitingView.show();
 		window.place.save(window.place.attributes, {
 			success: function(model){
 				var id = window.place.id;
 				delete window.place;
 				window.settings.place = {};
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				window.location.hash = '#places/'+ id;
 			},
 			error: function(model, xhr, options){
@@ -721,7 +721,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 					localStorage.removeItem('token');
 					window.location.hash = '#';
 				} else {
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					self.errorView.render([xhr.responseText]);
 				}
 			}

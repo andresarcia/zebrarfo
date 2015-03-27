@@ -20,7 +20,7 @@ app.view.WaitingView = Backbone.View.extend({
 		this.$el.show();
 	},
 
-	closeView: function(){
+	hide: function(){
 		this.$el.hide();
 	}
 

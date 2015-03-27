@@ -388,7 +388,7 @@ app.view.HeatmapView = Backbone.View.extend({
 			self.renderHeatmap(true,true);
 		});
 
-		this.waitingView.closeView();
+		this.waitingView.hide();
 	},
 
 	renderHeatmap: function(updateData,center){

@@ -21,7 +21,7 @@ app.view.EditPlaceView = Backbone.View.extend({
 		window.settings.place.editPlace = window.settings.place.editPlace || {};
 
 		this.render();
-		this.waitingView.closeView();
+		this.waitingView.hide();
 
 		if(window.settings.place.editPlace.tab)
 			this.change(null,window.settings.place.editPlace.tab);
@@ -73,13 +73,13 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 	renderEditOutliers: function(){
 		var self = this;
-		this.waitingView.render();
+		this.waitingView.show();
 		this.fetchOutliers(function(){
 			var editOutliers = new app.view.EditOutliersView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
 			});
-			self.$el.find('#edit-outliers-tab').html(editOutliers.render().el);			
+			self.$el.find('#edit-outliers-tab').html(editOutliers.render().el);
 		});
 	},
 
@@ -93,8 +93,8 @@ app.view.EditPlaceView = Backbone.View.extend({
 					callback();
 				},
 				error: function(model, xhr, options){
-		     		self.errorView.render([xhr.responseText]);
-		    	}
+					self.errorView.render([xhr.responseText]);
+				}
 			});
 
 		} else

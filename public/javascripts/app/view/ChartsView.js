@@ -22,7 +22,7 @@ app.view.ChartsView = Backbone.View.extend({
 		window.settings.place.charts.heatmap = window.settings.place.charts.heatmap || {};
 
 		this.render();
-		this.waitingView.closeView();
+		this.waitingView.hide();
 
 		if(window.settings.place.charts.tab)
 			this.change(null,window.settings.place.charts.tab);

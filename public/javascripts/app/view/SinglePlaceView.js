@@ -36,16 +36,16 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	downloadPlace: function(){
 		var self = this;
-		self.waitingView.render();
+		self.waitingView.show();
 		$.fileDownload('/api/places/'+ window.place.id +'/download', {
 			data: {
 				"access_token": localStorage.token,
 			},
 			httpMethod: "POST"
 		})
-		.done(function () { self.waitingView.closeView(); })
+		.done(function () { self.waitingView.hide(); })
 		.fail(function (res) { 
-			self.waitingView.closeView();
+			self.waitingView.hide();
 			self.errorView.render([res]);
 		});
 	},
@@ -53,16 +53,16 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	deletePlace: function(){
 		var self = this;
 		var deleteFunction = function(){
-			self.waitingView.render();
+			self.waitingView.show();
 			var place = new app.model.Place({ id: window.place.id });
 			place.destroy({
 				success: function() {
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					delete window.places;
 					window.location.hash = '#places';
 				},
 				error: function(model, xhr, options){
-					self.waitingView.closeView();
+					self.waitingView.hide();
 					self.errorView.render([xhr.responseText]);
 				}
 			});
@@ -117,14 +117,14 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			},
 		};
 
-		this.waitingView.render();
+		this.waitingView.show();
 		this.currentPowerFrequencies.data.fetch({
 			success: function(){
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				self.renderPowerFrequencies();
 			},
 			error: function(model, xhr, options){
-				self.waitingView.closeView();
+				self.waitingView.hide();
 				self.errorView.render([xhr.responseText]);
 			}
 		});

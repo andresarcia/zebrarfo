@@ -17,7 +17,7 @@ app.view.LoginView = Backbone.View.extend({
 
 	initialize: function(options){
 		this.waitingView = options.waitingView;
-		this.waitingView.closeView();
+		this.waitingView.hide();
 
 		this.render();
 	},
@@ -92,17 +92,17 @@ app.view.LoginView = Backbone.View.extend({
 			type: "POST",
 				data: { email: this.email, password: this.password },
 			beforeSend: function() {
-				self.waitingView.render();
+				self.waitingView.show();
 			}
 		})
 		.done(function( res ) {
-			self.waitingView.closeView();
+			self.waitingView.hide();
 			localStorage.token = res.token;
 			window.location.hash = '#places';
 		})
 		.fail(function(err) {
 			self.enable();
-			self.waitingView.closeView();
+			self.waitingView.hide();
 			self.$el.find('#login-form').tooltip('show');
 		});
 	},
