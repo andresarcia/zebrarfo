@@ -29,8 +29,13 @@ app.view.EditOutliersView = Backbone.View.extend({
 					window.location.hash = '#places/'+ id;
 				},
 				error: function(model, xhr, options){
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
+					if(xhr.responseJSON.message == "Access token has expired"){
+						localStorage.removeItem('token');
+						window.location.hash = '#';
+					} else {
+						self.waitingView.closeView();
+						self.errorView.render([xhr.responseText]);
+					}
 				}
 			});
 		};

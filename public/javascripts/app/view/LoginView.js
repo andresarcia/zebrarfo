@@ -90,7 +90,7 @@ app.view.LoginView = Backbone.View.extend({
 		$.ajax({
 			url: "api/login",
 			type: "POST",
-				data: { username: this.email, password: this.password },
+				data: { email: this.email, password: this.password },
 			beforeSend: function() {
 				self.waitingView.render();
 			}

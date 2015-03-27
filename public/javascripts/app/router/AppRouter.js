@@ -109,8 +109,13 @@ app.router.AppRouter = Backbone.Router.extend({
 					callback();
 				},
 				error: function(model, xhr, options){
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
+					if(xhr.responseJSON.message == "Access token has expired"){
+						localStorage.removeItem('token');
+						window.location.hash = '#';
+					} else {
+						self.waitingView.closeView();
+						self.errorView.render([xhr.responseText]);
+					}
 				}
 			});
 		} else 
@@ -157,42 +162,24 @@ app.router.AppRouter = Backbone.Router.extend({
 			var data = new app.model.Place({id:id});
 			data.fetch({
 				success: function(){  
-					self.setPlaceData(data,function(){
-						callback();
-					});
+					self.waitingView.closeView();
+					self.currentData.id = 'singlePlace';
+					self.currentData.data = data;
+					window.settings.fixedChannels = self.setChannelsInRange(self.currentData.data.attributes.frequencyMin, self.currentData.data.attributes.frequencyMax);
+					callback();
 				},
 				error: function(model, xhr, options){
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
+					if(xhr.responseJSON.message == "Access token has expired"){
+						localStorage.removeItem('token');
+						window.location.hash = '#';
+					} else {
+						self.waitingView.closeView();
+						self.errorView.render([xhr.responseText]);
+					}
 				}
 			});
 		} else
 			callback();
-	},
-
-	setPlaceData: function(data,callback){
-		var self = this;
-		this.currentData.id = 'singlePlace';
-		this.currentData.data = data;
-		window.settings.fixedChannels = this.setChannelsInRange(this.currentData.data.attributes.frequencyMin, this.currentData.data.attributes.frequencyMax);
-		if(this.currentData.data.attributes.coordinates){
-			self.waitingView.closeView();
-			callback();
-		} else {
-			var coordinates = new app.collection.Coordinates({idPlace:this.currentData.data.id});
-			coordinates.fetch({
-				success: function(){
-					self.waitingView.closeView();
-					self.currentData.data.attributes.coordinates = coordinates.models[0].attributes.coordinates;
-					callback();
-				},
-				error: function(model, xhr, options){
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
-					callback();
-				}
-			});
-		}
 	},
 
 	renderMenuSinglePlace: function(index,id){

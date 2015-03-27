@@ -18,7 +18,6 @@ app.view.ChartsView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		this.data = options.data;
 
-		window.settings.place = window.settings.place || {};
 		window.settings.place.charts = window.settings.place.charts || {};
 		window.settings.place.charts.occupation = window.settings.place.charts.occupation || {};
 		window.settings.place.charts.heatmap = window.settings.place.charts.heatmap || {};
@@ -95,8 +94,13 @@ app.view.ChartsView = Backbone.View.extend({
 					callback();
 				},
 				error: function(model, xhr, options){
-		     		self.errorView.render([xhr.responseText]);
-		    	}
+					if(xhr.responseJSON.message == "Access token has expired"){
+						localStorage.removeItem('token');
+						window.location.hash = '#';
+					} else {
+						self.errorView.render([xhr.responseText]);
+					}
+				}
 			});
 
 		} else

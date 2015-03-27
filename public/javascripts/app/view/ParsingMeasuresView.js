@@ -174,10 +174,15 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 				self.parentComponent.children().eq(3).find($('.glyphicon-refresh-animate')).hide();
 				},
 			error: function(model, xhr, options){
-				$('.modal-footer').children().prop("disabled",false);
-				self.modal.modal('hide');
-				Backbone.pubSub.trigger('event-server-error');
-				self.errorView.render([xhr.responseText]);
+				if(xhr.responseJSON.message == "Access token has expired"){
+						localStorage.removeItem('token');
+						window.location.hash = '#';
+				} else {
+					$('.modal-footer').children().prop("disabled",false);
+					self.modal.modal('hide');
+					Backbone.pubSub.trigger('event-server-error');
+					self.errorView.render([xhr.responseText]);
+				}
 			}
 		});
 
