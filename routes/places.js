@@ -135,7 +135,10 @@ exports.get = function(req,res,next){
 				next(httpError(404));
 				return;
 			}
-			
+			place = place.toJSON();
+			place.coordinates = place.Coordinates;
+			delete place.Coordinates;
+
 			res.status(200).send(place);
 		
 		}).catch(function(err) {
