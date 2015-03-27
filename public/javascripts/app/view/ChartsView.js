@@ -83,29 +83,6 @@ app.view.ChartsView = Backbone.View.extend({
 		}
 	},
 
-	fetchData: function(callback){
-		if(!window.place.attributes.charts){
-			var self = this;
-			var data = new app.model.ChartsData({idPlace:window.place.id});
-			data.fetch({
-				success: function(){
-					window.place.attributes.charts = data.attributes.data;
-					callback();
-				},
-				error: function(model, xhr, options){
-					if(xhr.responseJSON.message == "Access token has expired"){
-						localStorage.removeItem('token');
-						window.location.hash = '#';
-					} else {
-						self.errorView.render([xhr.responseText]);
-					}
-				}
-			});
-
-		} else
-			callback();
-	},
-
 	renderOccupation: function(){
 		var self = this;
 		window.settings.place.charts.occupation.view = new app.view.OccupationView({
@@ -115,11 +92,8 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.$el.find('#occupation-tab').html(window.settings.place.charts.occupation.view.render().el);
-
-		this.fetchData(function(){
-			if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=occupation'))
-				window.settings.place.charts.occupation.view.renderComponents();
-		});
+		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=occupation'))
+			window.settings.place.charts.occupation.view.renderComponents();
 	},
 
 	renderHeatmap: function(){
@@ -132,11 +106,8 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);
-
-		this.fetchData(function(){
-			if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=heatmap'))
-				window.settings.place.charts.heatmap.view.renderComponents();
-		});
+		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=heatmap'))
+			window.settings.place.charts.heatmap.view.renderComponents();
 	},
 
 	render: function(){

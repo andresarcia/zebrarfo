@@ -4,19 +4,24 @@ app.view = app.view || {};
 app.view.WaitingView = Backbone.View.extend({
 
 	el: '#waiting',
-	
+
 	initialize: function(options){
+		this.render();
 	},
 
 	render: function(){
 		var template = Zebra.tmpl.waiting;
 		this.$el.html(template);
-		this.$el.show();
+		this.$el.hide();
 		return this;
 	},
 
+	show: function(){
+		this.$el.show();
+	},
+
 	closeView: function(){
-		this.$el.fadeOut(250);
+		this.$el.hide();
 	}
 
 });

@@ -40,6 +40,81 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
+	fetchPlaces: function(callback){
+		if(window.places)
+			return callback();
+
+		var self = this;
+		this.waitingView.show();
+		window.places = new app.collection.Places();
+		window.places.fetch({
+			success: function(){  
+				self.waitingView.closeView();
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
+					self.waitingView.closeView();
+					self.errorView.render([xhr.responseText]);
+				}
+			}
+		});
+	},
+
+	fetchSinglePlace: function(id,callback){
+		if(window.place)
+			return callback();
+
+		var self = this;
+		this.waitingView.show();
+		window.settings.place = {};
+		window.place = new app.model.Place({id:id});
+		window.place.fetch({
+			success: function(){  
+				self.waitingView.closeView();
+				window.settings.fixedChannels = self.setChannelsInRange(window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
+					self.waitingView.closeView();
+					self.errorView.render([xhr.responseText]);
+				}
+			}
+		});
+	},
+
+	fetchChart: function(callback){
+		if(window.place.attributes.charts)
+			return callback();
+
+		this.waitingView.show();
+		var self = this;
+		var data = new app.model.ChartsData({idPlace:window.place.id});
+		data.fetch({
+			success: function(){
+				self.waitingView.closeView();
+				window.place.attributes.charts = data.attributes.data;
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
+					self.errorView.render([xhr.responseText]);
+				}
+			}
+		});
+	},
+
+	/*-------------------------------------------------------------------*/
 	home: function(){
 		if(localStorage.token)
 			this.showPlaces();
@@ -68,7 +143,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				"x-access-token":localStorage.token,
 			},
 			beforeSend: function() {
-				self.waitingView.render();
+				self.waitingView.show();
 			}
 		})
 		.done(function( res ) {
@@ -96,30 +171,6 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	fetchPlaces: function(callback){
-		if(window.places)
-			return callback();
-
-		var self = this;
-		this.waitingView.render();
-		window.places = new app.collection.Places();
-		window.places.fetch({
-			success: function(){  
-				self.waitingView.closeView();
-				callback();
-			},
-			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
-				}
-			}
-		});
-	},
-
 	renderMenuPlaces: function(index){
 		this.menu.renderSubMenu(0,'main_menu_sub_upload');
 		this.menu.changeActive(index);
@@ -150,32 +201,6 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	fetchSinglePlace: function(id,callback){
-		if(window.place)
-			return callback();
-
-		var self = this;
-		this.waitingView.render();
-		window.settings.place = {};
-		window.place = new app.model.Place({id:id});
-		window.place.fetch({
-			success: function(){  
-				self.waitingView.closeView();
-				window.settings.fixedChannels = self.setChannelsInRange(window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
-				callback();
-			},
-			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.waitingView.closeView();
-					self.errorView.render([xhr.responseText]);
-				}
-			}
-		});
-	},
-
 	renderMenuSinglePlace: function(index,id){
 		this.menu.renderSubMenu(0,'main_menu_sub_single_place',id);
 		this.menu.changeActive(index);
@@ -230,12 +255,14 @@ app.router.AppRouter = Backbone.Router.extend({
 			chartType = 1;
 
 		this.fetchSinglePlace(id,function(){
-			self.currentView = new app.view.ChartsView({
-				waitingView: self.waitingView,
-				errorView : self.errorView,
-				type: chartType
+			self.fetchChart(function(){
+				self.currentView = new app.view.ChartsView({
+					waitingView: self.waitingView,
+					errorView : self.errorView,
+					type: chartType
+				});
+				self.renderMenuSinglePlace([0,2],id);
 			});
-			self.renderMenuSinglePlace([0,2],id);
 		});
 	},
 
