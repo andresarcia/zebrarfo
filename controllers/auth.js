@@ -17,17 +17,23 @@ exports.isAuth = function(req, res, next){
 		try {
 			var decoded = jwt.decode(token, app.get('jwtTokenSecret'));
 			if (decoded.exp <= Date.now()) {
-				res.end('Access token has expired', 400);
+				res.json(400, {
+					message: "Access token has expired"
+				});
 			}
 
 			req.user = decoded;
 			next();
 
 		} catch (err) {
-			res.end(err, 500);
+			res.json(500, {
+				message: err
+			});
 		}
 	} else {
-		res.end('You need to be Authenticated first!', 400);
+		res.json(400, {
+			message: "You need to be Authenticated first!"
+		});
 	}
 };
 
