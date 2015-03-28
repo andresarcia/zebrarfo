@@ -61,7 +61,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	renderEditCoordinates: function(){
-		var self = this;
 		var editCoordinates = new app.view.EditCoordinatesView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
@@ -72,33 +71,11 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	renderEditOutliers: function(){
-		var self = this;
-		this.waitingView.show();
-		this.fetchOutliers(function(){
-			var editOutliers = new app.view.EditOutliersView({
-				waitingView: self.waitingView,
-				errorView : self.errorView,
-			});
-			self.$el.find('#edit-outliers-tab').html(editOutliers.render().el);
+		var editOutliers = new app.view.EditOutliersView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
 		});
-	},
-
-	fetchOutliers: function(callback){
-		if(!window.place.attributes.outliers){
-			var self = this;
-			var data = new app.collection.Outliers({idPlace:window.place.id});
-			data.fetch({
-				success: function(){
-					window.place.attributes.outliers = data.models;
-					callback();
-				},
-				error: function(model, xhr, options){
-					self.errorView.render([xhr.responseText]);
-				}
-			});
-
-		} else
-			callback();
+		this.$el.find('#edit-outliers-tab').html(editOutliers.render().el);
 	},
 
 	render: function(){

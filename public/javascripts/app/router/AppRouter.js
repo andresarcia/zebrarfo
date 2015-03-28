@@ -113,6 +113,30 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
+	fetchOutliers: function(callback){
+		if(window.place.attributes.outliers && this.checkSession())
+			return callback();
+
+		this.waitingView.show();
+		var self = this;
+		var data = new app.collection.Outliers({idPlace:window.place.id});
+		data.fetch({
+			success: function(){
+				self.waitingView.hide();
+				window.place.attributes.outliers = data.models;
+				callback();
+			},
+			error: function(model, xhr, options){
+				if(xhr.responseJSON.message == "Access token has expired"){
+					localStorage.removeItem('token');
+					window.location.hash = '#';
+				} else {
+					self.errorView.render([xhr.responseText]);
+				}
+			}
+		});
+	},
+
 	fetchChart: function(callback){
 		if(window.place.attributes.charts && this.checkSession())
 			return callback();
@@ -239,12 +263,14 @@ app.router.AppRouter = Backbone.Router.extend({
 			editType = 1;
 
 		this.fetchSinglePlace(id,function(){
-			self.currentView = new app.view.EditPlaceView({
-				waitingView: self.waitingView,
-				errorView : self.errorView,
-				type: editType
+			self.fetchOutliers(function(){
+				self.currentView = new app.view.EditPlaceView({
+					waitingView: self.waitingView,
+					errorView : self.errorView,
+					type: editType
+				});
+				self.renderMenuSinglePlace([0,1],id);
 			});
-			self.renderMenuSinglePlace([0,1],id);
 		});
 	},
 
