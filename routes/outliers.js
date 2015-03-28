@@ -5,8 +5,6 @@ var utils = require('./utils/Utils');
 var placeUtils = require('./utils/PlaceUtils');
 var async = require('async');
 
-var UserIdentification = 1;
-
 /*-------------------------------------------------------------------*/
 exports.save = function(id,outliers,isNew,callback){
 	if(utils.isNumber(id)){
@@ -46,11 +44,11 @@ exports.save = function(id,outliers,isNew,callback){
 					callback(err);
 				});
 			}).catch(function(err){
-				callback(err)
+				callback(err);
 			});
 		}
 	} else
-		callback("ID")
+		callback("ID");
 };
 
 /*-------------------------------------------------------------------*/
@@ -58,7 +56,7 @@ exports.list = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.id,
 				visible: true
 			},
@@ -93,7 +91,7 @@ exports.delete = function(req,res,next){
 	if(utils.isNumber(req.params.idPlace) && utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.idPlace,
 				visible: true
 			},
@@ -133,7 +131,7 @@ exports.delete = function(req,res,next){
 							callback();
 					}, function(err){
 						if(err) return next(httpError(err));
-						placeUtils.retakeStatsAndSave(req.params.idPlace, function(err, n){
+						placeUtils.retakeStatsAndSave(req.user.iss ,req.params.idPlace, function(err, n){
 							if(err) next(httpError(err));
 							res.status(200).send(n);
 						});

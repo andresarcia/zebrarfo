@@ -9,8 +9,6 @@ var placeUtils = require('./utils/PlaceUtils');
 var coordinate = require('./coordinates');
 var outliers = require('./outliers');
 
-var UserIdentification = 1;
-
 /*-------------------------------------------------------------------*/
 exports.create = function(req,res,next){
 	if(Object.keys(req.body).length === 0)
@@ -28,7 +26,7 @@ exports.create = function(req,res,next){
 
 				db.Place.findOrInitialize({
 					where: {
-						UserId:UserIdentification,
+						UserId:req.user.iss,
 						name: place.name,
 					},
 				}).then(function(n){
@@ -78,7 +76,7 @@ exports.create = function(req,res,next){
 								if(err)
 									next(httpError(err));
 								
-								placeUtils.takeStatsComparingPlace(n[0].id,place,function(err,n){
+								placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
 									if (err)
 										next(httpError(err));
 									// ========================
@@ -105,7 +103,7 @@ exports.create = function(req,res,next){
 exports.list = function(req,res,next){
 	db.Place.findAll({
 		where: {
-			UserId:UserIdentification,
+			UserId:req.user.iss,
 			visible: true
 		}
 	}).then(function(places){
@@ -120,7 +118,7 @@ exports.get = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.id,
 				visible: true
 			},
@@ -154,7 +152,7 @@ exports.update = function(req,res,next){
 
 		if(req.body.spacing){
 			async.eachSeries(_.keys(req.body.spacing), function(key, callback) {
-				placeUtils.saveCoordinateCapturesAvg(req.body.id, key, req.body.spacing[key], 
+				placeUtils.saveCoordinateCapturesAvg(req.user.iss,req.body.id, key, req.body.spacing[key], 
 				function(err){
 					if(err) next(httpError(err));
 					callback();
@@ -165,27 +163,27 @@ exports.update = function(req,res,next){
 					return next(httpError(err));
 
 				if(req.body.edited){
-					coordinate._delete(req.body.id, req.body.edited, 
+					coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
 					function(err){
 						if(err) next(httpError(err));
-						placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+						placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 							if(err) next(httpError(err));
 							res.status(200).send(n);
 						});
 					});
 				} else {
-					placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+					placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 						if(err) next(httpError(err));
 						res.status(200).send(n);
 					});
 				}
 			});
 		} else if(req.body.edited){
-			coordinate._delete(req.body.id, req.body.edited, 
+			coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
 			function(err){
 				if(err) next(httpError(err));
 
-				placeUtils.retakeStatsAndSave(req.body.id, function(err, n){
+				placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 					if(err) next(httpError(err));
 					res.status(200).send(n);
 				});
@@ -201,7 +199,7 @@ exports.delete = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.id,
 				visible: true
 			}
@@ -229,7 +227,7 @@ exports.delete = function(req,res,next){
 /*-------------------------------------------------------------------*/
 exports.download = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
-		placeUtils.toJson(req.params.id, function(err,data,name){
+		placeUtils.toJson(req.user.iss, req.params.id, function(err,data,name){
 			if(err) return next(httpError(err));
 			if(data === null) next(httpError(404));
 			

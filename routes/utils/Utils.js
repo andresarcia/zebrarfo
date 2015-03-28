@@ -9,7 +9,7 @@ exports.isNumber = function(n) {
 /*-----------------------------------------------------------*/
 exports.deg2rad = function(deg) {
 	return deg * (Math.PI/180);
-}
+};
 
 /*-----------------------------------------------------------*/
 exports.GetDistanceFromLatLonInKm = function(lat1,lon1,lat2,lon2) {

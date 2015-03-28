@@ -4,10 +4,7 @@ var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
 var capture = require('./captures');
 var async = require('async');
-
 var _ = require("underscore");
-
-var UserIdentification = 1;
 
 /*-------------------------------------------------------------------*/
 exports.save = function(id,coordinates,callback){
@@ -62,7 +59,7 @@ exports.list = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.id,
 				visible: true
 			}
@@ -117,7 +114,7 @@ exports.get = function(req, res, next){
 		
 		db.Place.find({
 			where: {
-				UserId:UserIdentification,
+				UserId:req.user.iss,
 				id: req.params.idPlace,
 				visible: true
 			}
@@ -162,11 +159,11 @@ exports.get = function(req, res, next){
 		next(httpError(404));
 };
 
-exports._delete = function(placeId, coordinates, callback){
+exports._delete = function(userId, placeId, coordinates, callback){
 	db.Place.find({
 		where: {
 			id: placeId,
-			UserId: UserIdentification,
+			UserId: userId,
 			visible: true
 		},
 	})
@@ -203,6 +200,3 @@ exports._delete = function(placeId, coordinates, callback){
 		return callback(err);
 	});
 };
-
-
-

@@ -8,8 +8,6 @@ var _ = require('underscore');
 var async = require('async');
 var capturesModel = require('../captures');
 
-var UserIdentification = 1;
-
 /*-----------------------------------------------------------------*/
 exports.getOccupationHetmapData = function(req,res,next){
 	if(utils.isNumber(req.params.id)){
@@ -24,7 +22,7 @@ exports.getOccupationHetmapData = function(req,res,next){
 					'select ' +
 						'id ' +
 					'from Places ' +
-					'where id = '+req.params.id+' and UserId = '+ UserIdentification+' and visible = 1' +
+					'where id = '+req.params.id+' and UserId = '+ req.user.iss+' and visible = 1' +
 				') as aux, Coordinates ' +
 				'where Coordinates.PlaceId = aux.id and Coordinates.visible = 1' +
 			') as aux, Captures ' +
@@ -47,11 +45,11 @@ exports.getOccupationHetmapData = function(req,res,next){
 };
 
 /*-----------------------------------------------------------------*/
-exports.getFullPlace = function(id,callback){
+exports.getFullPlace = function(userId,id,callback){
 	db.Place.find({
 		where: {
 			id: id,
-			UserId: UserIdentification,
+			UserId: userId,
 			visible: true
 		},
 		include: [{ 
@@ -76,13 +74,13 @@ exports.getFullPlace = function(id,callback){
 };
 
 /*-----------------------------------------------------------------*/
-exports.takeStatsComparingPlace = function(id, n, callback){	
+exports.takeStatsComparingPlace = function(userId,id, n, callback){	
 	console.log('* UPDATING PLACE STATS *');
 
 	db.Place.find({
 		where: {
 			id: id,
-			UserId: UserIdentification,
+			UserId: userId,
 			visible: true
 		}
 	}).then(function(o){
@@ -90,7 +88,7 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 		.then(function(count){
 
 			if(count != o.numberCoordinates){
-				o.numberCoordinates = count;	
+				o.numberCoordinates = count;
 				if(o.powerMin > n.powerMin)
 					o.powerMin = n.powerMin;
 				if(o.powerMax < n.powerMax)
@@ -137,8 +135,8 @@ exports.takeStatsComparingPlace = function(id, n, callback){
 };
 
 /*--------------------------------------------------------------------------------------------------------------*/
-exports.retakeStats = function(id, callback){
-	i.getFullPlace(id, function(err,place){
+exports.retakeStats = function(userId, id, callback){
+	i.getFullPlace(userId, id, function(err,place){
 		if(err) 
 			return callback(err,null);
 
@@ -150,8 +148,8 @@ exports.retakeStats = function(id, callback){
 };
 
 /*--------------------------------------------------------------------------------------------------------------*/
-exports.retakeStatsAndSave = function(id, callback){
-	i.retakeStats(id, function(err, n){
+exports.retakeStatsAndSave = function(userId,id, callback){
+	i.retakeStats(userId, id, function(err, n){
 		if(err) {
 			callback(err,null);
 		}
@@ -162,7 +160,7 @@ exports.retakeStatsAndSave = function(id, callback){
 			
 			db.Place.find({
 				where: {
-					UserId:UserIdentification,
+					UserId:userId,
 					id: id,
 					visible: true
 				}
@@ -195,7 +193,7 @@ exports.retakeStatsAndSave = function(id, callback){
 	});
 };
 
-exports.saveCoordinateCapturesAvg = function(placeId, coordinateToSave, coordinates, callback){
+exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, coordinates, callback){
 	var captures = [];
 	var coordSave = null;
 
@@ -203,7 +201,7 @@ exports.saveCoordinateCapturesAvg = function(placeId, coordinateToSave, coordina
 	db.Place.find({
 		where: {
 			id: placeId,
-			UserId: UserIdentification,
+			UserId: userId,
 			visible: true
 		},
 	})
@@ -277,8 +275,8 @@ exports.saveCoordinateCapturesAvg = function(placeId, coordinateToSave, coordina
 };
 
 
-exports.toJson = function(id,callback){
-	i.getFullPlace(id, function(err,place){
+exports.toJson = function(userId,id,callback){
+	i.getFullPlace(userId, id, function(err,place){
 		if(err) 
 			return callback(err,null);
 

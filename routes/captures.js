@@ -4,8 +4,6 @@ var httpError = require('build-http-error');
 var _ = require("underscore");
 var i = require('./captures');
 
-var UserIdentification = 1;
-
 /*-------------------------------------------------------------------*/
 exports.save = function(id,captures,callback){
 	_.each(captures, function(capture){
