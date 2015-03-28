@@ -183,6 +183,9 @@ app.router.AppRouter = Backbone.Router.extend({
 			self.waitingView.hide();
 			localStorage.removeItem('token');
 			localStorage.removeItem('email');
+			delete window.places;
+			delete window.place;
+			window.settings.place = {};
 			window.location.hash = '#';
 		})
 		.fail(function(err) {
