@@ -62,6 +62,16 @@ app.router.AppRouter = Backbone.Router.extend({
 		return true;
 	},
 
+	errorRequest: function(msg){
+		if(msg == "Access token has expired"){
+			localStorage.removeItem('token');
+			window.location.hash = '#';
+		} else {
+			this.waitingView.hide();
+			this.errorView.render([msg]);
+		}
+	},
+
 	/*-------------------------------------------------------------------*/
 	fetchPlaces: function(callback){
 		if(window.places && this.checkSession())
@@ -76,13 +86,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.waitingView.hide();
-					self.errorView.render([xhr.responseText]);
-				}
+				self.errorRequest(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -102,13 +106,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.waitingView.hide();
-					self.errorView.render([xhr.responseText]);
-				}
+				self.errorRequest(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -127,12 +125,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.errorView.render([xhr.responseText]);
-				}
+				self.errorRequest(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -151,12 +144,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				if(xhr.responseJSON.message == "Access token has expired"){
-					localStorage.removeItem('token');
-					window.location.hash = '#';
-				} else {
-					self.errorView.render([xhr.responseText]);
-				}
+				self.errorRequest(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -194,6 +182,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		.done(function( res ) {
 			self.waitingView.hide();
 			localStorage.removeItem('token');
+			localStorage.removeItem('email');
 			window.location.hash = '#';
 		})
 		.fail(function(err) {
