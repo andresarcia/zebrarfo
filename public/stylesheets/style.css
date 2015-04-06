@@ -498,6 +498,13 @@ hr {
   margin-top: 35px;
 }
 
+#white-spaces-canvas {
+  height: 500px;
+}
+#white-spaces-canvas > div {
+  border: solid 1px #e0e0e0 !important;
+}
+
 .ws-dropdown-container {
   display: none;
 }

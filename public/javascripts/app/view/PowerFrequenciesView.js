@@ -45,15 +45,15 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 
 	mouseOnBand: function(e,self){
 		if (e.type == 'mouseover') {
-    		self.svgElem.attr({
-        		'stroke-width': 1,
-        		stroke: Highcharts.Color(self.options.color).setOpacity(5).get(),
-    		});
+			self.svgElem.attr({
+				'stroke-width': 1,
+				stroke: Highcharts.Color(self.options.color).setOpacity(5).get(),
+			});
 		} else {
-    		self.svgElem.attr({
-        		'stroke-width': 1,
-        		stroke: 'transparent',
-    		});
+			self.svgElem.attr({
+				'stroke-width': 1,
+				stroke: 'transparent',
+			});
 		}
 	},
 
@@ -84,10 +84,10 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 	clickEvent: function(e,self){
 		if(self.selected !== true){
 			this.selectBand(self);
-    		Backbone.pubSub.trigger('event-power-frequencies-channel-select',self.options.id);
+			Backbone.pubSub.trigger('event-power-frequencies-channel-select',self.options.id);
 		} else {
 			this.deselectBand(self);
-    		Backbone.pubSub.trigger('event-power-frequencies-channel-deselect',self.options.id);
+			Backbone.pubSub.trigger('event-power-frequencies-channel-deselect',self.options.id);
 		}
 	},
 
@@ -101,7 +101,7 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 	deselectBand: function(band){
 		band.selected = undefined;
 		band.svgElem.attr({
-    		fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get(),
+			fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get(),
 		});
 	},
 
@@ -115,8 +115,8 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 
 		var chartOptions = {
 			renderTo: $(this.selector).find('.chart_power_frequency')[0],
-	        backgroundColor: null,
-	        zoomType: 'x'
+			backgroundColor: null,
+			zoomType: 'x'
 		};
 		chartOptions = _.extend(chartOptions, options.chart);
 
@@ -124,57 +124,57 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 			if(item.frequency)
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
 		});
-		
+
 		this.chart = new Highcharts.Chart({	
-	        chart: chartOptions,
-	        title: {
-    			text: '',
-    			style: {
-        			display: 'none'
-    			}
+			chart: chartOptions,
+			title: {
+				text: '',
+				style: {
+					display: 'none'
+				}
 			},
 			subtitle: {
-            	text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' :
-                    'Pinch the chart to zoom in'
-        	},
+				text: document.ontouchstart === undefined ?
+					'Click and drag in the plot area to zoom in' :
+					'Pinch the chart to zoom in'
+			},
 			tooltip: {
 				positioner: function(){
 					if(options.tooltip.positioner)
-                		return options.tooltip.positioner;
-            	},
-    			formatter: function(){
-        			return this.x + '</b> : <b>' + (this.y).toFixed(3);
-    			}
+						return options.tooltip.positioner;
+				},
+				formatter: function(){
+					return this.x + '</b> : <b>' + (this.y).toFixed(3);
+				}
 			},
-	        xAxis: {
-	            title: {
-	                text: 'Frequencies (MHz)'
-	            },
-	        },
-	        yAxis: options.yAxis,
-	        plotOptions: {
-	            line: {
-	                enableMouseTracking: true
-	            },
-	            series: {
-             	   fillOpacity: 0.35
-            	},
-	        },
-	        series: [{
-	        	showInLegend: false,
-	            data: dataPlot,
-	            states: {
-                    hover: false
-                },
-                marker: {
-                	lineWidth: 2,
-                	radius: 6
-            	},
-	        }]
-	    });
+			xAxis: {
+				title: {
+					text: 'Frequencies (MHz)'
+				},
+			},
+			yAxis: options.yAxis,
+			plotOptions: {
+				line: {
+					enableMouseTracking: true
+				},
+				series: {
+					fillOpacity: 0.35
+				},
+			},
+			series: [{
+				showInLegend: false,
+				data: dataPlot,
+				states: {
+					hover: false
+				},
+				marker: {
+					lineWidth: 2,
+					radius: 6
+				},
+			}]
+		});
 
-		this.appendChannels(this.chart);	
+		this.appendChannels(this.chart);
 
 		return this;
 	},

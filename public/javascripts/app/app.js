@@ -10,7 +10,7 @@ $(function(){
     };
 
 	Backbone.pubSub = _.extend({}, Backbone.Events);
-	loadGoogleMapApi();
+	loadGoogleApi();
 	window.appRouter = new app.router.AppRouter();
     window.settings = {
         channels: [
@@ -30,12 +30,28 @@ $(function(){
 	Backbone.history.start();
 });
 
-function loadGoogleMapApi() {
+function loadGoogleApi() {
     var l = new app.util.Loader();
-    l.require(['https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&callback=loadGoogleMapHeatmapPlugin']);
+    l.require(['http://www.google.com/jsapi'], function(){
+        google.load("maps", "3", { 
+            other_params:'sensor=false&libraries=visualization', 
+            callback: loadGoogleMapHeatmapPlugin 
+        });
+
+        google.load("visualization", "1", {
+            callback: loadGoogleVisualizationPlugin 
+        });
+    });
+
+    
 }
 
 function loadGoogleMapHeatmapPlugin(){
     window.settings.googleMapApi = true;
     Backbone.pubSub.trigger('event-loaded-google-map-api');
+}
+
+function loadGoogleVisualizationPlugin(){
+    window.settings.googleVisualizationApi = true;
+    Backbone.pubSub.trigger('event-loaded-google-visualization-api');
 }

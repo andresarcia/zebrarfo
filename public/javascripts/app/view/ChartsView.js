@@ -13,13 +13,13 @@ app.view.ChartsView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
-		this.id = 'place-charts';
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 
 		window.settings.place.charts = window.settings.place.charts || {};
 		window.settings.place.charts.occupation = window.settings.place.charts.occupation || {};
 		window.settings.place.charts.heatmap = window.settings.place.charts.heatmap || {};
+		window.settings.place.charts.whiteSpaces = window.settings.place.charts.whiteSpaces || {};
 
 		this.render();
 		this.waitingView.hide();
@@ -80,6 +80,12 @@ app.view.ChartsView = Backbone.View.extend({
 					});
 
 				break;
+
+			case 2:
+				window.location.hash = '#places/'+window.place.id+'/charts?type=white-spaces';
+				isEmpty = this.$el.find('#white-spaces-tab').is(':empty');
+				if(isEmpty)
+					self.renderWhiteSpaces();
 		}
 	},
 
@@ -108,6 +114,18 @@ app.view.ChartsView = Backbone.View.extend({
 		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);
 		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=heatmap'))
 			window.settings.place.charts.heatmap.view.renderComponents();
+	},
+
+	renderWhiteSpaces: function(){
+		var self = this;
+		window.settings.place.charts.whiteSpaces.view = new app.view.WhiteSpacesView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+		});
+
+		this.$el.find('#white-spaces-tab').html(window.settings.place.charts.whiteSpaces.view.render().el);
+		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=white-spaces'))
+			window.settings.place.charts.whiteSpaces.view.renderComponents();
 	},
 
 	render: function(){

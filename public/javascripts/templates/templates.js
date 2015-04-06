@@ -7,7 +7,7 @@ this["Zebra"]["tmpl"]["charts"] = Handlebars.template({"compiler":[6,">= 2.0.0-b
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></li>\n	<li class=\"active\">Charts</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"charts-tabs\">\n	<li class=\"active\"><a href=\"#occupation-tab\" role=\"tab\" data-toggle=\"tab\">Occupation</a></li>\n	<li><a href=\"#heatmap-tab\" role=\"tab\" data-toggle=\"tab\">Heatmap</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"occupation-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"heatmap-tab\"></div>\n</div>";
+    + "</a></li>\n	<li class=\"active\">Charts</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"charts-tabs\">\n	<li class=\"active\"><a href=\"#occupation-tab\" role=\"tab\" data-toggle=\"tab\">Occupation</a></li>\n	<li><a href=\"#heatmap-tab\" role=\"tab\" data-toggle=\"tab\">Heatmap</a></li>\n	<li><a href=\"#white-spaces-tab\" role=\"tab\" data-toggle=\"tab\">White Spaces</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"occupation-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"heatmap-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"white-spaces-tab\"></div>\n</div>";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["edit_coordinates"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -297,4 +297,8 @@ this["Zebra"]["tmpl"]["upload_measures"] = Handlebars.template({"1":function(dep
 
 this["Zebra"]["tmpl"]["waiting"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"ws-waiting\">\n	<div class=\"spinner-container\">\n  		<div class=\"rect1\"></div>\n  		<div class=\"rect2\"></div>\n  		<div class=\"rect3\"></div>\n  		<div class=\"rect4\"></div>\n  		<div class=\"rect5\"></div>\n	</div>\n</div>";
+  },"useData":true});
+
+this["Zebra"]["tmpl"]["white_spaces"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"row\">\n	<div class=\"col-md-12\">\n		<br>\n		<div id=\"white-spaces-canvas\"></div>\n	</div>\n</div>";
   },"useData":true});

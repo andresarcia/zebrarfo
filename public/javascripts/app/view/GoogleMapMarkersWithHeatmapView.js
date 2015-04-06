@@ -83,6 +83,10 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		var noSelected = _.clone(self.markers);
 		noSelected.splice(crr.index, 1);
 
+		var SD_M = 0;
+		var SD_X = 0;
+		var n = 0;
+
 		do {
 			var inner = [];
 			var near = undefined;
@@ -121,7 +125,16 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 
 			crr = _.clone(near);
 			noSelected = _.clone(selected);
+			SD_M += nearDistance;
+			SD_X += (nearDistance * nearDistance);
+			n += 1;
+
 		} while (noSelected.length !== 0);
+
+		console.log("avg: " + SD_M / n);
+		SD_X = Math.sqrt((SD_X - (SD_M * SD_M)/ n)/(n - 1));
+		SD_X = Number(SD_X.toFixed(5));
+		console.log("sd: " + SD_X);
 
 		return ids;
 	},

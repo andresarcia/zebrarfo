@@ -278,6 +278,8 @@ app.router.AppRouter = Backbone.Router.extend({
 			chartType = 0;
 		else if(type === 'heatmap') 
 			chartType = 1;
+		else if(type === 'white-spaces') 
+			chartType = 2;
 
 		this.fetchSinglePlace(id,function(){
 			self.fetchChart(function(){
