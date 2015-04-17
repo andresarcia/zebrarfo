@@ -20,6 +20,9 @@ app.util.Parser.prototype = {
 		this.place.frequencies.values = [];
 		self.place.frequencies.unit = unit;
 
+		files = [].slice.call(files);
+		files.sort();
+
 		_.each(files, function(file){
 			var fr = new FileReader();
 			fr.onload = function(e) { 
