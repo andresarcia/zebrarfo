@@ -20,16 +20,16 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	calculateData: function(){
 		this.data3D = new google.visualization.DataTable();
-		this.data3D.addColumn('number', 'x');
-		this.data3D.addColumn('number', 'y');
-		this.data3D.addColumn('number', 'z');
+		this.data3D.addColumn('number', 'Power Threshold');
+		this.data3D.addColumn('number', 'Frequencies (MHz)');
+		this.data3D.addColumn('number', 'Occupation (%)');
 
 		var self = this;
 		var dataGrouped = _.groupBy(this.data.charts, function(sample){
 			return sample.frequency;
 		});
 		var a = [];
-		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= 5) {
+		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= 3) {
 			_.each(dataGrouped, function(itemSameFrequency){
 				var passed = 0;
 				_.each(itemSameFrequency, function(item){
@@ -67,7 +67,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		var options = {
 			width:  "100%",
-			style: "surface", // dot, dot-line, line, grid, surface, bar
+			style: "bar", // dot, dot-line, line, grid, surface, bar
 			showPerspective: true,
 			showGrid: true,
 			showShadow: false,
