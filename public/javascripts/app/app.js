@@ -42,8 +42,6 @@ function loadGoogleApi() {
             callback: loadGoogleVisualizationPlugin 
         });
     });
-
-    
 }
 
 function loadGoogleMapHeatmapPlugin(){

@@ -21,7 +21,9 @@ app.util.Parser.prototype = {
 		self.place.frequencies.unit = unit;
 
 		files = [].slice.call(files);
-		files.sort();
+		files = files.sort(function(a,b){
+			return app.util.alphanum(a.name,b.name);
+		});
 
 		_.each(files, function(file){
 			var fr = new FileReader();

@@ -3,12 +3,12 @@ app.util = app.util || {};
 
 app.util.FormatSizeUnits = function(bytes){
 	if(bytes === 0) 
-    	return '0 Byte';
-   	
-   	var k = 1000;
-   	var sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
-   	var i = Math.floor(Math.log(bytes) / Math.log(k));
-   	return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+    return '0 Byte';
+
+  var k = 1000;
+  var sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
+  var i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
 };
 
 app.util.GetURLParameter = function(name){
@@ -28,7 +28,7 @@ app.util.CkeckUrl = function(url){
 
 app.util.deg2rad = function(deg) {
   return deg * (Math.PI/180);
-}
+};
 
 app.util.GetDistanceFromLatLonInKm = function(lat1,lon1,lat2,lon2) {
   var R = 6371; // Radius of the earth in km
@@ -49,4 +49,34 @@ app.util.GetPrecision = function() {
         d = s.indexOf('.') + 1;
 
     return !d ? 0 : s.length - d;
+};
+
+app.util.alphanum = function(a,b) {
+  function chunkify(t) {
+    var tz = [];
+    var x = 0, y = -1, n = 0, i, j;
+
+    while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+      var m = (i == 46 || (i >=48 && i <= 57));
+      if (m !== n) {
+        tz[++y] = "";
+        n = m;
+      }
+      tz[y] += j;
+    }
+    return tz;
+  }
+
+  var aa = chunkify(a.toLowerCase());
+  var bb = chunkify(b.toLowerCase());
+
+  for (x = 0; aa[x] && bb[x]; x++) {
+    if (aa[x] !== bb[x]) {
+      var c = Number(aa[x]), d = Number(bb[x]);
+      if (c == aa[x] && d == bb[x]) {
+        return c - d;
+      } else return (aa[x] > bb[x]) ? 1 : -1;
+    }
+  }
+  return aa.length - bb.length;
 };
