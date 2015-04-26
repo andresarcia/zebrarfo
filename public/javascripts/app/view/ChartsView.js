@@ -13,6 +13,7 @@ app.view.ChartsView = Backbone.View.extend({
 
 	initialize: function(options){
 		var self = this;
+		this.id = "place-charts";
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 
@@ -39,8 +40,6 @@ app.view.ChartsView = Backbone.View.extend({
 		Backbone.pubSub.off('single-place-charts-change-channels');
 		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
 			window.settings.place.charts.channels = channels;
-			if(window.settings.place.charts.channels.length > 0)
-				window.settings.place.charts.heatmap.frequencyBy = 'channels';
 		});
 	},
 
@@ -63,9 +62,7 @@ app.view.ChartsView = Backbone.View.extend({
 				if(isEmpty)
 					self.renderOccupation();
 				else 
-					window.settings.place.charts.occupation.view.updateDataByTab({
-						channels: window.settings.place.charts.channels
-					});
+					window.settings.place.charts.occupation.view.updateDataByTab();
 				break;
 				
 			case 1:
@@ -74,11 +71,7 @@ app.view.ChartsView = Backbone.View.extend({
 				if(isEmpty)
 					self.renderHeatmap();
 				else
-					window.settings.place.charts.heatmap.view.updateDataByTab({
-						frequencyBy: window.settings.place.charts.heatmap.frequencyBy,
-						channels: window.settings.place.charts.channels
-					});
-
+					window.settings.place.charts.heatmap.view.updateDataByTab();
 				break;
 
 			case 2:
@@ -94,7 +87,6 @@ app.view.ChartsView = Backbone.View.extend({
 		window.settings.place.charts.occupation.view = new app.view.OccupationView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			channels: window.settings.place.charts.channels
 		});
 
 		this.$el.find('#occupation-tab').html(window.settings.place.charts.occupation.view.render().el);
@@ -107,8 +99,6 @@ app.view.ChartsView = Backbone.View.extend({
 		window.settings.place.charts.heatmap.view = new app.view.HeatmapView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
-			frequencyBy: window.settings.place.charts.heatmap.frequencyBy,
-			channels: window.settings.place.charts.channels
 		});
 
 		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);

@@ -42,31 +42,17 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 		
 		this.data = window.place.attributes;
-
-		var tail = Math.round((this.data.frequencyMax - this.data.frequencyMin) * 0.10);
-
-		this.boundaries = [];
-		this.boundaries.push({
-			from: this.data.frequencyMin + tail,
-			to: this.data.frequencyMax - tail
-		});
-
 		this.heatmapDataProcessor = new app.util.HeatmapDataProcessor();
-
-		this.frequencyBy = options.frequencyBy;
-		if(options.channels)
-			this.channels = options.channels;
-		else
-			this.channels = [];
-	},
-
-	renderComponents: function(){
 		this.heatmapDataProcessor.require({
 			place: this.data,
 			data: this.data.charts
 		});
 
-		this.$el.find('.heatmap-settings').removeClass('disable-container');
+		if(!window.settings.place.charts.channels)
+			window.settings.place.charts.channels = [];
+	},
+
+	renderComponents: function(){
 		this.renderSettings();
 		this.renderMap();
 	},
@@ -87,7 +73,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	renderSettings: function(){
 		var self = this;
 		this.$el.find("#select-function-operate").select2();
-	
+
 		this.opacitySlider = this.$el.find('.opacity-slider').noUiSlider({
 			start: this.heatmap.settings.opacity,
 			step: 1,
@@ -99,9 +85,6 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': 100
 			}
 		});
-
-		this.renderMaxIntensitySlider();
-
 		this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
 			$(this).html(
 				'<strong>' + value + '%</strong>'
@@ -125,8 +108,14 @@ app.view.HeatmapView = Backbone.View.extend({
 			);
 		});
 
+		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2("val", 
+			window.settings.currentChannelAllocation);
+		this.$el.find('.heatmap-select-channels').hide();
+
+		var tail = Math.round((this.data.frequencyMax - this.data.frequencyMin) * 0.10);
 		this.slider = this.$el.find('.slider').noUiSlider({
-			start: [this.boundaries[0].from,this.boundaries[0].to],
+			start: [this.data.frequencyMin + tail, this.data.frequencyMax - tail],
 			step: 1,
 			behaviour: 'tap-drag',
 			connect: true,
@@ -138,24 +127,18 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': this.data.frequencyMax
 			}
 		});
-
 		this.$el.find('.slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
 			$(this).html(
 				'<strong>' + value + ' MHz</strong>'
 			);
 		});
-
 		this.$el.find('.slider').Link('upper').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
 			$(this).html(
 				'<strong>' + value + ' MHz</strong>'
 			);
 		});
 
-		this.$el.find("#allocation-channel").select2();
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-
-		this.$el.find('.heatmap-select-channels').hide();
-
+		this.changeFrequencyBy(false);
 
 		this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
 
@@ -177,46 +160,38 @@ app.view.HeatmapView = Backbone.View.extend({
 			mode: 'range',
 			density: 3.33
 		});
-
-		this.changeFrequencyBy(this.frequencyBy,false);
 	},
 
-	renderMarkersSlider: function(max){
-		this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
-			start: this.heatmap.settings.currentMarkerItem,
-			step: 1,
-			orientation: "vertical",
-			format: wNumb({
-				decimals: 0
-			}),
-			range: {
-				'min': 0,
-				'max': max
-			}
-		}, true);
+	changeFrequencyBy: function(update){
+		var val;
+		if(update !== false)
+			val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
+		else {
+			if(window.settings.place.charts.channels.length > 0)
+				val = "channels";
+			else
+				val = "frequency";
+		}
 
-		this.$el.find('.heatmap-controllers-container').slideDown(100);
-	},
+		if(val == "channels"){
+			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('.heatmap-slider-container').hide();
+			this.renderChannelInput();
+			this.$el.find('.heatmap-select-channels').show();
+			if(update !== false)
+				this.changeChannelRange();
+			else
+				this.calBoundChannels();
 
-	renderMaxIntensitySlider: function(){
-		this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
-			start: this.data.powerMax,
-			step: 1,
-			format: wNumb({
-				decimals: 0
-			}),
-			range: {
-				'min': -120,
-				'max': 0
-			}
-		}, true);
-
-		this.maxIntensitySlider.val(this.data.powerMax);
-		this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + ' dBm</strong>'
-			);
-		});
+		} else if(val == "frequency"){
+			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="frequency"]').attr('checked', true);
+			this.$el.find('.heatmap-select-channels').hide();
+			this.$el.find('.heatmap-slider-container').show();
+			if(update !== false)
+				this.changeFrequencyRange();
+			else
+				this.calBoundFrequencies();
+		}
 	},
 
 	renderChannelInput: function(){
@@ -233,12 +208,15 @@ app.view.HeatmapView = Backbone.View.extend({
 			data: channelData,
 		});
 
-		if(this.channels === undefined || this.channels.length < 1){
-			this.channels = [];
-			this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+		var channels = window.settings.place.charts.channels;
+
+		if(channels === undefined || channels.length < 1){
+			channels = [];
+			channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+			Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 		}
 
-		this.$el.find('#select-channels').select2('val', this.channels);
+		this.$el.find('#select-channels').select2('val', channels);
 	},
 
 	changeDataFunction: function(){
@@ -253,71 +231,46 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.renderHeatmap();
 	},
 
-	changeFrequencyBy: function(value,update){
-		var val;
-		if($.type(value) === "string")
-			val = value;
-		else if(value === undefined)
-			val = 'frequency';
-		else
-			val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
-
-		update = typeof update !== 'undefined' ? update : true;
-
-		if(val === 'frequency'){
-			this.$el.find('.heatmap-select-channels').hide();
-			this.$el.find('.heatmap-slider-container').show();
-			if(update)
-				this.changeFrequencyRange();
-		
-		} if(val === 'channels'){
-			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
-			this.$el.find('.heatmap-slider-container').hide();
-			this.renderChannelInput();
-			this.$el.find('.heatmap-select-channels').show();
-			if(update)
-				this.changeChannelRange();
-		}
-	},
-
-	updateDataByTab: function(options){
-		this.frequencyBy = options.frequencyBy;
-		this.channels = options.channels;
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-		this.changeFrequencyBy(this.frequencyBy,true);
-	},
-
 	changeAllocationChannel: function(){
 		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
-		this.channels = [];
-		this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+		var channels = [];
+		channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 		this.renderChannelInput();
 		this.changeChannelRange();
 	},
 
 	changeFrequencyRange: function(){
-		var self = this;
-		this.boundaries = [];
-
-		this.boundaries.push({
-			from: Number(self.slider.val()[0]),
-			to: Number(self.slider.val()[1])
-		});
+		this.calBoundFrequencies();
 		this.renderHeatmap(true);
 	},
 
+	calBoundFrequencies: function(){
+		this.boundaries = [];
+		this.boundaries.push({
+			from: Number(this.slider.val()[0]),
+			to: Number(this.slider.val()[1])
+		});
+	},
+
 	checkChannelRange: function(evt){
-		if(this.channels.length == 1)
+		if(window.settings.place.charts.channels.length == 1)
 			evt.preventDefault();
 	},
 
 	changeChannelRange: function(){
 		var self = this;
-		this.boundaries = [];
-		this.channels = this.$el.find('#select-channels').select2("val"); 
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		this.calBoundChannels();
+		this.renderHeatmap(true);
+	},
 
-		_.each(this.channels, function(item){
+	calBoundChannels: function(){
+		var self = this;
+		this.boundaries = [];
+		var channels = this.$el.find('#select-channels').select2("val"); 
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+
+		_.each(channels, function(item){
 			var boundaries = item.split("-");
 			self.boundaries.push({
 				from: Number(boundaries[0]),
@@ -326,7 +279,6 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 
 		this.boundaries = _.sortBy(this.boundaries, function(item) { return item.to; });
-		this.renderHeatmap(true);
 	},
 
 	changeSpreadDistance: function(){
@@ -444,7 +396,7 @@ app.view.HeatmapView = Backbone.View.extend({
 			});
 			
 			this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
-			this.renderMaxIntensitySlider();
+			this.renderMaxSuggestedSlider();
 			this.renderMarkersSlider(data.data.length - 1);
 
 			if(center)
@@ -460,6 +412,54 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 
 		this.heatmap.heatmap.setMap(this.heatmap.map);
+		this.$el.find('.heatmap-settings').removeClass('disable-container');
+	},
+
+	renderMaxSuggestedSlider: function(){
+		this.maxIntensitySlider = this.$el.find('.max-intensity-slider').noUiSlider({
+			start: this.data.powerMax,
+			step: 1,
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': -120,
+				'max': 0
+			}
+		}, true);
+
+		this.maxIntensitySlider.val(this.data.powerMax);
+		this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
+			$(this).html(
+				'<strong>' + value + ' dBm</strong>'
+			);
+		});
+	},
+
+	renderMarkersSlider: function(max){
+		this.markersSlider = this.$el.find('.markers-slider').noUiSlider({
+			start: this.heatmap.settings.currentMarkerItem,
+			step: 1,
+			orientation: "vertical",
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': 0,
+				'max': max
+			}
+		}, true);
+
+		this.$el.find('.heatmap-controllers-container').slideDown(100);
+	},
+
+	updateDataByTab: function(){
+		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		if(window.settings.place.charts.channels.length > 0)
+			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
+		else
+			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="frequency"]').attr('checked', true);
+		this.changeFrequencyBy(true);
 	},
 
 	render: function(){

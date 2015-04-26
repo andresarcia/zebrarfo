@@ -53,10 +53,8 @@ app.view.OccupationView = Backbone.View.extend({
 			}
 		};
 
-		if(options.channels)
-			this.channels = options.channels;
-		else
-			this.channels = [];
+		if(!window.settings.place.charts.channels)
+			window.settings.place.charts.channels = [];
 
 		Backbone.pubSub.off('event-power-frequencies-channel-select');
 		Backbone.pubSub.on('event-power-frequencies-channel-select', this.pushChannelsFromGraph, this);
@@ -80,10 +78,9 @@ app.view.OccupationView = Backbone.View.extend({
 		this.renderChart();
 	},
 
-	updateDataByTab: function(data){
+	updateDataByTab: function(){
 		var self = this;
-		this.channels = data.channels;
-		
+
 		if(this.chart.chart)
 			this.chart.chart.destroy();
 
@@ -93,49 +90,39 @@ app.view.OccupationView = Backbone.View.extend({
 
 		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
 		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
-		
-		if((this.channels === undefined || this.channels.length < 1) && data.frequencyBy === 'channels'){
-			this.channels = [];
-			this.channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
-		
-		} else if(this.channels === undefined)
-			this.channels = [];
 
 		this.renderChannelInput();
 	},
 
 	pushChannelsFromGraph: function(data){
-		var channels = this.channels;
+		var channels = window.settings.place.charts.channels;
 		channels.push(data);
-		this.channels = channels;
-		this.$el.find('#select-channels').select2("val",this.channels);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		this.$el.find('#select-channels').select2("val",channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	pushChannelsFromInput: function(evt){
-		this.channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.$el.find('#select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val[evt.val.length - 1]);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	popChannelsFromGraph: function(data){
-		var channels = this.channels;
+		var channels = window.settings.place.charts.channels;
 		channels = _.without(channels, data);
-		this.channels = channels;
-		this.$el.find('#select-channels').select2("val",this.channels);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		this.$el.find('#select-channels').select2("val",channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	popChannelFromInput: function(evt){
-		this.channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.$el.find('#select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-deselect',evt.val);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	clearChannels: function(evt){
-		this.channels = [];
-		this.$el.find('#select-channels').select2("val",this.channels);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',this.channels);
+		this.$el.find('#select-channels').select2("val",[]);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',[]);
 	},
 
 	renderComponents: function(){
@@ -186,7 +173,7 @@ app.view.OccupationView = Backbone.View.extend({
 			data: channelData,
 		});
 
-		this.$el.find('#select-channels').select2('val', this.channels);
+		this.$el.find('#select-channels').select2('val', window.settings.place.charts.channels);
 	},
 
 	renderChart: function(){
@@ -207,7 +194,7 @@ app.view.OccupationView = Backbone.View.extend({
 
 		this.chart.render(data,this.chartOptions);
 
-		_.each(this.channels,function(item){
+		_.each(window.settings.place.charts.channels,function(item){
 			Backbone.pubSub.trigger('event-occupation-channel-select',item);
 		});
 	},
