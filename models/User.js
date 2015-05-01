@@ -11,6 +11,10 @@ module.exports = function(sequelize, DataTypes) {
       },
     },
 
+    is_subscribed: {
+      type:DataTypes.BOOLEAN,
+    },
+
     password: { type: DataTypes.STRING },
     
   }, {
