@@ -144,7 +144,11 @@ app.view.RegisterView = Backbone.View.extend({
 		$.ajax({
 			url: "api/users",
 			type: "POST",
-				data: { email: this.email, password: this.password },
+				data: { 
+					email: this.email, 
+					password: this.password, 
+					subscribed: this.$el.find('#reg-subscribed').is(':checked'),
+				},
 			beforeSend: function() {
 				self.waitingView.show();
 			}
