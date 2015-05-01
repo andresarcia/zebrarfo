@@ -97,6 +97,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 				self.mapView.render(self.coordinates);
 				self.enableSelectors();
 			});
+			this.disableSelectors();
 		}
 	},
 
@@ -185,10 +186,9 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			idContainer: 'map_canvas_coordinates'
 		});
 		this.renderMarkerSlider(0);
-		this.renderMap();
 		this.renderEditingArea();
 		this.renderSpreadComponents();
-		this.disableSelectors();
+		this.renderMap();
 	},
 
 	disableSelectors: function(){
