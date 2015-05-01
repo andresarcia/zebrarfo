@@ -32,6 +32,7 @@ exports.create = function(req,res,next){
 				}).then(function(n){
 					if(n[0].isNewRecord){
 						console.log('* SAVING PLACE *');
+
 						n[0].numberCoordinates = place.numberCoordinates;
 						n[0].powerMin = place.powerMin;
 						n[0].powerMax = place.powerMax;
@@ -42,9 +43,9 @@ exports.create = function(req,res,next){
 						n[0].frequencyMax = place.frequencyMax;
 						n[0].numberPowerFrequency = place.numberPowerFrequency;
 						n[0].totalDistance = place.totalDistance;
-						n[0].distaceAvg = place.distaceAvg;
-						n[0].distaceMin = place.distaceMin;
-						n[0].distaceMax = place.distaceMax;
+						n[0].distanceAvg = place.distanceAvg;
+						n[0].distanceMin = place.distanceMin;
+						n[0].distanceMax = place.distanceMax;
 						
 						n[0].save()
 						.then(function(){

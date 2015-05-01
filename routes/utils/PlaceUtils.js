@@ -104,12 +104,12 @@ exports.takeStatsComparingPlace = function(userId,id, n, callback){
 					o.sdPowerAvg = Number(sdPowerAvg_X.toFixed(5));
 
 					o.totalDistance = o.totalDistance + n.totalDistance;
-					o.distaceAvg = (o.distaceAvg + n.distaceAvg)/2;
+					o.distanceAvg = (o.distanceAvg + n.distanceAvg)/2;
 
-					if(o.distaceMin > n.distaceMin)
-						o.distaceMin = n.distaceMin;
-					if(o.distaceMax < n.distaceMax)
-						o.distaceMax = n.distaceMax;
+					if(o.distanceMin > n.distanceMin)
+						o.distanceMin = n.distanceMin;
+					if(o.distanceMax < n.distanceMax)
+						o.distanceMax = n.distanceMax;
 
 				} else
 					o.sdPowerAvg = 0;
@@ -175,9 +175,9 @@ exports.retakeStatsAndSave = function(userId,id, callback){
 				o.frequencyMin = n.frequencyMin;
 				o.frequencyMax = n.frequencyMax;
 				o.totalDistance = n.totalDistance;
-				o.distaceAvg = n.distaceAvg;
-				o.distaceMin = n.distaceMin;
-				o.distaceMax = n.distaceMax;
+				o.distanceAvg = n.distanceAvg;
+				o.distanceMin = n.distanceMin;
+				o.distanceMax = n.distanceMax;
 
 				o.save()
 				.then(function(){
@@ -297,9 +297,9 @@ exports.toJson = function(userId,id,callback){
 		delete place.frequencyMin;
 		delete place.frequencyMax;
 		delete place.totalDistance;
-		delete place.distaceAvg;
-		delete place.distaceMin;
-		delete place.distaceMax;
+		delete place.distanceAvg;
+		delete place.distanceMin;
+		delete place.distanceMax;
 		delete place.visible;
 		delete place.UserId;
 		delete place.createdAt;

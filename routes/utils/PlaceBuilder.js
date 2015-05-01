@@ -20,9 +20,9 @@ exports.create = function(place, callback) {
 	n.frequencyMin = null;
 	n.frequencyMax = null;
 	n.totalDistance = 0;
-	n.distaceAvg = 0;
-	n.distaceMax = null;
-	n.distaceMin = null;
+	n.distanceAvg = 0;
+	n.distanceMax = null;
+	n.distanceMin = null;
 	n.outliers = {};
 
 	/* -- vars for take stats -- */
@@ -316,13 +316,13 @@ function saveCoord(coord, n){
 		n.totalDistance += distance;
 		n.countSamplesDistance += 1;
 
-		if(n.distaceMin === null || n.distaceMax === null)
-			n.distaceMin = n.distaceMax = distance;
+		if(n.distanceMin === null || n.distanceMax === null)
+			n.distanceMin = n.distanceMax = distance;
 		else {
-			if(n.distaceMin > distance)
-				n.distaceMin = distance;
-			if(n.distaceMax < distance)
-				n.distaceMax = distance;
+			if(n.distanceMin > distance)
+				n.distanceMin = distance;
+			if(n.distanceMax < distance)
+				n.distanceMax = distance;
 		}
 	}
 }
@@ -343,9 +343,9 @@ function takePlaceStats(n){
 	n.avgPowerSD = Number(n.avgPowerSD.toFixed(5));
 
 	if(n.coordinates.length > 1)
-		n.distaceAvg = n.totalDistance/n.countSamplesDistance;
+		n.distanceAvg = n.totalDistance/n.countSamplesDistance;
 	else 
-		n.totalDistance = n.distaceAvg = n.distaceMin = n.distaceMax = 0;
+		n.totalDistance = n.distanceAvg = n.distanceMin = n.distanceMax = 0;
 
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;
@@ -383,13 +383,13 @@ function checkPlaceAttributes(n, callback){
 	if(n.totalDistance === null || n.totalDistance === undefined)
 		callback("We could not calculate the total distance of the place");
 
-	if(n.distaceAvg === null || n.distaceAvg === undefined)
+	if(n.distanceAvg === null || n.distanceAvg === undefined)
 		callback("We could not calculate the avg distance of the place");
 
-	if(n.distaceMax === null || n.distaceMax === undefined)
+	if(n.distanceMax === null || n.distanceMax === undefined)
 		callback("We could not calculate the max distance of the place");
 
-	if(n.distaceMin === null || n.distaceMin === undefined)
+	if(n.distanceMin === null || n.distanceMin === undefined)
 		callback("We could not calculate the total min of the place");
 
 	if(Object.keys(n.outliers).length === 0)
