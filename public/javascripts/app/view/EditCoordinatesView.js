@@ -88,12 +88,14 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	renderMap: function(){
 		var self = this;
 
-		if(window.settings.googleMapApi)
+		if(window.settings.googleMapApi){
 			this.mapView.render(this.coordinates);
-		else {
+			this.enableSelectors();
+		} else {
 			Backbone.pubSub.off('event-loaded-google-map-api');
 			Backbone.pubSub.on('event-loaded-google-map-api', function(){
 				self.mapView.render(self.coordinates);
+				self.enableSelectors();
 			});
 		}
 	},
@@ -186,6 +188,21 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.renderMap();
 		this.renderEditingArea();
 		this.renderSpreadComponents();
+		this.disableSelectors();
+	},
+
+	disableSelectors: function(){
+		this.markersSlider.attr('disabled', 'disabled');
+		this.spreadSlider.attr('disabled', 'disabled');
+		this.spreadSliderUnit.prop("disabled", true);
+		this.$el.find('.select-btn').prop('disabled', true);
+	},
+
+	enableSelectors: function(){
+		this.markersSlider.removeAttr('disabled');
+		this.spreadSlider.removeAttr('disabled');
+		this.spreadSliderUnit.prop("disabled", false);
+		this.$el.find('.select-btn').prop('disabled', false);
 	},
 
 	changeSliderByMarkers: function(markers){
@@ -351,7 +368,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			if(n[1] == this.coordinates.length - 1)
 				this.$el.find(".su-select-last-coord").addClass('active');
 			else
-				this.$el.find(".su-select-last-coord").removeClass('active');			
+				this.$el.find(".su-select-last-coord").removeClass('active');
 		}
 
 		this.renderMarkerSlider(n);
@@ -677,16 +694,10 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var count = 0;
 		var values = [];
 
-		// var valuesA = [];
-
 		_.each(ids, function(item){
-			// valuesA = valuesA.concat(item);
 			values = values.concat(self.realIndex2Relative(item));
 			count += item.length;
 		});
-
-		// console.log(valuesA);
-		// console.log(values);
 
 		this.editMarkers[this.editMarkersIndex] = {
 			values: values,
