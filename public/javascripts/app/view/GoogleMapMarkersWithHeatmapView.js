@@ -69,72 +69,66 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		if(this.markers.length < 1)
 			return;
 
+		// --------
+		var t0 = performance.now();
+		// --------
 		var self = this;
-		var spreadDistance;
-		if(unit == "m")
-			spreadDistance = distance / 1000;
-		else if(unit == "km")
-			spreadDistance = Number(distance);
-		else
-			spreadDistance = 0;
+		this.cleanAllMarkers();
 
+		var radio;
+		if(unit == "m") radio = distance / 1000;
+		else if(unit == "km") radio = Number(distance);
+		else radio = 0;
+
+		var markers = _.clone(this.markers);
 		var ids = {};
-		var crr = _.find(this.markers, function(item){ return item.visibleCount === 0; });
-		var noSelected = _.clone(self.markers);
-		noSelected.splice(crr.index, 1);
-
 		var SD_M = 0;
 		var SD_X = 0;
 		var n = 0;
 
-		do {
+		_.each(markers, function(item){
+			if(
+				item.visibleCount > 0 || 
+				item.icon == window.settings.markers.iconHover ||
+				ids[item.id]
+			)
+				return;
+
+			var sorted = self.tree.search(item, markers.length);
+			sorted.splice(0,1);
 			var inner = [];
-			var near = undefined;
-			var nearDistance;
-			var selected = [];
 
-			_.each(noSelected, function(item){
-				item.setIcon(window.settings.markers.iconIdle);
-				item.setAnimation(null);
-
-				if(item.index == crr.index || item.visibleCount > 0)
-					return;
-
-				d = app.util.GetDistanceFromLatLonInKm(
-					crr.position.k,crr.position.D,
-					item.position.k,item.position.D);
-
-				if(d < spreadDistance){
-					inner.push(item.id);
-					item.setIcon(window.settings.markers.iconHover);
-
-				} else {
-					if(item.icon == window.settings.markers.iconIdle){
-						selected.push(item);
-
-						if(near === undefined || nearDistance > d){
-							nearDistance = d;
-							near = item;
-						}
-					}
+			_.find(sorted, function(item, i){
+				var marker = markers[item.i];
+				if(marker.visibleCount < 1){
+					if(item.d <= radio && marker.icon != window.settings.markers.iconHover){
+						marker.setIcon(window.settings.markers.iconHover);
+						inner.push(marker.id);
+					} 
+					else if(item.d > radio && marker.icon == window.settings.markers.iconIdle){
+						SD_M += item.d;
+						SD_X += item.d * item.d;
+						return item;
+					} 
 				}
 			});
 
-			if(inner.length > 0)
-				ids[crr.id] = inner;
-
-			crr = _.clone(near);
-			noSelected = _.clone(selected);
-			SD_M += nearDistance;
-			SD_X += (nearDistance * nearDistance);
 			n += 1;
 
-		} while (noSelected.length !== 0);
+			if(inner.length > 0)
+				ids[item.id] = inner;
+		});
 
-		console.log("avg: " + SD_M / n);
-		SD_X = Math.sqrt((SD_X - (SD_M * SD_M)/ n)/(n - 1));
-		SD_X = Number(SD_X.toFixed(5));
-		console.log("sd: " + SD_X);
+		if(n == 1)
+			SD_X = 0;
+		else {
+			SD_X = Math.sqrt((SD_X - (SD_M * SD_M)/ n)/(n - 1));
+			SD_X = Number(SD_X.toFixed(5));
+		}
+
+		// console.log("sd: " + SD_X);
+		var t1 = performance.now();
+		console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 
 		return ids;
 	},
@@ -353,6 +347,11 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			google.maps.event.trigger(self.map, 'resize');
 			self.map.fitBounds(self.mapBounds);
 			self.renderHeatmap();
+		});
+
+		this.tree = VPTreeFactory.build(this.markers, function(a,b){
+			return app.util.GetDistanceFromLatLonInKm(
+				a.position.k, a.position.D, b.position.k, b.position.D); 
 		});
 	},
 

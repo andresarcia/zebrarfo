@@ -77,6 +77,7 @@ module.exports = function(grunt) {
               'public/javascripts/vendor/jquery.nouislider.all.js',
               'public/javascripts/vendor/select2.js',
               'public/javascripts/vendor/jquery.fileDownload.js',
+              'public/javascripts/vendor/vptree.min.js',
               'public/javascripts/vendor/graph3d-min.js',
             ],
         

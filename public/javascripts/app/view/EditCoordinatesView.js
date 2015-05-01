@@ -278,7 +278,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 				coordinates.from.longitude,
 				coordinates.to.latitude,
 				coordinates.to.longitude);
-			coordinates.distance = coordinates.distance.toFixed(1);
+			coordinates.distance = coordinates.distance.toFixed(2);
 		}
 
 		this.editMarkers[this.editMarkersIndex] = coordinates;
@@ -404,25 +404,22 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		if(this.spreadSlider.val() == "0.0"){
 			this.mapView.hideMarkers(this.relativeIndex2Real(v),true);
 			if(v.length == 1){
-				var coord = _.clone(this.coordinates[v[0]]);
-				edited.push(coord);
+				edited.push(this.coordinates[v[0]]);
 				this.coordinates.splice(v[0], 1);
 
 			} else {
 				for (var i = v[1]; i >= v[0]; i--){
-					var coord = _.clone(this.coordinates[i]);
-					edited.push(coord);
-					this.coordinates.splice(i, 1);
+					edited.push(this.coordinates[i]);
 				}
+				this.coordinates = _.difference(this.coordinates, edited);
 			}
 			this.editedCoords.push(edited);
 		} else {
 			this.mapView.hideMarkers(this.relativeIndex2Real(v),false);
-			for (var i = v.length - 1; i >= 0; i--){
-				var coord = _.clone(this.coordinates[v[i]]);
-				edited.push(coord);
-				this.coordinates.splice(v[i], 1);
+			for (var j = v.length - 1; j >= 0; j--){
+				edited.push(this.coordinates[v[j]]);
 			}
+			this.coordinates = _.difference(this.coordinates, edited);
 		}
 
 		this.renderMarkerSlider(0);
@@ -679,10 +676,17 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var self = this;
 		var count = 0;
 		var values = [];
+
+		// var valuesA = [];
+
 		_.each(ids, function(item){
+			// valuesA = valuesA.concat(item);
 			values = values.concat(self.realIndex2Relative(item));
 			count += item.length;
 		});
+
+		// console.log(valuesA);
+		// console.log(values);
 
 		this.editMarkers[this.editMarkersIndex] = {
 			values: values,

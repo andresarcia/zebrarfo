@@ -7,7 +7,7 @@ app.model.Place = Backbone.Model.extend({
 
 	parse: function(model){
 
-		model.totalDistance = Number(model.totalDistance.toFixed(1));
+		model.totalDistance = Number(model.totalDistance.toFixed(2));
 
 		model.frequencyMin = Number(Math.ceil(model.frequencyMin/1000));
 		model.frequencyMax = Number(Math.ceil(model.frequencyMax/1000));
