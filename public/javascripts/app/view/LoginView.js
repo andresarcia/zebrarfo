@@ -99,6 +99,8 @@ app.view.LoginView = Backbone.View.extend({
 			self.waitingView.hide();
 			localStorage.token = res.token;
 			localStorage.email = res.user.email;
+
+			new app.router.AppRouter();
 			window.location.hash = '#places';
 		})
 		.fail(function(err) {

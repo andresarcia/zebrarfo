@@ -10,7 +10,11 @@ app.view.WaitingView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl.waiting;
+		var template;
+		if(localStorage.token)
+			template = Zebra.tmpl.waiting;
+		else
+			template = Zebra.tmpl.waiting_login;
 		this.$el.html(template);
 		this.$el.hide();
 		return this;

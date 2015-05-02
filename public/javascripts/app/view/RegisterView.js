@@ -155,9 +155,13 @@ app.view.RegisterView = Backbone.View.extend({
 		})
 		.done(function( res ) {
 			self.waitingView.hide();
-			self.$el.find('#reg-modal').modal('hide');
 			localStorage.token = res.token;
-			window.location.hash = '#places';
+
+			self.$el.find('#reg-modal').modal('hide');
+			self.$el.find('#reg-modal').on('hidden.bs.modal', function (e) {
+				new app.router.AppRouter();
+				window.location.hash = '#places';
+			});
 		})
 		.fail(function(err) {
 			self.enable();

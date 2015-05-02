@@ -9,21 +9,8 @@ app.router.AppRouter = Backbone.Router.extend({
 		id: null
 	},
 
-	initialize: function(options){
-		new app.view.NavbarView();
-		this.menu = new app.view.MainMenuView();
-		this.errorView = new app.view.ErrorView();
-		this.waitingView = new app.view.WaitingView();
-	},
-
-	clearViews: function(){
-		if(this.currentView) 
-			this.currentView.undelegateEvents();
-		this.errorView.closeView();
-	},
-
 	routes: {
-		'': 'home',
+		'': 'showPlaces',
 		'logout': 'logout',
 
 		'places': 'showPlaces',
@@ -37,6 +24,34 @@ app.router.AppRouter = Backbone.Router.extend({
 		'help': 'showHelp',
 
 		'downloads/:id': 'downloads',
+	},
+
+	initialize: function(options){
+		var template = Zebra.tmpl.main;
+		var html = template();
+		$("#z-body").html(html);
+
+		var token = localStorage.token;
+		var backboneSync = Backbone.sync;
+		Backbone.sync = function (method, model, options) {
+			if (token){
+				options.headers = { 'x-access-token': token };
+				backboneSync(method, model, options);
+			} 
+			else 
+				window.location.hash = '#';
+		};
+
+		new app.view.NavbarView();
+		this.menu = new app.view.MainMenuView();
+		this.errorView = new app.view.ErrorView();
+		this.waitingView = new app.view.WaitingView();
+	},
+
+	clearViews: function(){
+		if(this.currentView) 
+			this.currentView.undelegateEvents();
+		this.errorView.closeView();
 	},
 
 	/*-------------------------------------------------------------------*/
@@ -65,6 +80,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	errorRequest: function(msg){
 		if(msg == "Access token has expired"){
 			localStorage.removeItem('token');
+			new app.router.LoginRouter();
 			window.location.hash = '#';
 		} else {
 			this.waitingView.hide();
@@ -150,20 +166,6 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	home: function(){
-		if(localStorage.token)
-			this.showPlaces();
-		else
-			this.login();
-	},
-
-	login: function(){
-		this.clearViews();
-		this.currentView = new app.view.LoginView({
-			waitingView: this.waitingView,
-		});
-	},
-
 	logout: function(){
 		if(!this.checkSession())
 			return;
@@ -186,6 +188,8 @@ app.router.AppRouter = Backbone.Router.extend({
 			delete window.places;
 			delete window.place;
 			window.settings.place = {};
+
+			new app.router.LoginRouter();
 			window.location.hash = '#';
 		})
 		.fail(function(err) {

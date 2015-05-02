@@ -59,6 +59,14 @@ this["Zebra"]["tmpl"]["login"] = Handlebars.template({"compiler":[6,">= 2.0.0-be
   return "<div id=\"login-container\">\n  <h1 id=\"login-title\">Sign in to Zebra</h1>\n  <form id=\"login-form\">\n    <input type=\"email\" class=\"\" id=\"login-email\" placeholder=\"Email\">\n    <input type=\"password\" class=\"\" id=\"login-password\" placeholder=\"Password\">\n    <button type=\"submit\" id=\"login-submit\" disabled>\n      <span class=\"glyphicon glyphicon-arrow-right\"></span>\n    </button>\n    <div class=\"checkbox\">\n      <label>\n        <input type=\"checkbox\"> Keep me signed in\n      </label>\n    </div>\n  </form>\n  <br>\n  <hr>\n  <h5 id=\"login-new-account\" class=\"text-skinny text-center\">Don't have an account in zebra? <a href=\"javascript:void(0)\">Create it now</a></h5>\n</div>";
   },"useData":true});
 
+this["Zebra"]["tmpl"]["main"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div id=\"navbar\"></div>\n<div id=\"z-modal\"></div>\n<div id=\"main-menu\" class=\"col-xs-12 col-sm-3 col-md-2\"></div>\n<div class=\"col-xs-12 col-sm-9 col-md-10 ws-modal\">\n	<div id=\"waiting\"></div>\n	<div id=\"error\"></div>\n	<div id=\"ws-containter\"></div>\n</div>";
+  },"useData":true});
+
+this["Zebra"]["tmpl"]["main_login"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div id=\"z-modal\"></div>\n<div id=\"waiting\"></div>\n<div id=\"ws-containter\"></div>";
+  },"useData":true});
+
 this["Zebra"]["tmpl"]["main_menu"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<ul class=\"list-group\">\n	<li>\n		<a href=\"#places\" class=\"active\">\n			<span class=\"glyphicon glyphicon-globe\"></span>\n			<span> Places</span>\n		</a>\n	</li>\n\n	<li>\n		<a href=\"#help\">\n			<span class=\"glyphicon glyphicon-question-sign\"></span>\n			<span> Help</span>\n		</a>\n	</li>\n</ul>";
   },"useData":true});
@@ -296,7 +304,11 @@ this["Zebra"]["tmpl"]["upload_measures"] = Handlebars.template({"1":function(dep
 },"useData":true});
 
 this["Zebra"]["tmpl"]["waiting"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"ws-waiting\">\n	<div class=\"spinner-container\">\n  		<div class=\"rect1\"></div>\n  		<div class=\"rect2\"></div>\n  		<div class=\"rect3\"></div>\n  		<div class=\"rect4\"></div>\n  		<div class=\"rect5\"></div>\n	</div>\n</div>";
+  return "<div class=\"ws-waiting\">\n	<div class=\"spinner-container\">\n		<div class=\"rect1\"></div>\n		<div class=\"rect2\"></div>\n		<div class=\"rect3\"></div>\n		<div class=\"rect4\"></div>\n		<div class=\"rect5\"></div>\n	</div>\n</div>";
+  },"useData":true});
+
+this["Zebra"]["tmpl"]["waiting_login"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"login-waiting\">\n	<div class=\"spinner-container\">\n		<div class=\"rect1\"></div>\n		<div class=\"rect2\"></div>\n		<div class=\"rect3\"></div>\n		<div class=\"rect4\"></div>\n		<div class=\"rect5\"></div>\n	</div>\n</div>";
   },"useData":true});
 
 this["Zebra"]["tmpl"]["white_spaces"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
