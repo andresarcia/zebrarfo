@@ -134,9 +134,10 @@ app.view.LoginView = Backbone.View.extend({
 			placement: 'bottom',
 		});
 
+		var y = $(window).width() > 767 ? 3 : 0;
 		this.$el.find('#scene').parallax({
 			scalarX: 3,
-			scalarY: 3
+			scalarY: y
 		});
 
 		return this;
