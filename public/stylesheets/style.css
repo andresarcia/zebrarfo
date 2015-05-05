@@ -12,7 +12,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -o-font-smoothing: antialiased;
-  position: relative;
 }
 
 hr {  
@@ -48,6 +47,7 @@ hr {
 .glyphicon.glyphicon-zoom-out {
   font-size: 17px;
 }
+
 #navbar {
   padding-bottom: 75px;
 }
@@ -249,51 +249,144 @@ hr {
 }
 
 #login-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: #FFFFFF;
+}
+#login-container #scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+#login-container .mask {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: none;
+}
+#login-container .content {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 120%;
+  height: 120%;
+  margin-top: -10%;
+  margin-left: -10%; 
+  overflow: hidden;
+  z-index: 50;
+}
+#login-container .content .background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#login-container .content .form {
+  position: relative;
+  margin-top: 250px;
   width: 360px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 18px 18px;
+  z-index: 70;
+  color: #ffffff;
+  background-color: rgba(0,0,0,0.25);
 }
-#login-title {
- font-family: "Code-Light"; 
- font-size: 40px;
- letter-spacing: -1px;
+#login-container .content .logo {
+  float: left;
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  z-index: 70;
+  background: transparent url(../images/logo.png) no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
-#login-form input[type="email"], 
-#login-form input[type="password"] {
-  background: rgba(255,255,255,0.75);
+#login-container .content .form h1 {
+  float: left;
+  clear: right;
+  font-family: "Code-Light"; 
+  font-size: 35px;
+  letter-spacing: -1px;
+  margin-top: -3px;
+  padding-bottom: 10px;
+}
+#login-container .content .form h6 {
+  clear: left;
+  margin-left: 55px;
+  position: absolute;
+  padding-top: 21px;
+  letter-spacing: 0px;
+  font-weight: bold;
+  font-family: "Code-Light"; 
+}
+#login-container .content .form input[type="email"], 
+#login-container .content .form input[type="password"] {
+  background: rgba(255,255,255,0.55);
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,0.1);
   height:48px;
   font-size: 19px;
   font-weight: 300;
-  line-height: 27px;
   padding-left:12px;
   outline:none;
+  color: #000;
 }
-#login-form #login-email {
+#login-email::-webkit-input-placeholder,
+#login-password::-webkit-input-placeholder {
+  color: rgba(0,0,0,0.5);
+}
+#login-email::-moz-placeholder,
+#login-password::-moz-placeholder {
+  color: rgba(0,0,0,0.5);
+}
+#login-email:-moz-placeholder,
+#login-password:-moz-placeholder {
+  color: rgba(0,0,0,0.5);
+}
+#login-email::-ms-input-placeholder,
+#login-password::-ms-input-placeholder {
+  color: rgba(0,0,0,0.5);
+}
+#login-container .content .form #login-email {
   width: 100%;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
-#login-form #login-password {
+#login-container .content .form #login-password {
   width: 286px;
   height:52px;
-  line-height: 53px;
-  padding-top: -20px;
   border-top: none;
   border-right: none;
   border-bottom-left-radius: 6px;
 }
-#login-form #login-submit {
-  background: rgba(255,255,255,0.75);
-  background-clip: padding-box;
+#login-container .content .form #login-submit {
+  position: absolute;
+  background: rgba(255,255,255,0.55);
   border: 1px solid rgba(0,0,0,0.1);
   border-left: none;  
   border-top: none;
   border-bottom-right-radius: 6px;
-  padding-right: 12px;
-  height:52px;
+  padding-right: 11px;
+  height:51px;
   line-height: 50px;
-  margin-left: -4px;
   font-size: 19px;
   cursor: pointer;
   -webkit-user-select: none;
@@ -302,19 +395,50 @@ hr {
           user-select: none;
   background-image: none;
   color: #2D302D;
-  background-color: transparent;
   outline:none;
 }
-#login-form #login-submit:disabled {
-  color: #ACB6AC;
+#login-container .content .form #login-submit:disabled {
+  color: rgba(0,0,0,0.35);
 }
-#login-form .checkbox {
+#login-container .content .form .checkbox {
   padding-top: 6px;
   margin-left: auto;
   margin-right: auto;
 }
+#login-new-account a {
+  color: #3A2722;
+  background-color: rgba(255,255,255,0.44);
+  margin-left: 12px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  text-decoration: none;
+}
+#login-new-account a:hover, a:active {
+  background-color: rgba(255,255,255,0.8);
+}
 #reg-modal .modal-body {
   padding: 70px 70px;
+}
+@media (max-width: 767px) {
+  #login-container .content .background {
+    background-image: url(../images/bg_mobile.jpg);
+  }
+}
+@media (min-width: 768px) {
+  #login-container .content .background {
+    background-image: url(../images/bg_tablet.jpg);
+  }
+}
+@media (min-width: 992px) {
+  #login-container .mask {
+    background: transparent url(../images/mask.png) no-repeat center;
+  }
+  #login-container .content .background {
+    background-image: url(../images/bg_desktop.jpg);
+  }
 }
 
 

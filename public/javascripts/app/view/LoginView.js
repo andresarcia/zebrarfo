@@ -3,7 +3,7 @@ app.view = app.view || {};
 
 app.view.LoginView = Backbone.View.extend({
 
-	el: '#ws-containter',
+	el: '#login-container',
 
 	events: {
 		'click #login-submit':'submit',
@@ -132,6 +132,11 @@ app.view.LoginView = Backbone.View.extend({
 			title: 'Your email or password was incorrect, please try again.',
 			trigger: 'manual',
 			placement: 'bottom',
+		});
+
+		this.$el.find('#scene').parallax({
+			scalarX: 3,
+			scalarY: 3
 		});
 
 		return this;

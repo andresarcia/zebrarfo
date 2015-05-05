@@ -1,18 +1,26 @@
-<div id="login-container">
-  <h1 id="login-title">Sign in to Zebra</h1>
-  <form id="login-form">
-    <input type="email" class="" id="login-email" placeholder="Email">
-    <input type="password" class="" id="login-password" placeholder="Password">
-    <button type="submit" id="login-submit" disabled>
-      <span class="glyphicon glyphicon-arrow-right"></span>
-    </button>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox"> Keep me signed in
-      </label>
+<div id="scene">
+  <div class="mask"></div>
+  <div class="content">
+    <div class="form layer">
+      <div class="logo"></div>
+      <h1>ZEBRA RFO</h1>
+      <h6>RADIO FREQUENCY OBSERVER</h6>
+      <form id="login-form">
+        <input type="email" class="" id="login-email" placeholder="Email">
+        <input type="password" class="" id="login-password" placeholder="Password">
+        <button type="submit" id="login-submit" disabled>
+          <span class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> Keep me signed in
+          </label>
+        </div>
+      </form>
+      <br>
+      <hr>
+      <h5 id="login-new-account" class="text-skinny text-center">Don't have an account in zebra? <a href="javascript:void(0)"><b>Create it now</b></a></h5>
     </div>
-  </form>
-  <br>
-  <hr>
-  <h5 id="login-new-account" class="text-skinny text-center">Don't have an account in zebra? <a href="javascript:void(0)">Create it now</a></h5>
+    <div class="background layer" data-depth="0.5"></div>
+  </div>
 </div>
