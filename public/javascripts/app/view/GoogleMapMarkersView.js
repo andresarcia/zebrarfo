@@ -44,7 +44,7 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 		var mapCanvas = document.getElementById(this.idContainer);
 		var mapOptions = {
 			scrollwheel: false,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
 		};
 
 		var map = new google.maps.Map(mapCanvas, mapOptions);

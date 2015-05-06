@@ -311,7 +311,9 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 		var mapCanvas = document.getElementById(this.idContainer);
 		var mapOptions = {
 			scrollwheel: false,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			styles: 
+				[{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
 		};
 
 		this.map = new google.maps.Map(mapCanvas, mapOptions);  
