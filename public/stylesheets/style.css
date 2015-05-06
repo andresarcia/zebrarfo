@@ -51,69 +51,90 @@ hr {
 #navbar {
   padding-bottom: 75px;
 }
+.navbar-default {
+  background-color: rgba(0,0,0,0.7);
+  -webkit-box-shadow: 0px 3px 37px -9px rgba(0,0,0,0.84);
+  -moz-box-shadow: 0px 3px 37px -9px rgba(0,0,0,0.84);
+  box-shadow: 0px 3px 37px -9px rgba(0,0,0,0.84);
+  border-color: #555 !important;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-toggle {
+  border-color: transparent;
+  color: #ffffff;
+}
+.navbar-default .navbar-nav > .open > a:hover, 
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  background-color: transparent;
+  color: #C7C7C7;
+}
+.dropdown-menu {
+  background-color: rgba(255,255,255,0.65);
+}
 .navbar-default .navbar-brand {
   font-family: "Code-Light";
   color: #ffffff;
-  font-size: 35px;
-  font-weight: 100;
-  line-height: 44px;
+  padding-left: 30px;
 }
-
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
+  color: #C7C7C7;
+}
+.navbar-default .navbar-brand .logo {
+  float: left;
+  width: 44px;
+  height: 44px;
+  margin-top: -11px;
+  margin-right: 12px;
+  background: transparent url(../images/logo.png) no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.navbar-default .navbar-brand h1 {
+  float: left;
+  clear: right;
+  letter-spacing: -1px;
+  font-size: 35px;
+  margin-top: -12px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.navbar-default .navbar-brand h6 {
+  clear: left;
+  float: left;
+  margin-top: -12px;
+  margin-left: 56px;
+  letter-spacing: 0px;
   font-weight: bold;
-  color: #fff;
+}
+@media (max-width: 767px) {
+  .navbar-default .navbar-brand .logo {
+    width: 48px;
+    height: 48px;
+    margin-top: -10px;
+    margin-left: -25px;
+  }
+  .navbar-default .navbar-brand h1 {
+    display: none;
+  }
+  .navbar-default .navbar-brand h6 {
+    display: none;
+  }
+  .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: transparent;
+    color: #C7C7C7;
+  }
 }
 .navbar-default .top{
   margin-top: 2px;
 }
-.navbar-brand-left-main {
-  padding: 2px 10px 0px 70px; 
-  letter-spacing: -2px;
-}
-.navbar-brand-right-main {
-  padding: 2px 10px 0px 0px;
-  margin-left: 14px!important;
-  letter-spacing: 1px;
-}
-.navbar-brand-logo {
-  position: absolute;
-  height: 38px;
-  width: 32px;
-  margin-left: -15px;
-  z-index: 100;
-}
-.navbar-brand-logo img {
-  width: 100%;
-  height: 100%;
-}
-.navbar-default .navbar-brand-sub {
-  position: absolute; 
-  top: 8px;
-  left: 74px;
-  color: #BFBFBF !important;
-  font-size: 13px !important;
-  font-weight: bold !important;
-  z-index: -1;
-}
-@media (max-width: 767px) {
-  .navbar-default .navbar-brand-sub {
-    display: none;
-  }
-  .navbar-default .navbar-brand {
-    font-size: 38px;
-    color: #000!important;
-  }
-  .navbar-brand-left-main {
-    padding: 7px 10px 0px 30px; 
-  }
-  .navbar-brand-right-main {
-    padding-top: 7px;
-  }
-  .navbar-brand-logo {
-    top:5px;
-  }
-}
+
+
 
 .btn-without-corners {
   border-radius: 0;
@@ -309,9 +330,10 @@ hr {
 }
 #login-container .content .logo {
   float: left;
-  width: 40px;
-  height: 40px;
-  margin-right: 15px;
+  width: 45px;
+  height: 45px;
+  margin-top: -1px;
+  margin-right: 14px;
   z-index: 70;
   background: transparent url(../images/logo.png) no-repeat center;
   -webkit-background-size: cover;
@@ -330,7 +352,7 @@ hr {
 }
 #login-container .content .form h6 {
   clear: left;
-  margin-left: 55px;
+  margin-left: 59px;
   position: absolute;
   padding-top: 21px;
   letter-spacing: 0px;
@@ -528,7 +550,7 @@ hr {
   #main-menu {
     position: absolute!important;
     opacity: 0!important;
-    background-color: #F2F2F2;
+    background-color: rgba(242, 242, 242, 0.94);
     z-index: 1000;
     display: none;
   }
