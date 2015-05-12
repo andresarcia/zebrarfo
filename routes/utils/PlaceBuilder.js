@@ -51,7 +51,7 @@ function reduceCommonGps(o,n,callback){
 		_.each(_.keys(groupByCoordinate), function(key){
 			var samplesToReduce = groupByCoordinate[key];
 			var union = [];
-		
+
 			_.each(samplesToReduce, function(item){
 				union = union.concat(item.Captures);
 			});

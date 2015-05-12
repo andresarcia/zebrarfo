@@ -18,85 +18,81 @@ exports.create = function(req,res,next){
 		// ========================
 		var start = new Date().getTime();
 		// ========================
-		if(req.body.json){
-			console.log('* CREATING NEW PLACE *');
-			builder.create(req.body, function(err, place){
-				if(err) 
-					next(httpError(404,err));
+		console.log('* CREATING NEW PLACE *');
+		builder.create(req.body, function(err, place){
+			if(err) 
+				next(httpError(404,err));
 
-				db.Place.findOrInitialize({
-					where: {
-						UserId:req.user.iss,
-						name: place.name,
-					},
-				}).then(function(n){
-					if(n[0].isNewRecord){
-						console.log('* SAVING PLACE *');
+			db.Place.findOrInitialize({
+				where: {
+					UserId:req.user.iss,
+					name: place.name,
+				},
+			}).then(function(n){
+				if(n[0].isNewRecord){
+					console.log('* SAVING PLACE *');
 
-						n[0].numberCoordinates = place.numberCoordinates;
-						n[0].powerMin = place.powerMin;
-						n[0].powerMax = place.powerMax;
-						n[0].powerAvg = place.powerAvg;
-						n[0].sdPowerAvg = place.sdPowerAvg;
-						n[0].avgPowerSD = place.avgPowerSD;
-						n[0].frequencyMin = place.frequencyMin;
-						n[0].frequencyMax = place.frequencyMax;
-						n[0].numberPowerFrequency = place.numberPowerFrequency;
-						n[0].totalDistance = place.totalDistance;
-						n[0].distanceAvg = place.distanceAvg;
-						n[0].distanceMin = place.distanceMin;
-						n[0].distanceMax = place.distanceMax;
-						
-						n[0].save()
-						.then(function(){
-							coordinate.save(n[0].id,place.coordinates,function(err){
-								if(err)
-									next(httpError(err));
-
-								outliers.save(n[0].id,place.outliers,true,function(err){
-									if(err)
-										next(httpError(err));
-									// ========================
-									var end = new Date().getTime();
-									console.log("Time ms:" + (end - start));
-									// ========================
-									res.status(200).send(n[0]);
-								});
-							});
-						}).catch(function(err) {
-							next(httpError(err));
-						});
-
-					} else {
-						console.log('* UPDATING OLD PLACE *');
+					n[0].numberCoordinates = place.numberCoordinates;
+					n[0].powerMin = place.powerMin;
+					n[0].powerMax = place.powerMax;
+					n[0].powerAvg = place.powerAvg;
+					n[0].sdPowerAvg = place.sdPowerAvg;
+					n[0].avgPowerSD = place.avgPowerSD;
+					n[0].frequencyMin = place.frequencyMin;
+					n[0].frequencyMax = place.frequencyMax;
+					n[0].numberPowerFrequency = place.numberPowerFrequency;
+					n[0].totalDistance = place.totalDistance;
+					n[0].distanceAvg = place.distanceAvg;
+					n[0].distanceMin = place.distanceMin;
+					n[0].distanceMax = place.distanceMax;
+					
+					n[0].save()
+					.then(function(){
 						coordinate.save(n[0].id,place.coordinates,function(err){
 							if(err)
 								next(httpError(err));
 
-							outliers.save(n[0].id,place.outliers,false,function(err){
+							outliers.save(n[0].id,place.outliers,true,function(err){
 								if(err)
 									next(httpError(err));
-								
-								placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
-									if (err)
-										next(httpError(err));
-									// ========================
-									var end = new Date().getTime();
-									console.log("Time ms:" + (end - start));
-									// ========================
-									res.status(200).send(n);
-								});
+								// ========================
+								var end = new Date().getTime();
+								console.log("Time ms:" + (end - start));
+								// ========================
+								res.status(200).send(n[0]);
 							});
 						});
-					}
+					}).catch(function(err) {
+						next(httpError(err));
+					});
 
-				}).catch(function(err) {
-					next(httpError(err));
-				});
+				} else {
+					console.log('* UPDATING OLD PLACE *');
+					coordinate.save(n[0].id,place.coordinates,function(err){
+						if(err)
+							next(httpError(err));
+
+						outliers.save(n[0].id,place.outliers,false,function(err){
+							if(err)
+								next(httpError(err));
+							
+							placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
+								if (err)
+									next(httpError(err));
+								// ========================
+								var end = new Date().getTime();
+								console.log("Time ms:" + (end - start));
+								// ========================
+								res.status(200).send(n);
+							});
+						});
+					});
+				}
+
+			}).catch(function(err) {
+				next(httpError(err));
 			});
-		
-		} else	
-			next(httpError(404,'please update your browser!!'));
+		});
 	}
 };
 
