@@ -1,129 +1,182 @@
 var utils = require('./Utils');
 var _ = require("underscore");
 
-exports.create = function(place, callback) {
-	var o = place;
+/**
+ * Creates a new place from an upload or other place
+ * @param {Object} u - place loaded 
+ * @param {Object} o - other place
+ * @param {Boolean} newCoordinates - append to the return object an array with just the new coords
+ * @return {Object} n - new place
+ */
+exports.create = function(u, o, newCoordinates, callback) {
+
+	// new place object initialization
 	var n = {};
-
-	if(o.name === null || o.name === undefined || o.name === "")
-		callback("Name of the place cannot be empty or null",null);
-
-	/* ------------------------- */
-	n.name = o.name;
-	n.coordinates = [];
-	n.numberCoordinates = 0;
-
-	/* ------------------------- */
+	n.name = u.name;
+	n.frequencies = {};
+	n.frequencies.values = [];
 	n.power = {};
 	n.power.min = null;
 	n.power.max = null;
 	n.power.avg = null;
-	n.power.sd_avg = null;
-
-	/* ------------------------- */
+	n.power.sd = null;
+	n.distance = {};
+	n.distance.total = null;
+	n.distance.min = null;
+	n.distance.max = null;
+	n.distance.avg = null;
+	n.coordinates = [];
+	if(newCoordinates) n.newCoordinates = [];
 	n.outliers = {};
 
-	/* ------------------------- */
-	n.frequencies = {};
-	n.frequencies.unit = o.frequencies.unit;
-	n.frequencies.total = o.frequencies.values.length || o.frequencies;
-	n.frequencies.values = o.frequencies.values;
-	n.frequencies.min = o.frequencies.values[0];
-	n.frequencies.max = o.frequencies.values[o.frequencies.values.length - 1];
-	if(n.frequencies.values.length > 1){
-		n.frequencies.step = n.frequencies.values[1] - n.frequencies.values[0];
-	} else {
-		n.frequencies.step = 0;
-	}
-
-	/* ------------------------- */
-	n.distance = {};
-	n.distance.total = 0;
-	n.distance.avg = 0;
-	n.distance.max = null;
-	n.distance.min = null;
-
-	/* -- vars for take stats -- */
+	/* -- temp vars ------------- */
 	n.placePowerSD_X = null;
 	n.placePowerSD_M = null;
-	n.countSamplesDistance = 0;
+	switch (u.frequencies.unit) {
+		case 'Hz':
+			n.frequencyUnitFactor = 1/1000;
+			break;
+		case 'kHz':
+			n.frequencyUnitFactor = 1;
+			break;
+		case 'MHz':
+			n.frequencyUnitFactor = 1000;
+			break;
+		case 'GHz':
+			n.frequencyUnitFactor = 1000000;
+			break;
+		default:
+			callback("There must be a frequency unit");
+			break;
+	}
 	/* ------------------------- */
 
-	reduceCommonGps(o,n,function(){
-		checkPlaceAttributes(n,function(err){
-			if(err)
-				callback(err,null);
+	reduceCommonGps(u, o, n, function(res){
+		checkPlaceAttributes(n, function(err){
+			if(err) callback(err,null);
 			callback(null,n);
-		})
+		});
 	});
-}
+};
 
-function reduceCommonGps(o,n,callback){	
-	var groupByCoordinate = _.groupBy(o.coordinates, function(sample){
-		return sample.latitude + sample.longitude;
-	});
 
-	_.each(_.keys(groupByCoordinate), function(key){
-		var item = groupByCoordinate[key];
-		var captures = [];
+function reduceCommonGps(u, o, n, callback){
+	var uploadedByCoords = {};
+	var otherByCoords = {};
+	var coords = {};
 
-		for (var i = 0; i < item[0].captures.length; i++) {
+	// if there uploaded place, grouped by coordinate
+	if(u) {
+		uploadedByCoords = _.groupBy(u.coordinates, function(sample){
+			return sample.lat + sample.lng;
+		});
+	}
+
+	// if there other place, grouped by coordinate
+	if(o) {
+		otherByCoords = _.groupBy(o.coordinates, function(sample){
+			return sample.lat + sample.lng;
+		});
+	}
+
+	// replace the common coordinates in the uploaded place by the other place
+	_.extend(coords, uploadedByCoords);
+	_.extend(coords, otherByCoords);
+
+	// check if there new coordinates
+	// var difference = _.difference(_.keys(coords), _.keys(otherByCoords));
+	// if(difference.length === 0)
+	// 	return callback(o);
+
+	_.each(_.keys(coords), function(key, index){
+		var item = coords[key];
+		var cap = [];
+
+		for (var i = 0; i < item[0].cap.length; i++) {
 			var operation;
-			switch (o.gpsFunction) {
+			switch (u.gpsFunction) {
 				case 'avg':
 					operation = _.reduce(item, function(memo, item){ 
-						return memo + item.captures[i]; 
+						return memo + item.cap[i]; 
 					}, 0);
 					operation /= item.length;
 					break;
 
 				case 'max':
 					operation = _.reduce(item, function(memo, item){ 
-						if(memo < item.captures[i])
-							return item.captures[i];
+						if(memo < item.cap[i])
+							return item.cap[i];
 						else
 							return memo;
-					}, item[0].captures[i]);
+					}, item[0].cap[i]);
 					break;
 
 				case 'min':
 					operation = _.reduce(item, function(memo, item){ 
-						if(memo > item.captures[i])
-							return item.captures[i];
+						if(memo > item.cap[i])
+							return item.cap[i];
 						else
 							return memo;
-					}, item[0].captures[i]);
+					}, item[0].cap[i]);
 					break;
 
 				case 'first':
-					operation = item[0].captures[i];
+					operation = item[0].cap[i];
 			 		break;
 
 				case 'last':
-					operation = item[item.length - 1].captures[i];
+					operation = item[item.length - 1].cap[i];
 					break;
 
 				default:
-					operation = item[0].captures[i];
+					operation = item[0].cap[i];
 					break;
 			}
 
-			captures.push(operation);
+			// transform the frequency to Herz
+			var fq = u.frequencies.values[i] * n.frequencyUnitFactor;
+			// save the frequencies values just once
+			if(index === 0) n.frequencies.values.push(fq);
 
-			if(n.outliers[operation])
-				n.outliers[operation] += 1;
+			// save outliers with one presition
+			var outlier = operation.toFixed(1);
+			if(n.outliers[outlier])
+				n.outliers[outlier] += 1;
 			else
-				n.outliers[operation] = 1;
+				n.outliers[outlier] = 1;
+
+			// save the captures
+			cap.push(operation);
 		}
 
-		var coord = takeCoordStats({
-			latitude: item[0].latitude,
-			longitude: item[0].longitude,
-			captures: captures,
-			createdDate: item[0].createdDate
-		}, n);
+		// if the # of frequencies are not equals to # of captures, continue to next index
+		if(cap.length != n.frequencies.values.length) return;
 
-		saveCoord(coord, n);
+		var coordinate = {};
+		// if new coordinate take stats and build object
+		if(!item[0]._id) {
+			coordinate = takeCoordStats(cap);
+			coordinate = _.extend(coordinate, {
+				lat: item[0].lat,
+				lng: item[0].lng,
+				cap: cap,
+				date: item[0].date
+			});
+
+			if(n.newCoordinates) n.newCoordinates.push(coordinate);
+
+		// else copy his properties
+		} else {
+			coordinate = _.extend(coordinate, item[0]);
+			
+			// check if the coordinate inside other[] if also present on uploaded[]
+			// if true, then put visible property to true
+			if(uploadedByCoords[key]) {
+				coordinate.visible = true;
+			}
+		}
+
+		saveCoord(coordinate, n);
 	});
 
 	takePlaceStats(n);
@@ -131,107 +184,101 @@ function reduceCommonGps(o,n,callback){
 }
 
 
-function takeCoordStats(coord, n){
+function takeCoordStats(captures){
 	var coordinate = {};
-	coordinate = _.extend(coordinate, coord);
-
 	var powerMin = null;
 	var powerMax = null;
 	var powerAvg = null;
 	var powerSD_X = null;
 	var powerSD_M = null;
 
-	_.each(coord.captures,function(item){
-		if(powerMin === null){
-			powerMin = powerMax = item;
-		} else {
-			if (powerMax < item)
-				powerMax = item;
-			if (powerMin > item)
-				powerMin = item;
+	_.each(captures, function(item){
+		if(powerMin === null) powerMin = powerMax = item;
+		else {
+			if (powerMax < item) powerMax = item;
+			if (powerMin > item) powerMin = item;
 		}
+
 		powerAvg += item;
 		powerSD_M += item;
 		powerSD_X += (item * item);
 	});
 
-	coordinate.powerMin = Number(powerMin.toFixed(5));
-	coordinate.powerMax = Number(powerMax.toFixed(5));
-	powerAvg = powerAvg / n.frequencies.total;
-	coordinate.powerAvg = Number(powerAvg.toFixed(5));
+	coordinate.power = {};
+	coordinate.power.min = Number(powerMin.toFixed(5));
+	coordinate.power.max = Number(powerMax.toFixed(5));
+	powerAvg = powerAvg / captures.length;
+	coordinate.power.avg = Number(powerAvg.toFixed(5));
 
-	if(coord.captures.length > 1){
-		powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/n.frequencies.total)/(n.frequencies.total - 1));
-		coordinate.powerSD = Number(powerSD_X.toFixed(5));
+	if(captures.length > 1){
+		powerSD_X = Math.sqrt((powerSD_X - (powerSD_M*powerSD_M)/captures.length)/(captures.length - 1));
+		coordinate.power.sd = Number(powerSD_X.toFixed(5));
 
-	} else
-		coordinate.powerSD = 0;
+	} else coordinate.power.sd = 0;
 
 	return coordinate;
 }
 
 
-function saveCoord(coord, n){
-	n.coordinates.push(coord);
-	n.numberCoordinates += 1;
-	n.power.avg += coord.powerAvg;	
-	n.placePowerSD_M += coord.powerAvg;
-	n.placePowerSD_X += (coord.powerAvg * coord.powerAvg);
+function saveCoord(coordinate, n){
+	n.coordinates.push(coordinate);
+	n.power.avg += coordinate.power.avg;
+	n.placePowerSD_M += coordinate.power.avg;
+	n.placePowerSD_X += (coordinate.power.avg * coordinate.power.avg);
 
-	if(n.power.min === null)
-		n.power.min = coord.powerMin;
-	if(n.power.max === null)
-		n.power.max = coord.powerMax;
-	if (n.power.min > coord.powerMin)
-		n.power.min = coord.powerMin;
-	if (n.power.max < coord.powerMax)
-		n.power.max = coord.powerMax;
+	if(n.power.min === null) n.power.min = coordinate.power.min;
+	if(n.power.max === null) n.power.max = coordinate.power.max;
+	if(n.power.min > coordinate.power.min) n.power.min = coordinate.power.min;
+	if(n.power.max < coordinate.power.max) n.power.max = coordinate.power.max;
 
 	if(n.coordinates.length > 1){
 		var lastItem = n.coordinates[n.coordinates.length - 2];
 		var currentItem = n.coordinates[n.coordinates.length - 1];
-		var distance = utils.GetDistanceFromLatLonInKm(lastItem.latitude, lastItem.longitude, currentItem.latitude, currentItem.longitude);
-		
-		n.distance.total += distance;
-		n.countSamplesDistance += 1;
+		var distance = utils.GetDistanceFromLatLonInKm(lastItem.lat, lastItem.lng, currentItem.lat, currentItem.lng);
 
-		if(n.distance.min === null || n.distance.max === null)
-			n.distance.min = n.distance.max = distance;
+		n.distance.total += distance;
+
+		if(n.distance.min === null || n.distance.max === null) n.distance.min = n.distance.max = distance;
 		else {
-			if(n.distance.min > distance)
-				n.distance.min = distance;
-			if(n.distance.max < distance)
-				n.distance.max = distance;
+			if(n.distance.min > distance) n.distance.min = distance;
+			if(n.distance.max < distance) n.distance.max = distance;
 		}
 	}
 }
 
 function takePlaceStats(n){
-	n.power.avg = n.power.avg / n.numberCoordinates;
+	n.power.avg = n.power.avg / n.coordinates.length;
 	n.power.avg = Number(n.power.avg.toFixed(5));
 	
-	if(n.numberCoordinates === 1)
-		n.power.sd_avg = 0;
-	
+	if(n.coordinates.length == 1) n.power.sd = 0;
 	else {
-		n.placePowerSD_X = Math.sqrt((n.placePowerSD_X - (n.placePowerSD_M*n.placePowerSD_M)/n.numberCoordinates)/(n.numberCoordinates - 1));
-		n.power.sd_avg = Number(n.placePowerSD_X.toFixed(5));
+		n.placePowerSD_X = Math.sqrt((n.placePowerSD_X - (n.placePowerSD_M*n.placePowerSD_M)/n.coordinates.length)/(n.coordinates.length - 1));
+		n.power.sd = Number(n.placePowerSD_X.toFixed(5));
 	}
 
-	if(n.coordinates.length > 1)
-		n.distance.avg = n.distance.total/n.countSamplesDistance;
-	else 
-		n.distance.total = n.distance.avg = n.distance.min = n.distance.max = 0;
+	if(n.coordinates.length > 1) n.distance.avg = n.distance.total/n.coordinates.length;
+	else n.distance.total = n.distance.avg = n.distance.min = n.distance.max = 0;
+
+	var aux = [];
+	_.each(_.keys(n.outliers), function(key){
+		aux.push({
+			power: Number(key),
+			frequency: n.outliers[key]
+		});
+	});
+
+	aux = _.sortBy(aux, 'power');
+	n.outliers = aux;
 
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;
 	delete n.placePowerSD_M;
-	delete n.countSamplesDistance;
+	delete n.frequencyUnitFactor;
 	/* -------------------------------- */
 }
 
 function checkPlaceAttributes(n, callback){
-	if(n.length == 0 || n.numberCoordinates == 0)
+	if(n.coordinates.length === 0)
 		callback("There must be at least one sample");
 
 	if(n.power.min === null || n.power.min === undefined)
@@ -243,23 +290,11 @@ function checkPlaceAttributes(n, callback){
 	if(n.power.avg === null || n.power.avg === undefined)
 		callback("We could not calculate the power avg of the place");
 
-	if(n.power.sd_avg === null || n.power.sd_avg === undefined)
+	if(n.power.sd === null || n.power.sd === undefined)
 		callback("We could not calculate the power standard deviation of the place");
 
-	if(n.frequencies.total < 1)
+	if(n.frequencies.values.length < 1)
 		callback("There must be at least one frequency and power in the samples");
-	
-	if(n.frequencies.min === null || n.frequencies.min === undefined)
-		callback("We could not calculate the frequency min of the place");
-
-	if(n.frequencies.max === null || n.frequencies.max === undefined)
-		callback("We could not calculate the frequency max of the place");
-
-	if(n.frequencies.unit === null || n.frequencies.unit === undefined)
-		callback("We could not calculate the frequency unit of the place");
-
-	if(n.frequencies.step === null || n.frequencies.step === undefined)
-		callback("We could not calculate the frequency step of the place");
 
 	if(n.distance.total === null || n.distance.total === undefined)
 		callback("We could not calculate the total distance of the place");
@@ -273,7 +308,7 @@ function checkPlaceAttributes(n, callback){
 	if(n.distance.min === null || n.distance.min === undefined)
 		callback("We could not calculate the total min of the place");
 
-	if(Object.keys(n.outliers).length === 0)
+	if(n.outliers.length === 0)
 		callback("We could not calculate the outliers of the place");
 
 	callback(null);

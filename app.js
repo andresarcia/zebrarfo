@@ -9,6 +9,9 @@ var compress = require('compression');
 var passport = require('passport');
 var jwt = require('jwt-simple');
 
+// == MONGO ===================================================================
+// var mongoose = require('mongoose');
+
 var app = express();
 module.exports = app;
 
@@ -68,3 +71,13 @@ if (app.get('env') === 'development') {
 // --------------------------------------------------------------------------
 var routes = require('./routes/index');
 app.use('/api/', routes);
+
+
+// == MONGO ===================================================================
+// mongoose.connect('mongodb://localhost/zebra', function(err, res){
+// 	if(err){
+// 		console.log('ERROR: connectiong to Database. ' + err);
+// 	} else {
+// 		console.log('Conected to Database');
+// 	}
+// });
