@@ -7,7 +7,6 @@ app.model.PlaceUpload = Backbone.Model.extend({
 
 	defaults: {
 		name: null,
-		json: false,
 		gpsFunction: 'avg'
 	},
 

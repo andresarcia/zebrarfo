@@ -8,7 +8,6 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	reset: function(){
 		this.model = null;
 		this.files = null;
-		this.html5 = null;
 		this.stop = false;
 		this.status = {};
 		this.status.waitingForServer = false;
@@ -22,15 +21,13 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	initialize: function(options){
 		var self = this;
 		this.reset();
-		if (options.placeName && options.supportHtml5){
+		if (options.placeName){
 			this.model = new app.model.PlaceUpload({
 				name:options.placeName,
-				json:options.supportHtml5,
 				coordinates: []
 			});
-			this.html5 = options.supportHtml5;
 		} else 
-			throw 'Place name or html5 support are not defined';
+			throw 'Place name are not defined';
 		
 		if(options.gpsFunction)
 			this.model.set("gpsFunction",options.gpsFunction);
@@ -59,24 +56,21 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 		this.restartProgressBar();
 
-		if(this.html5){
-			var parser = new app.util.Parser();
-
-			parser.initialize(this.files, this.model.attributes, options.unit, options.ext,
-			function(numFilesProcessed){
-				self.setNumberFilesParser(numFilesProcessed);
-			}, function(err,place){
-				if(err){
-					$('.modal-footer').children().prop("disabled",false);
-					self.modal.modal('hide');
-					Backbone.pubSub.trigger('event-server-error');
-					self.errorView.render(err);
-				} else {
-					self.model.attributes = place;
-					self.showMeasuresData();
-				}
-			});
-		}
+		var parser = new app.util.Parser();
+		parser.initialize(this.files, this.model.attributes, options.unit, options.ext,
+		function(numFilesProcessed){
+			self.setNumberFilesParser(numFilesProcessed);
+		}, function(err,place){
+			if(err){
+				$('.modal-footer').children().prop("disabled",false);
+				self.modal.modal('hide');
+				Backbone.pubSub.trigger('event-server-error');
+				self.errorView.render(err);
+			} else {
+				self.model.attributes = place;
+				self.showMeasuresData();
+			}
+		});
 	},
 
 	render: function(){
@@ -123,7 +117,6 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	showMeasuresData: function(){
 		if(!this.stop){
-
 			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
 			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.coordinates.length);
 			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.frequencies.values.length);

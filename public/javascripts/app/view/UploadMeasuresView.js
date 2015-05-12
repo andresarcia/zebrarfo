@@ -68,10 +68,10 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 
 		this.viewContainers.setGoodGpsFunctionContainer();
 
-		if (window.File && window.FileReader && window.FileList && window.Blob)
-			this.options.supportHtml5 = true;
-		else 
-			this.options.supportHtml5 = false;
+		if (!window.File || !window.FileReader || !window.FileList || !window.Blob){
+			self.errorView.render(["Please upgrade your browser to use the upload tool"]);
+			this.disableForm();
+		}
 	},
 
 	help: function(){
@@ -98,11 +98,9 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	checkFiles: function(evt){
-		if(this.options.supportHtml5){
-			this.filesInfo.files = null;
-			this.filesInfo.files = evt.target.files;
-		}
-		
+		this.filesInfo.files = null;
+		this.filesInfo.files = evt.target.files;
+
 		if(this.viewContainers.getFilesContainerVal() !== ''){
 			this.options.fillFiles = true;
 			this.viewContainers.setGoodFilesContainer();
@@ -185,45 +183,43 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		var self = this;
 		this.viewContainers.renderFilesInfoContainer(this.filesInfo.numFiles,this.filesInfo.sizeFiles);
 
-		if(this.options.supportHtml5){
-			var fr = new FileReader();
-			fr.readAsText(this.filesInfo.files[0]);
-			fr.onload = function(e){ 
-				var data = fr.result;
-				var frequency;
+		var fr = new FileReader();
+		fr.readAsText(this.filesInfo.files[0]);
+		fr.onload = function(e){ 
+			var data = fr.result;
+			var frequency;
 
-				if(self.filesInfo.ext == 'txt'){
-					var lines = data.split('\n');
-					frequency = Number(lines[0].split('\t')[0]);
-				} else if(self.filesInfo.ext == 'json'){
-					var json = JSON.parse(data);
-					frequency = json.frequencies.values[0];
-				}
+			if(self.filesInfo.ext == 'txt'){
+				var lines = data.split('\n');
+				frequency = Number(lines[0].split('\t')[0]);
+			} else if(self.filesInfo.ext == 'json'){
+				var json = JSON.parse(data);
+				frequency = json.frequencies.values[0];
+			}
 
-				if(frequency == null || frequency == undefined || frequency == 0){
-					self.deleteFiles();
-					self.errorView.render(["Error in files format"]);
-					return;
-				}
+			if(frequency == null || frequency == undefined || frequency == 0){
+				self.deleteFiles();
+				self.errorView.render(["Error in files format"]);
+				return;
+			}
 
-				var unit;
-				if(frequency % 10 == frequency)
-					unit = "GHz";
+			var unit;
+			if(frequency % 10 == frequency)
+				unit = "GHz";
 
-				else if(frequency % 10000 == frequency)
-					unit = "MHz";
+			else if(frequency % 10000 == frequency)
+				unit = "MHz";
 
-				else if(frequency % 1000000 == frequency)
-					unit = "kHz";
+			else if(frequency % 1000000 == frequency)
+				unit = "kHz";
 
-				else if(frequency % 1000000000 == frequency)
-					unit = "Hz";
+			else if(frequency % 1000000000 == frequency)
+				unit = "Hz";
 
-				self.$el.find('#upload-measures-unit').select2("val", unit);
-				self.filesInfo.unit = unit;
-				self.viewContainers.setGoodUnitContainer();
-			};
-		}
+			self.$el.find('#upload-measures-unit').select2("val", unit);
+			self.filesInfo.unit = unit;
+			self.viewContainers.setGoodUnitContainer();
+		};
 	},
 
 	deleteFiles: function(){
@@ -277,12 +273,10 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			this.errorView.render(error);
 		
 		} else {
-			
 			this.disableForm();
 
 			new app.view.ParsingMeasuresView({
 				placeName:this.placeName,
-				supportHtml5: this.options.supportHtml5,
 				files:this.filesInfo.files,
 				ext: this.filesInfo.ext,
 				unit: this.filesInfo.unit,

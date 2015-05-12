@@ -91,7 +91,7 @@ app.util.Parser.prototype = {
 		this.place.coordinates.push({
 			lat: lat,
 			lng: lng,
-		 	cap: captures,
+			cap: captures,
 			date: date
 		});
 	},
