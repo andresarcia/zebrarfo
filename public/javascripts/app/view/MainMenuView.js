@@ -21,10 +21,13 @@ app.view.MainMenuView = Backbone.View.extend({
 		else
 			self = this;
 
-		if ($(window).width() <= 767) 
+		if ($(window).width() <= 767) {
 			self.renderMobil();
-		else
+			this.isMobile = true;
+		} else {
 			self.renderDesktop();
+			this.isMobile = false;
+		}
 	},
 
 	renderDesktop: function(){
@@ -131,6 +134,8 @@ app.view.MainMenuView = Backbone.View.extend({
 			parent.addClass('active-parent');
 			item.addClass('active');
 		}
+
+		if(this.isMobile) this.toggleMobileMenu();
 	},
 
 	render: function(){

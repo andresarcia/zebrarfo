@@ -548,10 +548,10 @@ hr {
 }
 @media (max-width: 767px) {
   #main-menu {
-    position: absolute!important;
+    position: fixed!important;
     opacity: 0!important;
     background-color: rgba(242, 242, 242, 0.94);
-    z-index: 1000;
+    z-index: 2000;
     display: none;
   }
 }
