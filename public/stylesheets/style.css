@@ -632,13 +632,13 @@ hr {
 #markers-slider-edit-place {
   margin-left: -18px;
 }
-#markers-slider-edit-place .noUi-vertical .noUi-handle {
+/*#markers-slider-edit-place .noUi-vertical .noUi-handle {
   height: 20px;
   top: -2px !important;
 }
 #markers-slider-edit-place .noUi-handle:before, .noUi-handle:after {
   top: 9px !important;
-}
+}*/
 
 .chart_tooltip {
   border: 1px solid #2f7ed8;
@@ -650,7 +650,6 @@ hr {
   box-shadow: 1px 1px 3px #666;
   display: none;
 }
-
 .slider_tooltip {
   display: block;
   position: absolute;
@@ -660,21 +659,15 @@ hr {
   background: #fff;
   padding: 2px;
   text-align: center;
-  width: 90px;
   color: #6F6F6F;
 }
-.slider_tooltip_up {
-  top: -43px;
-  left: -9px;
+.slider_tooltip.up {
+  top:-20px;
 }
-.slider_tooltip_down {
-  top: 33px;
-  left: -9px;
+.slider_tooltip.bottom {
+  bottom:-20px;
 }
-.slider_tooltip strong {
-  display: block;
-  padding: 2px;
-}
+
 
 .occupation-settings {
   padding-top: 10px;

@@ -85,10 +85,12 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': 100
 			}
 		});
-		this.$el.find('.opacity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + '%</strong>'
-			);
+		this.$el.find('.opacity-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + '%</strong>');
+			$(this).css('width', '50px');
+			$(this).css('left', '-10px');
 		});
 
 		this.radiusSlider = this.$el.find('.radius-slider').noUiSlider({
@@ -102,10 +104,12 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': 25
 			}
 		});
-		this.$el.find('.radius-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:50px;"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + 'px</strong>'
-			);
+		this.$el.find('.radius-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + 'px</strong>');
+			$(this).css('width', '60px');
+			$(this).css('left', '-15px');
 		});
 
 		this.$el.find("#allocation-channel").select2();
@@ -127,15 +131,19 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': this.data.frequencyMax
 			}
 		});
-		this.$el.find('.slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + ' MHz</strong>'
-			);
+		this.$el.find('.slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+			$(this).html('<strong>' + value + ' MHz</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
 		});
-		this.$el.find('.slider').Link('upper').to('-inline-<div class="slider_tooltip slider_tooltip_up" style="top:-24px;left:-27px"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + ' MHz</strong>'
-			);
+		this.$el.find('.slider')
+		.Link('upper')
+		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + ' MHz</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
 		});
 
 		this.changeFrequencyBy(false);
@@ -431,10 +439,12 @@ app.view.HeatmapView = Backbone.View.extend({
 		}, true);
 
 		this.maxIntensitySlider.val(this.data.powerMax);
-		this.$el.find('.max-intensity-slider').Link('lower').to('-inline-<div class="slider_tooltip slider_tooltip_down" style="width:65px;"></div>', function(value) {
-			$(this).html(
-				'<strong>' + value + ' dBm</strong>'
-			);
+		this.$el.find('.max-intensity-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + ' dBm</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
 		});
 	},
 

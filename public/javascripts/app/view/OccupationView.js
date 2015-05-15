@@ -152,10 +152,10 @@ app.view.OccupationView = Backbone.View.extend({
 
 		this.$el.find('.slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip" style="top:-26px;left:-20px"></div>',function(value){
-			$(this).html(
-				'<strong>' + value + ' dBm</strong>'
-			);
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+			$(this).html('<strong>' + value + ' dBm</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
 		});
 	},
 

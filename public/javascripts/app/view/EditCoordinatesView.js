@@ -175,9 +175,23 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			}
 		});
 
+		this.renderSpreadTooltip();
+
 		this.$el.find('.spread-distance-slider').noUiSlider_pips({
 			mode: 'range',
 			density: 3.33
+		});
+	},
+
+	renderSpreadTooltip: function(){
+		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+		this.$el.find('.spread-distance-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+			if(value >= 10) value = value.slice(0, -2);
+			$(this).html('<strong>' + value + ' ' + unit + '</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
 		});
 	},
 
@@ -680,6 +694,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
 		var ids = this.mapView.changeMarkersByDistance(distance,unit);
 		this.renderEditingAreaSpread(ids,distance,unit);
+
+		this.renderSpreadTooltip();
 	},
 
 	renderEditingAreaSpread: function(ids,distance,unit){
