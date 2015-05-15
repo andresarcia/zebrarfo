@@ -584,6 +584,7 @@ hr {
 }
 
 #su-edit-place-controls {
+  text-align: center;
   margin-bottom: 5px;
 }
 #su-edit-place-controls .btn-group > .btn {
@@ -632,13 +633,6 @@ hr {
 #markers-slider-edit-place {
   margin-left: -18px;
 }
-/*#markers-slider-edit-place .noUi-vertical .noUi-handle {
-  height: 20px;
-  top: -2px !important;
-}
-#markers-slider-edit-place .noUi-handle:before, .noUi-handle:after {
-  top: 9px !important;
-}*/
 
 .chart_tooltip {
   border: 1px solid #2f7ed8;
