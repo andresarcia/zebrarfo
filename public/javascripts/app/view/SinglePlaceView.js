@@ -100,7 +100,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
-		this.currCapture.data = new app.model.PowerFrequencies({
+		this.currCapture.data = new app.model.Capture({
 			idPlace: window.place.id,
 			idCoord: res.id
 		});
