@@ -20,6 +20,7 @@ exports.create = function(place, callback) {
 	n.frequencyMin = null;
 	n.frequencyMax = null;
 	n.frequenciesBands = [];
+	n.frequenciesChannelWidth = [];
 	n.totalDistance = 0;
 	n.distanceAvg = 0;
 	n.distanceMax = null;
@@ -356,7 +357,7 @@ function takePlaceStats(n){
 	else 
 		n.totalDistance = n.distanceAvg = n.distanceMin = n.distanceMax = 0;
 
-
+	// wifi bands, add other
 	var bands = [{
 		from: 2412000,
 		to: 2484000,
@@ -370,6 +371,26 @@ function takePlaceStats(n){
 	_.each(bands, function(item){
 		var result = _.filter(n.frequencies, function(num){ return num >= item.from && num <= item.to; });
 		if(result.length > 0) n.frequenciesBands.push(item.name);
+	});
+
+	// channels width
+	var width = [{
+		from: 470000,
+		to: 890000,
+		name: "American 6Mhz"
+	},
+	{
+		from: 470000,
+		to: 862000,
+		name: "European 8Mhz"
+	}];
+
+	_.each(width, function(item, index){
+		var result = _.filter(n.frequencies, function(num){ return num >= item.from && num <= item.to; });
+		if(result.length > 0) n.frequenciesChannelWidth.push({
+			text: item.name,
+			id: index
+		});
 	});
 
 	/* -- delete vars for take stats -- */
