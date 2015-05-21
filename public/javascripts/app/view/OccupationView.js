@@ -26,7 +26,7 @@ app.view.OccupationView = Backbone.View.extend({
 		});
 
 		var isWifi = _.filter(window.place.attributes.frequenciesBands, function(item){
-			return item == "2.4 GHz" || item == "5 GHz";
+			return item.text == "2.4 GHz" || item.text == "5 GHz";
 		});
 
 		this.chartOptions = {

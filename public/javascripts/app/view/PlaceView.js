@@ -9,7 +9,7 @@ app.view.PlaceView = Backbone.View.extend({
 	currCapture: {},
 
 	events: {
-		'change #allocation-channel':'changeAllocationChannel',
+		'change #allocation-channel':'changeChannelWidth',
 		'change #frequency-bands':'changeBand',
 		'click #delete-link-place': 'deletePlace',
 		'click #download-link-place': 'downloadPlace',
@@ -84,7 +84,7 @@ app.view.PlaceView = Backbone.View.extend({
 		});
 	},
 
-	changeAllocationChannel: function(){
+	changeChannelWidth: function(){
 		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 		if(this.currCapture.data) this.renderCapture();
 	},
