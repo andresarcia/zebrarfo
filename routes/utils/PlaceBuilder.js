@@ -359,6 +359,10 @@ function takePlaceStats(n){
 
 	// wifi bands, add other
 	var bands = [{
+		from: n.frequencies[0],
+		to: n.frequencies[n.frequencies.length - 1],
+		name: "all"
+	},{
 		from: 2412000,
 		to: 2484000,
 		name: "2.4 GHz"
@@ -368,9 +372,14 @@ function takePlaceStats(n){
 		name: "5 GHz"
 	}];
 
-	_.each(bands, function(item){
+	_.each(bands, function(item, index){
 		var result = _.filter(n.frequencies, function(num){ return num >= item.from && num <= item.to; });
-		if(result.length > 0) n.frequenciesBands.push(item.name);
+		if(result.length > 0) n.frequenciesBands.push({
+			text: item.name,
+			from: item.from,
+			to: item.to,
+			id: index
+		});
 	});
 
 	// channels width
