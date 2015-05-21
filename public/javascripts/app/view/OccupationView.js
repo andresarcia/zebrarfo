@@ -25,9 +25,13 @@ app.view.OccupationView = Backbone.View.extend({
 			trackClick: true,
 		});
 
+		var isWifi = _.filter(window.place.attributes.frequenciesBands, function(item){
+			return item == "2.4 GHz" || item == "5 GHz";
+		});
+
 		this.chartOptions = {
 			chart: {
-				type: 'areaspline',
+				type: isWifi.length > 0 ? 'column': 'areaspline',
 				events: {
 					load: function(event) {
 
