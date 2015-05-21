@@ -86,12 +86,12 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	changeAllocationChannel: function(){
 		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
-		this.renderPowerFrequencies();
+		if(this.currCapture.data) this.renderCapture();
 	},
 
 	changeBand: function(){
 		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
-		this.renderPowerFrequencies();
+		if(this.currCapture.data) this.renderCapture();
 	},
 
 	renderCoordinateResume: function(res){
@@ -127,7 +127,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		this.currCapture.data.fetch({
 			success: function(){
 				self.waitingView.hide();
-				self.renderPowerFrequencies();
+				self.renderCapture();
 			},
 			error: function(model, xhr, options){
 				self.waitingView.hide();
@@ -136,7 +136,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		});
 	},
 
-	renderPowerFrequencies: function(){
+	renderCapture: function(){
 		var view = new app.view.CapturesView({
 			selector: '#su-selected-coordinate-map',
 			tooltipTop: 260
