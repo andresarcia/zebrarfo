@@ -19,7 +19,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.data = window.place.attributes;
 		this.threshold = this.data.powerAvg;
 
-		this.chart = new app.view.PowerFrequenciesView({
+		this.chart = new app.view.CapturesView({
 			selector: '#chart_canvas_occupation',
 			tooltipTop: 10,
 			trackClick: true,

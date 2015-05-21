@@ -1,7 +1,7 @@
 var app = app || {};
 app.view = app.view || {};
 
-app.view.PowerFrequenciesView = Backbone.View.extend({
+app.view.CapturesView = Backbone.View.extend({
 
 	initialize: function(options){
 		if (options.selector)
@@ -119,6 +119,13 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 			zoomType: 'x'
 		};
 		chartOptions = _.extend(chartOptions, options.chart);
+
+		// var currBand = window.place.attributes.frequenciesBands[];
+		console.log(window.settings.currBand);
+		// var from = currBand.from;
+		// var to = currBand.to;
+
+
 
 		_.each(data,function(item){
 			if(item.frequency)

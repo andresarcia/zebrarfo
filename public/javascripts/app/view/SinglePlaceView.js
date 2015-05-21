@@ -137,7 +137,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	renderPowerFrequencies: function(){
-		var view = new app.view.PowerFrequenciesView({
+		var view = new app.view.CapturesView({
 			selector: '#su-selected-coordinate-map',
 			tooltipTop: 260
 		});
