@@ -51,7 +51,8 @@ exports.create = function(req,res,next){
 					n[0].distanceAvg = place.distanceAvg;
 					n[0].distanceMin = place.distanceMin;
 					n[0].distanceMax = place.distanceMax;
-					
+					n[0].frequenciesBands = place.frequenciesBands.toString();
+
 					n[0].save()
 					.then(function(){
 						coordinate.save(n[0].id,place.coordinates,function(err){

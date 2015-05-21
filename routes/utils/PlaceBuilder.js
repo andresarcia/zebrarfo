@@ -19,6 +19,7 @@ exports.create = function(place, callback) {
 	n.numberPowerFrequency = null;
 	n.frequencyMin = null;
 	n.frequencyMax = null;
+	n.frequenciesBands = [];
 	n.totalDistance = 0;
 	n.distanceAvg = 0;
 	n.distanceMax = null;
@@ -30,6 +31,7 @@ exports.create = function(place, callback) {
 	n.placePowerSD_M = null;
 	n.countSamplesDistance = 0;
 	n.frequencyUnitFactor = 1;
+	n.frequencies = [];
 	/* ------------------------- */
 
 	reduceCommonGps(o,n,function(){
@@ -147,7 +149,7 @@ function reduceCommonGps(o,n,callback){
 			return sample.lat + sample.lng;
 		});
 
-		_.each(_.keys(groupByCoordinate), function(key){
+		_.each(_.keys(groupByCoordinate), function(key, index){
 			var item = groupByCoordinate[key];
 			var captures = [];
 
@@ -192,6 +194,13 @@ function reduceCommonGps(o,n,callback){
 						break;
 				}
 				var fq = o.frequencies.values[i] * n.frequencyUnitFactor;
+				if(index === 0) n.frequencies.push(fq);
+
+				if(n.outliers[outlier])
+					n.outliers[outlier] += 1;
+				else
+					n.outliers[outlier] = 1;
+
 				captures.push({ 
 					frequency: fq, 
 					power:operation 
@@ -347,11 +356,28 @@ function takePlaceStats(n){
 	else 
 		n.totalDistance = n.distanceAvg = n.distanceMin = n.distanceMax = 0;
 
+
+	var bands = [{
+		from: 2412000,
+		to: 2484000,
+		name: "2.4 GHz"
+	},{
+		from: 5180000,
+		to: 5809000,
+		name: "5 GHz"
+	}];
+
+	_.each(bands, function(item){
+		var result = _.filter(n.frequencies, function(num){ return num >= item.from && num <= item.to; });
+		if(result.length > 0) n.frequenciesBands.push(item.name);
+	});
+
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;
 	delete n.placePowerSD_M;
 	delete n.countSamplesDistance;
 	delete n.frequencyUnitFactor;
+	delete n.frequencies;
 	/* -------------------------------- */
 }
 

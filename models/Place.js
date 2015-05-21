@@ -44,6 +44,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,3),
       allowNull: true,
     },
+    frequenciesBands: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     totalDistance: {
       type: DataTypes.DECIMAL(12,3),
       allowNull: true,
