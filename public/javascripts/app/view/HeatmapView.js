@@ -113,8 +113,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 
 		this.$el.find("#allocation-channel").select2();
-		this.$el.find("#allocation-channel").select2("val", 
-			window.settings.currentChannelAllocation);
+		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.heatmap-select-channels').hide();
 
 		var tail = Math.round((this.data.frequencyMax - this.data.frequencyMin) * 0.10);
@@ -204,7 +203,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 	renderChannelInput: function(){
 		var channelData = [];
-		_.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
+		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
 			channelData.push({
 				id: channel.from + '-' + channel.to,
 				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
@@ -220,7 +219,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		if(channels === undefined || channels.length < 1){
 			channels = [];
-			channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+			channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
 			Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 		}
 
@@ -240,9 +239,9 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 		var channels = [];
-		channels.push(window.settings.fixedChannels[window.settings.currentChannelAllocation][0].from + '-' + window.settings.fixedChannels[window.settings.currentChannelAllocation][0].to);
+		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 		this.renderChannelInput();
 		this.changeChannelRange();
@@ -466,7 +465,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	updateDataByTab: function(){
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		if(window.settings.place.charts.channels.length > 0)
 			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
 		else

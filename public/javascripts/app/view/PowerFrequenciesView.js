@@ -23,7 +23,7 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 	appendChannels: function(chart){
 		var self = this;
 		
-		_.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
+		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
 			channel.id = channel.from + '-' + channel.to;
 			channel.events = {
 				mouseover: function(e){
@@ -109,7 +109,7 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 		$(this.selector).find('.chart_tooltip').hide();
 	},
 
-	render: function(data,options){
+	render: function(data, options){
 		var self = this;
 		var dataPlot = [];
 
@@ -125,7 +125,7 @@ app.view.PowerFrequenciesView = Backbone.View.extend({
 				dataPlot.push([Math.round(item.frequency/1000),item.power]);
 		});
 
-		this.chart = new Highcharts.Chart({	
+		this.chart = new Highcharts.Chart({
 			chart: chartOptions,
 			title: {
 				text: '',

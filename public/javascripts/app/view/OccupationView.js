@@ -24,6 +24,7 @@ app.view.OccupationView = Backbone.View.extend({
 			tooltipTop: 10,
 			trackClick: true,
 		});
+
 		this.chartOptions = {
 			chart: {
 				type: 'areaspline',
@@ -67,7 +68,7 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 		this.clearChannels();
 		this.renderChart();
 		this.renderChannelInput();
@@ -88,8 +89,8 @@ app.view.OccupationView = Backbone.View.extend({
 			self.renderChart();
 		}, 200);
 
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
-		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
+		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 
 		this.renderChannelInput();
 	},
@@ -161,7 +162,7 @@ app.view.OccupationView = Backbone.View.extend({
 
 	renderChannelInput: function(){
 		var channelData = [];
-		_.each(window.settings.fixedChannels[window.settings.currentChannelAllocation], function(channel){
+		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
 			channelData.push({
 				id: channel.from + '-' + channel.to,
 				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
@@ -205,7 +206,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.$el.find("#allocation-channel").select2();
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;

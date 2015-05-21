@@ -10,6 +10,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
+		'change #frequency-bands':'changeBand',
 		'click #delete-link-place': 'deletePlace',
 		'click #download-link-place': 'downloadPlace',
 		'click #su-edit-place': 'launchEditPlace'
@@ -84,8 +85,12 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.settings.currentChannelAllocation = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 		this.renderPowerFrequencies();
+	},
+
+	changeBand: function(){
+
 	},
 
 	renderCoordinateResume: function(res){
@@ -135,7 +140,8 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			selector: '#su-selected-coordinate-map',
 			tooltipTop: 260
 		});
-		view.render(this.currentPowerFrequencies.data.attributes,this.currentPowerFrequencies.options);
+
+		view.render(this.currentPowerFrequencies.data.attributes, this.currentPowerFrequencies.options);
 		$('html, body').stop().animate({
 			scrollTop: $('.chart_power_frequency').offset().top
 		}, 1000);
@@ -156,11 +162,13 @@ app.view.SinglePlaceView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.single_place;
-		var html = template(window.place);
-		this.$el.html(html);	
+		var html = template(window.place.attributes);
+		this.$el.html(html);
 
-		this.$el.find("#allocation-channel").select2();
-		this.$el.find("#allocation-channel").select2("val", window.settings.currentChannelAllocation);
+		this.$el.find("#allocation-channel").select2({ data: window.place.attributes.frequenciesChannelWidth });
+		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
+		this.$el.find("#frequency-bands").select2({ tags: window.place.attributes.frequenciesBands });
+		this.$el.find("#frequency-bands").select2("val", window.place.attributes.frequenciesBands);
 
 		return this;
 	},

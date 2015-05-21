@@ -118,7 +118,16 @@ app.router.AppRouter = Backbone.Router.extend({
 		window.place.fetch({
 			success: function(){  
 				self.waitingView.hide();
-				window.settings.fixedChannels = self.setChannelsInRange(window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
+				window.settings.fixedChannels = self.setChannelsInRange(
+					window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
+
+				window.place.attributes.frequenciesBands = 
+					JSON.parse(window.place.attributes.frequenciesBands);
+
+				window.place.attributes.frequenciesChannelWidth = 
+					JSON.parse(window.place.attributes.frequenciesChannelWidth);
+				if(window.place.attributes.frequenciesBands) window.settings.currChannel = 0;
+
 				callback();
 			},
 			error: function(model, xhr, options){
@@ -157,6 +166,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			success: function(){
 				self.waitingView.hide();
 				window.place.attributes.charts = data.attributes.data;
+
 				callback();
 			},
 			error: function(model, xhr, options){
