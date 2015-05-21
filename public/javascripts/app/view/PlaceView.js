@@ -1,7 +1,7 @@
 var app = app || {};
 app.view = app.view || {};
 
-app.view.SinglePlaceView = Backbone.View.extend({
+app.view.PlaceView = Backbone.View.extend({
 
 	el: '#ws-containter',
 	coordinates: null,
