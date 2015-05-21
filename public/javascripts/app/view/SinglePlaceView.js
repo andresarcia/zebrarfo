@@ -6,7 +6,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	el: '#ws-containter',
 	coordinates: null,
 	mapView: null,
-	currentPowerFrequencies: {},
+	currCapture: {},
 
 	events: {
 		'change #allocation-channel':'changeAllocationChannel',
@@ -90,7 +90,8 @@ app.view.SinglePlaceView = Backbone.View.extend({
 	},
 
 	changeBand: function(){
-
+		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		this.renderPowerFrequencies();
 	},
 
 	renderCoordinateResume: function(res){
@@ -99,12 +100,12 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var html = template(this.coordinates[res.index]);
 		this.$el.find('#su-selected-coordinate-map').html(html);
 
-		this.currentPowerFrequencies.data = new app.model.PowerFrequencies({
+		this.currCapture.data = new app.model.PowerFrequencies({
 			idPlace: window.place.id,
 			idCoord: res.id
 		});
 
-		this.currentPowerFrequencies.options = {
+		this.currCapture.options = {
 			yAxis: {
 				plotLines:[{
 					value: this.coordinates[res.index].powerAvg,
@@ -123,7 +124,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		};
 
 		this.waitingView.show();
-		this.currentPowerFrequencies.data.fetch({
+		this.currCapture.data.fetch({
 			success: function(){
 				self.waitingView.hide();
 				self.renderPowerFrequencies();
@@ -141,7 +142,7 @@ app.view.SinglePlaceView = Backbone.View.extend({
 			tooltipTop: 260
 		});
 
-		view.render(this.currentPowerFrequencies.data.attributes, this.currentPowerFrequencies.options);
+		view.render(this.currCapture.data.attributes, this.currCapture.options);
 		$('html, body').stop().animate({
 			scrollTop: $('.chart_power_frequency').offset().top
 		}, 1000);
@@ -165,10 +166,18 @@ app.view.SinglePlaceView = Backbone.View.extend({
 		var html = template(window.place.attributes);
 		this.$el.html(html);
 
-		this.$el.find("#allocation-channel").select2({ data: window.place.attributes.frequenciesChannelWidth });
+		this.$el.find("#allocation-channel").select2({ 
+			data: window.place.attributes.frequenciesChannelWidth 
+		});
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
-		this.$el.find("#frequency-bands").select2({ tags: window.place.attributes.frequenciesBands });
-		this.$el.find("#frequency-bands").select2("val", window.place.attributes.frequenciesBands);
+
+		if(window.place.attributes.frequenciesBands.length > 1){
+			this.$el.find("#frequency-bands").select2({ 
+				data: window.place.attributes.frequenciesBands,
+				multiple: true
+			});
+			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+		}
 
 		return this;
 	},
