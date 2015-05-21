@@ -233,11 +233,11 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
   return buffer;
 },"6":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "					<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "					<div class=\"ws-gray\">\n						<small>\n							&nbsp<b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.latitude : stack1), depth0))
-    + " <b>lng</b>: "
+    + " \n							<br>\n							&nbsp<b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.from : depth0)) != null ? stack1.longitude : stack1), depth0))
-    + "</small></div>\n";
+    + "\n						</small>\n					</div>\n";
 },"8":function(depth0,helpers,partials,data) {
   var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing, buffer = "					<div class=\"ws-blue\">\n						<small>To</small>\n						<span class=\"ws-dark-gray\"><small>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.index : stack1), depth0))
@@ -249,11 +249,11 @@ this["Zebra"]["tmpl"]["su_list_coord_to_edit"] = Handlebars.template({"1":functi
     + " km</small></span>\n					</div>\n";
 },"9":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "						<div class=\"ws-gray\"><small><b>lat</b>: "
+  return "						<div class=\"ws-gray\">\n							<small>\n								<b>lat</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.latitude : stack1), depth0))
-    + " <b>lng</b>: "
+    + " \n								<br>\n								<b>lng</b>: "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.to : depth0)) != null ? stack1.longitude : stack1), depth0))
-    + "</small></div>\n";
+    + "\n							</small>\n						</div>\n";
 },"11":function(depth0,helpers,partials,data) {
   return "					<small>You can select two markers for make a range</small>\n";
   },"13":function(depth0,helpers,partials,data) {

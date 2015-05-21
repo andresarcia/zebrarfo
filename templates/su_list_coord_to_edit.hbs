@@ -19,7 +19,13 @@
 					<span class="ws-dark-gray"><small>{{from.index}}</small></span>
 				</div>
 				{{#if from.latitude}}
-					<div class="ws-gray"><small><b>lat</b>: {{from.latitude}} <b>lng</b>: {{from.longitude}}</small></div>
+					<div class="ws-gray">
+						<small>
+							&nbsp<b>lat</b>: {{from.latitude}} 
+							<br>
+							&nbsp<b>lng</b>: {{from.longitude}}
+						</small>
+					</div>
 				{{/if}}
 				
 				{{#if to}}
@@ -28,7 +34,13 @@
 						<span class="ws-dark-gray"><small>{{to.index}}</small></span>
 					</div>
 					{{#if to.latitude}}
-						<div class="ws-gray"><small><b>lat</b>: {{to.latitude}} <b>lng</b>: {{to.longitude}}</small></div>
+						<div class="ws-gray">
+							<small>
+								<b>lat</b>: {{to.latitude}} 
+								<br>
+								<b>lng</b>: {{to.longitude}}
+							</small>
+						</div>
 					{{/if}}
 
 					<div class="ws-blue">
