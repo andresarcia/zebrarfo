@@ -165,12 +165,12 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			start: 0,
 			connect: "lower",
 			format: wNumb({
-				decimals: 1
+				decimals: 0
 			}),
 			range: {
-				'min': [ 0 ],
+				'min': [ 0, 1 ],
 				'33.33%': [ 10, 10 ],
-				'66.33%': [ 100, 100 ],
+				'66.66%': [ 100, 100 ],
 				'max': [ 1000 ]
 			}
 		});
@@ -188,7 +188,6 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.$el.find('.spread-distance-slider')
 		.Link('lower')
 		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
-			if(value >= 10) value = value.slice(0, -2);
 			$(this).html('<strong>' + value + ' ' + unit + '</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
