@@ -11,6 +11,7 @@ app.view.PlaceView = Backbone.View.extend({
 	events: {
 		'change #allocation-channel':'changeChannelWidth',
 		'change #frequency-bands':'changeBand',
+		'select2-removing #frequency-bands':'checkBands',
 		'click #delete-link-place': 'deletePlace',
 		'click #download-link-place': 'downloadPlace',
 		'click #su-edit-place': 'launchEditPlace'
@@ -94,6 +95,10 @@ app.view.PlaceView = Backbone.View.extend({
 		if(this.currCapture.data) this.renderCapture();
 	},
 
+	checkBands: function(evt){
+		if(window.settings.currBand.length == 1) evt.preventDefault();
+	},
+
 	renderCoordinateResume: function(res){
 		var self = this;
 		var template = Zebra.tmpl.su_coordinate_resume;
@@ -174,7 +179,7 @@ app.view.PlaceView = Backbone.View.extend({
 		if(window.place.attributes.frequenciesBands.length > 1){
 			this.$el.find("#frequency-bands").select2({ 
 				data: window.place.attributes.frequenciesBands,
-				multiple: true
+				multiple: true,
 			});
 			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
 		}

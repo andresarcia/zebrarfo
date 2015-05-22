@@ -16,10 +16,10 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places': 'showPlaces',
 		'places/upload': 'uploadPlace',
 
-		'places/:id' : 'showSinglePlace',
+		'places/:id' : 'showPlace',
 		'places/:id/edit?type=:type' : 'showEditPlace',
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
-		'places/:id/upload' : 'showSinglePlaceUpload',
+		'places/:id/upload' : 'showPlaceUpload',
 		
 		'help': 'showHelp',
 
@@ -107,7 +107,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	fetchSinglePlace: function(id,callback){
+	fetchPlace: function(id,callback){
 		if(window.place && this.checkSession())
 			return callback();
 
@@ -123,10 +123,12 @@ app.router.AppRouter = Backbone.Router.extend({
 
 				window.place.attributes.frequenciesBands = 
 					JSON.parse(window.place.attributes.frequenciesBands);
+				if(window.place.attributes.frequenciesBands.length > 1) window.settings.currBand = [1];
+				else window.settings.currBand = [0];
 
 				window.place.attributes.frequenciesChannelWidth = 
 					JSON.parse(window.place.attributes.frequenciesChannelWidth);
-				if(window.place.attributes.frequenciesBands) window.settings.currChannel = 0;
+				if(window.place.attributes.frequenciesChannelWidth) window.settings.currChannel = 0;
 
 				callback();
 			},
@@ -243,11 +245,11 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.menu.changeActive(index);
 	},
 
-	showSinglePlace: function(id){
+	showPlace: function(id){
 		var self = this;
 		this.clearViews();
-		this.fetchSinglePlace(id,function(){
-			self.currentView = new app.view.SinglePlaceView({
+		this.fetchPlace(id,function(){
+			self.currentView = new app.view.PlaceView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
 			});
@@ -268,7 +270,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'outliers') 
 			editType = 1;
 
-		this.fetchSinglePlace(id,function(){
+		this.fetchPlace(id,function(){
 			self.fetchOutliers(function(){
 				self.currentView = new app.view.EditPlaceView({
 					waitingView: self.waitingView,
@@ -295,7 +297,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'white-spaces') 
 			chartType = 2;
 
-		this.fetchSinglePlace(id,function(){
+		this.fetchPlace(id,function(){
 			self.fetchChart(function(){
 				self.currentView = new app.view.ChartsView({
 					waitingView: self.waitingView,
@@ -307,10 +309,10 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showSinglePlaceUpload: function(id){
+	showPlaceUpload: function(id){
 		var self = this;
 		this.clearViews();
-		this.fetchSinglePlace(id,function(){
+		this.fetchPlace(id,function(){
 			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
