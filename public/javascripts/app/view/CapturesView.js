@@ -120,17 +120,32 @@ app.view.CapturesView = Backbone.View.extend({
 		};
 		chartOptions = _.extend(chartOptions, options.chart);
 
-		// var currBand = window.place.attributes.frequenciesBands[];
-		console.log(window.settings.currBand);
-		// var from = currBand.from;
-		// var to = currBand.to;
+		// filter by bands
+		var bands = _.sortBy(window.settings.currBand);
+		// if all ([0]) in bands, then all bands
+		if(Number(bands[0]) === 0){
+			_.each(data,function(item){
+				if(item.frequency) dataPlot.push([Math.round(item.frequency/1000),item.power]);
+			});
+		// else apply filter
+		} else {
+			var index = 0;
+			var boundIndex = bands[index];
+			_.find(data, function(item){
+				var from = window.place.attributes.frequenciesBands[boundIndex].from;
+				var to = window.place.attributes.frequenciesBands[boundIndex].to;
+				var fq = item.frequency;
 
-
-
-		_.each(data,function(item){
-			if(item.frequency)
-				dataPlot.push([Math.round(item.frequency/1000),item.power]);
-		});
+				if(fq >= from && fq <= to) dataPlot.push([Math.round(fq/1000),item.power]);
+				if(fq > to) {
+					if(index < bands.length - 1){
+						index += 1;
+						boundIndex = bands[index];
+					} 
+					else return item;
+				}
+			});
+		}
 
 		this.chart = new Highcharts.Chart({
 			chart: chartOptions,

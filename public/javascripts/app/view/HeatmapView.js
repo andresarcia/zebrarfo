@@ -32,7 +32,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		'slide .markers-slider':'changeMarker',
 		'change .spread-distance-slider':'changeSpreadDistance',
 		'change #spread-distance-unit-slider':'changeSpreadDistance',
-		'change #allocation-channel':'changeAllocationChannel',
+		'change #allocation-channel':'changeChannelWidth',
 	},
 	
 	initialize: function(options){
@@ -238,7 +238,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.renderHeatmap();
 	},
 
-	changeAllocationChannel: function(){
+	changeChannelWidth: function(){
 		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
 		var channels = [];
 		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
