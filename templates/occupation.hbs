@@ -1,9 +1,21 @@
 <div class="row">
 	<div class="col-md-12 slider-container occupation-settings">
-		<h5>Channel width</h5>
-		<input class="form-control" id="allocation-channel" type="hidden" />
-		<h5>Threshold</h5>
-		<div class="slider"></div>
+		<form class="form-horizontal">
+			{{#if this.frequenciesChannelWidth}}
+				<div class="form-group">
+					<label for="allocation-channel" class="col-sm-2 control-label">Channel width</label>
+					<div class="col-sm-10">
+						<input class="form-control" id="allocation-channel" type="hidden" />
+					</div>
+				</div>
+			{{/if}}
+			<div class="form-group">
+				<label for="threshold-slider" class="col-sm-2 control-label">Threshold</label>
+				<div class="col-sm-10">
+					<div class="slider" id="threshold-slider"></div>
+				</div>
+			</div>
+		</form>
 	</div>
 	<div id="chart_canvas_occupation" class="col-md-12">
 		<div class="chart_power_frequency" style="height:420px;width:95%;"></div> 

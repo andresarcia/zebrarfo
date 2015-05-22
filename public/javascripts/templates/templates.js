@@ -101,13 +101,57 @@ this["Zebra"]["tmpl"]["navbar_mobil"] = Handlebars.template({"compiler":[6,">= 2
   return "<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n	<div class=\"container-fluid\">\n		<div class=\"navbar-header\" id=\"navbar-header\">\n			<button type=\"button\" class=\"navbar-toggle\" id=\"toggle-main-menu\">\n				<span class=\"sr-only\">Toggle navigation</span>\n				<span class=\"icon-bar\"></span>\n				<span class=\"icon-bar\"></span>\n				<span class=\"icon-bar\"></span>\n			</button>\n			<button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-menu\">\n				<span class=\"glyphicon glyphicon-user\"></span>\n				<b class=\"caret\"></b>\n			</button>\n			<div class=\"navbar-brand\">\n				<div class=\"logo\"></div>\n				<h1>ZEBRA RFO</h1>\n				<h6>RADIO FREQUENCY OBSERVER</h6>\n			</div>\n		</div>\n\n		<div class=\"collapse navbar-collapse\" id=\"navbar-menu\">\n			<ul class=\"nav navbar-nav navbar-right\">\n				<li><a href=\"#\">Profile</a></li>\n				<li><a href=\"#\">Account settings</a></li>\n				<li class=\"divider\"></li>\n				<li><a href=\"#logout\">Log Out</a></li>\n			</ul>\n		</div>\n	</div>\n</nav>";
   },"useData":true});
 
-this["Zebra"]["tmpl"]["occupation"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"row\">\n	<div class=\"col-md-12 slider-container occupation-settings\">\n		<h5>Channel width</h5>\n		<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n		<h5>Threshold</h5>\n		<div class=\"slider\"></div>\n	</div>\n	<div id=\"chart_canvas_occupation\" class=\"col-md-12\">\n		<div class=\"chart_power_frequency\" style=\"height:420px;width:95%;\"></div> \n		<div class=\"chart_tooltip\">\n			<p style=\"margin:0\">default</p>\n		</div>\n	</div>\n	<div class=\"col-md-12 occupation-settings\">\n		<div class=\"col-md-8\">\n			<input class=\"form-control\" id=\"select-channels\" type=\"hidden\" />\n		</div>\n		<div class=\"col-md-4\">\n			<button type=\"button\" class=\"btn btn-primary btn-block build-heatmap-btn-container\">Build heatmap</button>\n		</div>\n	</div>\n</div>";
-  },"useData":true});
+this["Zebra"]["tmpl"]["occupation"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "				<div class=\"form-group\">\n					<label for=\"allocation-channel\" class=\"col-sm-2 control-label\">Channel width</label>\n					<div class=\"col-sm-10\">\n						<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n					</div>\n				</div>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class=\"row\">\n	<div class=\"col-md-12 slider-container occupation-settings\">\n		<form class=\"form-horizontal\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesChannelWidth : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "			<div class=\"form-group\">\n				<label for=\"threshold-slider\" class=\"col-sm-2 control-label\">Threshold</label>\n				<div class=\"col-sm-10\">\n					<div class=\"slider\" id=\"threshold-slider\"></div>\n				</div>\n			</div>\n		</form>\n	</div>\n	<div id=\"chart_canvas_occupation\" class=\"col-md-12\">\n		<div class=\"chart_power_frequency\" style=\"height:420px;width:95%;\"></div> \n		<div class=\"chart_tooltip\">\n			<p style=\"margin:0\">default</p>\n		</div>\n	</div>\n	<div class=\"col-md-12 occupation-settings\">\n		<div class=\"col-md-8\">\n			<input class=\"form-control\" id=\"select-channels\" type=\"hidden\" />\n		</div>\n		<div class=\"col-md-4\">\n			<button type=\"button\" class=\"btn btn-primary btn-block build-heatmap-btn-container\">Build heatmap</button>\n		</div>\n	</div>\n</div>";
+},"useData":true});
 
 this["Zebra"]["tmpl"]["password_requirements"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"tooltip\" role=\"tooltip\">\n	<div class=\"tooltip-arrow\"></div>\n	<div class=\"tooltip-inner-2\">\n		<b>Your password mush have:</b>\n		<div class=\"text-skinny\">\n			<ul>\n				<li>8 or more characters</li>\n				<li>At least one number</li>\n				<li>Upper and lowercase letters</li>\n			</ul>\n		</div>\n	</div>\n</div>";
   },"useData":true});
+
+this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"frequency-bands\">Frequency bands</label>\n								<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n							</td>\n						</tr>\n";
+  },"3":function(depth0,helpers,partials,data) {
+  return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"allocation-channel\">Channel width</label>\n								<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n							</td>\n						</tr>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li class=\"active\">"
+    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default su-place-info\">\n			<div class=\"panel-body\">\n				<div class=\"su-place-info-links\">\n					<a href=\"#places/"
+    + escapeExpression(lambda((depth0 != null ? depth0.id : depth0), depth0))
+    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"download-link-place\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"delete-link-place\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<br>\n				<br>\n				<h2 class=\"col-md-12\">"
+    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + "</h2>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.numberCoordinates : depth0), depth0))
+    + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.totalDistance : depth0), depth0))
+    + " <small><b>km</b></small></td>\n					</tr>\n					<tr>\n						<td>Total number of frequencies</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.numberPowerFrequency : depth0), depth0))
+    + "</td>\n					</tr>\n					<tr>\n						<td>Range of frequencies</td>\n						<td>["
+    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMin : depth0), depth0))
+    + "-"
+    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMax : depth0), depth0))
+    + "] <small><b>MHz</b></small></td>\n					</tr>\n					<tr>\n						<td>Minimum power</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.powerMin : depth0), depth0))
+    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Maximum power</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.powerMax : depth0), depth0))
+    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average power</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.powerAvg : depth0), depth0))
+    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
+    + escapeExpression(lambda((depth0 != null ? depth0.sdPowerAvg : depth0), depth0))
+    + " <small><b>dBm</b></small></td>\n					</tr>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesBands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesChannelWidth : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "				</table>\n\n				<button id=\"su-edit-place\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h5 class=\"pull-right\"><small>last update <b>"
+    + escapeExpression(lambda((depth0 != null ? depth0.friendlyDate : depth0), depth0))
+    + "</b></small></h5> \n				<br>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"su-coord-markers-map\" style=\"height:450px;\"></div>\n		<div id=\"su-selected-coordinate-map\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
+},"useData":true});
 
 this["Zebra"]["tmpl"]["places"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
@@ -148,45 +192,6 @@ this["Zebra"]["tmpl"]["places"] = Handlebars.template({"1":function(depth0,helpe
 this["Zebra"]["tmpl"]["register"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"modal fade\" id=\"reg-modal\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h1 class=\"modal-title text-skinny\">Create your Zebra account</h1>\n      </div>\n      <div class=\"modal-body\">\n        <form id=\"reg-form\">\n          <p class=\"text-center text-skinny\">\n            One account is all you need to access all Zebra RFO services.\n            <br>\n            Already have a Zebra account? \n            <a href=\"javascript:void(0)\" data-dismiss=\"modal\">Sign in</a>\n          </p>\n          <br>\n          <div class=\"form-group\">\n            <input type=\"email\" class=\"form-control\" id=\"reg-email\" placeholder=\"name@example.com\">\n          </div>\n          <br>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" id=\"reg-password\" placeholder=\"password\">\n          </div>\n          <div class=\"form-group\">\n            <input type=\"password\" class=\"form-control\" id=\"reg-repeat-password\" placeholder=\"repeat password\">\n          </div>\n          <hr>\n          <div class=\"checkbox\">\n            <label>\n              <input type=\"checkbox\" id=\"reg-subscribed\" checked> Zebra RFO News and Announcements\n              <br>\n              <small class=\"ws-gray\">Keep me up to date with Zebra RFO news and the lastest information on products and services.</small>\n            </label>\n          </div>\n        </form>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n        <span class=\"divider-vertical\"></span>\n        <button type=\"button\" id=\"reg-submit\" class=\"btn btn-primary\" disabled>Continue</button>\n      </div>\n    </div>\n  </div>\n</div>";
   },"useData":true});
-
-this["Zebra"]["tmpl"]["single_place"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"frequency-bands\">Frequency bands</label>\n								<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n							</td>\n						</tr>\n";
-  },"3":function(depth0,helpers,partials,data) {
-  return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"allocation-channel\">Channel width</label>\n								<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n							</td>\n						</tr>\n";
-  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li class=\"active\">"
-    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
-    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default su-place-info\">\n			<div class=\"panel-body\">\n				<div class=\"su-place-info-links\">\n					<a href=\"#places/"
-    + escapeExpression(lambda((depth0 != null ? depth0.id : depth0), depth0))
-    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"download-link-place\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"delete-link-place\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<br>\n				<br>\n				<h2 class=\"col-md-12\">"
-    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
-    + "</h2>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.numberCoordinates : depth0), depth0))
-    + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.totalDistance : depth0), depth0))
-    + " <small><b>km</b></small></td>\n					</tr>\n					<tr>\n						<td>Total number of frequencies</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.numberPowerFrequency : depth0), depth0))
-    + "</td>\n					</tr>\n					<tr>\n						<td>Range of frequencies</td>\n						<td>["
-    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMin : depth0), depth0))
-    + "-"
-    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMax : depth0), depth0))
-    + "] <small><b>MHz</b></small></td>\n					</tr>\n					<tr>\n						<td>Minimum power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerMin : depth0), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Maximum power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerMax : depth0), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerAvg : depth0), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.sdPowerAvg : depth0), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesBands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesChannelWidth : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "				</table>\n\n				<button id=\"su-edit-place\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h5 class=\"pull-right\"><small>last update <b>"
-    + escapeExpression(lambda((depth0 != null ? depth0.friendlyDate : depth0), depth0))
-    + "</b></small></h5> \n				<br>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"su-coord-markers-map\" style=\"height:450px;\"></div>\n		<div id=\"su-selected-coordinate-map\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
-},"useData":true});
 
 this["Zebra"]["tmpl"]["su_coordinate_resume"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;

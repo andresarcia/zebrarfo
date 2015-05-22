@@ -167,7 +167,7 @@ app.view.PlaceView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var template = Zebra.tmpl.single_place;
+		var template = Zebra.tmpl.place;
 		var html = template(window.place.attributes);
 		this.$el.html(html);
 

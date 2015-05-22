@@ -157,7 +157,7 @@ app.view.OccupationView = Backbone.View.extend({
 
 		this.$el.find('.slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + ' dBm</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
@@ -206,7 +206,7 @@ app.view.OccupationView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.occupation;
-		var html = template();
+		var html = template(window.place.attributes);
 		this.$el.html(html);
 
 		this.$el.find("#allocation-channel").select2({ 
