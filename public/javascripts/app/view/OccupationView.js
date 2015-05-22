@@ -209,7 +209,9 @@ app.view.OccupationView = Backbone.View.extend({
 		var html = template();
 		this.$el.html(html);
 
-		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2({ 
+			data: window.place.attributes.frequenciesChannelWidth 
+		});
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 

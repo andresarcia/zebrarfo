@@ -112,7 +112,9 @@ app.view.HeatmapView = Backbone.View.extend({
 			$(this).css('left', '-15px');
 		});
 
-		this.$el.find("#allocation-channel").select2();
+		this.$el.find("#allocation-channel").select2({ 
+			data: window.place.attributes.frequenciesChannelWidth 
+		});
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.heatmap-select-channels').hide();
 
