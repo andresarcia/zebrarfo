@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
 	<li><a href="#places">Places</a></li>
-	<li class="active">{{this.attributes.name}}</li>
+	<li class="active">{{this.name}}</li>
 </ol>
 
 <div class="row">
@@ -8,7 +8,7 @@
 		<div class="panel panel-default su-place-info">
 			<div class="panel-body">
 				<div class="su-place-info-links">
-					<a href="#places/{{this.attributes.id}}/upload" class="pull-right ws-blue">
+					<a href="#places/{{this.id}}/upload" class="pull-right ws-blue">
 						<small>upload more samples</small>
 					</a>
 					<br>
@@ -22,69 +22,75 @@
 				</div>
 				<br>
 				<br>
-				<h2 class="col-md-12">{{this.attributes.name}}</h2>
-		  		<table class="table table-striped">
-			    	<tr>
-				  		<td>Total number of samples</td>
-				  		<td>{{this.attributes.numberCoordinates}}</td>
-				  	</tr>
-				  	<tr>
-				  		<td>Total distance</td>
-				  		<td>{{this.attributes.totalDistance}} <small><b>km</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td>Total number of frequencies</td>
-				  		<td>{{this.attributes.numberPowerFrequency}}</td>
-				  	</tr>
-				  	<tr>
-				  		<td>Range of frequencies</td>
-				  		<td>[{{this.attributes.frequencyMin}}-{{this.attributes.frequencyMax}}] <small><b>MHz</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td>Minimum power</td>
-				  		<td>{{this.attributes.powerMin}} <small><b>dBm</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td>Maximum power</td>
-				  		<td>{{this.attributes.powerMax}} <small><b>dBm</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td>Average power</td>
-				  		<td>{{this.attributes.powerAvg}} <small><b>dBm</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td>Standard deviation of power</td>
-				  		<td>{{this.attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
-				  	</tr>
-				  	<tr>
-				  		<td colspan="2">Channel width</td>
-				  	</tr>
-				  	<tr>
-				  		<td colspan="2">
-				  			<select class="form-control" id="allocation-channel">
-								<option value="0">American 6Mhz</option>
-								<option value="1">European 8Mhz</option>
-							</select>
-				  		</td>
-				  	</tr>
-			  	</table>
-			  	<button id="su-edit-place" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
+				<h2 class="col-md-12">{{this.name}}</h2>
+				<table class="table table-striped">
+					<tr>
+						<td>Total number of samples</td>
+						<td>{{this.numberCoordinates}}</td>
+					</tr>
+					<tr>
+						<td>Total distance</td>
+						<td>{{this.totalDistance}} <small><b>km</b></small></td>
+					</tr>
+					<tr>
+						<td>Total number of frequencies</td>
+						<td>{{this.numberPowerFrequency}}</td>
+					</tr>
+					<tr>
+						<td>Range of frequencies</td>
+						<td>[{{this.frequencyMin}}-{{this.frequencyMax}}] <small><b>MHz</b></small></td>
+					</tr>
+					<tr>
+						<td>Minimum power</td>
+						<td>{{this.powerMin}} <small><b>dBm</b></small></td>
+					</tr>
+					<tr>
+						<td>Maximum power</td>
+						<td>{{this.powerMax}} <small><b>dBm</b></small></td>
+					</tr>
+					<tr>
+						<td>Average power</td>
+						<td>{{this.powerAvg}} <small><b>dBm</b></small></td>
+					</tr>
+					<tr>
+						<td>Standard deviation of power</td>
+						<td>{{this.sdPowerAvg}} <small><b>dBm</b></small></td>
+					</tr>
+					{{#if this.frequenciesBands}}
+						<tr>
+							<td colspan="2">
+								<label for="frequency-bands">Frequency bands</label>
+								<input class="form-control" id="frequency-bands" type="hidden" />
+							</td>
+						</tr>
+					{{/if}}
+					{{#if this.frequenciesChannelWidth}}
+						<tr>
+							<td colspan="2">
+								<label for="allocation-channel">Channel width</label>
+								<input class="form-control" id="allocation-channel" type="hidden" />
+							</td>
+						</tr>
+					{{/if}}
+				</table>
+
+				<button id="su-edit-place" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
 					Edit place
 				</button>
 			</div>
 			<div class="panel-footer">
-				<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
+				<h5 class="pull-right"><small>last update <b>{{this.friendlyDate}}</b></small></h5> 
 				<br>
 			</div>
 		</div>
-  	</div>
-	  	
-  	<div class="col-md-8">
-  		<div id="su-coord-markers-map" style="height:450px;"></div>
-  		<div id="su-selected-coordinate-map">
+	</div>
+
+	<div class="col-md-8">
+		<div id="su-coord-markers-map" style="height:450px;"></div>
+		<div id="su-selected-coordinate-map">
 			<div class="page-header" style="text-align:center">
 					<h1>Click <small>on any marker will get info of the sample</small></h1>
 			</div>
 		</div>
-  	</div>
+	</div>
 </div>
