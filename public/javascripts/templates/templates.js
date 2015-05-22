@@ -102,10 +102,14 @@ this["Zebra"]["tmpl"]["navbar_mobil"] = Handlebars.template({"compiler":[6,">= 2
   },"useData":true});
 
 this["Zebra"]["tmpl"]["occupation"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "				<div class=\"form-group\">\n					<label for=\"frequency-bands\" class=\"col-sm-2 control-label\">Frequency bands</label>\n					<div class=\"col-sm-10\">\n						<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n					</div>\n				</div>\n";
+  },"3":function(depth0,helpers,partials,data) {
   return "				<div class=\"form-group\">\n					<label for=\"allocation-channel\" class=\"col-sm-2 control-label\">Channel width</label>\n					<div class=\"col-sm-10\">\n						<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n					</div>\n				</div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "<div class=\"row\">\n	<div class=\"col-md-12 slider-container occupation-settings\">\n		<form class=\"form-horizontal\">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesChannelWidth : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequenciesChannelWidth : stack1), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "			<div class=\"form-group\">\n				<label for=\"threshold-slider\" class=\"col-sm-2 control-label\">Threshold</label>\n				<div class=\"col-sm-10\">\n					<div class=\"slider\" id=\"threshold-slider\"></div>\n				</div>\n			</div>\n		</form>\n	</div>\n	<div id=\"chart_canvas_occupation\" class=\"col-md-12\">\n		<div class=\"chart_power_frequency\" style=\"height:420px;width:95%;\"></div> \n		<div class=\"chart_tooltip\">\n			<p style=\"margin:0\">default</p>\n		</div>\n	</div>\n	<div class=\"col-md-12 occupation-settings\">\n		<div class=\"col-md-8\">\n			<input class=\"form-control\" id=\"select-channels\" type=\"hidden\" />\n		</div>\n		<div class=\"col-md-4\">\n			<button type=\"button\" class=\"btn btn-primary btn-block build-heatmap-btn-container\">Build heatmap</button>\n		</div>\n	</div>\n</div>";
 },"useData":true});
@@ -120,36 +124,36 @@ this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helper
   return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"allocation-channel\">Channel width</label>\n								<input class=\"form-control\" id=\"allocation-channel\" type=\"hidden\" />\n							</td>\n						</tr>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li class=\"active\">"
-    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
     + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default su-place-info\">\n			<div class=\"panel-body\">\n				<div class=\"su-place-info-links\">\n					<a href=\"#places/"
-    + escapeExpression(lambda((depth0 != null ? depth0.id : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.id : stack1), depth0))
     + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"download-link-place\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"delete-link-place\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<br>\n				<br>\n				<h2 class=\"col-md-12\">"
-    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
     + "</h2>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.numberCoordinates : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
     + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.totalDistance : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.totalDistance : stack1), depth0))
     + " <small><b>km</b></small></td>\n					</tr>\n					<tr>\n						<td>Total number of frequencies</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.numberPowerFrequency : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberPowerFrequency : stack1), depth0))
     + "</td>\n					</tr>\n					<tr>\n						<td>Range of frequencies</td>\n						<td>["
-    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMin : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencyMin : stack1), depth0))
     + "-"
-    + escapeExpression(lambda((depth0 != null ? depth0.frequencyMax : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencyMax : stack1), depth0))
     + "] <small><b>MHz</b></small></td>\n					</tr>\n					<tr>\n						<td>Minimum power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerMin : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerMin : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Maximum power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerMax : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerMax : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.powerAvg : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerAvg : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
-    + escapeExpression(lambda((depth0 != null ? depth0.sdPowerAvg : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.sdPowerAvg : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesBands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.frequenciesChannelWidth : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequenciesChannelWidth : stack1), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "				</table>\n\n				<button id=\"su-edit-place\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h5 class=\"pull-right\"><small>last update <b>"
-    + escapeExpression(lambda((depth0 != null ? depth0.friendlyDate : depth0), depth0))
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.friendlyDate : stack1), depth0))
     + "</b></small></h5> \n				<br>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"su-coord-markers-map\" style=\"height:450px;\"></div>\n		<div id=\"su-selected-coordinate-map\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 

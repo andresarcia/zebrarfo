@@ -1,7 +1,15 @@
 <div class="row">
 	<div class="col-md-12 slider-container occupation-settings">
 		<form class="form-horizontal">
-			{{#if this.frequenciesChannelWidth}}
+			{{#if bands}}
+				<div class="form-group">
+					<label for="frequency-bands" class="col-sm-2 control-label">Frequency bands</label>
+					<div class="col-sm-10">
+						<input class="form-control" id="frequency-bands" type="hidden" />
+					</div>
+				</div>
+			{{/if}}
+			{{#if place.frequenciesChannelWidth}}
 				<div class="form-group">
 					<label for="allocation-channel" class="col-sm-2 control-label">Channel width</label>
 					<div class="col-sm-10">

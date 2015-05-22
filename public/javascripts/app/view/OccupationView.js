@@ -6,6 +6,8 @@ app.view.OccupationView = Backbone.View.extend({
 	events: {
 		'change .slider':'updateChart',
 		'change #allocation-channel':'changeAllocationChannel',
+		'change #frequency-bands':'changeBand',
+		'select2-removing #frequency-bands':'checkBands',
 		'change #select-channels':'pushChannelsFromInput',
 		'select2-removed #select-channels':'popChannelFromInput',
 		'click .build-heatmap-btn-container':'changeToHeatmap'
@@ -40,8 +42,8 @@ app.view.OccupationView = Backbone.View.extend({
 			},
 			tooltip: {
 				positioner: {
-					x: 80, 
-					y: 40 
+					x: 80,
+					y: 40
 				}
 			},
 			yAxis: {
@@ -76,6 +78,15 @@ app.view.OccupationView = Backbone.View.extend({
 		this.clearChannels();
 		this.renderChart();
 		this.renderChannelInput();
+	},
+
+	changeBand: function(){
+		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		this.renderChart();
+	},
+
+	checkBands: function(evt){
+		if(window.settings.currBand.length == 1) evt.preventDefault();
 	},
 
 	updateChart: function(){
@@ -206,7 +217,10 @@ app.view.OccupationView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.occupation;
-		var html = template(window.place.attributes);
+		var html = template({
+			place: window.place.attributes, 
+			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+		});
 		this.$el.html(html);
 
 		this.$el.find("#allocation-channel").select2({ 
@@ -214,6 +228,14 @@ app.view.OccupationView = Backbone.View.extend({
 		});
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+
+		if(window.place.attributes.frequenciesBands.length > 1){
+			this.$el.find("#frequency-bands").select2({ 
+				data: window.place.attributes.frequenciesBands,
+				multiple: true,
+			});
+			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+		}
 
 		return this;
 	},
