@@ -168,7 +168,10 @@ app.view.PlaceView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.place;
-		var html = template(window.place.attributes);
+		var html = template({
+			place: window.place.attributes, 
+			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+		});
 		this.$el.html(html);
 
 		this.$el.find("#allocation-channel").select2({ 

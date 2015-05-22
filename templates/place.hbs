@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
 	<li><a href="#places">Places</a></li>
-	<li class="active">{{this.name}}</li>
+	<li class="active">{{place.name}}</li>
 </ol>
 
 <div class="row">
@@ -8,7 +8,7 @@
 		<div class="panel panel-default su-place-info">
 			<div class="panel-body">
 				<div class="su-place-info-links">
-					<a href="#places/{{this.id}}/upload" class="pull-right ws-blue">
+					<a href="#places/{{place.id}}/upload" class="pull-right ws-blue">
 						<small>upload more samples</small>
 					</a>
 					<br>
@@ -22,41 +22,41 @@
 				</div>
 				<br>
 				<br>
-				<h2 class="col-md-12">{{this.name}}</h2>
+				<h2 class="col-md-12">{{place.name}}</h2>
 				<table class="table table-striped">
 					<tr>
 						<td>Total number of samples</td>
-						<td>{{this.numberCoordinates}}</td>
+						<td>{{place.numberCoordinates}}</td>
 					</tr>
 					<tr>
 						<td>Total distance</td>
-						<td>{{this.totalDistance}} <small><b>km</b></small></td>
+						<td>{{place.totalDistance}} <small><b>km</b></small></td>
 					</tr>
 					<tr>
 						<td>Total number of frequencies</td>
-						<td>{{this.numberPowerFrequency}}</td>
+						<td>{{place.numberPowerFrequency}}</td>
 					</tr>
 					<tr>
 						<td>Range of frequencies</td>
-						<td>[{{this.frequencyMin}}-{{this.frequencyMax}}] <small><b>MHz</b></small></td>
+						<td>[{{place.frequencyMin}}-{{place.frequencyMax}}] <small><b>MHz</b></small></td>
 					</tr>
 					<tr>
 						<td>Minimum power</td>
-						<td>{{this.powerMin}} <small><b>dBm</b></small></td>
+						<td>{{place.powerMin}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Maximum power</td>
-						<td>{{this.powerMax}} <small><b>dBm</b></small></td>
+						<td>{{place.powerMax}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Average power</td>
-						<td>{{this.powerAvg}} <small><b>dBm</b></small></td>
+						<td>{{place.powerAvg}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Standard deviation of power</td>
-						<td>{{this.sdPowerAvg}} <small><b>dBm</b></small></td>
+						<td>{{place.sdPowerAvg}} <small><b>dBm</b></small></td>
 					</tr>
-					{{#if this.frequenciesBands}}
+					{{#if bands }}
 						<tr>
 							<td colspan="2">
 								<label for="frequency-bands">Frequency bands</label>
@@ -64,7 +64,7 @@
 							</td>
 						</tr>
 					{{/if}}
-					{{#if this.frequenciesChannelWidth}}
+					{{#if place.frequenciesChannelWidth}}
 						<tr>
 							<td colspan="2">
 								<label for="allocation-channel">Channel width</label>
@@ -79,7 +79,7 @@
 				</button>
 			</div>
 			<div class="panel-footer">
-				<h5 class="pull-right"><small>last update <b>{{this.friendlyDate}}</b></small></h5> 
+				<h5 class="pull-right"><small>last update <b>{{place.friendlyDate}}</b></small></h5> 
 				<br>
 			</div>
 		</div>
