@@ -120,6 +120,9 @@ app.view.PlaceView = Backbone.View.extend({
 					label:{text:'Average power'}
 				}]
 			},
+			xAxis: {
+				tickPositions: app.util.isWifi() ? [2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472, 2484, 5180, 5200, 5220, 5240, 5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680, 5700, 5745, 5765, 5785, 5805, 5809] : undefined,
+			},
 			tooltip: {
 				positioner: {
 					x: 80, 

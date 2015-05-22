@@ -80,3 +80,12 @@ app.util.alphanum = function(a,b) {
   }
   return aa.length - bb.length;
 };
+
+app.util.isWifi = function(){
+  var isWifi = _.filter(window.place.attributes.frequenciesBands, function(item){
+    return item.text == "2.4 GHz" || item.text == "5 GHz";
+  });
+
+  return isWifi.length > 0 ? true : false;
+};
+

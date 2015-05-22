@@ -110,15 +110,21 @@ app.view.CapturesView = Backbone.View.extend({
 	},
 
 	render: function(data, options){
-		var self = this;
-		var dataPlot = [];
+		var self = this,
+			dataPlot = [],
+			chartOptions = {
+				renderTo: $(this.selector).find('.chart_power_frequency')[0],
+				backgroundColor: null,
+				zoomType: 'x'
+			},
+			xAxis = {
+				title: {
+					text: 'Frequencies (MHz)'
+				},
+			};
 
-		var chartOptions = {
-			renderTo: $(this.selector).find('.chart_power_frequency')[0],
-			backgroundColor: null,
-			zoomType: 'x'
-		};
 		chartOptions = _.extend(chartOptions, options.chart);
+		xAxis = _.extend(xAxis, options.xAxis);
 
 		// filter by bands
 		var bands = _.sortBy(window.settings.currBand);
@@ -169,11 +175,7 @@ app.view.CapturesView = Backbone.View.extend({
 					return this.x + '</b> : <b>' + (this.y).toFixed(3);
 				}
 			},
-			xAxis: {
-				title: {
-					text: 'Frequencies (MHz)'
-				},
-			},
+			xAxis: xAxis,
 			yAxis: options.yAxis,
 			plotOptions: {
 				line: {
