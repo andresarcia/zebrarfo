@@ -367,8 +367,8 @@ function takePlaceStats(n){
 		to: 2484000,
 		name: "2.4 GHz"
 	},{
-		from: 5180000,
-		to: 5809000,
+		from: 5170000,
+		to: 5825000,
 		name: "5 GHz"
 	}];
 
