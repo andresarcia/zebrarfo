@@ -34,10 +34,18 @@
 			<label for="radius-slider">Radius</label>
 			<div class="radius-slider"></div>
 		</div>
+		{{#if bands }}
+			<div class="form-group">
+				<label for="frequency-bands">Frequency bands</label>
+				<input class="form-control" id="frequency-bands" type="hidden" />
+			</div>
+		{{/if}}
 		<br />
 		<div class="form-group heatmap-select-channels">
-			<label for="allocation-channel">Channel width</label>
-			<input class="form-control" id="allocation-channel" type="hidden" />
+			{{#if place.frequenciesChannelWidth}}
+				<label for="allocation-channel">Channel width</label>
+				<input class="form-control" id="allocation-channel" type="hidden" />
+			{{/if}}
 		</div>
 	</div>
 	<div class="col-md-9">
