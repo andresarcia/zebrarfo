@@ -400,7 +400,6 @@ app.view.HeatmapView = Backbone.View.extend({
 		google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
 			google.maps.event.trigger(self.heatmap.map, 'resize');
 			self.renderHeatmap(true,true);
-			self.waitingView.hide();
 		});
 	},
 
@@ -409,6 +408,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		if(this.heatmap.heatmap) this.heatmap.heatmap.setMap(null);
 
 		if(update){
+			this.disableSettings();
 			var settings = this.heatmap.settings;
 			var data = this.heatmapDataProcessor.process(
 				this.boundaries, 
@@ -480,7 +480,8 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 
 		this.heatmap.heatmap.setMap(this.heatmap.map);
-		this.$el.find('.heatmap-settings').removeClass('disable-container');
+		this.$el.find('.settings').removeClass('disable-container');
+		this.waitingView.hide();
 	},
 
 	renderMaxSuggestedSlider: function(){
@@ -532,6 +533,11 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.changeFrequencyBy(true);
 	},
 
+	disableSettings: function(){
+		if(!this.$el.find('.settings').hasClass("disable-container"))
+			this.$el.find('.settings').addClass('disable-container');
+	},
+
 	render: function(){
 		var template = Zebra.tmpl.heatmap;
 		var html = template({
@@ -540,7 +546,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 		this.$el.html(html);
 
-		this.$el.find('.heatmap-settings').addClass('disable-container');
+		this.disableSettings();
 		this.$el.find('#map_canvas_heatmap').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;
