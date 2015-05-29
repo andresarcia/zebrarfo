@@ -25,12 +25,37 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.data3D.addColumn('number', 'Occupation (%)');
 
 		var self = this;
-		var dataGrouped = _.groupBy(this.data.charts, function(sample){
-			return sample.frequency;
-		});
-		var a = [];
-		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= 3) {
-			_.each(dataGrouped, function(itemSameFrequency){
+
+		// filter by bands
+		var bands = _.sortBy(window.settings.currBand),
+			data = _.groupBy(this.data.charts, function(sample){ return sample.frequency; });
+
+		// if all ([0]) not in bands, then filter
+		if(Number(bands[0]) !== 0){
+			var dataFiltered = {};
+			var index = 0;
+			var boundIndex = bands[index];
+			_.find(_.keys(data), function(key){
+				var from = window.place.attributes.frequenciesBands[boundIndex].from;
+				var to = window.place.attributes.frequenciesBands[boundIndex].to;
+				var fq = Number(key);
+
+				if(fq >= from && fq <= to) dataFiltered[key] = data[key];
+				if(fq > to) {
+					if(index < bands.length - 1){
+						index += 1;
+						boundIndex = bands[index];
+					} 
+					else return key;
+				}
+			});
+
+			data = dataFiltered;
+		} 
+
+		var presition = 3;
+		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= presition) {
+			_.each(data, function(itemSameFrequency){
 				var passed = 0;
 				_.each(itemSameFrequency, function(item){
 					if(item.power >= i) passed += 1;
@@ -62,8 +87,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	renderGraph: function(){
 		this.waitingView.show();
-		if(!this.data3D)
-			this.calculateData();
+		if(!this.data3D) this.calculateData();
 
 		var options = {
 			width:  "100%",
