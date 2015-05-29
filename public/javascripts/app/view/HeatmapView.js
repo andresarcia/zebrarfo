@@ -130,7 +130,10 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		this.$el.find('.heatmap-select-channels').hide();
 
-		this.changeBand();
+		var b = this.calculateBand();
+		// select by frequency
+		this.renderFrequencySlider(b.start, b.from, b.to);
+		this.changeFrequencyBy(false);
 
 		// spreader
 		this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
@@ -218,6 +221,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 	renderChannelInput: function(){
 		var channelData = [];
+
 		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
 			channelData.push({
 				id: channel.from + '-' + channel.to,
@@ -253,9 +257,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.renderHeatmap();
 	},
 
-	changeBand: function(evt){
-		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
-
+	calculateBand: function(){
 		var bands = _.sortBy(window.settings.currBand),
 			from, 
 			to;
@@ -270,9 +272,18 @@ app.view.HeatmapView = Backbone.View.extend({
 		var tail = Math.round((to - from) * 0.10),
 			start = [from + tail, to - tail];
 
-		this.renderFrequencySlider(start, from, to);
+		return {
+			start: start,
+			from: from,
+			to: to
+		};
+	},
 
-		this.changeFrequencyBy(!evt ? false : true);
+	changeBand: function(evt){
+		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		var b = this.calculateBand();
+		this.renderFrequencySlider(b.start, b.from, b.to);
+		this.changeFrequencyBy(true);
 	},
 
 	checkBands: function(evt){
@@ -382,29 +393,28 @@ app.view.HeatmapView = Backbone.View.extend({
 			styles: 
 				[{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
 		};
-		
-		this.heatmap.map = new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
+		this.heatmap.map = 
+			new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
 		this.heatmap.bounds = new google.maps.LatLngBounds();
+
 		google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
 			google.maps.event.trigger(self.heatmap.map, 'resize');
 			self.renderHeatmap(true,true);
+			self.waitingView.hide();
 		});
-
-		this.waitingView.hide();
 	},
 
-	renderHeatmap: function(updateData,center){
+	renderHeatmap: function(update,center){
 		var self = this;
+		if(this.heatmap.heatmap) this.heatmap.heatmap.setMap(null);
 
-		if (this.heatmap.heatmap)
-			this.heatmap.heatmap.setMap(null);
-
-		if(updateData){
+		if(update){
+			var settings = this.heatmap.settings;
 			var data = this.heatmapDataProcessor.process(
 				this.boundaries, 
-				this.heatmap.settings.dataFunction,
-				this.heatmap.settings.distance,
-				this.heatmap.settings.distanceUnit
+				settings.dataFunction,
+				settings.distance,
+				settings.distanceUnit
 			);
 
 			this.disableMarker();
@@ -413,7 +423,6 @@ app.view.HeatmapView = Backbone.View.extend({
 
 			_.each(data.data, function(item, index) {
 				var location = new google.maps.LatLng(item.lat, item.lng);
-
 				self.heatmap.data.push({
 					location: location, 
 					weight: item.count 
@@ -438,19 +447,19 @@ app.view.HeatmapView = Backbone.View.extend({
 					infowindow.close();
 				});
 
-				if(index != self.heatmap.settings.currentMarkerItem)
-					marker.setVisible(false);
+				// just show one marker (current) 
+				if(index != self.heatmap.settings.currentMarkerItem) marker.setVisible(false);
 
 				self.heatmap.markers.push(marker);
 				self.heatmap.bounds.extend(marker.position);
 			});
 			
-			this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+			this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(
+				this.data.powerMax);
 			this.renderMaxSuggestedSlider();
 			this.renderMarkersSlider(data.data.length - 1);
 
-			if(center)
-				this.heatmap.map.fitBounds(this.heatmap.bounds);
+			if(center) this.heatmap.map.fitBounds(this.heatmap.bounds);
 		}
 
 		this.heatmap.heatmap = new google.maps.visualization.HeatmapLayer({
