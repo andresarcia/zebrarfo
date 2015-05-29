@@ -48,10 +48,8 @@ app.view.OccupationView = Backbone.View.extend({
 			yAxis: {
 				min: 0,
 				max: 110,
-				
 				endOnTick: false,
 				showLastLabel: false,
-
 				tickInterval: 10,
 				title: {
 					text: 'Occupation (%)'
@@ -59,8 +57,7 @@ app.view.OccupationView = Backbone.View.extend({
 			}
 		};
 
-		if(!window.settings.place.charts.channels)
-			window.settings.place.charts.channels = [];
+		if(!window.settings.place.charts.channels) window.settings.place.charts.channels = [];
 
 		Backbone.pubSub.off('event-power-frequencies-channel-select');
 		Backbone.pubSub.on('event-power-frequencies-channel-select', this.pushChannelsFromGraph, this);
@@ -96,16 +93,12 @@ app.view.OccupationView = Backbone.View.extend({
 	updateDataByTab: function(){
 		var self = this;
 
-		if(this.chart.chart)
-			this.chart.chart.destroy();
-
+		if(this.chart.chart) this.chart.chart.destroy();
 		setTimeout(function(){
 			self.renderChart();
 		}, 200);
 
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
-		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
-
 		this.renderChannelInput();
 	},
 
