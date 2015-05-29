@@ -467,7 +467,16 @@ app.view.HeatmapView = Backbone.View.extend({
 			maxIntensity: this.heatmap.settings.maxIntensity,
 			radius: Number(self.heatmap.settings.radius),
 			opacity: self.heatmap.settings.opacity/100,
-			gradient: ['rgba(0, 0, 0, 0)','#000000','#63328D','#145DF5','#00DADD','#00F24F','#FEF252','#FF8D33','#EE1F1A'],
+			gradient: [
+				'RGBA(0, 0, 0, 0)',
+				'RGBA(4, 3, 5, 1)',
+				'RGBA(3, 4, 105, 1)',
+				'RGBA(11, 52, 185, 1)',
+				'RGBA(69, 233, 254, 1)',
+				'RGBA(57, 183, 0, 1)',
+				'RGBA(255, 252, 0, 1)',
+				'RGBA(255, 141, 51, 1)',
+				'RGBA(247, 26, 8, 1)'],
 		});
 
 		this.heatmap.heatmap.setMap(this.heatmap.map);
