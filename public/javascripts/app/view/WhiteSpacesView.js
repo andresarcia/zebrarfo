@@ -12,6 +12,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.quality = {};
 		this.settings.quality.crr = 5;
 		this.settings.quality.max = 10;
+		this.cameraPosition = {};
+		this.cameraPosition.horizontal = 5.4;
+		this.cameraPosition.vertical = 0.5;
+		this.cameraPosition.distance = 2;
 	},
 
 	initialize: function(options){
@@ -30,10 +34,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		var self;
 		if(evt)
 			self = evt.data.reference;
-		else
+		else{
 			self = this;
-
-		this.renderSettings();
+			this.renderSettings();
+		}
 
 		if(window.settings.googleVisualizationApi)
 			self.renderGraph(this.coordinates);
@@ -138,15 +142,20 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			showShadow: false,
 			keepAspectRatio: false,
 			verticalRatio: 0.5,
-			cameraPosition: {
-				"horizontal": 5.4, 
-				"vertical": 0.5, 
-				"distance": 1.7
-			}
+			cameraPosition: this.cameraPosition
 		};
 
 		var self = this;
 		var graph = new links.Graph3d(document.getElementById('white-spaces-canvas'));
+		google.visualization.events.addListener(graph, 'camerapositionchange', onCameraPositionChange);
+
+		// save camera position to redraw in the same position
+		function onCameraPositionChange(evt) {
+			self.cameraPosition.horizontal = evt.horizontal;
+			self.cameraPosition.vertical = evt.vertical;
+			self.cameraPosition.distance = evt.distance;
+		}
+
 		setTimeout(function(){
 			graph.draw(self.data3D, options);
 			self.waitingView.hide();
