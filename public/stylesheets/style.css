@@ -117,6 +117,27 @@ hr {
 .modal-footer .btn-danger:hover {
   color: #CC0000!important;
 }
+
+/* TOOLTIP ***********************/
+.tooltip-inner-2 {
+  max-width: 200px;
+  padding: 3px 8px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  background-color: #000;
+  border-radius: 4px;
+}
+.tooltip-inner-2 {
+  max-width: 300px!important;
+  text-align: left!important;
+  padding:16px 15px 5px 15px;
+}
+.tooltip-inner-2 ul li {
+  list-style: none;
+  margin-left: -35px;
+}
+
 /* NAVBAR ************************/
 #navbar {
   padding-bottom: 75px;
