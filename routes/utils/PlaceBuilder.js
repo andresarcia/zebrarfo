@@ -1,5 +1,6 @@
 var utils = require('./Utils');
 var _ = require("underscore");
+var vptree = require("vptree");
 
 exports.create = function(place, callback) {
 	var o = place;
@@ -25,6 +26,7 @@ exports.create = function(place, callback) {
 	n.distanceAvg = 0;
 	n.distanceMax = null;
 	n.distanceMin = null;
+	n.distanceSD = [];
 	n.outliers = {};
 
 	/* -- vars for take stats -- */
@@ -33,13 +35,12 @@ exports.create = function(place, callback) {
 	n.countSamplesDistance = 0;
 	n.frequencyUnitFactor = 1;
 	n.frequencies = [];
+	n.coord = [];
 	/* ------------------------- */
 
 	reduceCommonGps(o,n,function(){
 		checkPlaceAttributes(n,function(err){
-			if(err)
-				callback(err,null);
-
+			if(err) callback(err,null);
 			callback(null,n);
 		});
 	});
@@ -127,7 +128,7 @@ function reduceCommonGps(o,n,callback){
 
 			saveCoord(coord, n);
 		});
-	
+
 	} else {
 		// Change the frequencies values to common unit (kHz)
 		switch (o.frequencies.unit) {
@@ -213,7 +214,10 @@ function reduceCommonGps(o,n,callback){
 				else
 					n.outliers[outlier] = 1;
 			}
-		
+
+			// save lat & lng for sd spredear
+			n.coord.push({ lat: item[0].lat, lng: item[0].lng });
+
 			var coord = takeCoordStats({
 				latitude: item[0].lat,
 				longitude: item[0].lng,
@@ -402,12 +406,67 @@ function takePlaceStats(n){
 		});
 	});
 
+	// vptree
+
+	// build radios
+	var range = _.range(1,10);
+	var factors = [0.001, 0.01, 0.1, 1, 10, 100];
+	var radios = [];
+	_.each(factors, function(factor){
+		var decimal = factor.toString().split(".")[1];
+		if(decimal) decimal = decimal.length;
+		else decimal = 0;
+
+		var res = _.map(range, function(num){ 
+			var sol = num * factor;
+			return Number(sol.toFixed(decimal));
+		});
+		radios = _.union(radios, res);
+	});
+	radios.push(1000);
+
+	// build tree
+	var sd = [];
+	var tree = vptree.build(n.coord, function(a,b){
+		return utils.GetDistanceFromLatLonInKm(a.lat, a.lng, b.lat, b.lng);
+	});
+
+	// build sd
+	_.each(radios, function(r){
+		var SD_M 	= 0,
+			SD_X 	= 0,
+			count 	= 0;
+
+		_.each(n.coord, function(item){
+			if(item.selected) return;
+			var sorted = tree.search(item, n.coord.length);
+			sorted.splice(0,1);
+
+			_.find(sorted, function(sItem, i){
+				var marker = n.coord[sItem.i];
+				if(sItem.d <= r) marker.selected = true;
+				else {
+					SD_M += sItem.d;
+					SD_X += sItem.d * sItem.d;
+					return sItem;
+				}
+			});
+
+			count += 1;
+		});
+
+		if(count == 1) SD_X = 0;
+		else SD_X = Number(Math.sqrt((SD_X - (SD_M * SD_M)/ count)/(count - 1))).toFixed(4);
+		n.distanceSD.push({ radio: r, sd: SD_X });
+	});
+
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;
 	delete n.placePowerSD_M;
 	delete n.countSamplesDistance;
 	delete n.frequencyUnitFactor;
 	delete n.frequencies;
+	delete n.coord;
 	/* -------------------------------- */
 }
 

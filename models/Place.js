@@ -68,6 +68,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(12,7),
       allowNull: true,
     },
+    distanceSD: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     visible : {
       type:DataTypes.BOOLEAN,
       defaultValue: 1

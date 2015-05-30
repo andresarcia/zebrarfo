@@ -54,6 +54,7 @@ exports.create = function(req,res,next){
 					n[0].distanceMax = place.distanceMax;
 					n[0].frequenciesBands = JSON.stringify(place.frequenciesBands);
 					n[0].frequenciesChannelWidth = JSON.stringify(place.frequenciesChannelWidth);
+					n[0].distanceSD = JSON.stringify(place.distanceSD);
 
 					n[0].save()
 					.then(function(){
