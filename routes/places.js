@@ -7,13 +7,14 @@ var utils = require('./utils/Utils');
 var builder = require('./utils/PlaceBuilder');
 // == MONGO ===================================================================
 // var builder = require('./utils/PlaceBuilderV2');
+// ============================================================================
 var placeUtils = require('./utils/PlaceUtils');
 var coordinate = require('./coordinates');
 var outliers = require('./outliers');
 
 // == MONGO ===================================================================
 // var Place = require('../models_mongo/place.js');
-// var PlaceStats = require('./utils/PlaceStats');
+// ============================================================================
 
 /*-------------------------------------------------------------------*/
 exports.create = function(req,res,next){
@@ -137,6 +138,8 @@ exports.create = function(req,res,next){
 	// 			o.distance = n.distance;
 	// 			o.power = n.power;
 	// 			o.outliers = n.outliers;
+	// 			o.frequencies.bands = n.frequencies.bands;
+	// 			o.frequencies.width = n.frequencies.width;
 	// 			o.updatedAt = Date.now();
 	// 			_.each(n.newCoordinates, function(item){
 	// 				o.coordinates.push(item);

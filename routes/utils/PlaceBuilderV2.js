@@ -3,7 +3,7 @@ var _ = require("underscore");
 
 /**
  * Creates a new place from an upload or other place
- * @param {Object} u - place loaded 
+ * @param {Object} u - place uploaded 
  * @param {Object} o - other place
  * @param {Boolean} newCoordinates - append to the return object an array with just the new coords
  * @return {Object} n - new place
@@ -15,6 +15,8 @@ exports.create = function(u, o, newCoordinates, callback) {
 	n.name = u.name;
 	n.frequencies = {};
 	n.frequencies.values = [];
+	n.frequencies.bands = [];
+	n.frequencies.width = [];
 	n.power = {};
 	n.power.min = null;
 	n.power.max = null;
@@ -247,18 +249,22 @@ function saveCoord(coordinate, n){
 }
 
 function takePlaceStats(n){
+	// power
 	n.power.avg = n.power.avg / n.coordinates.length;
 	n.power.avg = Number(n.power.avg.toFixed(5));
 	
+	// sd
 	if(n.coordinates.length == 1) n.power.sd = 0;
 	else {
 		n.placePowerSD_X = Math.sqrt((n.placePowerSD_X - (n.placePowerSD_M*n.placePowerSD_M)/n.coordinates.length)/(n.coordinates.length - 1));
 		n.power.sd = Number(n.placePowerSD_X.toFixed(5));
 	}
 
+	// distance
 	if(n.coordinates.length > 1) n.distance.avg = n.distance.total/n.coordinates.length;
 	else n.distance.total = n.distance.avg = n.distance.min = n.distance.max = 0;
 
+	// outliers
 	var aux = [];
 	_.each(_.keys(n.outliers), function(key){
 		aux.push({
@@ -266,9 +272,62 @@ function takePlaceStats(n){
 			frequency: n.outliers[key]
 		});
 	});
-
 	aux = _.sortBy(aux, 'power');
 	n.outliers = aux;
+
+	// frequencies bands
+	var bands = [{
+		from: n.frequencies.values[0],
+		to: n.frequencies.values[n.frequencies.values.length - 1],
+		name: "all"
+	},{
+		from: 2412000,
+		to: 2484000,
+		name: "2.4 GHz"
+	},{
+		from: 5170000,
+		to: 5825000,
+		name: "5 GHz"
+	}];
+
+	_.each(bands, function(item, index){
+		var result = _.filter(n.frequencies.values, function(num){ 
+			return num >= item.from && num <= item.to; 
+		});
+		if(result.length > 0){
+			n.frequencies.bands.push({
+				text: item.name,
+				from: item.from,
+				to: item.to,
+				id: index
+			});
+		}
+	});
+
+	// frequencies width
+	var width = [{
+		from: 470000,
+		to: 890000,
+		name: "American 6Mhz"
+	},
+	{
+		from: 470000,
+		to: 862000,
+		name: "European 8Mhz"
+	}];
+
+	_.each(width, function(item, index){
+		var result = _.filter(n.frequencies.values, function(num){ 
+			return num >= item.from && num <= item.to; 
+		});
+		if(result.length > 0) {
+			n.frequencies.width.push({
+				text: item.name,
+				id: index
+			});
+		}
+	});
+
 
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;

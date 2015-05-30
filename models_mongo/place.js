@@ -12,6 +12,34 @@ var placeShema = new Schema({
 			type: Number,
 			min: 0
 		}],
+		bands: [{
+			id: {
+				type: Number,
+				required: true,
+			},
+			text: {
+				type: String,
+				required: true, 
+			},
+			from: {
+				type: Number,
+				required: true,
+			},
+			to: {
+				type: Number,
+				required: true,
+			},
+		}],
+		width: [{
+			id: {
+				type: Number,
+				required: true,
+			},
+			text: {
+				type: String,
+				required: true, 
+			},
+		}],
 	},
 	power: {
 		min: {
