@@ -66,71 +66,9 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 	},
 
 	changeMarkersByDistance: function(distance,unit){
-		if(this.markers.length < 1)
-			return;
-
-		// --------
-		var t0 = performance.now();
-		// --------
-		var self = this;
+		if(this.markers.length < 1) return;
 		this.cleanAllMarkers();
-
-		var radio;
-		if(unit == "m") radio = distance / 1000;
-		else if(unit == "km") radio = Number(distance);
-		else radio = 0;
-
-		var markers = _.clone(this.markers);
-		var ids = {};
-		var SD_M = 0;
-		var SD_X = 0;
-		var n = 0;
-
-		_.each(markers, function(item){
-			if(
-				item.visibleCount > 0 || 
-				item.icon == window.settings.markers.iconHover ||
-				ids[item.id]
-			)
-				return;
-
-			var sorted = self.tree.search(item, markers.length);
-			sorted.splice(0,1);
-			var inner = [];
-
-			_.find(sorted, function(item, i){
-				var marker = markers[item.i];
-				if(marker.visibleCount < 1){
-					if(item.d <= radio && marker.icon != window.settings.markers.iconHover){
-						marker.setIcon(window.settings.markers.iconHover);
-						inner.push(marker.id);
-					} 
-					else if(item.d > radio && marker.icon == window.settings.markers.iconIdle){
-						SD_M += item.d;
-						SD_X += item.d * item.d;
-						return item;
-					} 
-				}
-			});
-
-			n += 1;
-
-			if(inner.length > 0)
-				ids[item.id] = inner;
-		});
-
-		if(n == 1)
-			SD_X = 0;
-		else {
-			SD_X = Math.sqrt((SD_X - (SD_M * SD_M)/ n)/(n - 1));
-			SD_X = Number(SD_X.toFixed(5));
-		}
-
-		// console.log("sd: " + SD_X);
-		var t1 = performance.now();
-		console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
-
-		return ids;
+		return this.spreader.spread(distance,unit);
 	},
 
 	changeMarkers: function(v){
@@ -351,10 +289,9 @@ app.view.GoogleMapMarkersWithHeatmapView = Backbone.View.extend({
 			self.renderHeatmap();
 		});
 
-		this.tree = VPTreeFactory.build(this.markers, function(a,b){
-			return app.util.GetDistanceFromLatLonInKm(
-				a.position.k, a.position.D, b.position.k, b.position.D); 
-		});
+		// spreader tree
+		this.spreader = new app.util.SpreadMarkers();
+		this.spreader.initialize(this.markers);
 	},
 
 	renderHeatmap: function(){
