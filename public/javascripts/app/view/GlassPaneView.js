@@ -5,17 +5,13 @@ app.view.GlassPaneView = Backbone.View.extend({
 
 	initialize: function(options){
 		this.container = options.container;
-		var html;
+		var fontSize = options.fontSize || '30px';
 
-		if(!options.icon)
-			html = '<div class="glass-pane"></div>';
-		else {
-
-			if(!options.iconSize)
-				html = '<div class="glass-pane"><a class="glass-icon"><span class="glyphicon '+options.icon+'"></span></a></div>';
-			else
-				html = '<div class="glass-pane"><a class="glass-icon"><span class="glyphicon '+options.icon+' glyphicon-'+options.iconSize+'x "></span></a></div>';
-		}
+		var template = Zebra.tmpl.glass_pane;
+		var html = template({
+			fontSize: fontSize, 
+			icon: options.icon,
+		});
 
 		var width = this.container.outerWidth();
 		var height = this.container.outerHeight();

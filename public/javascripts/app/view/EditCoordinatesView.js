@@ -153,7 +153,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var restore = new app.view.GlassPaneView({
 			container: this.$el.find('.su-coord-to-edit').eq(index),
 			icon: 'glyphicon-arrow-left',
-			iconSize: '2'
+			fontSize: '40px',
 		});
 		restore.toggle();
 	},
