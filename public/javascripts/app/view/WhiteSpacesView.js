@@ -13,7 +13,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	reset: function(){
 		this.settings = {};
 		this.settings.quality = {};
-		this.settings.quality.crr = 5;
+		this.settings.quality.crr = app.util.isWifi() ? 1 : 5;
 		this.settings.quality.max = 10;
 		this.settings.occupationMin = 0;
 		this.settings.occupationMax = 100;
@@ -55,7 +55,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	renderSettings: function(){
 		this.qualitySlider = this.$el.find('.quality-slider').noUiSlider({
-			start: this.settings.quality.crr,
+			start: this.settings.quality.max - this.settings.quality.crr,
 			step: 1,
 			format: wNumb({
 				decimals: 0
@@ -68,7 +68,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		this.$el.find('.quality-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + '</strong>');
 			$(this).css('width', '50px');
 			$(this).css('left', '-10px');
@@ -157,8 +157,6 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 			data = dataFiltered;
 		} 
-
-		console.log(data);
 
 		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= this.settings.quality.crr) {
 			_.each(data, function(itemSameFrequency){
