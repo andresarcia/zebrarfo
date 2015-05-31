@@ -5,7 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
-var compress = require('compression');
 var compression = require('compression');
 var passport = require('passport');
 var jwt = require('jwt-simple');
@@ -22,11 +21,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('jwtTokenSecret', 'LiwzebraRFO8J9u13tg');
 
-app.use(compress());
 // compresion of responses
 app.use(compression({
 	filter: shouldCompress,
-	level: 9
+	level: 9 // max level of compression, default 6
 }));
 app.use(favicon());
 app.use(logger('dev'));
