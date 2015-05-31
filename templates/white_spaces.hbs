@@ -6,6 +6,16 @@
 			<label for="quality-slider">Quality</label>
 			<div class="quality-slider"></div>
 		</div>
+		<div class="form-group">
+			<label for="occupation-slider">Occupation range</label>
+			<div class="occupation-slider"></div>
+		</div>
+		{{#if bands }}
+			<div class="form-group">
+				<label for="frequency-bands">Frequency bands</label>
+				<input class="form-control" id="frequency-bands" type="hidden" />
+			</div>
+		{{/if}}
 	</div>
 	<div class="col-md-9">
 		<div id="white-spaces-canvas"></div>

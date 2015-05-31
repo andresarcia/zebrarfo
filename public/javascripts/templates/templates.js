@@ -51,6 +51,20 @@ this["Zebra"]["tmpl"]["error"] = Handlebars.template({"1":function(depth0,helper
   return buffer + "				</ul>\n		  	</li>\n		</ul>\n		<button id=\"error-button\" type=\"button\" class=\"btn ws-error-button btn-lg\">Got it</button>\n	</div>\n</div>";
 },"useData":true});
 
+this["Zebra"]["tmpl"]["glass_pane"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "		<a class=\"glass-icon\" style=\"font-size: "
+    + escapeExpression(((helper = (helper = helpers.fontSize || (depth0 != null ? depth0.fontSize : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"fontSize","hash":{},"data":data}) : helper)))
+    + "\">\n			<span class=\"glyphicon "
+    + escapeExpression(((helper = (helper = helpers.icon || (depth0 != null ? depth0.icon : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"icon","hash":{},"data":data}) : helper)))
+    + "\"></span>\n		</a>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class=\"glass-pane\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.icon : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</div>";
+},"useData":true});
+
 this["Zebra"]["tmpl"]["heatmap"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "			<div class=\"form-group\">\n				<label for=\"frequency-bands\">Frequency bands</label>\n				<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n			</div>\n";
   },"3":function(depth0,helpers,partials,data) {
@@ -104,8 +118,11 @@ this["Zebra"]["tmpl"]["modal_parsing_measures"] = Handlebars.template({"compiler
 },"useData":true});
 
 this["Zebra"]["tmpl"]["navbar"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n	<div class=\"container-fluid\">\n		<div class=\"navbar-header\" id=\"navbar-header\">\n			<button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-menu\">\n				<span class=\"glyphicon glyphicon-user\"></span>\n				<b class=\"caret\"></b>\n			</button>\n			<div class=\"navbar-brand\">\n				<div class=\"logo\"></div>\n				<h1>ZEBRA RFO</h1>\n				<h6>RADIO FREQUENCY OBSERVER</h6>\n			</div>\n		</div>\n\n		<div class=\"collapse navbar-collapse\" id=\"navbar-menu\">\n			<ul class=\"nav navbar-nav navbar-right\">\n				<li class=\"dropdown\">\n					<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n						<span class=\"glyphicon glyphicon-user\"></span>\n						<b class=\"caret\"></b>\n					</a>\n					<ul class=\"dropdown-menu\" role=\"menu\">\n						<li><a href=\"#\">Profile</a></li>\n						<li><a href=\"#\">Account settings</a></li>\n						<li class=\"divider\"></li>\n						<li><a href=\"#logout\">Log Out</a></li>\n					</ul>\n				</li>\n			</ul>\n		</div>\n	</div>\n</nav>";
-  },"useData":true});
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n	<div class=\"container-fluid\">\n		<div class=\"navbar-header\" id=\"navbar-header\">\n			<button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-menu\">\n				<span class=\"glyphicon glyphicon-user\"></span>\n				<b class=\"caret\"></b>\n			</button>\n			<div class=\"navbar-brand\">\n				<div class=\"logo\"></div>\n				<h1>ZEBRA RFO</h1>\n				<h6>RADIO FREQUENCY OBSERVER</h6>\n			</div>\n		</div>\n\n		<div class=\"collapse navbar-collapse\" id=\"navbar-menu\">\n			<ul class=\"nav navbar-nav navbar-right\">\n				<li class=\"dropdown\">\n					<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">\n						<span class=\"username\">"
+    + escapeExpression(((helper = (helper = helpers.email || (depth0 != null ? depth0.email : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"email","hash":{},"data":data}) : helper)))
+    + "</span>\n						<span class=\"glyphicon glyphicon-user\"></span>\n						<b class=\"caret\"></b>\n					</a>\n					<ul class=\"dropdown-menu\" role=\"menu\">\n						<li><a href=\"#\">Profile</a></li>\n						<li><a href=\"#\">Account settings</a></li>\n						<li class=\"divider\"></li>\n						<li><a href=\"#logout\">Log Out</a></li>\n					</ul>\n				</li>\n			</ul>\n		</div>\n	</div>\n</nav>";
+},"useData":true});
 
 this["Zebra"]["tmpl"]["navbar_mobil"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n	<div class=\"container-fluid\">\n		<div class=\"navbar-header\" id=\"navbar-header\">\n			<button type=\"button\" class=\"navbar-toggle\" id=\"toggle-main-menu\">\n				<span class=\"sr-only\">Toggle navigation</span>\n				<span class=\"icon-bar\"></span>\n				<span class=\"icon-bar\"></span>\n				<span class=\"icon-bar\"></span>\n			</button>\n			<button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#navbar-menu\">\n				<span class=\"glyphicon glyphicon-user\"></span>\n				<b class=\"caret\"></b>\n			</button>\n			<div class=\"navbar-brand\">\n				<div class=\"logo\"></div>\n				<h1>ZEBRA RFO</h1>\n				<h6>RADIO FREQUENCY OBSERVER</h6>\n			</div>\n		</div>\n\n		<div class=\"collapse navbar-collapse\" id=\"navbar-menu\">\n			<ul class=\"nav navbar-nav navbar-right\">\n				<li><a href=\"#\">Profile</a></li>\n				<li><a href=\"#\">Account settings</a></li>\n				<li class=\"divider\"></li>\n				<li><a href=\"#logout\">Log Out</a></li>\n			</ul>\n		</div>\n	</div>\n</nav>";
@@ -338,6 +355,11 @@ this["Zebra"]["tmpl"]["waiting_login"] = Handlebars.template({"compiler":[6,">= 
   return "<div class=\"login-waiting\">\n	<div class=\"spinner-container\">\n		<div class=\"rect1\"></div>\n		<div class=\"rect2\"></div>\n		<div class=\"rect3\"></div>\n		<div class=\"rect4\"></div>\n		<div class=\"rect5\"></div>\n	</div>\n</div>";
   },"useData":true});
 
-this["Zebra"]["tmpl"]["white_spaces"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<br>\n<div class=\"row\">\n	<div class=\"col-md-3 settings\">\n		<h4>Data Settings</h4>\n		<div class=\"form-group\">\n			<label for=\"quality-slider\">Quality</label>\n			<div class=\"quality-slider\"></div>\n		</div>\n	</div>\n	<div class=\"col-md-9\">\n		<div id=\"white-spaces-canvas\"></div>\n	</div>\n</div>";
-  },"useData":true});
+this["Zebra"]["tmpl"]["white_spaces"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "			<div class=\"form-group\">\n				<label for=\"frequency-bands\">Frequency bands</label>\n				<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n			</div>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-3 settings\">\n		<h4>Data Settings</h4>\n		<div class=\"form-group\">\n			<label for=\"quality-slider\">Quality</label>\n			<div class=\"quality-slider\"></div>\n		</div>\n		<div class=\"form-group\">\n			<label for=\"occupation-slider\">Occupation range</label>\n			<div class=\"occupation-slider\"></div>\n		</div>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "	</div>\n	<div class=\"col-md-9\">\n		<div id=\"white-spaces-canvas\"></div>\n	</div>\n</div>";
+},"useData":true});

@@ -5,6 +5,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	events: {
 		'change .quality-slider':'changeQuality',
+		'change .occupation-slider':'changeOccupation',
+		'change #frequency-bands':'changeBand',
+		'select2-removing #frequency-bands':'checkBands',
 	},
 
 	reset: function(){
@@ -12,6 +15,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.quality = {};
 		this.settings.quality.crr = 5;
 		this.settings.quality.max = 10;
+		this.settings.occupationMin = 0;
+		this.settings.occupationMax = 100;
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
 		this.cameraPosition.vertical = 0.5;
@@ -32,9 +37,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	renderComponents: function(evt){
 		var self;
-		if(evt)
-			self = evt.data.reference;
-		else{
+		if(evt) self = evt.data.reference;
+		else {
 			self = this;
 			this.renderSettings();
 		}
@@ -69,12 +73,53 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			$(this).css('width', '50px');
 			$(this).css('left', '-10px');
 		});
+
+		this.occupationSlider = this.$el.find('.occupation-slider').noUiSlider({
+			start: [0,100],
+			step: 1,
+			behaviour: 'tap-drag',
+			connect: true,
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': 0,
+				'max': 100
+			}
+		});
+
+		// bands
+		if(window.place.attributes.frequenciesBands.length > 1){
+			this.$el.find("#frequency-bands").select2({ 
+				data: window.place.attributes.frequenciesBands,
+				multiple: true,
+			});
+			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+		}
 	},
 
 	changeQuality: function(){
 		this.settings.quality.crr = this.settings.quality.max - this.qualitySlider.val();
 		this.data3D = undefined;
 		this.renderGraph();
+	},
+
+	changeOccupation: function(){
+		var occupation = this.occupationSlider.val();
+		this.settings.occupationMin = occupation[0];
+		this.settings.occupationMax = occupation[1];
+		// this.data3D = undefined;
+		// this.renderGraph();
+	},
+
+	changeBand: function(evt){
+		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		this.data3D = undefined;
+		this.renderGraph();
+	},
+
+	checkBands: function(evt){
+		if(window.settings.currBand.length == 1) evt.preventDefault();
 	},
 
 	calculateData: function(){
@@ -113,6 +158,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			data = dataFiltered;
 		} 
 
+		console.log(data);
+
 		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= this.settings.quality.crr) {
 			_.each(data, function(itemSameFrequency){
 				var passed = 0;
@@ -122,7 +169,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				var x = itemSameFrequency[0].frequency / 1000;
 				var y = (passed/itemSameFrequency.length)*100;
 				var z = i;
-				self.data3D.addRow([ z, x, y ]);
+
+				// if(y >= self.settings.occupationMin && y <= self.settings.occupationMax){
+					self.data3D.addRow([ z, x, y ]);
+				// }
 			});
 		}
 	},
@@ -142,7 +192,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			showShadow: false,
 			keepAspectRatio: false,
 			verticalRatio: 0.5,
-			cameraPosition: this.cameraPosition
+			cameraPosition: this.cameraPosition,
 		};
 
 		var self = this;
@@ -170,7 +220,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.white_spaces;
-		var html = template();
+		var html = template({
+			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+		});
 		this.$el.html(html);
 		
 		this.disableSettings();

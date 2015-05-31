@@ -179,8 +179,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	/*-------------------------------------------------------------------*/
 	logout: function(){
-		if(!this.checkSession())
-			return;
+		if(!this.checkSession()) return;
 
 		var self = this;
 		$.ajax({
@@ -265,10 +264,8 @@ app.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		var editType;
 
-		if(type === 'coordinates') 
-			editType = 0;
-		else if(type === 'outliers') 
-			editType = 1;
+		if(type === 'coordinates') editType = 0;
+		else if(type === 'outliers') editType = 1;
 
 		this.fetchPlace(id,function(){
 			self.fetchOutliers(function(){
@@ -290,12 +287,9 @@ app.router.AppRouter = Backbone.Router.extend({
 		var self = this;
 		var chartType;
 
-		if(type === 'occupation') 
-			chartType = 0;
-		else if(type === 'heatmap') 
-			chartType = 1;
-		else if(type === 'white-spaces') 
-			chartType = 2;
+		if(type === 'occupation') chartType = 0;
+		else if(type === 'heatmap') chartType = 1;
+		else if(type === 'white-spaces') chartType = 2;
 
 		this.fetchPlace(id,function(){
 			self.fetchChart(function(){
