@@ -15,7 +15,6 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.quality = {};
 		this.settings.quality.crr = app.util.isWifi() ? 1 : 5;
 		this.settings.quality.max = 10;
-		this.settings.occupationMin = 0;
 		this.settings.occupationMax = 100;
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
@@ -75,10 +74,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		});
 
 		this.occupationSlider = this.$el.find('.occupation-slider').noUiSlider({
-			start: [0,100],
+			start: 100,
 			step: 1,
 			behaviour: 'tap-drag',
-			connect: true,
+			connect: 'lower',
 			format: wNumb({
 				decimals: 0
 			}),
@@ -86,6 +85,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				'min': 0,
 				'max': 100
 			}
+		});
+		this.$el.find('.occupation-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+			$(this).html('<strong>' + value + ' %</strong>');
+			$(this).css('width', '50px');
+			$(this).css('left', '-10px');
 		});
 
 		// bands
@@ -105,11 +111,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	changeOccupation: function(){
-		var occupation = this.occupationSlider.val();
-		this.settings.occupationMin = occupation[0];
-		this.settings.occupationMax = occupation[1];
-		// this.data3D = undefined;
-		// this.renderGraph();
+		this.settings.occupationMax = this.occupationSlider.val();
+		this.data3D = undefined;
+		this.renderGraph();
 	},
 
 	changeBand: function(evt){
@@ -165,12 +169,12 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 					if(item.power >= i) passed += 1;
 				});
 				var x = itemSameFrequency[0].frequency / 1000;
-				var y = (passed/itemSameFrequency.length)*100;
+				var occupation = (passed/itemSameFrequency.length)*100;
+				if(occupation <= self.settings.occupationMax) y = occupation;
+				else if(y > self.settings.occupationMax) y = self.settings.occupationMax;
 				var z = i;
 
-				// if(y >= self.settings.occupationMin && y <= self.settings.occupationMax){
-					self.data3D.addRow([ z, x, y ]);
-				// }
+				self.data3D.addRow([ z, x, y ]);
 			});
 		}
 	},
@@ -186,11 +190,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			width:  "100%",
 			style: "bar", // dot, dot-line, line, grid, surface, bar
 			showPerspective: true,
-			showGrid: true,
+			showGrid: false,
 			showShadow: false,
 			keepAspectRatio: false,
 			verticalRatio: 0.5,
 			cameraPosition: this.cameraPosition,
+			// zMax: 60, // occupation
+			// xMax: -60, // threshold
 		};
 
 		var self = this;
