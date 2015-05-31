@@ -80,7 +80,17 @@ var placeShema = new Schema({
 			type: Number,
 			required: true,
 			min: 0
-		}
+		},
+		sd: [{
+			radio: {
+				type: Number,
+				required: true,
+			},
+			sd: {
+				type: Number,
+				required: true, 
+			},
+		}],
 	},
 	coordinates: {
 		index: true,

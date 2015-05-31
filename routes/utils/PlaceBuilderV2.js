@@ -1,5 +1,6 @@
 var utils = require('./Utils');
 var _ = require("underscore");
+var vptree = require("vptree");
 
 /**
  * Creates a new place from an upload or other place
@@ -27,6 +28,7 @@ exports.create = function(u, o, newCoordinates, callback) {
 	n.distance.min = null;
 	n.distance.max = null;
 	n.distance.avg = null;
+	n.distance.sd = [];
 	n.coordinates = [];
 	if(newCoordinates) n.newCoordinates = [];
 	n.outliers = {};
@@ -328,6 +330,54 @@ function takePlaceStats(n){
 		}
 	});
 
+	// build radios
+	var range = _.range(1,10);
+	var factors = [0.001, 0.01, 0.1, 1, 10, 100];
+	var radios = [];
+	_.each(factors, function(factor){
+		var decimal = factor.toString().split(".")[1];
+		if(decimal) decimal = decimal.length;
+		else decimal = 0;
+
+		var res = _.map(range, function(num){ 
+			var sol = num * factor;
+			return Number(sol.toFixed(decimal));
+		});
+		radios = _.union(radios, res);
+	});
+	radios.push(1000);
+
+	var tree = vptree.build(n.coordinates, function(a,b){
+		return utils.GetDistanceFromLatLonInKm(a.lat, a.lng, b.lat, b.lng);
+	});
+
+	// build sd
+	_.each(radios, function(r){
+		var SD_M 	= 0,
+			SD_X 	= 0,
+			count 	= 0;
+
+		_.each(n.coordinates, function(item){
+			if(item.selected) return;
+			var sorted = tree.search(item, n.coordinates.length);
+			sorted.splice(0,1);
+
+			_.find(sorted, function(sItem, i){
+				var marker = n.coordinates[sItem.i];
+				if(sItem.d <= r) marker.selected = true;
+				else {
+					SD_M += sItem.d;
+					SD_X += sItem.d * sItem.d;
+					return sItem;
+				}
+			});
+			count += 1;
+		});
+
+		if(count == 1) SD_X = 0;
+		else SD_X = Number(Math.sqrt((SD_X - (SD_M * SD_M)/ count)/(count - 1))).toFixed(4);
+		n.distance.sd.push({ radio: r, sd: SD_X });
+	});
 
 	/* -- delete vars for take stats -- */
 	delete n.placePowerSD_X;

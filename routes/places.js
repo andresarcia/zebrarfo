@@ -109,65 +109,65 @@ exports.create = function(req,res,next){
 
 
 	// == MONGO ===================================================================
-	// if(Object.keys(req.body).length === 0)
-	// 	next(httpError(404,'something blew up with your browser, try to update it'));
-	
-	// else {
-	// 	// ========================
-	// 	var start = new Date().getTime();
-	// 	// ========================
+// 	if(Object.keys(req.body).length === 0){
+// 		next(httpError(404,'something blew up with your browser, try to update it'));
 
-	// 	Place.findOne({ name: req.body.name }, function(err, o) {
-	// 		if(err) next(httpError(404,err));
-	// 		if(!o) createPlace();
-	// 		else updatePlace(o);
-	// 	});
+// 	} else {
+// 		// ========================
+// 		var start = new Date().getTime();
+// 		// ========================
 
-	// 	var createPlace = function (){
-	// 		console.log('* CREATING NEW PLACE *');
-	// 		builder.create(req.body, null, false, function(err, n){
-	// 			console.log('* SAVING NEW PLACE *');
-	// 			var place = new Place(n);
-	// 			saveAndResponse(place, true);
-	// 		});
-	// 	};
+// 		Place.findOne({ name: req.body.name }, function(err, o) {
+// 			if(err) next(httpError(404,err));
+// 			if(!o) createPlace();
+// 			else updatePlace(o);
+// 		});
 
-	// 	var updatePlace = function(o){
-	// 		console.log('* UPDATING PLACE *');
-	// 		builder.create(req.body, o, true, function(err, n){
-	// 			console.log('* SAVING UPDATED PLACE *');
-	// 			o.distance = n.distance;
-	// 			o.power = n.power;
-	// 			o.outliers = n.outliers;
-	// 			o.frequencies.bands = n.frequencies.bands;
-	// 			o.frequencies.width = n.frequencies.width;
-	// 			o.updatedAt = Date.now();
-	// 			_.each(n.newCoordinates, function(item){
-	// 				o.coordinates.push(item);
-	// 			});
+// 		var createPlace = function (){
+// 			console.log('* CREATING NEW PLACE *');
+// 			builder.create(req.body, null, false, function(err, n){
+// 				console.log('* SAVING NEW PLACE *');
+// 				var place = new Place(n);
+// 				saveAndResponse(place, true);
+// 			});
+// 		};
+
+// 		var updatePlace = function(o){
+// 			console.log('* UPDATING PLACE *');
+// 			builder.create(req.body, o, true, function(err, n){
+// 				console.log('* SAVING UPDATED PLACE *');
+// 				o.distance = n.distance;
+// 				o.power = n.power;
+// 				o.outliers = n.outliers;
+// 				o.frequencies.bands = n.frequencies.bands;
+// 				o.frequencies.width = n.frequencies.width;
+// 				o.updatedAt = Date.now();
+// 				_.each(n.newCoordinates, function(item){
+// 					o.coordinates.push(item);
+// 				});
 				
-	// 			if(n.newCoordinates.length > 0) saveAndResponse(o, true);
-	// 			else saveAndResponse(o, false);
-	// 		});
-	// 	};
+// 				if(n.newCoordinates.length > 0) saveAndResponse(o, true);
+// 				else saveAndResponse(o, false);
+// 			});
+// 		};
 
-	// 	var saveAndResponse = function(place, save){
-	// 		if(save){
-	// 			place.save(function(err){
-	// 				if(err) next(httpError(err));
-	// 				console.log("DONE");
-	// 				// ========================
-	// 				var end = new Date().getTime();
-	// 				console.log("Time ms:" + (end - start));
-	// 				// ========================
-	// 				// res.status(200).send(n);
-	// 			});
-	// 		} else {
-	// 			console.log("DONE");
-	// 			// res.status(200).send(n);
-	// 		}
-	// 	};
-	// }
+// 		var saveAndResponse = function(place, save){
+// 			if(save){
+// 				place.save(function(err){
+// 					if(err) next(httpError(err));
+// 					console.log("DONE");
+// 					// ========================
+// 					var end = new Date().getTime();
+// 					console.log("Time ms:" + (end - start));
+// 					// ========================
+// 					// res.status(200).send(n);
+// 				});
+// 			} else {
+// 				console.log("DONE");
+// 				// res.status(200).send(n);
+// 			}
+// 		};
+// 	}
 };
 
 /*-------------------------------------------------------------------*/

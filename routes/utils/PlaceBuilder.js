@@ -426,7 +426,6 @@ function takePlaceStats(n){
 	radios.push(1000);
 
 	// build tree
-	var sd = [];
 	var tree = vptree.build(n.coord, function(a,b){
 		return utils.GetDistanceFromLatLonInKm(a.lat, a.lng, b.lat, b.lng);
 	});
