@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var compress = require('compression');
+var compression = require('compression');
 var passport = require('passport');
 var jwt = require('jwt-simple');
 
@@ -22,6 +23,11 @@ app.set('view engine', 'jade');
 app.set('jwtTokenSecret', 'LiwzebraRFO8J9u13tg');
 
 app.use(compress());
+// compresion of responses
+app.use(compression({
+	filter: shouldCompress,
+	level: 9
+}));
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser({limit: '99mb'}));
@@ -30,6 +36,17 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 // passport
 app.use(passport.initialize());
+
+// COMPRESION ----------------------------------------------------------------
+function shouldCompress(req, res) {
+  if (req.headers['x-no-compression']) {
+    // don't compress responses with this request header
+    return false;
+  }
+
+  // fallback to standard filter function
+  return compression.filter(req, res);
+}
 
 // PUBLIC FOLDER -------------------------------------------------------------
 if (app.get('env') === 'development') {

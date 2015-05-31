@@ -58,6 +58,7 @@ exports.login = function(req, res, next) {
 
 		delete user.password;
 
+		res.set('x-no-compression', 'true');
 		res.json({
 			token : token,
 			expires: expires,
