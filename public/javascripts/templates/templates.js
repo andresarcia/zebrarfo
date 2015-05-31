@@ -358,7 +358,7 @@ this["Zebra"]["tmpl"]["waiting_login"] = Handlebars.template({"compiler":[6,">= 
 this["Zebra"]["tmpl"]["white_spaces"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "			<div class=\"form-group\">\n				<label for=\"frequency-bands\">Frequency bands</label>\n				<input class=\"form-control\" id=\"frequency-bands\" type=\"hidden\" />\n			</div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-3 settings\">\n		<h4>Data Settings</h4>\n		<div class=\"form-group\">\n			<label for=\"quality-slider\">Quality</label>\n			<div class=\"quality-slider\"></div>\n		</div>\n		<div class=\"form-group\">\n			<label for=\"occupation-slider\">Occupation range</label>\n			<div class=\"occupation-slider\"></div>\n		</div>\n";
+  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-3 settings\">\n		<h4>Data Settings</h4>\n		<div class=\"form-group\">\n			<label for=\"quality-slider\">Quality</label>\n			<div class=\"quality-slider\"></div>\n		</div>\n		<div class=\"form-group\">\n			<label for=\"occupation-slider\">Occupation range</label>\n			<div class=\"occupation-slider\"></div>\n		</div>\n		<div class=\"form-group\">\n			<label for=\"threshold-slider\">Threshold range</label>\n			<div class=\"threshold-slider\"></div>\n		</div>\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "	</div>\n	<div class=\"col-md-9\">\n		<div id=\"white-spaces-canvas\"></div>\n	</div>\n</div>";

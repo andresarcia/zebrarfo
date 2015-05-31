@@ -6,6 +6,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	events: {
 		'change .quality-slider':'changeQuality',
 		'change .occupation-slider':'changeOccupation',
+		'change .threshold-slider':'changeThreshold',
 		'change #frequency-bands':'changeBand',
 		'select2-removing #frequency-bands':'checkBands',
 	},
@@ -16,6 +17,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.quality.crr = app.util.isWifi() ? 1 : 5;
 		this.settings.quality.max = 10;
 		this.settings.occupationMax = 100;
+		this.settings.thresholdMax = window.place.attributes.powerMax;
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
 		this.cameraPosition.vertical = 0.5;
@@ -94,6 +96,27 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			$(this).css('left', '-10px');
 		});
 
+		this.thresholdSlider = this.$el.find('.threshold-slider').noUiSlider({
+			start: this.settings.thresholdMax,
+			step: 1,
+			behaviour: 'tap-drag',
+			connect: 'lower',
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': window.place.attributes.powerMin,
+				'max': this.settings.thresholdMax
+			}
+		});
+		this.$el.find('.threshold-slider')
+		.Link('lower')
+		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+			$(this).html('<strong>' + value + ' dBm</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
+		});
+
 		// bands
 		if(window.place.attributes.frequenciesBands.length > 1){
 			this.$el.find("#frequency-bands").select2({ 
@@ -111,7 +134,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	changeOccupation: function(){
-		this.settings.occupationMax = this.occupationSlider.val();
+		this.settings.occupationMax = Number(this.occupationSlider.val());
+		this.data3D = undefined;
+		this.renderGraph();
+	},
+
+	changeThreshold: function(){
+		this.settings.thresholdMax = Number(this.thresholdSlider.val());
 		this.data3D = undefined;
 		this.renderGraph();
 	},
@@ -160,7 +189,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			});
 
 			data = dataFiltered;
-		} 
+		}
 
 		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= this.settings.quality.crr) {
 			_.each(data, function(itemSameFrequency){
@@ -169,10 +198,14 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 					if(item.power >= i) passed += 1;
 				});
 				var x = itemSameFrequency[0].frequency / 1000;
+				// occupation
 				var occupation = (passed/itemSameFrequency.length)*100;
 				if(occupation <= self.settings.occupationMax) y = occupation;
-				else if(y > self.settings.occupationMax) y = self.settings.occupationMax;
-				var z = i;
+				else y = self.settings.occupationMax;
+				// threshold
+				var threshold = i;
+				if(threshold <= self.settings.thresholdMax) z = threshold;
+				else if(threshold > self.settings.thresholdMax) z = self.settings.thresholdMax;
 
 				self.data3D.addRow([ z, x, y ]);
 			});
