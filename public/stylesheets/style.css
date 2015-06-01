@@ -653,18 +653,25 @@ hr {
   border: none !important;
 }
 
-.su-place-info {
+
+#place-info {
   font-size: 13px;
   -webkit-box-shadow: 0 8px 16px -10px black;
      -moz-box-shadow: 0 8px 16px -10px black;
           box-shadow: 0 8px 16px -10px black;
 }
-
-.su-place-info-links {
+#place-info .links {
   position: absolute;
   right: 33px;
   z-index: 100;
 }
+#place-info .name {
+  overflow: hidden;
+  margin-top: 50px;
+  padding-left: 2px;
+}
+
+
 
 #su-coord-markers-map {
   margin-bottom: 10px;

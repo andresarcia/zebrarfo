@@ -152,11 +152,11 @@ this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helper
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#places\">Places</a></li>\n	<li class=\"active\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default su-place-info\">\n			<div class=\"panel-body\">\n				<div class=\"su-place-info-links\">\n					<a href=\"#places/"
+    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default\" id=\"place-info\">\n			<div class=\"panel-body\">\n				<div class=\"links\">\n					<a href=\"#places/"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.id : stack1), depth0))
-    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"download-link-place\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"delete-link-place\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<br>\n				<br>\n				<h2 class=\"col-md-12\">"
+    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"download-link-place\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"delete-link-place\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<h3 class=\"col-md-12 name\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</h2>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
+    + "</h3>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
     + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.totalDistance : stack1), depth0))
