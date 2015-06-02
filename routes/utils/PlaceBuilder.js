@@ -153,6 +153,12 @@ function reduceCommonGps(o,n,callback){
 
 		_.each(_.keys(groupByCoordinate), function(key, index){
 			var item = groupByCoordinate[key];
+
+			var lat = item[0].lat;
+			var lng = item[0].lng;
+			// check if lat and lng are valid
+			if(!lat || !lng || lat === 0 || lng === 0) return;
+
 			var captures = [];
 
 			for (var i = 0; i < item[0].cap.length; i++) {
@@ -198,6 +204,7 @@ function reduceCommonGps(o,n,callback){
 				var fq = o.frequencies.values[i] * n.frequencyUnitFactor;
 				if(index === 0) n.frequencies.push(fq);
 
+				var outlier = operation.toFixed(1);
 				if(n.outliers[outlier])
 					n.outliers[outlier] += 1;
 				else
@@ -207,12 +214,6 @@ function reduceCommonGps(o,n,callback){
 					frequency: fq, 
 					power:operation 
 				});
-
-				var outlier = operation.toFixed(1);
-				if(n.outliers[outlier])
-					n.outliers[outlier] += 1;
-				else
-					n.outliers[outlier] = 1;
 			}
 
 			// save lat & lng for sd spredear
@@ -326,7 +327,7 @@ function saveCoord(coord, n){
 		var lastItem = n.coordinates[n.coordinates.length - 2];
 		var currentItem = n.coordinates[n.coordinates.length - 1];
 		var distance = utils.GetDistanceFromLatLonInKm(lastItem.latitude, lastItem.longitude, currentItem.latitude, currentItem.longitude);
-		
+
 		n.totalDistance += distance;
 		n.countSamplesDistance += 1;
 
@@ -352,7 +353,7 @@ function takePlaceStats(n){
 		n.placePowerSD_X = Math.sqrt((n.placePowerSD_X - (n.placePowerSD_M*n.placePowerSD_M)/n.numberCoordinates)/(n.numberCoordinates - 1));
 		n.sdPowerAvg = Number(n.placePowerSD_X.toFixed(5));
 	}
-	
+
 	n.avgPowerSD = n.avgPowerSD / n.numberCoordinates;
 	n.avgPowerSD = Number(n.avgPowerSD.toFixed(5));
 

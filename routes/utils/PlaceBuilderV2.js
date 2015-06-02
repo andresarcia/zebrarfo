@@ -94,6 +94,12 @@ function reduceCommonGps(u, o, n, callback){
 
 	_.each(_.keys(coords), function(key, index){
 		var item = coords[key];
+
+		var lat = item[0].lat;
+		var lng = item[0].lng;
+		// check if lat and lng are valid else next()
+		if(!lat || !lng || lat === 0 || lng === 0) return;
+
 		var cap = [];
 
 		for (var i = 0; i < item[0].cap.length; i++) {

@@ -59,8 +59,7 @@ exports.create = function(req,res,next){
 					n[0].save()
 					.then(function(){
 						coordinate.save(n[0].id,place.coordinates,function(err){
-							if(err)
-								next(httpError(err));
+							if(err) next(httpError(err));
 
 							outliers.save(n[0].id,place.outliers,true,function(err){
 								if(err)
