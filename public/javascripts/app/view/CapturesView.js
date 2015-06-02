@@ -22,38 +22,74 @@ app.view.CapturesView = Backbone.View.extend({
 
 	appendChannels: function(chart){
 		var self = this;
-		
 		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
 			channel.id = channel.from + '-' + channel.to;
 			channel.events = {
 				mouseover: function(e){
 					self.mouseOnBand(e,this);
-					self.showTooltip('Channel '+this.options.tooltipText + ' ['+this.options.from+','+this.options.to+']',this.svgElem.d.split(' ')[1]);
+					// if wifi fix the channel width
+					if(app.util.isWifi()){
+						self.showTooltip('Channel '+this.options.tooltipText + ' ['+(this.options.from - 10)+','+(this.options.to + 10)+']',this.svgElem.d.split(' ')[1]);
+					} else {
+						self.showTooltip('Channel '+this.options.tooltipText + ' ['+this.options.from+','+this.options.to+']',this.svgElem.d.split(' ')[1]);
+					}
 				},
 				mouseout: function(e){
 					self.mouseOnBand(e,this);
 					self.hideTooltip();
 				},
 				click: function(e){
-					if(self.trackClick)
-						self.clickEvent(e,this);
+					if(self.trackClick) self.clickEvent(e,this);
 				},
 			};
-			chart.xAxis[0].addPlotBand(channel);
+
+			// if wifi reduce the ch width for no overlap
+			if(app.util.isWifi()){
+				var ch = _.clone(channel);
+				ch.from = ch.from + 10;
+				ch.to = ch.to - 10;
+				// don't plot ch for wifi line chart
+				if(chart.options.chart.type){
+					chart.xAxis[0].addPlotBand(ch);
+					// set stroke to dashed
+					var svg = _.last(chart.xAxis[0].plotLinesAndBands).svgElem;
+					svg.attr({
+						'stroke-width': 1,
+						'stroke': "rgba(51, 51, 51, 0.3)",
+						'stroke-dasharray': '10,10',
+					});
+				}
+			} else {
+				chart.xAxis[0].addPlotBand(channel);
+			}
 		});
 	},
 
 	mouseOnBand: function(e,self){
 		if (e.type == 'mouseover') {
-			self.svgElem.attr({
-				'stroke-width': 1,
-				stroke: Highcharts.Color(self.options.color).setOpacity(5).get(),
-			});
+			if(app.util.isWifi()){
+				self.svgElem.attr({
+					'stroke': "rgba(51, 51, 51, 1)",
+					'stroke-dasharray': '0,0',
+				});
+			} else {
+				self.svgElem.attr({
+					'stroke-width': 1,
+					'stroke': Highcharts.Color(self.options.color).setOpacity(1).get(),
+				});
+			}
 		} else {
-			self.svgElem.attr({
-				'stroke-width': 1,
-				stroke: 'transparent',
-			});
+			if(app.util.isWifi()){
+				self.svgElem.attr({
+					'stroke': "rgba(51, 51, 51, 0.3)",
+					'stroke-dasharray': '10,10',
+				});
+			} else {
+				self.svgElem.attr({
+					'stroke-width': 1,
+					stroke: 'transparent',
+				});
+			}
 		}
 	},
 
@@ -93,16 +129,31 @@ app.view.CapturesView = Backbone.View.extend({
 
 	selectBand: function(band){
 		band.selected = true;
-		band.svgElem.attr({
-			fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.7 : 0.3).get(),
-		});
+		if(app.util.isWifi()){
+			band.svgElem.attr({
+				'fill': Highcharts.Color(band.options.colorSelected).get(),
+			});
+
+		} else {
+			band.svgElem.attr({
+				'fill': Highcharts.Color(band.options.color).setOpacity(
+					band.options.color != 'rgba(0, 0, 0, 0)' ? 0.7 : 0.3).get()
+			});
+		}
 	},
 
 	deselectBand: function(band){
 		band.selected = undefined;
-		band.svgElem.attr({
-			fill: Highcharts.Color(band.options.color).setOpacity(band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get(),
-		});
+		if(app.util.isWifi()){
+			band.svgElem.attr({
+				'fill': Highcharts.Color(band.options.color).setOpacity(0).get(),
+			});
+		} else {
+			band.svgElem.attr({
+				'fill': Highcharts.Color(band.options.color).setOpacity(
+					band.options.color != 'rgba(0, 0, 0, 0)' ? 0.2 : 0).get()
+			});
+		}
 	},
 
 	hideTooltip: function(){
@@ -121,10 +172,25 @@ app.view.CapturesView = Backbone.View.extend({
 				title: {
 					text: 'Frequencies (MHz)'
 				},
+			},
+			yAxis = {
+				stackLabels: !app.util.isWifi()? {} : {
+					style: {
+						color: 'rgba(0, 0, 0, 0.6)',
+						fontWeight: "bold",
+						fontSize: "13px"
+					},
+					enabled: true,
+					formatter: function () {
+						return app.util.WifiCentralFqMap(this.x);
+					}
+				}
 			};
+
 
 		chartOptions = _.extend(chartOptions, options.chart);
 		xAxis = _.extend(xAxis, options.xAxis);
+		yAxis = _.extend(yAxis, options.yAxis);
 
 		// filter by bands
 		var bands = _.sortBy(window.settings.currBand);
@@ -172,14 +238,24 @@ app.view.CapturesView = Backbone.View.extend({
 						return options.tooltip.positioner;
 				},
 				formatter: function(){
-					return this.x + '</b> : <b>' + (this.y).toFixed(3);
+					return this.x + '<b> : </b>' + (this.y).toFixed(1) + '%';
 				}
 			},
 			xAxis: xAxis,
-			yAxis: options.yAxis,
+			yAxis: yAxis,
 			plotOptions: {
 				line: {
-					enableMouseTracking: true
+					enableMouseTracking: true,
+					stacking: 'normal',
+					dataLabels: {
+						enabled: false
+					}
+				},
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: false
+					}
 				},
 				series: {
 					fillOpacity: 0.35
