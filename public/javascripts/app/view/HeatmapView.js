@@ -28,7 +28,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		'select2-removing #select-channels':'checkChannelRange',
 		'change #select-function-operate':'changeDataFunction',
 		'change .max-intensity-slider':'changeMaxIntensity',
-		'change input:radio[name=select-change-data-by]':'changeFrequencyBy',
+		'change input:radio[name=select-frequency-by]':'changeFrequencyBy',
 		'change .opacity-slider':'changeOpacity',
 		'change .radius-slider':'changeRadius',
 		'slide .markers-slider':'changeMarker',
@@ -160,16 +160,16 @@ app.view.HeatmapView = Backbone.View.extend({
 	changeFrequencyBy: function(update){
 		var val;
 		if(update !== false)
-			val = this.$el.find('input:radio[name=select-change-data-by]:checked').val();
+			val = this.$el.find('input:radio[name=select-frequency-by]:checked').val();
 		else {
 			if(window.settings.place.charts.channels.length > 0)
 				val = "channels";
 			else
-				val = "frequency";
+				val = "range";
 		}
 
 		if(val == "channels"){
-			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
 			this.$el.find('.heatmap-slider-container').hide();
 			this.renderChannelInput();
 			this.$el.find('.heatmap-select-channels').show();
@@ -178,8 +178,8 @@ app.view.HeatmapView = Backbone.View.extend({
 			else
 				this.calBoundChannels();
 
-		} else if(val == "frequency"){
-			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="frequency"]').attr('checked', true);
+		} else if(val == "range"){
+			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="range"]').attr('checked', true);
 			this.$el.find('.heatmap-select-channels').hide();
 			this.$el.find('.heatmap-slider-container').show();
 			if(update !== false)
@@ -527,9 +527,9 @@ app.view.HeatmapView = Backbone.View.extend({
 	updateDataByTab: function(){
 		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
 		if(window.settings.place.charts.channels.length > 0)
-			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
 		else
-			this.$el.find('input:radio[name="select-change-data-by"]').filter('[value="frequency"]').attr('checked', true);
+			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="range"]').attr('checked', true);
 		this.changeFrequencyBy(true);
 	},
 
