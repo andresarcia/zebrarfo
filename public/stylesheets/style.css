@@ -356,6 +356,7 @@ hr {
 	outline:0 !important;
 }
 
+/* LOGIN ************************/
 #login-container {
   position: absolute;
   left: 0;
@@ -597,7 +598,7 @@ hr {
   }
 }
 
-
+/* MAIN MENU ************************/
 #main-menu {
   position: relative;
   opacity: 1;
@@ -653,7 +654,7 @@ hr {
   border: none !important;
 }
 
-
+/* PLACE INFO CARD ************************/
 #place-info {
   font-size: 13px;
   -webkit-box-shadow: 0 8px 16px -10px black;
@@ -670,7 +671,7 @@ hr {
   margin-top: 50px;
   padding-left: 2px;
 }
-
+/*****************************************/
 
 
 #su-coord-markers-map {

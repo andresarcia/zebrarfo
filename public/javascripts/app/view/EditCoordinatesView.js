@@ -42,7 +42,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.crrSpacing = {};
 		this.calculateRealCoorDict();
 		this.calculateRelativeCoorDict();
-		
+
 		Backbone.pubSub.off('event-marker-selected-on-google-map-edit');
 		Backbone.pubSub.on('event-marker-selected-on-google-map-edit', function(markers){
 			this.changeSliderByMarkers(markers);
@@ -160,7 +160,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	renderSpreadComponents: function(){
 		this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
-
+		this.renderSDGraph();
 		this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
 			start: 0,
 			connect: "lower",
@@ -180,6 +180,65 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.$el.find('.spread-distance-slider').noUiSlider_pips({
 			mode: 'range',
 			density: 3.33
+		});
+	},
+
+	renderSDGraph: function () {
+		data = [];
+		_.each(JSON.parse(window.place.attributes.distanceSD), function (item) {
+			data.push([Number(item.radio), Number(item.sd)]);
+		});
+
+		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+		this.$el.find('.chart-sd-distance').highcharts({
+			chart: {
+				type: 'column',
+				marginRight: -5,
+				marginTop: -8,
+			},
+			exporting: {
+				enabled: false
+			},
+			title: {
+				text: '',
+				style: {
+					display: 'none'
+				}
+			},
+			tooltip: {
+				positioner: function () {
+					return { x: 0, y: 0 };
+				},
+				formatter: function(){
+					return this.x + 'km<b> : </b>' + (this.y).toFixed(4);
+				}
+			},
+			yAxis: {
+				title: {
+					text: '',
+				},
+				labels: {
+					enabled: false
+				},
+				gridLineWidth: 0,
+				minorGridLineWidth: 0
+			},
+			xAxis: {
+				type: 'logarithmic',
+				labels: {
+					format: '{value} km'
+				}
+			},
+			plotOptions: {
+				column: {
+					pointPadding: 0,
+					borderWidth: 0
+				},
+			},
+			series: [{
+				showInLegend: false,
+				data: data
+			}]
 		});
 	},
 
