@@ -13,26 +13,26 @@
 			</ul>
 		</div>
 		<label class="control-label sr-only" for="inputSuccess5">Hidden label</label>
-		<input id='upload-measures-name' type="text" class="form-control" placeholder="or type one">	
+		<input id='u-measures-name' type="text" class="form-control" placeholder="or type one">	
 		<span class="feedback-icon-container glyphicon form-control-feedback"></span>
 		<div class="input-group-btn">
-			<button type="button" id="upload-measures-info-help" class="btn btn-warning">
+			<button type="button" id="u-measures-info-help" class="btn btn-warning">
 				help
 				<span class="glyphicon glyphicon-info-sign"></span>
 			</button>
 		</div>
 	</div>
 
-	<div class="ws-dragandrophandler">
+	<div class="u-dragandrophandler">
 		<h1>Drag files here</h1>
 		<div>Or, if you prefer...</div>
 		<br />
-		<input id='upload-measures-file' type="file" multiple='multiple' name='data'>
+		<input id='u-measures-file' type="file" multiple='multiple' name='data'>
 	</div>
 	
 	<div class="form-group has-feedback">
-		<label for="upload-measures-unit">Please select the unit for frequency</label>
-		<select class="form-control" id="upload-measures-unit">
+		<label for="u-measures-unit">Please select the unit for frequency</label>
+		<select class="form-control" id="u-measures-unit">
 			<option></option>
 			<option value="Hz">Hertz - Hz</option>
 			<option value="kHz">Kilohertz - kHz</option>
@@ -42,8 +42,8 @@
 	</div>
 
 	<div class="form-group has-feedback">
-		<label for="upload-gps-position-function">Please select the function for calculating representative samples of a common GPS position</label>
-		<select class="form-control" id="upload-gps-position-function">
+		<label for="u-gps-position-function">Please select the function for calculating representative samples of a common GPS position</label>
+		<select class="form-control" id="u-gps-position-function">
 			<option value="avg">Average</option>
 			<option value="max">Maximum</option>
 			<option value="min">Minimum</option>
@@ -52,7 +52,7 @@
 		</select>
 	</div>
 
-	<ul id="upload-measures-files-info" class="list-group">
+	<ul id="u-measures-files-info" class="list-group">
 		<div class="well well-sm">
 			Files to upload 
 			<span class="badge">0</span>
@@ -62,6 +62,6 @@
 		</div>
 	</ul>
 
-	<button id='upload-measures-button-delete' type="button" class="btn btn-warning btn-sm pull-left">Delete selected files</button>
-	<button id='upload-measures-button' type="button" class="btn btn-primary btn-lg pull-right">Synchronize</button>
+	<button id='u-measures-button-delete' type="button" class="btn btn-warning btn-sm pull-left">Delete selected files</button>
+	<button id='u-measures-button' type="button" class="btn btn-primary btn-lg pull-right">Synchronize</button>
 </form>

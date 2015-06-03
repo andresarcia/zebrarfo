@@ -15,7 +15,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 	},
 
 	events: {
-		'click #ws-modal-parsing-measures-button' : 'cancelUpload'
+		'click #u-modal-parsing-cancel-btn' : 'cancelUpload'
 	},
 
 	initialize: function(options){
@@ -46,7 +46,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 		this.errorView = options.errorView;
 
 		this.render();
-		this.modal = $('#modal-parsing-measures-modal');
+		this.modal = $('#u-modal-parsing');
 		this.modal.modal({keyboard: false, backdrop : 'static'});
 		this.parentComponent = $('.list-group');
 		this.progressBar = $('.progress-bar');
@@ -117,15 +117,20 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 
 	showMeasuresData: function(){
 		if(!this.stop){
-			$('#ws-modal-parsing-measures-data-table-name').html(this.model.attributes.name);
-			$('#ws-modal-parsing-measures-data-table-numberCoordinates').html(this.model.attributes.coordinates.length);
-			$('#ws-modal-parsing-measures-data-table-numberPowerFrequency').html(this.model.attributes.frequencies.values.length);
-			$('#ws-modal-parsing-measures-data-table-frequenciesBandwidth').html('['+this.model.attributes.frequencies.values[0]+' - '+this.model.attributes.frequencies.values[this.model.attributes.frequencies.values.length - 1]+'] <small><b>'+this.model.attributes.frequencies.unit+'</b></small>');
+			var tableCol = $('#u-modal-parsing-table').find('tr');
+			// name 
+			tableCol.eq(0).children().eq(1).html(this.model.attributes.name);
+			// number of samples
+			tableCol.eq(1).children().eq(1).html(this.model.attributes.coordinates.length);
+			// number of frequencies
+			tableCol.eq(2).children().eq(1).html(this.model.attributes.frequencies.values.length);
+			// frequencies range
+			tableCol.eq(3).children().eq(1).html('['+this.model.attributes.frequencies.values[0]+' - '+this.model.attributes.frequencies.values[this.model.attributes.frequencies.values.length - 1]+'] <small><b>'+this.model.attributes.frequencies.unit+'</b></small>');
 
 			this.parentComponent.children().first().removeClass('active').addClass('list-group-item-success');
 
-			$('#ws-modal-parsing-measures-data-table-heading').show();
-			$('#ws-modal-parsing-measures-data-table').fadeIn(800);
+			$('#u-modal-parsing-table-heading').show();
+			$('#u-modal-parsing-table').fadeIn(800);
 
 			this.uploadDataToServer();
 		}

@@ -4,13 +4,13 @@ app.view = app.view || {};
 app.view.OccupationView = Backbone.View.extend({
 
 	events: {
-		'change .slider':'updateChart',
-		'change #allocation-channel':'changeAllocationChannel',
-		'change #frequency-bands':'changeBand',
-		'select2-removing #frequency-bands':'checkBands',
-		'change #select-channels':'pushChannelsFromInput',
-		'select2-removed #select-channels':'popChannelFromInput',
-		'click .build-heatmap-btn-container':'changeToHeatmap'
+		'change #o-frequency-bands':'changeBand',
+		'select2-removing #o-frequency-bands':'checkBands',
+		'change #o-channel-width':'changeAllocationChannel',
+		'change #o-threshold-slider':'updateChart',
+		'change #o-select-channels':'pushChannelsFromInput',
+		'select2-removed #o-select-channels':'popChannelFromInput',
+		'click #o-heatmap-btn':'changeToHeatmap'
 	},
 
 	initialize: function(options){
@@ -22,7 +22,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.threshold = this.data.powerAvg;
 
 		this.chart = new app.view.CapturesView({
-			selector: '#chart_canvas_occupation',
+			selector: '#o-chart',
 			tooltipTop: 10,
 			trackClick: true,
 		});
@@ -70,14 +70,14 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	changeAllocationChannel: function(){
-		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#o-channel-width").select2("val");
 		this.clearChannels();
 		this.renderChart();
 		this.renderChannelInput();
 	},
 
 	changeBand: function(){
-		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		window.settings.currBand = this.$el.find("#o-frequency-bands").select2("val");
 		this.renderChart();
 	},
 
@@ -86,7 +86,7 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	updateChart: function(){
-		this.threshold = this.slider.val();
+		this.threshold = this.thresholdSlider.val();
 		this.renderChart();
 	},
 
@@ -98,19 +98,19 @@ app.view.OccupationView = Backbone.View.extend({
 			self.renderChart();
 		}, 200);
 
-		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
+		this.$el.find("#o-channel-width").select2("val", window.settings.currChannel);
 		this.renderChannelInput();
 	},
 
 	pushChannelsFromGraph: function(data){
 		var channels = window.settings.place.charts.channels;
 		channels.push(data);
-		this.$el.find('#select-channels').select2("val",channels);
+		this.$el.find('#o-select-channels').select2("val",channels);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	pushChannelsFromInput: function(evt){
-		var channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.$el.find('#o-select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val[evt.val.length - 1]);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
@@ -118,18 +118,18 @@ app.view.OccupationView = Backbone.View.extend({
 	popChannelsFromGraph: function(data){
 		var channels = window.settings.place.charts.channels;
 		channels = _.without(channels, data);
-		this.$el.find('#select-channels').select2("val",channels);
+		this.$el.find('#o-select-channels').select2("val",channels);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	popChannelFromInput: function(evt){
-		var channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.$el.find('#o-select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-deselect',evt.val);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 	},
 
 	clearChannels: function(evt){
-		this.$el.find('#select-channels').select2("val",[]);
+		this.$el.find('#o-select-channels').select2("val",[]);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',[]);
 	},
 
@@ -146,7 +146,7 @@ app.view.OccupationView = Backbone.View.extend({
 	renderSlider: function(){
 		var self = this;
 
-		this.slider = this.$el.find('.slider').noUiSlider({
+		this.thresholdSlider = this.$el.find('#o-threshold-slider').noUiSlider({
 			start: this.data.powerAvg,
 			step: 1,
 			range: {
@@ -158,9 +158,9 @@ app.view.OccupationView = Backbone.View.extend({
 			}),
 		});
 
-		this.$el.find('.slider')
+		this.$el.find('#o-threshold-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + ' dBm</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
@@ -175,13 +175,13 @@ app.view.OccupationView = Backbone.View.extend({
 				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
 		});
 
-		this.$el.find('#select-channels').select2({
+		this.$el.find('#o-select-channels').select2({
 			placeholder: 'Select channels',
 			multiple: true,
 			data: channelData,
 		});
 
-		this.$el.find('#select-channels').select2('val', window.settings.place.charts.channels);
+		this.$el.find('#o-select-channels').select2('val', window.settings.place.charts.channels);
 	},
 
 	renderChart: function(){
@@ -215,18 +215,18 @@ app.view.OccupationView = Backbone.View.extend({
 		});
 		this.$el.html(html);
 
-		this.$el.find("#allocation-channel").select2({ 
+		this.$el.find("#o-channel-width").select2({ 
 			data: window.place.attributes.frequenciesChannelWidth 
 		});
-		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
-		this.$el.find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.$el.find("#o-channel-width").select2("val", window.settings.currChannel);
+		this.$el.find('.captures-chart').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		if(window.place.attributes.frequenciesBands.length > 1){
-			this.$el.find("#frequency-bands").select2({ 
+			this.$el.find("#o-frequency-bands").select2({ 
 				data: window.place.attributes.frequenciesBands,
 				multiple: true,
 			});
-			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+			this.$el.find("#o-frequency-bands").select2("val", window.settings.currBand);
 		}
 
 		return this;

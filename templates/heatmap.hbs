@@ -3,8 +3,8 @@
 	<div class="col-md-3 settings">
 		<h4>Data Settings</h4>
 		<div class="form-group">
-			<label for="select-function-operate">Pick a function to operate on the data</label>
-			<select class="form-control" id="select-function-operate">
+			<label for="h-function-operate">Pick a function to operate on the data</label>
+			<select class="form-control" id="h-function-operate">
 				<option></option>
 				<option value="avg" selected>Average</option>
 				<option value="max">Maximum</option>
@@ -12,71 +12,71 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<label for="max-intensity-slider">Suggested referential Maximum</label>
-			<div id="max-intensity-slider"></div>
+			<label for="h-max-intensity-slider">Suggested referential Maximum</label>
+			<div id="h-max-intensity-slider"></div>
 		</div>
 		<div class="form-group">
-			<label for="select-frequency-by">Select frequency by</label>
+			<label for="h-select-frequency-by">Select frequency by</label>
 			<br />
 			<label class="radio-inline">
-				<input type="radio" name="select-frequency-by" value="range" checked> Range
+				<input type="radio" name="h-select-frequency-by" value="range" checked> Range
 			</label>
 			<label class="radio-inline">
-				<input type="radio" name="select-frequency-by" value="channels"> Channels
+				<input type="radio" name="h-select-frequency-by" value="channels"> Channels
 			</label>
 		</div>
 		<h4>Heatmap Settings</h4>
 		<div class="form-group">
-			<label for="opacity-slider">Opacity</label>
-			<div id="opacity-slider"></div>
+			<label for="h-opacity-slider">Opacity</label>
+			<div id="h-opacity-slider"></div>
 		</div>
 		<div class="form-group">
-			<label for="radius-slider">Radius</label>
-			<div id="radius-slider"></div>
+			<label for="h-radius-slider">Radius</label>
+			<div id="h-radius-slider"></div>
 		</div>
 		{{#if bands }}
 			<div class="form-group">
-				<label for="frequency-bands">Frequency bands</label>
-				<input class="form-control" id="frequency-bands" type="hidden" />
+				<label for="h-frequency-bands">Frequency bands</label>
+				<input class="form-control" id="h-frequency-bands" type="hidden" />
 			</div>
 		{{/if}}
 		<br />
-		<div class="form-group heatmap-select-channels">
+		<div class="form-group h-channels-settings">
 			{{#if place.frequenciesChannelWidth}}
-				<label for="allocation-channel">Channel width</label>
-				<input class="form-control" id="allocation-channel" type="hidden" />
+				<label for="h-channel-width">Channel width</label>
+				<input class="form-control" id="h-channel-width" type="hidden" />
 			{{/if}}
 		</div>
 	</div>
 	<div class="col-md-9">
 		<div class="col-xs-11 col-sm-11 col-md-11">
-			<div id="map_canvas_heatmap" style="width:100%; height:400px;"></div>
+			<div id="h-canvas" style="width:100%; height:400px;"></div>
 		</div>
 		<div class="col-xs-1 col-sm-1 col-md-1">
-			<div id="markers-slider" style="height:400px;"></div>
+			<div id="h-markers-slider" style="height:400px;"></div>
 		</div>
 
-		<div class="col-md-11 col-md-offset-0 controllers-container">
-			<div class="col-md-12 range-slider-container">
-				<div class="range-slider"></div>
+		<div class="col-md-11 col-md-offset-0 h-controllers">
+			<div class="col-md-12 h-range-slider-settings">
+				<div id="h-range-slider"></div>
 			</div>
-			<div class="col-md-12 select-channels-container">
-				<label for="select-channels">Please select the channels to observe</label>
-				<input class="form-control" id="select-channels" type="hidden" />
+			<div class="col-md-12 h-channels-settings">
+				<label for="h-select-channels">Please select the channels to observe</label>
+				<input class="form-control" id="h-select-channels" type="hidden" />
 			</div>
-		
-			<div class="spreader-container">
+
+			<div class="h-spreader-container">
 				<h5 class="col-md-12">Please select the unit and distance between each point</h5>
 				<div class="col-md-3">
-					<label for="spreader-unit">Unit</label>
-					<select class="form-control" id="spreader-unit">
+					<label for="h-spreader-unit">Unit</label>
+					<select class="form-control" id="h-spreader-unit">
 						<option value="m">Meters - m</option>
 						<option value="km">Kilometers - km</option>
 					</select>
 				</div>
 				<div class="col-md-9">
-					<label for="spreader-slider">Distance</label>
-					<div id="spreader-slider"></div>
+					<label for="h-spreader-slider">Distance</label>
+					<div id="h-spreader-slider"></div>
 				</div>
 			</div>
 		</div>

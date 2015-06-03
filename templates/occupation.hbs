@@ -1,41 +1,41 @@
 <div class="row">
-	<div class="col-md-12 slider-container occupation-settings">
+	<div class="col-md-12 o-settings">
 		<form class="form-horizontal">
 			{{#if bands}}
 				<div class="form-group">
-					<label for="frequency-bands" class="col-sm-2 control-label">Frequency bands</label>
+					<label for="o-frequency-bands" class="col-sm-2 control-label">Frequency bands</label>
 					<div class="col-sm-10">
-						<input class="form-control" id="frequency-bands" type="hidden" />
+						<input class="form-control" id="o-frequency-bands" type="hidden" />
 					</div>
 				</div>
 			{{/if}}
 			{{#if place.frequenciesChannelWidth}}
 				<div class="form-group">
-					<label for="allocation-channel" class="col-sm-2 control-label">Channel width</label>
+					<label for="o-channel-width" class="col-sm-2 control-label">Channel width</label>
 					<div class="col-sm-10">
-						<input class="form-control" id="allocation-channel" type="hidden" />
+						<input class="form-control" id="o-channel-width" type="hidden" />
 					</div>
 				</div>
 			{{/if}}
 			<div class="form-group">
-				<label for="threshold-slider" class="col-sm-2 control-label">Threshold</label>
+				<label for="o-threshold-slider" class="col-sm-2 control-label">Threshold</label>
 				<div class="col-sm-10">
-					<div class="slider" id="threshold-slider"></div>
+					<div id="o-threshold-slider"></div>
 				</div>
 			</div>
 		</form>
 	</div>
-	<div id="chart_canvas_occupation" class="col-md-12">
-		<div class="chart_power_frequency" style="height:420px;width:95%;"></div> 
-		<div class="chart_tooltip">
+	<div id="o-chart" class="col-md-12">
+		<div class="captures-chart" style="height:420px;width:95%;"></div> 
+		<div class="high-chart-tooltip">
 			<p style="margin:0">default</p>
 		</div>
 	</div>
-	<div class="col-md-12 occupation-settings">
+	<div class="col-md-12 o-settings">
 		<div class="form-group input-group">
-			<input class="form-control" id="select-channels" type="hidden" />
+			<input class="form-control" id="o-select-channels" type="hidden" />
 			<div class="input-group-btn">
-				<button type="button" class="btn btn-primary build-heatmap-btn-container">Build heatmap</button>
+				<button type="button" class="btn btn-primary" id="o-heatmap-btn">Build heatmap</button>
 			</div>
 		</div>
 	</div>

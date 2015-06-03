@@ -12,7 +12,7 @@ app.view.CapturesView = Backbone.View.extend({
 		this.tooltipTop = options.tooltipTop;
 		this.trackClick = options.trackClick;
 
-		$(this.selector).find('.chart_power_frequency').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		$(this.selector).find('.captures-chart').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		Backbone.pubSub.off('event-occupation-channel-select');
 		Backbone.pubSub.on('event-occupation-channel-select', this.selectChannel, this);
@@ -94,7 +94,7 @@ app.view.CapturesView = Backbone.View.extend({
 	},
 
 	showTooltip: function(txt,left){
-		var $tooltip = $(this.selector).find('.chart_tooltip');
+		var $tooltip = $(this.selector).find('.high-chart-tooltip');
 		$tooltip.children().text(txt);
 		$tooltip.css('top', this.tooltipTop + 'px');
 		$tooltip.css('left', parseInt(left) + 24 + 'px');
@@ -157,14 +157,14 @@ app.view.CapturesView = Backbone.View.extend({
 	},
 
 	hideTooltip: function(){
-		$(this.selector).find('.chart_tooltip').hide();
+		$(this.selector).find('.high-chart-tooltip').hide();
 	},
 
 	render: function(data, options){
 		var self = this,
 			dataPlot = [],
 			chartOptions = {
-				renderTo: $(this.selector).find('.chart_power_frequency')[0],
+				renderTo: $(this.selector).find('.captures-chart')[0],
 				backgroundColor: null,
 				zoomType: 'x'
 			},

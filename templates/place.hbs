@@ -12,11 +12,11 @@
 						<small>upload more samples</small>
 					</a>
 					<br>
-					<a href="javascript:void(0)" id="download-link-place" class="pull-right ws-blue">
+					<a href="javascript:void(0)" id="p-download" class="pull-right ws-blue">
 						<small>download place</small>
 					</a>
 					<br>
-					<a href="javascript:void(0)" id="delete-link-place" class="pull-right ws-red">
+					<a href="javascript:void(0)" id="p-delete" class="pull-right ws-red">
 						<small>delete</small>
 					</a>
 				</div>
@@ -57,22 +57,22 @@
 					{{#if bands }}
 						<tr>
 							<td colspan="2">
-								<label for="frequency-bands">Frequency bands</label>
-								<input class="form-control" id="frequency-bands" type="hidden" />
+								<label for="p-frequency-bands">Frequency bands</label>
+								<input class="form-control" id="p-frequency-bands" type="hidden" />
 							</td>
 						</tr>
 					{{/if}}
 					{{#if place.frequenciesChannelWidth}}
 						<tr>
 							<td colspan="2">
-								<label for="allocation-channel">Channel width</label>
-								<input class="form-control" id="allocation-channel" type="hidden" />
+								<label for="p-channel-width">Channel width</label>
+								<input class="form-control" id="p-channel-width" type="hidden" />
 							</td>
 						</tr>
 					{{/if}}
 				</table>
 
-				<button id="su-edit-place" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
+				<button id="p-edit" class="btn btn-success btn-xs btn-block btn-without-corners" type="button">
 					Edit place
 				</button>
 			</div>
@@ -84,8 +84,8 @@
 	</div>
 
 	<div class="col-md-8">
-		<div id="su-coord-markers-map" style="height:450px;"></div>
-		<div id="su-selected-coordinate-map">
+		<div id="p-map" style="height:450px;"></div>
+		<div id="p-selected-coord">
 			<div class="page-header" style="text-align:center">
 					<h1>Click <small>on any marker will get info of the sample</small></h1>
 			</div>

@@ -1,8 +1,8 @@
-<div class="modal fade" id="modal-parsing-measures-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="u-modal-parsing" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
-	   	<div class="modal-content">
-	      	<div class="modal-body">
-	        	<div class="progress">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="progress">
 						<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
 						0%
 						</div>
@@ -11,38 +11,38 @@
 				<div class="list-group">
 					<a href="#" class="list-group-item active">
 						<span class="badge">0/{{numFiles}}</span>
-					    Files processed
+						Files processed
 					</a>
-				  	<a href="#" class="list-group-item">
-				    	<h4 id="ws-modal-parsing-measures-data-table-heading" class="list-group-item-heading">Measures data</h4>
-				    	<table id="ws-modal-parsing-measures-data-table" class="table table-hover">
-						  	<tr>
-						  		<td>Name</td><td id="ws-modal-parsing-measures-data-table-name"></td>
-						  	</tr>
-						  	<tr>
-						  		<td>Total number of samples</td><td id="ws-modal-parsing-measures-data-table-numberCoordinates"></td>
-						  	</tr>
-						  	<tr>
-						  		<td>Total number of frequencies</td><td id="ws-modal-parsing-measures-data-table-numberPowerFrequency"></td>
-						  	</tr>
-						  	<tr>
-						  		<td>Range of frequencies</td><td id="ws-modal-parsing-measures-data-table-frequenciesBandwidth"></td>
-						  	</tr>
+					<a href="#" class="list-group-item">
+						<h4 id="u-modal-parsing-table-heading" class="list-group-item-heading">Measures data</h4>
+						<table id="u-modal-parsing-table" class="table table-hover">
+							<tr>
+								<td>Name</td><td></td>
+							</tr>
+							<tr>
+								<td>Total number of samples</td><td></td>
+							</tr>
+							<tr>
+								<td>Total number of frequencies</td><td></td>
+							</tr>
+							<tr>
+								<td>Range of frequencies</td><td></td>
+							</tr>
 						</table>
-				  	</a>
-				  	<a href="#" class="list-group-item">Uploading data
-				  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
-				  	</a>
-				  	<a href="#" class="list-group-item">Processing in server
-				  		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
-				  	</a>
+					</a>
+					<a href="#" class="list-group-item">Uploading data
+						<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
+					</a>
+					<a href="#" class="list-group-item">Processing in server
+						<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate pull-right"></span>
+					</a>
 				</div>
 
 
-	      	</div>
-	      	<div class="modal-footer">
-	        	<button id="ws-modal-parsing-measures-button" type="button" class="btn btn-danger" data-dismiss="modal">Cancel upload</button>
-	      	</div>
-	    </div>
+			</div>
+			<div class="modal-footer">
+				<button id="u-modal-parsing-cancel-btn" type="button" class="btn btn-danger" data-dismiss="modal">Cancel upload</button>
+			</div>
+		</div>
 	</div>
 </div>

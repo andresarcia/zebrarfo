@@ -9,8 +9,8 @@
 	<h2><small>Edit list</small></h2>
 
 	{{#each data}}
-		<a href="javascript:void(0)" class="su-coord-to-edit">
-			<span href="javascript:void(0)" class="pull-right ws-red su-edit-remove-from-list">
+		<a href="javascript:void(0)" class="ed-coord-to-edit">
+			<span href="javascript:void(0)" class="pull-right ws-red ed-coord-remove-from-list">
 				<small>remove from list</small>
 			</span> 
 			{{#if from}}
@@ -69,13 +69,13 @@
 		</a>
 	{{/each}}
 	{{#if create}}
-		<a href="javascript:void(0)" class="su-create-new-edition-range ws-dark-gray">
+		<a href="javascript:void(0)" class="ws-dark-gray" id="ed-coord-new-edition">
 			<h3>Click <small>to create a new edition range</small></h3>
 		</a>
 	{{/if}}
 
-	<button type="button" class="btn btn-default btn-sm btn-block save-btn su-save-save">Save</button>
-	<button type="button" class="btn btn-default btn-sm btn-block save-btn su-save-save-as">Save as</button>
+	<button type="button" class="btn btn-default btn-sm btn-block save-btn" id="ed-coord-save">Save</button>
+	<button type="button" class="btn btn-default btn-sm btn-block save-btn" id="ed-coord-save-as">Save as</button>
 {{/if}}
 {{#unless data}}
 	<div class="page-header">

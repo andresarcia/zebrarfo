@@ -117,7 +117,7 @@ hr {
 .modal-footer .btn-danger:hover {
   color: #CC0000!important;
 }
-
+/*********************************/
 /* TOOLTIP ***********************/
 .tooltip-inner-2 {
   max-width: 200px;
@@ -137,7 +137,7 @@ hr {
   list-style: none;
   margin-left: -35px;
 }
-
+/*********************************/
 /* NAVBAR ************************/
 #navbar {
   padding-bottom: 75px;
@@ -224,7 +224,7 @@ hr {
 .navbar-default .top{
   margin-top: 2px;
 }
-/*************************/
+/*********************************/
 
 
 .btn-without-corners {
@@ -597,8 +597,8 @@ hr {
     background-size: contain;
   }
 }
-
-/* MAIN MENU ************************/
+/*********************************/
+/* MAIN MENU *********************/
 #main-menu {
   position: relative;
   opacity: 1;
@@ -643,6 +643,7 @@ hr {
     display: none;
   }
 }
+/*********************************/
 
 .ws-containter {
   width: 92.5%;
@@ -650,11 +651,64 @@ hr {
   margin-left: auto;
 }
 
-#su-places-container .list-group-item {
+/* HIGH CHART ********************/
+.high-chart-tooltip {
+  border: 1px solid #2f7ed8;
+  background-color: #fff;
+  opacity: 0.8500000000000001;
+  padding: 4px 12px;
+  border-radius: 3px;
+  position: absolute;
+  box-shadow: 1px 1px 3px #666;
+  display: none;
+}
+/*********************************/
+/* SLIDER ************************/
+.nouislider-tooltip {
+  display: block;
+  position: absolute;
+  border: 1px solid #D9D9D9;
+  font: 400 12px/12px Arial;
+  border-radius: 3px;
+  background: #fff;
+  padding: 2px;
+  text-align: center;
+  color: #6F6F6F;
+}
+.nouislider-tooltip.up {
+  top:-20px;
+}
+.nouislider-tooltip.bottom {
+  bottom:-20px;
+}
+/*********************************/
+/* UPLOAD ************************/
+.u-dragandrophandler {
+  border:2px dashed #C3C5C7;
+  margin: 20px 0;
+  padding: 35px 20px; 
+  text-align: center; 
+  color: #C3C5C7;
+  width:100%;
+}
+.u-dragandrophandler h1 {
+  font-size: 32px; 
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+/* UPLOAD PARSING MODAL **********/
+#u-modal-parsing-table,
+#u-modal-parsing-table-heading {
+  display: none;
+}
+/*********************************/
+/* PLACES ************************/
+#places-container .list-group-item {
   border: none !important;
 }
-
-/* PLACE INFO CARD ************************/
+/*********************************/
+/* PLACE *************************/
+/* PLACE INFO CARD ***************/
 #place-info {
   font-size: 13px;
   -webkit-box-shadow: 0 8px 16px -10px black;
@@ -671,32 +725,32 @@ hr {
   margin-top: 50px;
   padding-left: 2px;
 }
-/*****************************************/
-
-
-#su-coord-markers-map {
+/* PLACE MAP ***************/
+#p-map {
   margin-bottom: 10px;
 }
-
-#su-edit-place-controls {
+/*********************************/
+/* EDITION **********************/
+/* EDITION COORDINATES **********/
+#ed-coord-controls {
   text-align: center;
   margin-bottom: 5px;
 }
-#su-edit-place-controls .btn-group > .btn {
+#ed-coord-controls .btn-group > .btn {
   color: #353535;
   background-color: #fff;
 }
-#su-edit-place-controls .btn-group > .btn:disabled {
+#ed-coord-controls .btn-group > .btn:disabled {
   color: #A6A6A6;
   background-color: #fff; 
 }
-#su-edit-place-controls .btn-group >.btn:hover,
-#su-edit-place-controls .btn-group > .btn.active {
+#ed-coord-controls .btn-group >.btn:hover,
+#ed-coord-controls .btn-group > .btn.active {
   color: #0088CC;
   background-color: #fff;
 }
-#su-select-window-left-input,
-#su-select-window-right-input {
+#ed-coord-window-left-input,
+#ed-coord-window-right-input {
   float: left;
   display: inline-block;
   margin-top: 5px;
@@ -704,111 +758,54 @@ hr {
   padding: 6px 6px;
   text-align: center;
 }
-#su-select-window-left-input:disabled, 
-#su-select-window-right-input:disabled {
+#ed-coord-window-left-input:disabled, 
+#ed-coord-window-right-input:disabled {
   color: #C5C5C5;
 }
-
-.su-coord-to-edit{
+.ed-coord-to-edit{
   position: relative;
   display: block;
   padding: 20px 10px 9px 10px;
   margin-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
-.su-edit-remove-from-list {
-  margin-top: -18px!important;
-}
-.su-coord-to-edit:active,
-.su-coord-to-edit:hover,
-.su-coord-to-edit:visited,
-.su-coord-to-edit:link {
+.ed-coord-to-edit:active,
+.ed-coord-to-edit:hover,
+.ed-coord-to-edit:visited,
+.ed-coord-to-edit:link {
   text-decoration: none;
 }
-#markers-slider-edit-place {
-  margin-left: -18px;
+.ed-coord-remove-from-list {
+  margin-top: -18px!important;
 }
-
-.chart_tooltip {
-  border: 1px solid #2f7ed8;
-  background-color: #fff;
-  opacity: 0.8500000000000001;
-  padding: 4px 12px;
-  border-radius: 3px;
-  position: absolute;
-  box-shadow: 1px 1px 3px #666;
-  display: none;
-}
-.slider_tooltip {
-  display: block;
-  position: absolute;
-  border: 1px solid #D9D9D9;
-  font: 400 12px/12px Arial;
-  border-radius: 3px;
-  background: #fff;
-  padding: 2px;
-  text-align: center;
-  color: #6F6F6F;
-}
-.slider_tooltip.up {
-  top:-20px;
-}
-.slider_tooltip.bottom {
-  bottom:-20px;
-}
-
-
-.occupation-settings {
+/*******************************/
+/* GRAPH ************************/
+/* OCCUPATION *******************/
+.o-settings {
   padding-top: 10px;
   padding-left: 50px;
   padding-right: 85px;
 }
-
-#map_canvas_heatmap {
+/* HEATMAP **********************/
+#h-canvas {
   margin-bottom: 20px;
 }
-.heatmap-controllers-container,
-.heatmap-slider-container,
-.heatmap-select-channels {
+.h-controllers,
+.h-range-slider-settings
+.h-channels-settings {
   display: none;
 }
-.heatmap-slider-container {
+.h-range-slider-settings {
   margin-top: 15px;
 }
-.heatmap-select-spread-distance {
-  margin-top: 35px;
+.h-spreader-container {
+  margin-top: 45px;
 }
-
-#white-spaces-canvas {
-  height: 500px;
-}
-#white-spaces-canvas > div {
+/* WHITE SPACES *****************/
+#ws-canvas > div {
   border: solid 1px #e0e0e0 !important;
 }
-
-.ws-dropdown-container {
-  display: none;
-}
-
-.ws-dragandrophandler {
-  border:2px dashed #C3C5C7;
-  margin: 20px 0;
-  padding: 35px 20px; 
-  text-align: center; 
-  color: #C3C5C7;
-  width:100%;
-}
-
-.ws-dragandrophandler h1 {
-  font-size: 32px; 
-  margin-bottom: 20px;
-  font-weight: normal;
-}
-
-#ws-modal-parsing-measures-data-table,
-#ws-modal-parsing-measures-data-table-heading {
-  display: none;
-}
+/*******************************/
 
 .animated {
   -webkit-animation-duration: 1s;

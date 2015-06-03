@@ -9,12 +9,12 @@ app.view.PlaceView = Backbone.View.extend({
 	currCapture: {},
 
 	events: {
-		'change #allocation-channel':'changeChannelWidth',
-		'change #frequency-bands':'changeBand',
-		'select2-removing #frequency-bands':'checkBands',
-		'click #delete-link-place': 'deletePlace',
-		'click #download-link-place': 'downloadPlace',
-		'click #su-edit-place': 'launchEditPlace'
+		'change #p-channel-width':'changeChannelWidth',
+		'change #p-frequency-bands':'changeBand',
+		'select2-removing #p-frequency-bands':'checkBands',
+		'click #p-delete': 'deletePlace',
+		'click #p-download': 'downloadPlace',
+		'click #p-edit': 'launchEditPlace'
 	},
 
 	initialize: function(options){
@@ -26,7 +26,7 @@ app.view.PlaceView = Backbone.View.extend({
 		this.render();
 		this.coordinates = window.place.attributes.coordinates;
 		this.mapView = new app.view.GoogleMapBasicMarkersView({
-			idContainer: 'su-coord-markers-map'
+			idContainer: 'p-map'
 		});
 		this.renderMap();
 
@@ -86,12 +86,12 @@ app.view.PlaceView = Backbone.View.extend({
 	},
 
 	changeChannelWidth: function(){
-		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#p-channel-width").select2("val");
 		if(this.currCapture.data) this.renderCapture();
 	},
 
 	changeBand: function(){
-		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		window.settings.currBand = this.$el.find("#p-frequency-bands").select2("val");
 		if(this.currCapture.data) this.renderCapture();
 	},
 
@@ -101,9 +101,9 @@ app.view.PlaceView = Backbone.View.extend({
 
 	renderCoordinateResume: function(res){
 		var self = this;
-		var template = Zebra.tmpl.su_coordinate_resume;
+		var template = Zebra.tmpl.place_coordinate_resume;
 		var html = template(this.coordinates[res.index]);
-		this.$el.find('#su-selected-coordinate-map').html(html);
+		this.$el.find('#p-selected-coord').html(html);
 
 		this.currCapture.data = new app.model.Capture({
 			idPlace: window.place.id,
@@ -146,13 +146,13 @@ app.view.PlaceView = Backbone.View.extend({
 
 	renderCapture: function(){
 		var view = new app.view.CapturesView({
-			selector: '#su-selected-coordinate-map',
+			selector: '#p-selected-coord',
 			tooltipTop: 260
 		});
 
 		view.render(this.currCapture.data.attributes, this.currCapture.options);
 		$('html, body').stop().animate({
-			scrollTop: $('.chart_power_frequency').offset().top
+			scrollTop: $('.captures-chart').offset().top
 		}, 1000);
 	},
 
@@ -177,17 +177,17 @@ app.view.PlaceView = Backbone.View.extend({
 		});
 		this.$el.html(html);
 
-		this.$el.find("#allocation-channel").select2({ 
+		this.$el.find("#p-channel-width").select2({ 
 			data: window.place.attributes.frequenciesChannelWidth 
 		});
-		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
+		this.$el.find("#p-channel-width").select2("val", window.settings.currChannel);
 
 		if(window.place.attributes.frequenciesBands.length > 1){
-			this.$el.find("#frequency-bands").select2({ 
+			this.$el.find("#p-frequency-bands").select2({ 
 				data: window.place.attributes.frequenciesBands,
 				multiple: true,
 			});
-			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+			this.$el.find("#p-frequency-bands").select2("val", window.settings.currBand);
 		}
 
 		return this;

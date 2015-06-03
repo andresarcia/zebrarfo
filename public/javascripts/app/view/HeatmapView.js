@@ -21,20 +21,20 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	events: {
-		'change .range-slider':'changeFrequencyRange',
-		'change #frequency-bands':'changeBand',
-		'select2-removing #frequency-bands':'checkBands',
-		'change #select-channels':'changeChannelRange',
-		'select2-removing #select-channels':'checkChannelRange',
-		'change #select-function-operate':'changeDataFunction',
-		'change #max-intensity-slider':'changeMaxIntensity',
-		'change input:radio[name=select-frequency-by]':'changeFrequencyBy',
-		'change #opacity-slider':'changeOpacity',
-		'change #radius-slider':'changeRadius',
-		'slide #markers-slider':'changeMarker',
-		'change #spreader-slider':'changeSpreadDistance',
-		'change #spreader-unit':'changeSpreadDistance',
-		'change #allocation-channel':'changeChannelWidth',
+		'change #h-function-operate':'changeDataFunction',
+		'change #h-max-intensity-slider':'changeMaxIntensity',
+		'change input:radio[name=h-select-frequency-by]':'changeFrequencyBy',
+		'change #h-opacity-slider':'changeOpacity',
+		'change #h-radius-slider':'changeRadius',
+		'change #h-frequency-bands':'changeBand',
+		'select2-removing #h-frequency-bands':'checkBands',
+		'change #h-channel-width':'changeChannelWidth',
+		'slide #h-markers-slider':'changeMarker',
+		'change #h-range-slider':'changeFrequencyRange',
+		'change #h-select-channels':'changeChannelRange',
+		'select2-removing #h-select-channels':'checkChannelRange',
+		'change #h-spreader-unit':'changeSpreadDistance',
+		'change #h-spreader-slider':'changeSpreadDistance',
 	},
 
 	initialize: function(options){
@@ -74,9 +74,9 @@ app.view.HeatmapView = Backbone.View.extend({
 
 	renderSettings: function(){
 		var self = this;
-		this.$el.find("#select-function-operate").select2();
+		this.$el.find("#h-function-operate").select2();
 
-		this.opacitySlider = this.$el.find('#opacity-slider').noUiSlider({
+		this.opacitySlider = this.$el.find('#h-opacity-slider').noUiSlider({
 			start: this.heatmap.settings.opacity,
 			step: 1,
 			format: wNumb({
@@ -87,15 +87,15 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': 100
 			}
 		});
-		this.$el.find('#opacity-slider')
+		this.$el.find('#h-opacity-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + '%</strong>');
 			$(this).css('width', '50px');
 			$(this).css('left', '-10px');
 		});
 
-		this.radiusSlider = this.$el.find('#radius-slider').noUiSlider({
+		this.radiusSlider = this.$el.find('#h-radius-slider').noUiSlider({
 			start: this.heatmap.settings.radius,
 			step: 1,
 			format: wNumb({
@@ -106,9 +106,9 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': 25
 			}
 		});
-		this.$el.find('#radius-slider')
+		this.$el.find('#h-radius-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + 'px</strong>');
 			$(this).css('width', '60px');
 			$(this).css('left', '-15px');
@@ -116,19 +116,18 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		// bands
 		if(window.place.attributes.frequenciesBands.length > 1){
-			this.$el.find("#frequency-bands").select2({ 
+			this.$el.find("#h-frequency-bands").select2({ 
 				data: window.place.attributes.frequenciesBands,
 				multiple: true,
 			});
-			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+			this.$el.find("#h-frequency-bands").select2("val", window.settings.currBand);
 		}
 
 		// channels width
-		this.$el.find("#allocation-channel").select2({ 
+		this.$el.find("#h-channel-width").select2({ 
 			data: window.place.attributes.frequenciesChannelWidth 
 		});
-		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
-		this.$el.find('.select-channels-container').hide();
+		this.$el.find("#h-channel-width").select2("val", window.settings.currChannel);
 
 		var b = this.calculateBand();
 		// select by frequency
@@ -136,8 +135,8 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.changeFrequencyBy(false);
 
 		// spreader
-		this.spreadSliderUnit = this.$el.find("#spreader-unit").select2();
-		this.spreadSlider = this.$el.find('#spreader-slider').noUiSlider({
+		this.spreadSliderUnit = this.$el.find("#h-spreader-unit").select2();
+		this.spreadSlider = this.$el.find('#h-spreader-slider').noUiSlider({
 			start: this.heatmap.settings.distance,
 			connect: "lower",
 			format: wNumb({
@@ -151,7 +150,7 @@ app.view.HeatmapView = Backbone.View.extend({
 			}
 		});
 
-		this.$el.find('#spreader-slider').noUiSlider_pips({
+		this.$el.find('#h-spreader-slider').noUiSlider_pips({
 			mode: 'range',
 			density: 3.33
 		});
@@ -160,7 +159,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	changeFrequencyBy: function(update){
 		var val;
 		if(update !== false)
-			val = this.$el.find('input:radio[name=select-frequency-by]:checked').val();
+			val = this.$el.find('input:radio[name=h-select-frequency-by]:checked').val();
 		else {
 			if(window.settings.place.charts.channels.length > 0)
 				val = "channels";
@@ -169,19 +168,19 @@ app.view.HeatmapView = Backbone.View.extend({
 		}
 
 		if(val == "channels"){
-			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
-			this.$el.find('.range-slider-container').hide();
+			this.$el.find('input:radio[name="h-select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('.h-range-slider-settings').hide();
 			this.renderChannelInput();
-			this.$el.find('.select-channels-container').show();
+			this.$el.find('.h-channels-settings').show();
 			if(update !== false)
 				this.changeChannelRange();
 			else
 				this.calBoundChannels();
 
 		} else if(val == "range"){
-			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="range"]').attr('checked', true);
-			this.$el.find('.select-channels-container').hide();
-			this.$el.find('.range-slider-container').show();
+			this.$el.find('input:radio[name="h-select-frequency-by"]').filter('[value="range"]').attr('checked', true);
+			this.$el.find('.h-channels-settings').hide();
+			this.$el.find('.h-range-slider-settings').show();
 			if(update !== false)
 				this.changeFrequencyRange();
 			else
@@ -190,7 +189,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	renderRangeSlider: function(start, from, to){
-		this.rangeSlider = this.$el.find('.range-slider').noUiSlider({
+		this.rangeSlider = this.$el.find('#h-range-slider').noUiSlider({
 			start: start,
 			step: 1,
 			behaviour: 'tap-drag',
@@ -203,16 +202,16 @@ app.view.HeatmapView = Backbone.View.extend({
 				'max': to
 			}
 		}, true);
-		this.$el.find('.range-slider')
+		this.$el.find('#h-range-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + ' MHz</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
 		});
-		this.$el.find('.range-slider')
+		this.$el.find('#h-range-slider')
 		.Link('upper')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + ' MHz</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
@@ -228,7 +227,7 @@ app.view.HeatmapView = Backbone.View.extend({
 				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
 		});
 
-		this.$el.find('#select-channels').select2({
+		this.$el.find('#h-select-channels').select2({
 			placeholder: 'Select channels',
 			multiple: true,
 			data: channelData,
@@ -242,11 +241,11 @@ app.view.HeatmapView = Backbone.View.extend({
 			Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 		}
 
-		this.$el.find('#select-channels').select2('val', channels);
+		this.$el.find('#h-select-channels').select2('val', channels);
 	},
 
 	changeDataFunction: function(){
-		this.heatmap.settings.dataFunction = this.$el.find("#select-function-operate").select2("val");
+		this.heatmap.settings.dataFunction = this.$el.find("#h-function-operate").select2("val");
 		this.renderHeatmap(true);
 	},
 
@@ -280,7 +279,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	changeBand: function(evt){
-		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		window.settings.currBand = this.$el.find("#h-frequency-bands").select2("val");
 		var b = this.calculateBand();
 		this.renderRangeSlider(b.start, b.from, b.to);
 		this.changeFrequencyBy(true);
@@ -291,7 +290,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	changeChannelWidth: function(){
-		window.settings.currChannel = this.$el.find("#allocation-channel").select2("val");
+		window.settings.currChannel = this.$el.find("#h-channel-width").select2("val");
 		var channels = [];
 		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
@@ -326,7 +325,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	calBoundChannels: function(){
 		var self = this;
 		this.boundaries = [];
-		var channels = this.$el.find('#select-channels').select2("val"); 
+		var channels = this.$el.find('#h-select-channels').select2("val"); 
 		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
 
 		_.each(channels, function(item){
@@ -345,7 +344,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.heatmap.settings.currentMarkerItem = 0;
 		this.markersSlider.val(0);
 		this.heatmap.settings.distance = this.spreadSlider.val();
-		this.heatmap.settings.distanceUnit = this.$el.find("#spreader-unit").select2("val");
+		this.heatmap.settings.distanceUnit = this.$el.find("#h-spreader-unit").select2("val");
 		this.renderHeatmap(true);
 	},
 
@@ -394,7 +393,7 @@ app.view.HeatmapView = Backbone.View.extend({
 				[{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
 		};
 		this.heatmap.map = 
-			new google.maps.Map(document.getElementById("map_canvas_heatmap"), myOptions);
+			new google.maps.Map(document.getElementById("h-canvas"), myOptions);
 		this.heatmap.bounds = new google.maps.LatLngBounds();
 
 		google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
@@ -485,7 +484,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	renderMaxSuggestedSlider: function(){
-		this.maxIntensitySlider = this.$el.find('#max-intensity-slider').noUiSlider({
+		this.maxIntensitySlider = this.$el.find('#h-max-intensity-slider').noUiSlider({
 			start: this.data.powerMax,
 			step: 1,
 			format: wNumb({
@@ -498,9 +497,9 @@ app.view.HeatmapView = Backbone.View.extend({
 		}, true);
 
 		this.maxIntensitySlider.val(this.data.powerMax);
-		this.$el.find('#max-intensity-slider')
+		this.$el.find('#h-max-intensity-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip bottom"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
 			$(this).html('<strong>' + value + ' dBm</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
@@ -508,7 +507,7 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	renderMarkersSlider: function(max){
-		this.markersSlider = this.$el.find('#markers-slider').noUiSlider({
+		this.markersSlider = this.$el.find('#h-markers-slider').noUiSlider({
 			start: this.heatmap.settings.currentMarkerItem,
 			step: 1,
 			orientation: "vertical",
@@ -521,15 +520,15 @@ app.view.HeatmapView = Backbone.View.extend({
 			}
 		}, true);
 
-		this.$el.find('.controllers-container').slideDown(100);
+		this.$el.find('.h-controllers').slideDown(100);
 	},
 
 	updateDataByTab: function(){
-		this.$el.find("#allocation-channel").select2("val", window.settings.currChannel);
+		this.$el.find("#h-channel-width").select2("val", window.settings.currChannel);
 		if(window.settings.place.charts.channels.length > 0)
-			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('input:radio[name="h-select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
 		else
-			this.$el.find('input:radio[name="select-frequency-by"]').filter('[value="range"]').attr('checked', true);
+			this.$el.find('input:radio[name="h-select-frequency-by"]').filter('[value="range"]').attr('checked', true);
 		this.changeFrequencyBy(true);
 	},
 
@@ -547,7 +546,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.disableSettings();
-		this.$el.find('#map_canvas_heatmap').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.$el.find('#h_canvas').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;
 	}

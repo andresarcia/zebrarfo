@@ -15,14 +15,14 @@ app.model.UploadMeasuresContainers = Backbone.Model.extend({
 		if(options.el)
 			this.el = options.el;
 
-		this.nameContainer= this.el.find($('#upload-measures-name'));
-		this.filesContainer= this.el.find($('#upload-measures-file'));
-		this.unitContainer = this.el.find($('#upload-measures-unit'));
-		this.gpsFunctionContainer = this.el.find($('#upload-gps-position-function'));
-		this.dragFilesContainer = this.el.find($('.ws-dragandrophandler'));
-		this.filesInfoContainer = this.el.find($('#upload-measures-files-info'));
-		this.buttonSendDataContainer = this.el.find($('#upload-measures-button'));
-		this.buttonDeleteContainer = this.el.find($('#upload-measures-button-delete'));
+		this.nameContainer= this.el.find($('#u-measures-name'));
+		this.filesContainer= this.el.find($('#u-measures-file'));
+		this.unitContainer = this.el.find($('#u-measures-unit'));
+		this.gpsFunctionContainer = this.el.find($('#u-gps-position-function'));
+		this.dragFilesContainer = this.el.find($('.u-dragandrophandler'));
+		this.filesInfoContainer = this.el.find($('#u-measures-files-info'));
+		this.buttonSendDataContainer = this.el.find($('#u-measures-button'));
+		this.buttonDeleteContainer = this.el.find($('#u-measures-button-delete'));
 
 		this.filesContainer.filestyle({buttonBefore: true, buttonName: "btn-primary"});
 		this.disableButtonDeleteContainer();

@@ -4,11 +4,11 @@ app.view = app.view || {};
 app.view.WhiteSpacesView = Backbone.View.extend({
 
 	events: {
-		'change .quality-slider':'changeQuality',
-		'change .occupation-slider':'changeOccupation',
-		'change .threshold-slider':'changeThreshold',
-		'change #frequency-bands':'changeBand',
-		'select2-removing #frequency-bands':'checkBands',
+		'change #ws-quality-slider':'changeQuality',
+		'change #ws-occupation-slider':'changeOccupation',
+		'change #ws-threshold-slider':'changeThreshold',
+		'change #ws-frequency-bands':'changeBand',
+		'select2-removing #ws-frequency-bands':'checkBands',
 	},
 
 	reset: function(){
@@ -55,7 +55,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	renderSettings: function(){
-		this.qualitySlider = this.$el.find('.quality-slider').noUiSlider({
+		this.qualitySlider = this.$el.find('#ws-quality-slider').noUiSlider({
 			start: this.settings.quality.max - this.settings.quality.crr,
 			step: 1,
 			format: wNumb({
@@ -67,15 +67,15 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			}
 		});
 
-		this.$el.find('.quality-slider')
+		this.$el.find('#ws-quality-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + '</strong>');
 			$(this).css('width', '50px');
 			$(this).css('left', '-10px');
 		});
 
-		this.occupationSlider = this.$el.find('.occupation-slider').noUiSlider({
+		this.occupationSlider = this.$el.find('#ws-occupation-slider').noUiSlider({
 			start: 100,
 			step: 1,
 			behaviour: 'tap-drag',
@@ -88,15 +88,15 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				'max': 100
 			}
 		});
-		this.$el.find('.occupation-slider')
+		this.$el.find('#ws-occupation-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + ' %</strong>');
 			$(this).css('width', '50px');
 			$(this).css('left', '-10px');
 		});
 
-		this.thresholdSlider = this.$el.find('.threshold-slider').noUiSlider({
+		this.thresholdSlider = this.$el.find('#ws-threshold-slider').noUiSlider({
 			start: this.settings.thresholdMax,
 			step: 1,
 			behaviour: 'tap-drag',
@@ -109,9 +109,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				'max': this.settings.thresholdMax
 			}
 		});
-		this.$el.find('.threshold-slider')
+		this.$el.find('#ws-threshold-slider')
 		.Link('lower')
-		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
+		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + ' dBm</strong>');
 			$(this).css('width', '70px');
 			$(this).css('left', '-20px');
@@ -119,12 +119,65 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		// bands
 		if(window.place.attributes.frequenciesBands.length > 1){
-			this.$el.find("#frequency-bands").select2({ 
+			this.$el.find("#ws-frequency-bands").select2({ 
 				data: window.place.attributes.frequenciesBands,
 				multiple: true,
 			});
-			this.$el.find("#frequency-bands").select2("val", window.settings.currBand);
+			this.$el.find("#ws-frequency-bands").select2("val", window.settings.currBand);
 		}
+
+		var b = this.calculateBand();
+		this.renderRangeSlider(b.start, b.from, b.to);
+	},
+
+	calculateBand: function(){
+		var bands = _.sortBy(window.settings.currBand),
+			from, 
+			to;
+
+		if(Number(bands[0]) === 0){
+			from = this.data.frequencyMin;
+			to = this.data.frequencyMax;
+		} else {
+			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
+			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
+		}
+
+		return {
+			start: [from, to],
+			from: from,
+			to: to
+		};
+	},
+
+	renderRangeSlider: function(start, from, to){
+		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
+			start: start,
+			step: 1,
+			behaviour: 'tap-drag',
+			connect: true,
+			format: wNumb({
+				decimals: 0
+			}),
+			range: {
+				'min': from,
+				'max': to
+			}
+		}, true);
+		this.$el.find('#ws-range-slider')
+		.Link('lower')
+		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
+			$(this).html('<strong>' + value + ' MHz</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
+		});
+		this.$el.find('#ws-range-slider')
+		.Link('upper')
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + ' MHz</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
+		});
 	},
 
 	changeQuality: function(){
@@ -146,7 +199,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	changeBand: function(evt){
-		window.settings.currBand = this.$el.find("#frequency-bands").select2("val");
+		window.settings.currBand = this.$el.find("#ws-frequency-bands").select2("val");
 		this.data3D = undefined;
 		this.renderGraph();
 	},
@@ -228,12 +281,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			keepAspectRatio: false,
 			verticalRatio: 0.5,
 			cameraPosition: this.cameraPosition,
-			// zMax: 60, // occupation
-			// xMax: -60, // threshold
 		};
 
 		var self = this;
-		var graph = new links.Graph3d(document.getElementById('white-spaces-canvas'));
+		var graph = new links.Graph3d(document.getElementById('ws-canvas'));
 		google.visualization.events.addListener(graph, 'camerapositionchange', onCameraPositionChange);
 
 		// save camera position to redraw in the same position

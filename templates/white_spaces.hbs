@@ -3,25 +3,46 @@
 	<div class="col-md-3 settings">
 		<h4>Data Settings</h4>
 		<div class="form-group">
-			<label for="quality-slider">Quality</label>
-			<div class="quality-slider"></div>
+			<label for="ws-quality-slider">Quality</label>
+			<div id="ws-quality-slider"></div>
 		</div>
 		<div class="form-group">
-			<label for="occupation-slider">Occupation range</label>
-			<div class="occupation-slider"></div>
+			<label for="ws-occupation-slider">Occupation range</label>
+			<div id="ws-occupation-slider"></div>
 		</div>
 		<div class="form-group">
-			<label for="threshold-slider">Threshold range</label>
-			<div class="threshold-slider"></div>
+			<label for="ws-threshold-slider">Threshold range</label>
+			<div id="ws-threshold-slider"></div>
+		</div>
+		<div class="form-group">
+			<label for="ws-select-frequency-by">Select frequency by</label>
+			<br />
+			<label class="radio-inline">
+				<input type="radio" name="ws-select-frequency-by" value="range" checked> Range
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="ws-select-frequency-by" value="channels"> Channels
+			</label>
 		</div>
 		{{#if bands }}
 			<div class="form-group">
-				<label for="frequency-bands">Frequency bands</label>
-				<input class="form-control" id="frequency-bands" type="hidden" />
+				<label for="ws-frequency-bands">Frequency bands</label>
+				<input class="form-control" id="ws-frequency-bands" type="hidden" />
 			</div>
 		{{/if}}
 	</div>
 	<div class="col-md-9">
-		<div id="white-spaces-canvas"></div>
+		<div id="ws-canvas" style="height:400px;"></div>
+		<div class="col-md-12 ws-controllers-container">
+			<br>
+			<div class="col-md-12 ws-range-slider-settings">
+				<div id="ws-range-slider"></div>
+			</div>
+			<div class="col-md-12 select-channels-container">
+				<label for="ws-select-channels">Please select the channels to observe</label>
+				<input class="form-control" id="ws-select-channels" type="hidden" />
+			</div>
+		</div>
 	</div>
+
 </div>

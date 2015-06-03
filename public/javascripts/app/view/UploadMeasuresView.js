@@ -28,14 +28,14 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 	},
 
 	events : {
-		'blur #upload-measures-name' : 'checkName',
+		'blur #u-measures-name' : 'checkName',
 		'click .item-zone-name' : 'pickName',
-		'change #upload-measures-file' : 'checkFiles',
-		'change #upload-measures-unit' : 'changeUnit',
-		'change #upload-gps-position-function' : 'changeGpsFunction',
-		'click #upload-measures-button' : 'uploadData',
-		'click #upload-measures-button-delete' : 'deleteFiles',
-		'click #upload-measures-info-help': 'help',
+		'change #u-measures-file' : 'checkFiles',
+		'change #u-measures-unit' : 'changeUnit',
+		'change #u-gps-position-function' : 'changeGpsFunction',
+		'click #u-measures-button' : 'uploadData',
+		'click #u-measures-button-delete' : 'deleteFiles',
+		'click #u-measures-info-help': 'help',
 	},
 
 	initialize: function(options){
@@ -47,10 +47,10 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		this.waitingView.hide();
 		this.render();
 		this.viewContainers = new app.model.UploadMeasuresContainers({el:self.$el});
-		$(".ws-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
-		$(".ws-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
-		$(".ws-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
-		$(".ws-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
+		$(".u-dragandrophandler").bind("dragenter", _.bind(self.dragEnterEvent, self));
+		$(".u-dragandrophandler").bind("dragover", _.bind(self.dragOverEvent, self));
+		$(".u-dragandrophandler").bind("dragleave", _.bind(self.dragLeaveEvent, self));
+		$(".u-dragandrophandler").bind("drop", _.bind(self.dropEvent, self));	
 
 		Backbone.pubSub.off('event-server-error');
 		Backbone.pubSub.on('event-server-error', function(){
@@ -216,7 +216,7 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 			else if(frequency % 1000000000 == frequency)
 				unit = "Hz";
 
-			self.$el.find('#upload-measures-unit').select2("val", unit);
+			self.$el.find('#u-measures-unit').select2("val", unit);
 			self.filesInfo.unit = unit;
 			self.viewContainers.setGoodUnitContainer();
 		};
@@ -291,8 +291,8 @@ app.view.UploadMeasuresView = Backbone.View.extend({
 		var html = template(window.places);
 		this.$el.html(html);
 
-		this.$el.find("#upload-measures-unit").select2( { placeholder: "Pick frequency unit"});
-		this.$el.find("#upload-gps-position-function").select2();
+		this.$el.find("#u-measures-unit").select2( { placeholder: "Pick frequency unit"});
+		this.$el.find("#u-gps-position-function").select2();
 
 		return this;
 	}

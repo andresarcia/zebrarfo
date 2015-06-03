@@ -6,8 +6,8 @@ app.view.HelpView = Backbone.View.extend({
 	el: '#ws-containter',
 
 	events: {
-		'click #download-android-parser-txt': 'downloadTxt',
-		'click #download-android-parser-json': 'downloadJson'
+		'click #h-files-format-download-android-parser-txt': 'downloadTxt',
+		'click #h-files-format-download-android-parser-json': 'downloadJson'
 	},
 
 	initialize: function(options){
