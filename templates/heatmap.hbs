@@ -13,7 +13,7 @@
 		</div>
 		<div class="form-group">
 			<label for="max-intensity-slider">Suggested referential Maximum</label>
-			<div class="max-intensity-slider"></div>
+			<div id="max-intensity-slider"></div>
 		</div>
 		<div class="form-group">
 			<label for="select-frequency-by">Select frequency by</label>
@@ -23,16 +23,16 @@
 			</label>
 			<label class="radio-inline">
 				<input type="radio" name="select-frequency-by" value="channels"> Channels
-				</label>
+			</label>
 		</div>
 		<h4>Heatmap Settings</h4>
 		<div class="form-group">
 			<label for="opacity-slider">Opacity</label>
-			<div class="opacity-slider"></div>
+			<div id="opacity-slider"></div>
 		</div>
 		<div class="form-group">
 			<label for="radius-slider">Radius</label>
-			<div class="radius-slider"></div>
+			<div id="radius-slider"></div>
 		</div>
 		{{#if bands }}
 			<div class="form-group">
@@ -53,31 +53,30 @@
 			<div id="map_canvas_heatmap" style="width:100%; height:400px;"></div>
 		</div>
 		<div class="col-xs-1 col-sm-1 col-md-1">
-			<div class="markers-slider" style="height:400px;"></div>
+			<div id="markers-slider" style="height:400px;"></div>
 		</div>
 
-		<div class="col-md-11 col-md-offset-0 heatmap-controllers-container">
-			<div class="col-md-12 heatmap-slider-container">
-				<div class="slider"></div>
-				<div class="slider-value"></div>
+		<div class="col-md-11 col-md-offset-0 controllers-container">
+			<div class="col-md-12 range-slider-container">
+				<div class="range-slider"></div>
 			</div>
-			<div class="col-md-12 heatmap-select-channels">
+			<div class="col-md-12 select-channels-container">
 				<label for="select-channels">Please select the channels to observe</label>
 				<input class="form-control" id="select-channels" type="hidden" />
 			</div>
 		
-			<div class="heatmap-select-spread-distance">
+			<div class="spreader-container">
 				<h5 class="col-md-12">Please select the unit and distance between each point</h5>
 				<div class="col-md-3">
-					<label for="upload-measures-unit">Unit</label>
-					<select class="form-control" id="spread-distance-unit-slider">
+					<label for="spreader-unit">Unit</label>
+					<select class="form-control" id="spreader-unit">
 						<option value="m">Meters - m</option>
 						<option value="km">Kilometers - km</option>
 					</select>
 				</div>
 				<div class="col-md-9">
-					<label for="spread-distance-slider">Distance</label>
-					<div class="spread-distance-slider"></div>
+					<label for="spreader-slider">Distance</label>
+					<div id="spreader-slider"></div>
 				</div>
 			</div>
 		</div>
