@@ -21,8 +21,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		'click .su-select-right-plus-coord': '_selectPlusRightCoords',
 		'keydown #su-select-window-left-input': 'checkWindowSelectInput',
 		'keydown #su-select-window-right-input': 'checkWindowSelectInput',
-		'change .spread-distance-slider':'changeSpreadDistance',
-		'change #spread-distance-unit-slider':'changeSpreadDistance',
+		'change #spreader-slider':'changeSpreadDistance',
+		'change #spreader-unit':'changeSpreadDistance',
 		'click .su-deselect-coord': '_deselectCoords',
 		'click .su-save-save': 'save',
 		'click .su-save-save-as': 'saveAs',
@@ -159,9 +159,9 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	renderSpreadComponents: function(){
-		this.spreadSliderUnit = this.$el.find("#spread-distance-unit-slider").select2();
+		this.spreadSliderUnit = this.$el.find("#spreader-unit").select2();
 		this.renderSDGraph();
-		this.spreadSlider = this.$el.find('.spread-distance-slider').noUiSlider({
+		this.spreadSlider = this.$el.find('#spreader-slider').noUiSlider({
 			start: 0,
 			connect: "lower",
 			format: wNumb({
@@ -177,7 +177,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 		this.renderSpreadTooltip();
 
-		this.$el.find('.spread-distance-slider').noUiSlider_pips({
+		this.$el.find('#spreader-slider').noUiSlider_pips({
 			mode: 'range',
 			density: 3.33
 		});
@@ -189,8 +189,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			data.push([Number(item.radio), Number(item.sd)]);
 		});
 
-		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
-		this.$el.find('.chart-sd-distance').highcharts({
+		var unit = this.$el.find("#spreader-unit").select2("val");
+		this.$el.find('#chart-sd-distance').highcharts({
 			chart: {
 				type: 'column',
 				marginRight: -5,
@@ -243,8 +243,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	renderSpreadTooltip: function(){
-		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
-		this.$el.find('.spread-distance-slider')
+		var unit = this.$el.find("#spreader-unit").select2("val");
+		this.$el.find('#spreader-slider')
 		.Link('lower')
 		.to('-inline-<div class="slider_tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + ' ' + unit + '</strong>');
@@ -456,7 +456,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		else {
 			this.editMarkers[this.editMarkersIndex].by = 'distance';
 			this.editMarkers[this.editMarkersIndex].distance = this.spreadSlider.val();
-			this.editMarkers[this.editMarkersIndex].unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+			this.editMarkers[this.editMarkersIndex].unit = this.$el.find("#spreader-unit").select2("val");
 			this.editMarkers[this.editMarkersIndex].spacing = _.clone(this.spacing);
 
 			if(Object.keys(this.spacing).length === 0)
@@ -749,7 +749,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.renderMarkerSlider([0]);
 		
 		var distance = this.spreadSlider.val();
-		var unit = this.$el.find("#spread-distance-unit-slider").select2("val");
+		var unit = this.$el.find("#spreader-unit").select2("val");
 		var ids = this.mapView.changeMarkersByDistance(distance,unit);
 		this.renderEditingAreaSpread(ids,distance,unit);
 
