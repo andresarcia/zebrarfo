@@ -451,7 +451,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	_deleteCoord: function(){
 		var self = this;
-		if(this.spreadSlider.val() == "0.0")
+
+		if(Number(this.spreadSlider.val()) === 0)
 			this.editMarkers[this.editMarkersIndex].by = 'range';
 		else {
 			this.editMarkers[this.editMarkersIndex].by = 'distance';
@@ -490,7 +491,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var v = this.getMarkersIndex();
 		var edited = [];
 
-		if(this.spreadSlider.val() == "0.0"){
+		if(Number(this.spreadSlider.val()) === 0){
 			this.mapView.hideMarkers(this.relativeIndex2Real(v),true);
 			if(v.length == 1){
 				edited.push(this.coordinates[v[0]]);
