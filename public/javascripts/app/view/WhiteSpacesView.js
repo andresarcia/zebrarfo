@@ -4,6 +4,7 @@ app.view = app.view || {};
 app.view.WhiteSpacesView = Backbone.View.extend({
 
 	events: {
+		'change #ws-graph-type':'changeGraphType',
 		'change #ws-quality-slider':'changeQuality',
 		'change #ws-occupation-slider':'changeOccupation',
 		'change #ws-threshold-slider':'changeThreshold',
@@ -18,6 +19,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	reset: function(){
 		this.settings = {};
+		this.settings.type = 'bar';
 		this.settings.quality = {};
 		this.settings.quality.crr = app.util.isWifi() ? 1 : 5;
 		this.settings.quality.max = 10;
@@ -53,16 +55,18 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		}
 
 		if(window.settings.googleVisualizationApi)
-			self.renderGraph(this.coordinates);
+			self.renderGraph(true);
 		else {
 			Backbone.pubSub.off('event-loaded-google-visualization-api');
 			Backbone.pubSub.on('event-loaded-google-visualization-api', function(){
-				self.renderGraph(self.coordinates);
+				self.renderGraph(true);
 			});
 		}
 	},
 
 	renderSettings: function(){
+		this.$el.find("#ws-graph-type").select2();
+
 		this.qualitySlider = this.$el.find('#ws-quality-slider').noUiSlider({
 			start: this.settings.quality.max - this.settings.quality.crr,
 			step: 1,
@@ -248,8 +252,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	changeFrequencyRange: function(){
 		this.calBoundFrequencies();
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderGraph(true);
 	},
 
 	checkChannelRange: function(evt){
@@ -276,8 +279,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	changeChannelRange: function(){
 		this.calBoundChannels();
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderGraph(true);
 	},
 
 	changeChannelWidth: function(){
@@ -289,22 +291,24 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.changeChannelRange();
 	},
 
+	changeGraphType: function(){
+		this.settings.type = this.$el.find("#ws-graph-type").select2("val");
+		this.renderGraph(true);
+	},
+
 	changeQuality: function(){
 		this.settings.quality.crr = this.settings.quality.max - this.qualitySlider.val();
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderGraph(true);
 	},
 
 	changeOccupation: function(){
 		this.settings.occupationMax = Number(this.occupationSlider.val());
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderGraph(true);
 	},
 
 	changeThreshold: function(){
 		this.settings.thresholdMax = Number(this.thresholdSlider.val());
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderGraph(true);
 	},
 
 	changeBand: function(evt){
@@ -363,15 +367,15 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		}
 	},
 
-	renderGraph: function(){
-		if(!this.data3D) {
+	renderGraph: function(update){
+		if(update) {
 			this.disableSettings();
 			this.calculateData();
 		}
 
 		var options = {
 			width:  "100%",
-			style: "grid", // dot, dot-line, line, grid, surface, bar
+			style: this.settings.type, // dot, dot-line, line, grid, surface, bar
 			showPerspective: true,
 			showGrid: false,
 			showShadow: false,

@@ -1,11 +1,24 @@
 <br>
 <div class="row">
 	<div class="col-md-3 settings">
-		<h4>Data Settings</h4>
+		<h4>Graph Settings</h4>
+		<div class="form-group">
+			<label for="ws-graph-type">Type</label>
+			<select class="form-control" id="ws-graph-type">
+				<option></option>
+				<option value="bar" selected>Bar</option>
+				<option value="surface">Surface</option>
+				<option value="grid">Grid</option>
+				<option value="line">Line</option>
+				<option value="dot-line">Dot-Line</option>
+				<option value="dot">Dot</option>
+			</select>
+		</div>
 		<div class="form-group">
 			<label for="ws-quality-slider">Quality</label>
 			<div id="ws-quality-slider"></div>
 		</div>
+		<h4>Data Settings</h4>
 		<div class="form-group">
 			<label for="ws-occupation-slider">Occupation range</label>
 			<div id="ws-occupation-slider"></div>
@@ -39,7 +52,7 @@
 	</div>
 	<div class="col-md-9">
 		<div id="ws-canvas" style="height:400px;"></div>
-		<div class="col-md-12 ws-controllers-container">
+		<div class="col-md-12 ws-controllers">
 			<br>
 			<div class="col-md-12 ws-range-slider-settings">
 				<div id="ws-range-slider"></div>
