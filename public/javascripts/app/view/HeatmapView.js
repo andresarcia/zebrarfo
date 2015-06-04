@@ -532,7 +532,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.disableSettings();
-		this.$el.find('#h_canvas').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.$el.find('#h-canvas').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		return this;
 	}

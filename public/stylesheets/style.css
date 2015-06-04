@@ -282,14 +282,6 @@ hr {
   background-color:rgba(0,0,0,0.433);
   z-index: 1100;
 }
-.ws-waiting-maps {  
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color:#7F8C8D;
-  opacity: 0.75;
-  cursor: progress;
-}
 @media (max-width: 767px) {
   .ws-error, .ws-waiting {
     width: 100%;
@@ -680,6 +672,16 @@ hr {
 }
 .nouislider-tooltip.bottom {
   bottom:-20px;
+}
+/*********************************/
+/* COMPONENTS WAIT ***************/
+.ws-waiting-maps {  
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color:#7F8C8D;
+  opacity: 0.75;
+  cursor: progress;
 }
 /*********************************/
 /* UPLOAD ************************/
