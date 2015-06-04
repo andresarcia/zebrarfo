@@ -12,7 +12,7 @@ app.view.CapturesView = Backbone.View.extend({
 		this.tooltipTop = options.tooltipTop;
 		this.trackClick = options.trackClick;
 
-		$(this.selector).find('.captures-chart').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		$(this.selector).find('.captures-chart').html(Zebra.tmpl.waiting_component());
 
 		Backbone.pubSub.off('event-occupation-channel-select');
 		Backbone.pubSub.on('event-occupation-channel-select', this.selectChannel, this);

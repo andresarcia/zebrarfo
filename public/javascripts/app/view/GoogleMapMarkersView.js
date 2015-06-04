@@ -9,7 +9,7 @@ app.view.GoogleMapBasicMarkersView = Backbone.View.extend({
 	initialize: function(options){
 		if(options.idContainer){
 			this.idContainer = options.idContainer;
-			$('#'+this.idContainer).html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+			$('#'+this.idContainer).html(Zebra.tmpl.waiting_component());
 
 		} else
 			throw 'No id container for map canvas';

@@ -219,7 +219,6 @@ app.view.OccupationView = Backbone.View.extend({
 			data: window.place.attributes.frequenciesChannelWidth 
 		});
 		this.$el.find("#o-channel-width").select2("val", window.settings.currChannel);
-		this.$el.find('.captures-chart').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
 
 		if(window.place.attributes.frequenciesBands.length > 1){
 			this.$el.find("#o-frequency-bands").select2({ 

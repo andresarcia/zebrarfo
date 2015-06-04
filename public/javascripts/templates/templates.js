@@ -351,6 +351,10 @@ this["Zebra"]["tmpl"]["waiting"] = Handlebars.template({"compiler":[6,">= 2.0.0-
   return "<div class=\"ws-waiting\">\n	<div class=\"spinner-container\">\n		<div class=\"rect1\"></div>\n		<div class=\"rect2\"></div>\n		<div class=\"rect3\"></div>\n		<div class=\"rect4\"></div>\n		<div class=\"rect5\"></div>\n	</div>\n</div>";
   },"useData":true});
 
+this["Zebra"]["tmpl"]["waiting_component"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<div class=\"waiting-component\">\n	<div class=\"spinner-component\"></div>\n</div>";
+  },"useData":true});
+
 this["Zebra"]["tmpl"]["waiting_login"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div class=\"login-waiting\">\n	<div class=\"spinner-container\">\n		<div class=\"rect1\"></div>\n		<div class=\"rect2\"></div>\n		<div class=\"rect3\"></div>\n		<div class=\"rect4\"></div>\n		<div class=\"rect5\"></div>\n	</div>\n</div>";
   },"useData":true});

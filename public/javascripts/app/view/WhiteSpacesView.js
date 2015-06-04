@@ -449,7 +449,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.disableSettings();
-		this.$el.find('#ws-canvas').html('<div class="ws-waiting-maps"><div class="spinner-maps"></div></div>');
+		this.$el.find('#ws-canvas').html(Zebra.tmpl.waiting_component());
 
 		return this;
 	},

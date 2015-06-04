@@ -312,18 +312,6 @@ hr {
   width: 6px;
   display: inline-block;
 }
-.spinner-maps {
-  width: 40px;
-  height: 40px;
-  background-color: white;
-  position: absolute;
-  top:calc(50% - 20px);
-  left:calc(50% - 20px);
-  border-radius: 100%;  
-  -webkit-animation: scaleout 1.0s infinite ease-in-out;
-  -moz-animation: scaleout 1.0s infinite ease-in-out;
-  animation: scaleout 1.0s infinite ease-in-out;
-}
 .ws-error-message {
 	position: absolute;
 	bottom: 30%;
@@ -674,14 +662,26 @@ hr {
   bottom:-20px;
 }
 /*********************************/
-/* COMPONENTS WAIT ***************/
-.ws-waiting-maps {  
+/* WAITING COMPONENT *************/
+.waiting-component {  
   position: relative;
   width: 100%;
   height: 100%;
   background-color:#7F8C8D;
   opacity: 0.75;
   cursor: progress;
+}
+.spinner-component {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  position: absolute;
+  top:calc(50% - 20px);
+  left:calc(50% - 20px);
+  border-radius: 100%;  
+  -webkit-animation: scaleout 1.0s infinite ease-in-out;
+  -moz-animation: scaleout 1.0s infinite ease-in-out;
+  animation: scaleout 1.0s infinite ease-in-out;
 }
 /*********************************/
 /* UPLOAD ************************/
