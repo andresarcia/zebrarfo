@@ -32,13 +32,13 @@ app.view.ChartsView = Backbone.View.extend({
 		else
 			this.change(null,0);
 
-		Backbone.pubSub.off('single-place-change-to-heatmap');
-		Backbone.pubSub.on('single-place-change-to-heatmap', function(){
+		Backbone.pubSub.off('charts-change-to-heatmap');
+		Backbone.pubSub.on('charts-change-to-heatmap', function(){
 			self.change(null,1);
 		});
 
-		Backbone.pubSub.off('single-place-charts-change-channels');
-		Backbone.pubSub.on('single-place-charts-change-channels', function(channels){
+		Backbone.pubSub.off('charts-change-channels');
+		Backbone.pubSub.on('charts-change-channels', function(channels){
 			window.settings.place.charts.channels = channels;
 		});
 	},

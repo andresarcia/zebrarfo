@@ -245,7 +245,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		if(channels === undefined || channels.length < 1){
 			channels = [];
 			channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
-			Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+			Backbone.pubSub.trigger('charts-change-channels',channels);
 		}
 
 		this.$el.find('#h-select-channels').select2('val', channels);
@@ -277,7 +277,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		window.settings.currChannel = this.$el.find("#h-channel-width").select2("val");
 		var channels = [];
 		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 		this.renderChannelInput();
 		this.changeChannelRange();
 	},
@@ -309,7 +309,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		var self = this;
 		this.boundaries = [];
 		var channels = this.$el.find('#h-select-channels').select2("val"); 
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 
 		_.each(channels, function(item){
 			var boundaries = item.split("-");

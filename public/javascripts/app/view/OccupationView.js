@@ -66,7 +66,7 @@ app.view.OccupationView = Backbone.View.extend({
 	},
 
 	changeToHeatmap: function(){
-		Backbone.pubSub.trigger('single-place-change-to-heatmap');
+		Backbone.pubSub.trigger('charts-change-to-heatmap');
 	},
 
 	changeAllocationChannel: function(){
@@ -106,31 +106,31 @@ app.view.OccupationView = Backbone.View.extend({
 		var channels = window.settings.place.charts.channels;
 		channels.push(data);
 		this.$el.find('#o-select-channels').select2("val",channels);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 	},
 
 	pushChannelsFromInput: function(evt){
 		var channels = this.$el.find('#o-select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-select',evt.val[evt.val.length - 1]);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 	},
 
 	popChannelsFromGraph: function(data){
 		var channels = window.settings.place.charts.channels;
 		channels = _.without(channels, data);
 		this.$el.find('#o-select-channels').select2("val",channels);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 	},
 
 	popChannelFromInput: function(evt){
 		var channels = this.$el.find('#o-select-channels').select2("val"); 
 		Backbone.pubSub.trigger('event-occupation-channel-deselect',evt.val);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
 	},
 
 	clearChannels: function(evt){
 		this.$el.find('#o-select-channels').select2("val",[]);
-		Backbone.pubSub.trigger('single-place-charts-change-channels',[]);
+		Backbone.pubSub.trigger('charts-change-channels',[]);
 	},
 
 	renderComponents: function(){
