@@ -404,6 +404,15 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			this.$el.find('.settings').addClass('disable-container');
 	},
 
+	updateDataByTab: function(){
+		this.$el.find("#ws-channel-width").select2("val", window.settings.currChannel);
+		if(window.settings.place.charts.channels.length > 0)
+			this.$el.find('input:radio[name="ws-select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
+		else
+			this.$el.find('input:radio[name="ws-select-frequency-by"]').filter('[value="range"]').attr('checked', true);
+		this.changeFrequencyBy(true);
+	},
+
 	render: function(){
 		var template = Zebra.tmpl.white_spaces;
 		var html = template({

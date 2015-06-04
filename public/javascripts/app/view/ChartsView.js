@@ -79,6 +79,9 @@ app.view.ChartsView = Backbone.View.extend({
 				isEmpty = this.$el.find('#white-spaces-tab').is(':empty');
 				if(isEmpty)
 					self.renderWhiteSpaces();
+				else
+					window.settings.place.charts.whiteSpaces.view.updateDataByTab();
+				break;
 		}
 	},
 
