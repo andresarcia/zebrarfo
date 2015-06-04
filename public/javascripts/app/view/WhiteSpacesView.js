@@ -23,8 +23,15 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.quality = {};
 		this.settings.quality.crr = app.util.isWifi() ? 1 : 5;
 		this.settings.quality.max = 10;
-		this.settings.occupationMax = 100;
-		this.settings.thresholdMax = window.place.attributes.powerMax;
+		this.settings.occupation = {};
+		this.settings.occupation.dmin = 0;
+		this.settings.occupation.dmax = 100;
+		this.settings.occupation.max = 100;
+		this.settings.threshold = {};
+		this.settings.threshold.dmin = window.place.attributes.powerMin;
+		this.settings.threshold.dmax = window.place.attributes.powerMax;
+		this.settings.threshold.min = window.place.attributes.powerMin;
+		this.settings.threshold.max = window.place.attributes.powerMax;
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
 		this.cameraPosition.vertical = 0.5;
@@ -109,20 +116,27 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		});
 
 		this.thresholdSlider = this.$el.find('#ws-threshold-slider').noUiSlider({
-			start: this.settings.thresholdMax,
+			start: [this.settings.threshold.min, this.settings.threshold.max],
 			step: 1,
 			behaviour: 'tap-drag',
-			connect: 'lower',
+			connect: true,
 			format: wNumb({
 				decimals: 0
 			}),
 			range: {
-				'min': window.place.attributes.powerMin,
-				'max': this.settings.thresholdMax
+				'min': this.settings.threshold.dmin,
+				'max': this.settings.threshold.dmax
 			}
 		});
 		this.$el.find('#ws-threshold-slider')
 		.Link('lower')
+		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
+			$(this).html('<strong>' + value + ' dBm</strong>');
+			$(this).css('width', '70px');
+			$(this).css('left', '-20px');
+		});
+		this.$el.find('#ws-threshold-slider')
+		.Link('upper')
 		.to('-inline-<div class="nouislider-tooltip up"></div>', function(value){
 			$(this).html('<strong>' + value + ' dBm</strong>');
 			$(this).css('width', '70px');
@@ -302,12 +316,14 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	changeOccupation: function(){
-		this.settings.occupationMax = Number(this.occupationSlider.val());
+		this.settings.occupation.max = Number(this.occupationSlider.val());
 		this.renderGraph(true);
 	},
 
 	changeThreshold: function(){
-		this.settings.thresholdMax = Number(this.thresholdSlider.val());
+		var threshold = this.thresholdSlider.val();
+		this.settings.threshold.min = Number(threshold[0]);
+		this.settings.threshold.max = Number(threshold[1]);
 		this.renderGraph(true);
 	},
 
@@ -355,12 +371,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				var x = itemSameFrequency[0].frequency / 1000;
 				// occupation
 				var occupation = (passed/itemSameFrequency.length)*100;
-				if(occupation <= self.settings.occupationMax) y = occupation;
-				else y = self.settings.occupationMax;
+				if(occupation <= self.settings.occupation.max) y = occupation;
+				else y = self.settings.occupation.max;
 				// threshold
 				var threshold = j;
-				if(threshold <= self.settings.thresholdMax) z = threshold;
-				else if(threshold > self.settings.thresholdMax) z = self.settings.thresholdMax;
+				if(threshold >= self.settings.threshold.min && threshold <= self.settings.threshold.max) z = threshold;
+				else if(threshold < self.settings.threshold.min) z = self.settings.threshold.min;
+				else if(threshold > self.settings.threshold.max) z = self.settings.threshold.max;
 
 				self.data3D.addRow([ z, x, y ]);
 			});
@@ -382,6 +399,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			keepAspectRatio: false,
 			verticalRatio: 0.5,
 			cameraPosition: this.cameraPosition,
+			zMin: this.settings.occupation.dmin,
+			zMax: this.settings.occupation.dmax,
+			xMin: this.settings.threshold.dmin,
+			xMax: this.settings.threshold.dmax,
 		};
 
 		var self = this;
