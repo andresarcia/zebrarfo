@@ -239,7 +239,6 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	calBoundFrequencies: function(){
-		// Backbone.pubSub.trigger('charts-change-channels',[]);
 		this.boundaries = [];
 		this.boundaries.push({
 			from: Number(this.rangeSlider.val()[0]),
@@ -365,7 +364,6 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	},
 
 	renderGraph: function(){
-		this.waitingView.show();
 		if(!this.data3D) {
 			this.disableSettings();
 			this.calculateData();
@@ -373,7 +371,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		var options = {
 			width:  "100%",
-			style: "bar", // dot, dot-line, line, grid, surface, bar
+			style: "grid", // dot, dot-line, line, grid, surface, bar
 			showPerspective: true,
 			showGrid: false,
 			showShadow: false,
@@ -395,14 +393,17 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		setTimeout(function(){
 			graph.draw(self.data3D, options);
-			self.waitingView.hide();
 			self.$el.find('.settings').removeClass('disable-container');
+			self.$el.find('.ws-controllers').removeClass('disable-container');
 		}, 200);
 	},
 
 	disableSettings: function(){
 		if(!this.$el.find('.settings').hasClass("disable-container"))
 			this.$el.find('.settings').addClass('disable-container');
+
+		if(!this.$el.find('.ws-controllers').hasClass("disable-container"))
+			this.$el.find('.ws-controllers').addClass('disable-container');
 	},
 
 	updateDataByTab: function(){
@@ -421,7 +422,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
 		});
 		this.$el.html(html);
-		
+
 		this.disableSettings();
 
 		return this;

@@ -463,7 +463,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		this.heatmap.heatmap.setMap(this.heatmap.map);
 		this.$el.find('.settings').removeClass('disable-container');
-		this.waitingView.hide();
+		this.$el.find('.h-controllers').removeClass('disable-container');
 	},
 
 	renderMaxSuggestedSlider: function(){
@@ -518,6 +518,9 @@ app.view.HeatmapView = Backbone.View.extend({
 	disableSettings: function(){
 		if(!this.$el.find('.settings').hasClass("disable-container"))
 			this.$el.find('.settings').addClass('disable-container');
+
+		if(!this.$el.find('.h-controllers').hasClass("disable-container"))
+			this.$el.find('.h-controllers').addClass('disable-container');
 	},
 
 	render: function(){
