@@ -7,8 +7,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		'change #ws-quality-slider':'changeQuality',
 		'change #ws-occupation-slider':'changeOccupation',
 		'change #ws-threshold-slider':'changeThreshold',
+		'change input:radio[name=ws-select-frequency-by]':'changeFrequencyBy',
 		'change #ws-frequency-bands':'changeBand',
 		'select2-removing #ws-frequency-bands':'checkBands',
+		'change #ws-channel-width':'changeChannelWidth',
+		'change #ws-range-slider':'changeFrequencyRange',
+		'change #ws-select-channels':'changeChannelRange',
+		'select2-removing #ws-select-channels':'checkChannelRange',
 	},
 
 	reset: function(){
@@ -32,6 +37,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.data = window.place.attributes;
 		this.data3D = null;
 		this.reset();
+
+		if(!window.settings.place.charts.channels)
+			window.settings.place.charts.channels = [];
 
 		$(window).on('resize', { reference: this }, this.renderComponents);
 	},
@@ -126,11 +134,17 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			this.$el.find("#ws-frequency-bands").select2("val", window.settings.currBand);
 		}
 
-		var b = this.calculateBand();
-		this.renderRangeSlider(b.start, b.from, b.to);
+		// channels width
+		this.$el.find("#ws-channel-width").select2({ 
+			data: window.place.attributes.frequenciesChannelWidth 
+		});
+		this.$el.find("#ws-channel-width").select2("val", window.settings.currChannel);
+
+		this.renderRangeSlider();
+		this.changeFrequencyBy(false);
 	},
 
-	calculateBand: function(){
+	renderRangeSlider: function(){
 		var bands = _.sortBy(window.settings.currBand),
 			from, 
 			to;
@@ -143,16 +157,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
 		}
 
-		return {
-			start: [from, to],
-			from: from,
-			to: to
-		};
-	},
-
-	renderRangeSlider: function(start, from, to){
 		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
-			start: start,
+			start: [from, to],
 			step: 1,
 			behaviour: 'tap-drag',
 			connect: true,
@@ -180,6 +186,95 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		});
 	},
 
+	renderChannelInput: function(){
+		var channelData = [];
+
+		_.each(window.settings.fixedChannels[window.settings.currChannel], function(channel){
+			channelData.push({
+				id: channel.from + '-' + channel.to,
+				text: 'Channel ' + channel.tooltipText + ' [' + channel.from + '-' + channel.to + ']'});
+		});
+
+		this.$el.find('#ws-select-channels').select2({
+			placeholder: 'Select channels',
+			multiple: true,
+			data: channelData,
+		});
+
+		var channels = window.settings.place.charts.channels;
+
+		if(channels === undefined || channels.length < 1){
+			channels = [];
+			channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
+			Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		}
+
+		this.$el.find('#ws-select-channels').select2('val', channels);
+	},
+
+	changeFrequencyBy: function(update){
+		var val;
+		if(update !== false)
+			val = this.$el.find('input:radio[name=ws-select-frequency-by]:checked').val();
+		else {
+			if(window.settings.place.charts.channels.length > 0) val = "channels";
+			else val = "range";
+		}
+
+		if(val == "channels"){
+			this.$el.find('input:radio[name="ws-select-frequency-by"]').filter('[value="channels"]').attr('checked', true);
+			this.$el.find('.ws-range-slider-settings').hide();
+			this.renderChannelInput();
+			this.$el.find('.ws-channels-settings').show();
+			if(update !== false) this.changeChannelRange();
+			else this.calBoundChannels();
+
+		} else if(val == "range"){
+			this.$el.find('input:radio[name="ws-select-frequency-by"]').filter('[value="range"]').attr('checked', true);
+			this.$el.find('.ws-channels-settings').hide();
+			this.$el.find('.ws-range-slider-settings').show();
+			if(update !== false) this.changeFrequencyRange();
+			else this.calBoundFrequencies();
+		}
+	},
+
+	checkChannelRange: function(evt){
+		if(window.settings.place.charts.channels.length == 1)
+			evt.preventDefault();
+	},
+
+	calBoundChannels: function(){
+		var self = this;
+		this.boundaries = [];
+		var channels = this.$el.find('#ws-select-channels').select2("val"); 
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+
+		_.each(channels, function(item){
+			var boundaries = item.split("-");
+			self.boundaries.push({
+				from: Number(boundaries[0]),
+				to: Number(boundaries[1])
+			});
+		});
+
+		this.boundaries = _.sortBy(this.boundaries, function(item) { return item.to; });
+	},
+
+	changeChannelRange: function(){
+		this.calBoundChannels();
+		this.data3D = undefined;
+		this.renderGraph();
+	},
+
+	changeChannelWidth: function(){
+		window.settings.currChannel = this.$el.find("#ws-channel-width").select2("val");
+		var channels = [];
+		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
+		Backbone.pubSub.trigger('single-place-charts-change-channels',channels);
+		this.renderChannelInput();
+		this.changeChannelRange();
+	},
+
 	changeQuality: function(){
 		this.settings.quality.crr = this.settings.quality.max - this.qualitySlider.val();
 		this.data3D = undefined;
@@ -200,55 +295,58 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 	changeBand: function(evt){
 		window.settings.currBand = this.$el.find("#ws-frequency-bands").select2("val");
-		this.data3D = undefined;
-		this.renderGraph();
+		this.renderRangeSlider();
+		this.changeFrequencyBy(true);
 	},
 
 	checkBands: function(evt){
 		if(window.settings.currBand.length == 1) evt.preventDefault();
 	},
 
+	calBoundFrequencies: function(){
+		this.boundaries = [];
+		this.boundaries.push({
+			from: Number(this.rangeSlider.val()[0]),
+			to: Number(this.rangeSlider.val()[1])
+		});
+	},
+
+	changeFrequencyRange: function(){
+		this.calBoundFrequencies();
+		this.data3D = undefined;
+		this.renderGraph();
+	},
+
 	calculateData: function(){
+		var self = this;
 		this.data3D = {};
 		this.data3D = new google.visualization.DataTable();
 		this.data3D.addColumn('number', 'Power Threshold');
 		this.data3D.addColumn('number', 'Frequencies (MHz)');
 		this.data3D.addColumn('number', 'Occupation (%)');
 
-		var self = this;
+		var data = [],
+			index = 0,
+			fq;
 
-		// filter by bands
-		var bands = _.sortBy(window.settings.currBand),
-			data = _.groupBy(this.data.charts, function(sample){ return sample.frequency; });
+		for (var i = 0; i < this.data.charts.length; i++){
+			fq = this.data.charts[i].frequency / 1000;
+			if(fq >= this.boundaries[index].from && fq <= this.boundaries[index].to)
+				data.push(this.data.charts[i]);
 
-		// if all ([0]) not in bands, then filter
-		if(Number(bands[0]) !== 0){
-			var dataFiltered = {};
-			var index = 0;
-			var boundIndex = bands[index];
-			_.find(_.keys(data), function(key){
-				var from = window.place.attributes.frequenciesBands[boundIndex].from;
-				var to = window.place.attributes.frequenciesBands[boundIndex].to;
-				var fq = Number(key);
-
-				if(fq >= from && fq <= to) dataFiltered[key] = data[key];
-				if(fq > to) {
-					if(index < bands.length - 1){
-						index += 1;
-						boundIndex = bands[index];
-					} 
-					else return key;
-				}
-			});
-
-			data = dataFiltered;
+			if(fq > this.boundaries[index].to){
+				if(index < this.boundaries.length - 1) index += 1;
+				else break;
+			}
 		}
 
-		for (var i = this.data.powerMax - 1; i >= this.data.powerMin; i -= this.settings.quality.crr) {
+		data = _.groupBy(data, function(sample){ return sample.frequency; });
+
+		for (var j = this.data.powerMax - 1; j >= this.data.powerMin; j -= this.settings.quality.crr) {
 			_.each(data, function(itemSameFrequency){
 				var passed = 0;
 				_.each(itemSameFrequency, function(item){
-					if(item.power >= i) passed += 1;
+					if(item.power >= j) passed += 1;
 				});
 				var x = itemSameFrequency[0].frequency / 1000;
 				// occupation
@@ -256,7 +354,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				if(occupation <= self.settings.occupationMax) y = occupation;
 				else y = self.settings.occupationMax;
 				// threshold
-				var threshold = i;
+				var threshold = j;
 				if(threshold <= self.settings.thresholdMax) z = threshold;
 				else if(threshold > self.settings.thresholdMax) z = self.settings.thresholdMax;
 
@@ -309,6 +407,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 	render: function(){
 		var template = Zebra.tmpl.white_spaces;
 		var html = template({
+			place: window.place.attributes, 
 			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
 		});
 		this.$el.html(html);

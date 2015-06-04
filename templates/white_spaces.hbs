@@ -30,6 +30,12 @@
 				<input class="form-control" id="ws-frequency-bands" type="hidden" />
 			</div>
 		{{/if}}
+		<div class="form-group ws-channels-settings">
+			{{#if place.frequenciesChannelWidth}}
+				<label for="ws-channel-width">Channel width</label>
+				<input class="form-control" id="ws-channel-width" type="hidden" />
+			{{/if}}
+		</div>
 	</div>
 	<div class="col-md-9">
 		<div id="ws-canvas" style="height:400px;"></div>
@@ -38,7 +44,7 @@
 			<div class="col-md-12 ws-range-slider-settings">
 				<div id="ws-range-slider"></div>
 			</div>
-			<div class="col-md-12 select-channels-container">
+			<div class="col-md-12 ws-channels-settings">
 				<label for="ws-select-channels">Please select the channels to observe</label>
 				<input class="form-control" id="ws-select-channels" type="hidden" />
 			</div>
