@@ -16,10 +16,8 @@ app.view.MainMenuView = Backbone.View.extend({
 
 	checkToRender: function(evt){
 		var self;
-		if(evt)
-			self = evt.data.reference;
-		else
-			self = this;
+		if(evt) self = evt.data.reference;
+		else self = this;
 
 		if ($(window).width() <= 767) {
 			self.renderMobil();
@@ -32,9 +30,7 @@ app.view.MainMenuView = Backbone.View.extend({
 
 	renderDesktop: function(){
 		this.removeMobil();
-		if(this.$el.children().first().children().length > 0)
-			return;
-
+		if(this.$el.children().first().children().length > 0) return;
 		this.restore();
 		return this;
 	},
@@ -53,7 +49,9 @@ app.view.MainMenuView = Backbone.View.extend({
 		});
 
 		var $container = $("body").find("#navbar");
-		$container.html(Zebra.tmpl.navbar());
+		var template = Zebra.tmpl.navbar;
+		var html = template({ email: localStorage.email });
+		$container.html(html);
 	},
 
 	restore: function(){

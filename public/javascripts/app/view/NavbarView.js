@@ -19,7 +19,7 @@ app.view.NavbarView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.navbar;
-		var html = template();
+		var html = template({ email: localStorage.email });
 		this.$el.html(html);
 
 		return this;

@@ -578,6 +578,11 @@ hr {
   }
 }
 /*********************************/
+/* NAVBAR USER *******************/
+#navbar-menu .username {
+  padding-right: 7px;
+}
+/*********************************/
 /* MAIN MENU *********************/
 #main-menu {
   position: relative;
