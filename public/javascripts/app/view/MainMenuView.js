@@ -37,8 +37,8 @@ app.view.MainMenuView = Backbone.View.extend({
 
 	renderMobil: function(){
 		this.$el.trigger('detach.ScrollToFixed');
-		var $container = $("body").find("#navbar");
-		$container.html(Zebra.tmpl.navbar_mobil());
+		Backbone.pubSub.trigger('navbar-render-mobile');
+		this.hideMobileMenu();
 	},
 
 	removeMobil: function(){
@@ -48,10 +48,7 @@ app.view.MainMenuView = Backbone.View.extend({
 			marginTop: 65,
 		});
 
-		var $container = $("body").find("#navbar");
-		var template = Zebra.tmpl.navbar;
-		var html = template({ email: localStorage.email });
-		$container.html(html);
+		Backbone.pubSub.trigger('navbar-render-desktop');
 	},
 
 	restore: function(){
@@ -60,13 +57,21 @@ app.view.MainMenuView = Backbone.View.extend({
 	},
 
 	toggleMobileMenu: function(){
-		if(this.$el.css('opacity') == "0")
-			this.$el.show().addClass('fadeInLeft animated-fast');
-		else
-			this.$el.addClass('fadeOutLeft animated-fast')
+		if(this.$el.css('opacity') == "0") 
+			this.$el.show().addClass('fadeInLeft animated-fast')
 			.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', 
 				function(){
-					$(this).removeClass('fadeOutLeft animated-fast').hide();
+					$(this).removeClass('fadeOutLeft');
+			});
+		else this.hideMobileMenu();
+	},
+
+	hideMobileMenu: function(){
+		if(this.$el.css('opacity') == "0") return;
+		this.$el.addClass('fadeOutLeft')
+			.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', 
+				function(){
+					$(this).removeClass('fadeOutLeft').hide();
 			});
 	},
 
@@ -133,7 +138,7 @@ app.view.MainMenuView = Backbone.View.extend({
 			item.addClass('active');
 		}
 
-		if(this.isMobile) this.toggleMobileMenu();
+		if(this.isMobile) this.hideMobileMenu();
 	},
 
 	render: function(){
