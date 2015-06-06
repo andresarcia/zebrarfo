@@ -49,18 +49,27 @@ app.view.MapView = Backbone.View.extend({
 		} else throw 'No id container for map canvas';
 	},
 
-	markerClick: function(index,id){
-		this.selectMarkers(index);
-		Backbone.pubSub.trigger('MapView:MarkerSelected', this.selected);
+	changeMarkers: function(v){
+		var self = this;
+		n = [];
+		_.each(v, function(item){
+			n.push(self.markers[item]);
+		});
+		this._paintMarkers(n);
 	},
 
-	selectMakersSpacingByDistance: function(distance, unit){
+	changeMarkersBySpreaderDistance: function(distance, unit){
 		if(this.markers.length < 1) return;
 		this.cleanAllMarkers();
 		return this.spreader.spread(distance,unit);
 	},
 
-	selectMarkers: function(i){
+	_markerClick: function(index,id){
+		this._selectMarkers(index);
+		Backbone.pubSub.trigger('MapView:MarkerSelected', this.selected);
+	},
+
+	_selectMarkers: function(i){
 		var n = [];
 		// if no range activated
 		if(!this.selectOptions.range) n.push(this.markers[i]);
@@ -269,7 +278,7 @@ app.view.MapView = Backbone.View.extend({
 	zoomOut: function(){
 		if(this.markers.length < 1) return;
 		// adjust the map to all bounds
-		this.map.fitBounds(this.mapBounds);
+		this.map.fitBounds(this.bounds);
 	},
 
 	enterFullScrenn: function(){
@@ -341,7 +350,7 @@ app.view.MapView = Backbone.View.extend({
 			// if click event
 			if(self.selectOptions.click){
 				google.maps.event.addListener(marker, 'click', function() {
-					self.markerClick(marker.index, marker.id);
+					self._markerClick(marker.index, marker.id);
 				});
 			}
 

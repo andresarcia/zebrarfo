@@ -32,21 +32,7 @@ app.view.PlaceView = Backbone.View.extend({
 				scrollwheel: false,
 				data: window.place.attributes.coordinates,
 			},
-			// heatmapOptions: {
-			// 	radius: 60,
-			// 	opacity: 0.85,
-			// 	gradient: [
-			// 		'rgba(0, 0, 0, 0)',
-			// 		'#00013E',
-			// 		'#63328D',
-			// 		'#145DF5',
-			// 		'#00DADD',
-			// 	]
-			// },
 			selectOptions: {
-				// range: true,
-				click: true,
-				// spreader: true,
 				mouseover: true,
 			},
 		});
