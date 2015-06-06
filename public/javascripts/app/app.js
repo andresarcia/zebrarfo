@@ -1,10 +1,8 @@
 $(function(){
 	Backbone.pubSub = _.extend({}, Backbone.Events);
 	loadGoogleApi();
-	if(localStorage.token)
-        new app.router.AppRouter();
-    else
-        new app.router.LoginRouter();
+	if(localStorage.token) new app.router.AppRouter();
+    else new app.router.LoginRouter();
 
     window.settings = {
         channels: [

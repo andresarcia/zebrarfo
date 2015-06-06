@@ -25,14 +25,35 @@ app.view.PlaceView = Backbone.View.extend({
 
 		this.render();
 		this.coordinates = window.place.attributes.coordinates;
-		this.mapView = new app.view.GoogleMapBasicMarkersView({
-			idContainer: 'p-map'
-		});
-		this.renderMap();
 
-		Backbone.pubSub.off("event-marker-selected-on-google-map-main");
-		Backbone.pubSub.on("event-marker-selected-on-google-map-main", function(res){
-			self.renderCoordinateResume(res);
+		this.mapView = new app.view.MapView({
+			mapOptions: {
+				container: 'p-map',
+				scrollwheel: false,
+				data: window.place.attributes.coordinates,
+			},
+			// heatmapOptions: {
+			// 	radius: 60,
+			// 	opacity: 0.85,
+			// 	gradient: [
+			// 		'rgba(0, 0, 0, 0)',
+			// 		'#00013E',
+			// 		'#63328D',
+			// 		'#145DF5',
+			// 		'#00DADD',
+			// 	]
+			// },
+			selectOptions: {
+				// range: true,
+				click: true,
+				// spreader: true,
+				mouseover: true,
+			},
+		});
+
+		Backbone.pubSub.off("event-marker-selected-on-map");
+		Backbone.pubSub.on("event-marker-selected-on-map", function(coord){
+			self.renderCoordinateResume(coord[0]);
 		});
 	},
 
@@ -99,21 +120,21 @@ app.view.PlaceView = Backbone.View.extend({
 		if(window.settings.currBand.length == 1) evt.preventDefault();
 	},
 
-	renderCoordinateResume: function(res){
+	renderCoordinateResume: function(coord){
 		var self = this;
 		var template = Zebra.tmpl.place_coordinate_resume;
-		var html = template(this.coordinates[res.index]);
+		var html = template(this.coordinates[coord.index]);
 		this.$el.find('#p-selected-coord').html(html);
 
 		this.currCapture.data = new app.model.Capture({
 			idPlace: window.place.id,
-			idCoord: res.id
+			idCoord: coord.id
 		});
 
 		this.currCapture.options = {
 			yAxis: {
 				plotLines:[{
-					value: this.coordinates[res.index].powerAvg,
+					value: this.coordinates[coord.index].powerAvg,
 					color: '#ff0000',
 					width:1,
 					zIndex:4,
@@ -156,19 +177,6 @@ app.view.PlaceView = Backbone.View.extend({
 		}, 1000);
 	},
 
-	renderMap: function(){
-		var self = this;
-
-		if(window.settings.googleMapApi)
-			this.mapView.render(this.coordinates);
-		else {
-			Backbone.pubSub.off('event-loaded-google-map-api');
-			Backbone.pubSub.on('event-loaded-google-map-api', function(){
-				self.mapView.render(self.coordinates);
-			});
-		}
-	},
-
 	render: function(){
 		var template = Zebra.tmpl.place;
 		var html = template({
@@ -194,7 +202,9 @@ app.view.PlaceView = Backbone.View.extend({
 	},
 
 	launchEditPlace: function(){
-		window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
+		// window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
+
+		this.mapView.enterFullScrenn();
 	}
 
 });
