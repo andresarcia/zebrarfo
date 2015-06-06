@@ -43,8 +43,13 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.calculateRealCoorDict();
 		this.calculateRelativeCoorDict();
 
-		Backbone.pubSub.off('event-marker-selected-on-google-map-edit');
-		Backbone.pubSub.on('event-marker-selected-on-google-map-edit', function(markers){
+		Backbone.pubSub.off('MapView:Rendered');
+		Backbone.pubSub.on('MapView:Rendered', function(){
+			this.enableSelectors();
+		}, this);
+
+		Backbone.pubSub.off('MapView:MarkerSelected');
+		Backbone.pubSub.on('MapView:MarkerSelected', function(markers){
 			this.changeSliderByMarkers(markers);
 		}, this);
 
@@ -86,19 +91,30 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	renderMap: function(){
-		var self = this;
-
-		if(window.settings.googleMapApi){
-			this.mapView.render(this.coordinates);
-			this.enableSelectors();
-		} else {
-			Backbone.pubSub.off('Google:MapAPILoaded');
-			Backbone.pubSub.on('Google:MapAPILoaded', function(){
-				self.mapView.render(self.coordinates);
-				self.enableSelectors();
-			});
-			this.disableSelectors();
-		}
+		this.disableSelectors();
+		this.mapView = new app.view.MapView({
+			mapOptions: {
+				container: 'map_canvas_coordinates',
+				scrollwheel: false,
+				data: this.coordinates,
+				styles: [{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
+			},
+			heatmapOptions: {
+				radius: 60,
+				opacity: 0.85,
+				gradient: [
+					'rgba(0, 0, 0, 0)',
+					'#00013E',
+					'#63328D',
+					'#145DF5',
+					'#00DADD',
+				]
+			},
+			selectOptions: {
+				range: true,
+				spreader: true,
+			},
+		});
 	},
 
 	renderEditingArea: function(){
@@ -254,9 +270,6 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 	},
 
 	renderComponents: function(){
-		this.mapView = new app.view.GoogleMapMarkersWithHeatmapView({
-			idContainer: 'map_canvas_coordinates'
-		});
 		this.renderMarkerSlider(0);
 		this.renderEditingArea();
 		this.renderSpreadComponents();
@@ -623,8 +636,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.editMarkersLeftWindow = this.getLeftWindowSelect();
 		var v = this.getSliderVal();
 
-		if(v[0] === 0)
-			return;
+		if(v[0] === 0) return;
 
 		if(v.length == 1){
 			if(v[0] - this.editMarkersLeftWindow < 0)
@@ -751,7 +763,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		
 		var distance = this.spreadSlider.val();
 		var unit = this.$el.find("#ed-coord-spreader-unit").select2("val");
-		var ids = this.mapView.changeMarkersByDistance(distance,unit);
+		var ids = this.mapView.changeMarkersBySpreaderDistance(distance,unit);
 		this.renderEditingAreaSpread(ids,distance,unit);
 
 		this.renderSpreadTooltip();
