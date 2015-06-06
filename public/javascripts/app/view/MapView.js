@@ -331,6 +331,8 @@ app.view.MapView = Backbone.View.extend({
 				animation: null,
 				id: coord.id,
 				index: index,
+				// marker property for count the number of erased times, when the visibleCount is equeal to 0 then the marker can be is visible in the map
+				visibleCount: 0,
 			});
 
 			// if mouse over event
@@ -386,6 +388,8 @@ app.view.MapView = Backbone.View.extend({
 
 	renderHeatmap: function(data){
 		var options = _.extend(this.heatmapOptions, { data: data });
+		// fix overlap heatmap layer over the same map
+		if(_.keys(this.heatmap).length > 0) this.heatmap.setMap(null);
 		this.heatmap = new google.maps.visualization.HeatmapLayer(options);
 		this.heatmap.setMap(this.map);
 	},
