@@ -1,6 +1,18 @@
 var app = app || {};
 app.view = app.view || {};
 
+/*
+	## PUBSUB Specification ##
+		### Events triggers ###
+			- MapView:MarkerSelected
+				Fires when a marker was clicked on the map, return a list with the coordinates selected
+			- MapView:Rendered
+				Fires when the map is ready
+
+		### Events Listener ###
+			- Google:MapAPILoaded
+*/
+
 app.view.MapView = Backbone.View.extend({
 
 	reset: function(){
@@ -39,7 +51,7 @@ app.view.MapView = Backbone.View.extend({
 
 	markerClick: function(index,id){
 		this.selectMarkers(index);
-		Backbone.pubSub.trigger('event-marker-selected-on-map', this.selected);
+		Backbone.pubSub.trigger('MapView:MarkerSelected', this.selected);
 	},
 
 	selectMakersSpacingByDistance: function(distance, unit){
@@ -276,11 +288,14 @@ app.view.MapView = Backbone.View.extend({
 	render: function(){
 		var self = this;
 
-		if(window.settings.googleMapApi) this._render();
-		else {
-			Backbone.pubSub.off('event-loaded-google-map-api');
-			Backbone.pubSub.on('event-loaded-google-map-api', function(){
+		if(window.settings.googleMapApi){
+			this._render();
+			Backbone.pubSub.trigger('MapView:Rendered');
+		} else {
+			Backbone.pubSub.off('Google:MapAPILoaded');
+			Backbone.pubSub.on('Google:MapAPILoaded', function(){
 				self._render();
+				Backbone.pubSub.trigger('MapView:Rendered');
 			});
 		}
 	},

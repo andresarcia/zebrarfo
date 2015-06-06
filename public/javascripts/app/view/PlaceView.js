@@ -51,8 +51,8 @@ app.view.PlaceView = Backbone.View.extend({
 			},
 		});
 
-		Backbone.pubSub.off("event-marker-selected-on-map");
-		Backbone.pubSub.on("event-marker-selected-on-map", function(coord){
+		Backbone.pubSub.off("MapView:MarkerSelected");
+		Backbone.pubSub.on("MapView:MarkerSelected", function(coord){
 			self.renderCoordinateResume(coord[0]);
 		});
 	},

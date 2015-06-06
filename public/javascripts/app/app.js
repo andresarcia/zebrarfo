@@ -217,7 +217,7 @@ function loadGoogleApi() {
 
 function loadGoogleMapHeatmapPlugin(){
     window.settings.googleMapApi = true;
-    Backbone.pubSub.trigger('event-loaded-google-map-api');
+    Backbone.pubSub.trigger('Google:MapAPILoaded');
 }
 
 function loadGoogleVisualizationPlugin(){

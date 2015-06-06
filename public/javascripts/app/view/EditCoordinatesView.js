@@ -92,8 +92,8 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			this.mapView.render(this.coordinates);
 			this.enableSelectors();
 		} else {
-			Backbone.pubSub.off('event-loaded-google-map-api');
-			Backbone.pubSub.on('event-loaded-google-map-api', function(){
+			Backbone.pubSub.off('Google:MapAPILoaded');
+			Backbone.pubSub.on('Google:MapAPILoaded', function(){
 				self.mapView.render(self.coordinates);
 				self.enableSelectors();
 			});
