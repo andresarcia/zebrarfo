@@ -94,7 +94,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		this.disableSelectors();
 		this.mapView = new app.view.MapView({
 			mapOptions: {
-				container: 'map_canvas_coordinates',
+				container: 'ed-coord-canvas',
 				scrollwheel: false,
 				data: this.coordinates,
 				styles: [{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
@@ -376,10 +376,10 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			coordinates.to.index = markersRange[1];
 
 			coordinates.distance = app.util.GetDistanceFromLatLonInKm(
-				coordinates.from.latitude,
-				coordinates.from.longitude,
-				coordinates.to.latitude,
-				coordinates.to.longitude);
+				coordinates.from.lat,
+				coordinates.from.lng,
+				coordinates.to.lat,
+				coordinates.to.lng);
 			coordinates.distance = coordinates.distance.toFixed(2);
 		}
 

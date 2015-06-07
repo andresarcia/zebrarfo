@@ -3,14 +3,14 @@ app.view = app.view || {};
 
 /*
 	## PUBSUB Specification ##
-		### Events triggers ###
-			- MapView:MarkerSelected
-				Fires when a marker was clicked on the map, return a list with the coordinates selected
-			- MapView:Rendered
-				Fires when the map is ready
+	### Events triggers ###
+	- MapView:MarkerSelected
+		Fires when a marker was clicked on the map, return a list with the coordinates selected
+	- MapView:Rendered
+		Fires when the map is ready
 
-		### Events Listener ###
-			- Google:MapAPILoaded
+	### Events Listener ###
+	- Google:MapAPILoaded
 */
 
 app.view.MapView = Backbone.View.extend({
@@ -320,10 +320,10 @@ app.view.MapView = Backbone.View.extend({
 
 		_.each(this.mapOptions.data, function(coord, index){
 			var infowindow = new google.maps.InfoWindow({
-				content: 'Latitude: ' + coord.latitude + '<br>Longitude: ' + coord.longitude,
+				content: 'Latitude: ' + coord.lat + '<br>Longitude: ' + coord.lng,
 			});
 			
-			var latLng = new google.maps.LatLng(coord.latitude, coord.longitude);
+			var latLng = new google.maps.LatLng(coord.lat, coord.lng);
 			var marker = new google.maps.Marker({
 				position: latLng,
 				map: self.map,
