@@ -2,12 +2,12 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Coordinate = sequelize.define('Coordinate', {
-    latitude: {
+    lat: {
       type: DataTypes.DECIMAL(20,15),
       allowNull: false,
       validate: { min: -90, max: 90 }
     },
-    longitude: {
+    lng: {
       type: DataTypes.DECIMAL(20,15),
       allowNull: false,
       validate: { min: -180, max: 180 }

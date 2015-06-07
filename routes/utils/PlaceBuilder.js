@@ -49,7 +49,7 @@ exports.create = function(place, callback) {
 function reduceCommonGps(o,n,callback){	
 	if(o.frequencies === undefined){
 		var groupByCoordinate = _.groupBy(o.Coordinates, function(sample){
-			return sample.latitude + sample.longitude;
+			return sample.lat + sample.lng;
 		});
 
 		_.each(_.keys(groupByCoordinate), function(key){
@@ -120,8 +120,8 @@ function reduceCommonGps(o,n,callback){
 			});
 		
 			var coord = takeCoordStats({
-				latitude: groupByCoordinate[key][0].latitude,
-				longitude: groupByCoordinate[key][0].longitude,
+				lat: groupByCoordinate[key][0].lat,
+				lng: groupByCoordinate[key][0].lng,
 				captures: captures,
 				createdDate: groupByCoordinate[key][0].createdDate
 			});
@@ -220,8 +220,8 @@ function reduceCommonGps(o,n,callback){
 			n.coord.push({ lat: item[0].lat, lng: item[0].lng });
 
 			var coord = takeCoordStats({
-				latitude: item[0].lat,
-				longitude: item[0].lng,
+				lat: item[0].lat,
+				lng: item[0].lng,
 				captures: captures,
 				createdDate: item[0].date
 			});
@@ -326,7 +326,7 @@ function saveCoord(coord, n){
 	if(n.coordinates.length > 1){
 		var lastItem = n.coordinates[n.coordinates.length - 2];
 		var currentItem = n.coordinates[n.coordinates.length - 1];
-		var distance = utils.GetDistanceFromLatLonInKm(lastItem.latitude, lastItem.longitude, currentItem.latitude, currentItem.longitude);
+		var distance = utils.GetDistanceFromLatLonInKm(lastItem.lat, lastItem.lng, currentItem.lat, currentItem.lng);
 
 		n.totalDistance += distance;
 		n.countSamplesDistance += 1;

@@ -17,7 +17,7 @@ exports.getOccupationHetmapData = function(req,res,next){
 				'aux.id, aux.lat, aux.lng, frequency, power ' +
 			'from (' + 
 				'select ' + 
-					'Coordinates.latitude as lat, Coordinates.longitude as lng, Coordinates.id ' +
+					'Coordinates.lat as lat, Coordinates.lng as lng, Coordinates.id ' +
 				'from (' +
 					'select ' +
 						'id ' +
@@ -327,12 +327,12 @@ exports.toJson = function(userId,id,callback){
 				item.cap.push(cap.power);
 			});
 
-			item.lat = _.clone(item.latitude);
-			item.lng = _.clone(item.longitude);
+			item.lat = _.clone(item.lat);
+			item.lng = _.clone(item.lng);
 			item.date = _.clone(item.createdDate);
 
-			delete item.latitude;
-			delete item.longitude;
+			delete item.lat;
+			delete item.lng;
 			delete item.createdDate;
 			delete item.Captures;
 		});

@@ -12,8 +12,8 @@ exports.save = function(id,coordinates,callback){
 	async.eachSeries(coordinates, function(coord, asyncCallback) {
 		db.Coordinate.findOrInitialize({
 			where: {
-				latitude: coord.latitude,
-				longitude: coord.longitude,
+				lat: coord.lat,
+				lng: coord.lng,
 				powerMin: coord.powerMin,
 				powerMax : coord.powerMax,
 				powerAvg : coord.powerAvg,
