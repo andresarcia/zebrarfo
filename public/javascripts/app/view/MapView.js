@@ -26,6 +26,8 @@ app.view.MapView = Backbone.View.extend({
 		this.spreader = {};
 		// options
 		this.mapOptions = {};
+		this.mapOptions.showMarkers = true;
+		this.mapOptions.crrMarkerShow = 'all'; // all or index of marker to show
 		this.heatmapOptions = {};
 		this.selectOptions = {};
 		this.selectOptions.range = false;
@@ -335,26 +337,34 @@ app.view.MapView = Backbone.View.extend({
 				visibleCount: 0,
 			});
 
-			// if mouse over event
-			if(self.selectOptions.mouseover){
-				google.maps.event.addListener(marker, 'mouseover', function() {
-					marker.setIcon(window.settings.markers.iconHover);
-					infowindow.open(self.map, marker);
-				});
+			// if show markers
+			if(self.mapOptions.showMarkers){
+				// if crr marker to show if index, show just one
+				if(self.mapOptions.crrMarkerShow !== 'all')
+					if(index != Number(self.mapOptions.crrMarkerShow)) marker.setVisible(false);
 
-				google.maps.event.addListener(marker, 'mouseout', function() {
-					if(marker.getAnimation() === null)
-						marker.setIcon(window.settings.markers.iconIdle);
-					infowindow.close();
-				});
-			}
+				// if mouse over event
+				if(self.selectOptions.mouseover){
+					google.maps.event.addListener(marker, 'mouseover', function() {
+						marker.setIcon(window.settings.markers.iconHover);
+						infowindow.open(self.map, marker);
+					});
 
-			// if click event
-			if(self.selectOptions.click){
-				google.maps.event.addListener(marker, 'click', function() {
-					self._markerClick(marker.index, marker.id);
-				});
-			}
+					google.maps.event.addListener(marker, 'mouseout', function() {
+						if(marker.getAnimation() === null)
+							marker.setIcon(window.settings.markers.iconIdle);
+						infowindow.close();
+					});
+				}
+
+				// if click event
+				if(self.selectOptions.click){
+					google.maps.event.addListener(marker, 'click', function() {
+						self._markerClick(marker.index, marker.id);
+					});
+				}
+			// hide markers
+			} else marker.setVisible(false);
 
 			self.markers.push(marker);
 			self.bounds.extend(marker.position);
