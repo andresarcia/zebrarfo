@@ -313,8 +313,10 @@ app.view.MapView = Backbone.View.extend({
 
 	_render: function(){
 		var self = this,
-			isHeatmap = _.keys(this.heatmapOptions).length > 0 ? true: false,
-			heatmapData = [];
+			isHeatmap = _.keys(this.heatmapOptions).length > 0 ? true: false;
+
+		var heatmapData = {};
+		heatmapData.data = [];
 
 		this.map = new google.maps.Map(
 			document.getElementById(this.mapOptions.container), this.mapOptions);
@@ -369,13 +371,16 @@ app.view.MapView = Backbone.View.extend({
 			self.markers.push(marker);
 			self.bounds.extend(marker.position);
 
-			if(isHeatmap) heatmapData.push(latLng);
+			if(isHeatmap) heatmapData.data.push({
+				location: latLng,
+				weight: coord.count ? Number(coord.count) : 1,
+			});
 		});
 
 		google.maps.event.addListenerOnce(this.map, 'idle', function(){
 			google.maps.event.trigger(self.map, 'resize');
 			self.map.fitBounds(self.bounds);
-			if(heatmapData.length > 0) self.buildHeatmap(heatmapData);
+			if(heatmapData.data.length > 0) self.buildHeatmap(heatmapData);
 		});
 
 		if(this.selectOptions.spreader){
@@ -386,9 +391,17 @@ app.view.MapView = Backbone.View.extend({
 
 	buildHeatmap: function(data){
 		if(!data || data.length === 0){
-			data = [];
-			_.each(this.markers, function(marker){
-				if(marker.visible === true) data.push(marker.position);
+			var self = this;
+			data = {};
+			data.data = [];
+			_.each(this.mapOptions.data, function(coord, index){
+				if(self.markers[index].visible === true){
+					var latLng = new google.maps.LatLng(coord.lat, coord.lng);
+					data.data.push({
+						location: latLng,
+						weight: coord.count ? Number(coord.count) : 1,
+					});
+				}
 			});
 		}
 
@@ -397,7 +410,7 @@ app.view.MapView = Backbone.View.extend({
 	},
 
 	renderHeatmap: function(data){
-		var options = _.extend(this.heatmapOptions, { data: data });
+		var options = _.extend(this.heatmapOptions, data);
 		// fix overlap heatmap layer over the same map
 		if(_.keys(this.heatmap).length > 0) this.heatmap.setMap(null);
 		this.heatmap = new google.maps.visualization.HeatmapLayer(options);
