@@ -24,6 +24,7 @@ app.view.MapView = Backbone.View.extend({
 		this.markers = [];
 		this.selected = [];
 		this.spreader = {};
+		this.heatmapData = [];
 		// options
 		this.mapOptions = {};
 		this.mapOptions.showMarkers = true;
@@ -218,7 +219,7 @@ app.view.MapView = Backbone.View.extend({
 			});
 		}
 		// if heatmap then rebuild it
-		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true);
+		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true,true);
 	},
 
 	showMarkers: function(v, range, isBuild){
@@ -251,7 +252,7 @@ app.view.MapView = Backbone.View.extend({
 		}
 
 		// if heatmap then rebuild it
-		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true);
+		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true,true);
 	},
 
 	cleanAllMarkers: function(){
@@ -347,8 +348,10 @@ app.view.MapView = Backbone.View.extend({
 			if(self.mapOptions.showMarkers){
 				// if crr marker to show if index, show just one
 				if(self.mapOptions.crrMarkerShow !== 'all'){
-					if(index != Number(self.mapOptions.crrMarkerShow)) marker.setVisible(false);
-					marker.visibleCount = 1;
+					if(index != Number(self.mapOptions.crrMarkerShow)){
+						marker.setVisible(false);
+						marker.visibleCount = 1;
+					}
 				}
 
 				// if mouse over event
@@ -395,8 +398,16 @@ app.view.MapView = Backbone.View.extend({
 		}
 	},
 
-	buildHeatmap: function(data, isVisible){
-		if(!data || data.length === 0){
+	/**
+		parameters:
+			data: object with a data key and anothers parameters for the heatmap like maxIntensity,
+			isVisible: boolean, is true, when build the data just take the data where the markers are visible
+			update: boolean, update the data. Just when data.data is not present
+	**/
+	buildHeatmap: function(data, isVisible, update){
+		if(!data && !data.data && update) data = this.heatmapData;
+
+		if(!data || !data.data || data.data.length === 0){
 			var self = this;
 			data = {};
 			data.data = [];
@@ -410,11 +421,13 @@ app.view.MapView = Backbone.View.extend({
 			});
 		}
 
+		if(update) this.heatmapData = data.data;
+
 		google.maps.event.trigger(this.map, 'resize');
-		this.renderHeatmap(data);
+		this._renderHeatmap(data);
 	},
 
-	renderHeatmap: function(data){
+	_renderHeatmap: function(data){
 		var options = _.extend(this.heatmapOptions, data);
 		// fix overlap heatmap layer over the same map
 		if(_.keys(this.heatmap).length > 0) this.heatmap.setMap(null);
