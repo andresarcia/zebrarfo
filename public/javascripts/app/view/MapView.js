@@ -405,6 +405,7 @@ app.view.MapView = Backbone.View.extend({
 			update: boolean, update the data. Just when data.data is not present
 	**/
 	buildHeatmap: function(data, isVisible, update){
+		// load the old data
 		if(data && !data.data && !update) data.data = this.heatmapData;
 
 		if(!data || !data.data || data.data.length === 0){
@@ -421,18 +422,21 @@ app.view.MapView = Backbone.View.extend({
 			});
 		}
 
-		if(update) this.heatmapData = data.data;
-
-		google.maps.event.trigger(this.map, 'resize');
+		// save the data
+		this.heatmapData = data.data;
 		this._renderHeatmap(data);
 	},
 
 	_renderHeatmap: function(data){
-		var options = _.extend(this.heatmapOptions, data);
+		var self = this,
+			options = _.extend(this.heatmapOptions, data);
 		// fix overlap heatmap layer over the same map
 		if(_.keys(this.heatmap).length > 0) this.heatmap.setMap(null);
 		this.heatmap = new google.maps.visualization.HeatmapLayer(options);
 		this.heatmap.setMap(this.map);
+		google.maps.event.addListenerOnce(this.map, 'idle', function(){
+			google.maps.event.trigger(self.map, 'resize');
+		});
 	},
 
 });
