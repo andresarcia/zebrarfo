@@ -193,7 +193,7 @@ app.view.MapView = Backbone.View.extend({
 		}
 	},
 
-	hideMarkers: function(v, range){
+	hideMarkers: function(v, range, isBuild){
 		// if not markers to hide return
 		if(v.length === 0) return;
 		// if v is a range
@@ -218,10 +218,10 @@ app.view.MapView = Backbone.View.extend({
 			});
 		}
 		// if heatmap then rebuild it
-		if(_.keys(this.heatmapOptions).length > 0) this.buildHeatmap();
+		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true);
 	},
 
-	showMarkers: function(v, range){
+	showMarkers: function(v, range, isBuild){
 		// if not markers to show return
 		if(v.length === 0) return;
 		// if v is a range
@@ -251,7 +251,7 @@ app.view.MapView = Backbone.View.extend({
 		}
 
 		// if heatmap then rebuild it
-		if(_.keys(this.heatmapOptions).length > 0) this.buildHeatmap();
+		if(_.keys(this.heatmapOptions).length > 0 && isBuild) this.buildHeatmap([],true);
 	},
 
 	cleanAllMarkers: function(){
@@ -327,6 +327,10 @@ app.view.MapView = Backbone.View.extend({
 				content: 'Latitude: ' + coord.lat + '<br>Longitude: ' + coord.lng,
 			});
 			
+			// default setting for markers all visibles 
+			var visibleCount = 0;
+			if(!self.mapOptions.showMarkers) visibleCount = 1;
+
 			var latLng = new google.maps.LatLng(coord.lat, coord.lng);
 			var marker = new google.maps.Marker({
 				position: latLng,
@@ -336,14 +340,16 @@ app.view.MapView = Backbone.View.extend({
 				id: coord.id,
 				index: index,
 				// marker property for count the number of erased times, when the visibleCount is equeal to 0 then the marker can be is visible in the map
-				visibleCount: 0,
+				visibleCount: visibleCount,
 			});
 
 			// if show markers
 			if(self.mapOptions.showMarkers){
 				// if crr marker to show if index, show just one
-				if(self.mapOptions.crrMarkerShow !== 'all')
+				if(self.mapOptions.crrMarkerShow !== 'all'){
 					if(index != Number(self.mapOptions.crrMarkerShow)) marker.setVisible(false);
+					marker.visibleCount = 1;
+				}
 
 				// if mouse over event
 				if(self.selectOptions.mouseover){
@@ -389,19 +395,18 @@ app.view.MapView = Backbone.View.extend({
 		}
 	},
 
-	buildHeatmap: function(data){
+	buildHeatmap: function(data, isVisible){
 		if(!data || data.length === 0){
 			var self = this;
 			data = {};
 			data.data = [];
 			_.each(this.mapOptions.data, function(coord, index){
-				if(self.markers[index].visible === true){
-					var latLng = new google.maps.LatLng(coord.lat, coord.lng);
-					data.data.push({
-						location: latLng,
-						weight: coord.count ? Number(coord.count) : 1,
-					});
-				}
+				var item = {
+					location: new google.maps.LatLng(coord.lat, coord.lng),
+					weight: coord.count ? Number(coord.count) : 1,
+				};
+				if(isVisible && self.markers[index].visible === true) data.data.push(item);
+				else if(!isVisible || isVisible === false) data.data.push(item);
 			});
 		}
 
