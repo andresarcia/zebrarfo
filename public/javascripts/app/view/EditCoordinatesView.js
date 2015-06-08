@@ -505,7 +505,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var edited = [];
 
 		if(Number(this.spreadSlider.val()) === 0){
-			this.mapView.hideMarkers(this.relativeIndex2Real(v),true);
+			this.mapView.hideMarkers(this.relativeIndex2Real(v),true, true);
 			if(v.length == 1){
 				edited.push(this.coordinates[v[0]]);
 				this.coordinates.splice(v[0], 1);
@@ -518,7 +518,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			}
 			this.editedCoords.push(edited);
 		} else {
-			this.mapView.hideMarkers(this.relativeIndex2Real(v),false);
+			this.mapView.hideMarkers(this.relativeIndex2Real(v),false,true);
 			for (var j = v.length - 1; j >= 0; j--){
 				edited.push(this.coordinates[v[j]]);
 			}
@@ -542,14 +542,14 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 		var relative = this.relativeIndex2Real(indexes);
 		if(this.editMarkers[this.editMarkersIndex].by == "range"){
 			this.editedCoords.pop();
-			this.mapView.showMarkers(relative,true);
+			this.mapView.showMarkers(relative,true, true);
 			this.mapView.changeMarkers(relative);
 			this.renderMarkerSlider(indexes);
 			this.renderEditingArea();
 			this.$el.find('.action-btn').prop('disabled', false);
 		
 		} else if(this.editMarkers[this.editMarkersIndex].by == "distance"){
-			this.mapView.showMarkers(relative,false);
+			this.mapView.showMarkers(relative,false, true);
 			this.spacing = this.editMarkers[this.editMarkersIndex].spacing;
 			var distance = this.editMarkers[this.editMarkersIndex].distance;
 			var unit = this.editMarkers[this.editMarkersIndex].unit;
