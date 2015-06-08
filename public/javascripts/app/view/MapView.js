@@ -389,7 +389,7 @@ app.view.MapView = Backbone.View.extend({
 		google.maps.event.addListenerOnce(this.map, 'idle', function(){
 			google.maps.event.trigger(self.map, 'resize');
 			self.map.fitBounds(self.bounds);
-			if(heatmapData.data.length > 0) self.buildHeatmap(heatmapData);
+			if(heatmapData.data.length > 0) self.buildHeatmap(heatmapData, false, true);
 		});
 
 		if(this.selectOptions.spreader){
@@ -405,7 +405,7 @@ app.view.MapView = Backbone.View.extend({
 			update: boolean, update the data. Just when data.data is not present
 	**/
 	buildHeatmap: function(data, isVisible, update){
-		if(!data && !data.data && update) data = this.heatmapData;
+		if(data && !data.data && !update) data.data = this.heatmapData;
 
 		if(!data || !data.data || data.data.length === 0){
 			var self = this;
