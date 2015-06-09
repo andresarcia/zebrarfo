@@ -52,6 +52,11 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		if(!window.settings.place.charts.channels)
 			window.settings.place.charts.channels = [];
+
+		Backbone.pubSub.off('MapView:Rendered');
+		Backbone.pubSub.on('MapView:Rendered', function(){
+			this.enableSettings();
+		}, this);
 	},
 
 	renderComponents: function(){
@@ -60,16 +65,46 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	renderMap: function(){
-		var self = this;
-		
-		if(window.settings.googleMapApi)
-			self._renderMap();
-		else {
-			Backbone.pubSub.off('Google:MapAPILoaded');
-			Backbone.pubSub.on('Google:MapAPILoaded', function(){
-				self._renderMap();
-			});
-		}
+		this.disableSettings();
+		var data = this.getHeatmapData(false);
+		this.heatmap.settings.maxIntensity = 
+			this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+		this.renderMarkersSlider(data.data.length - 1);
+
+		// var infowindow = new google.maps.InfoWindow({
+	// 	content: 'Latitude: ' + item.lat + '<br>Longitude: ' + item.lng + '<br>Power: ' + self.heatmapDataProcessor.denormalizeValue(item.count) + ' dBm',
+	// });
+
+		this.mapView = new app.view.MapView({
+			mapOptions: {
+				container: 'h-canvas',
+				crrMarkerShow: this.heatmap.settings.currentMarkerItem,
+				data: data.data,
+				scaleControl: true,
+				panControl: false,
+				styles: [{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}]
+			},
+			heatmapOptions: {
+				radius: Number(this.heatmap.settings.radius),
+				opacity: this.heatmap.settings.opacity/100,
+				maxIntensity: this.heatmap.settings.maxIntensity,
+				gradient: [
+					'RGBA(0, 0, 0, 0)',
+					'RGBA(4, 3, 5, 1)',
+					'RGBA(3, 4, 105, 1)',
+					'RGBA(11, 52, 185, 1)',
+					'RGBA(69, 233, 254, 1)',
+					'RGBA(57, 183, 0, 1)',
+					'RGBA(255, 252, 0, 1)',
+					'RGBA(255, 141, 51, 1)',
+					'RGBA(247, 26, 8, 1)'
+				]
+			},
+			selectOptions: {
+				click: false,
+				mouseover: true
+			},
+		});
 	},
 
 	renderSettings: function(){
@@ -251,221 +286,6 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.find('#h-select-channels').select2('val', channels);
 	},
 
-	changeDataFunction: function(){
-		this.heatmap.settings.dataFunction = this.$el.find("#h-function-operate").select2("val");
-		this.renderHeatmap(true);
-	},
-
-	changeMaxIntensity: function(){
-		this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(this.maxIntensitySlider.val());
-		if(this.heatmap.settings.maxIntensity < 1)
-			this.heatmap.settings.maxIntensity = 1;
-		this.renderHeatmap();
-	},
-
-	changeBand: function(evt){
-		window.settings.currBand = this.$el.find("#h-frequency-bands").select2("val");
-		this.renderRangeSlider();
-		this.changeFrequencyBy(true);
-	},
-
-	checkBands: function(evt){
-		if(window.settings.currBand.length == 1) evt.preventDefault();
-	},
-
-	changeChannelWidth: function(){
-		window.settings.currChannel = this.$el.find("#h-channel-width").select2("val");
-		var channels = [];
-		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
-		Backbone.pubSub.trigger('charts-change-channels',channels);
-		this.renderChannelInput();
-		this.changeChannelRange();
-	},
-
-	changeFrequencyRange: function(){
-		this.calBoundFrequencies();
-		this.renderHeatmap(true);
-	},
-
-	calBoundFrequencies: function(){
-		this.boundaries = [];
-		this.boundaries.push({
-			from: Number(this.rangeSlider.val()[0]),
-			to: Number(this.rangeSlider.val()[1])
-		});
-	},
-
-	checkChannelRange: function(evt){
-		if(window.settings.place.charts.channels.length == 1)
-			evt.preventDefault();
-	},
-
-	changeChannelRange: function(){
-		this.calBoundChannels();
-		this.renderHeatmap(true);
-	},
-
-	calBoundChannels: function(){
-		var self = this;
-		this.boundaries = [];
-		var channels = this.$el.find('#h-select-channels').select2("val"); 
-		Backbone.pubSub.trigger('charts-change-channels',channels);
-
-		_.each(channels, function(item){
-			var boundaries = item.split("-");
-			self.boundaries.push({
-				from: Number(boundaries[0]),
-				to: Number(boundaries[1])
-			});
-		});
-
-		this.boundaries = _.sortBy(this.boundaries, function(item) { return item.to; });
-	},
-
-	changeSpreadDistance: function(){
-		this.disableMarker();
-		this.heatmap.settings.currentMarkerItem = 0;
-		this.markersSlider.val(0);
-		this.heatmap.settings.distance = this.spreadSlider.val();
-		this.heatmap.settings.distanceUnit = this.$el.find("#h-spreader-unit").select2("val");
-		this.renderHeatmap(true);
-	},
-
-	changeOpacity: function(){
-		this.heatmap.settings.opacity = this.opacitySlider.val();
-		this.renderHeatmap();
-	},
-
-	changeRadius: function(){
-		this.heatmap.settings.radius = this.radiusSlider.val();
-		this.renderHeatmap();
-	},
-
-	changeMarker: function(){
-		var marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
-		if(marker === undefined)
-			return;
-
-		marker.setVisible(false);
-
-		this.heatmap.settings.currentMarkerItem = this.markersSlider.val();
-		marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
-		marker.setVisible(true);
-	},
-
-	disableMarker: function(){
-		var marker = this.heatmap.markers[this.heatmap.settings.currentMarkerItem];
-		if(marker === undefined)
-			return;
-
-		marker.setVisible(false);
-	},
-
-	_renderMap: function(){
-		var self = this;
-
-		var myOptions = {
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			scaleControl: true,
-			panControl: false,
-			zoomControlOptions: {
-				style: google.maps.ZoomControlStyle.LARGE,
-				position: google.maps.ControlPosition.RIGHT_CENTER
-			},
-			styles: 
-				[{"elementType":"labels","stylers":[{"visibility":"off"}]},{"elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#000000"}]},{"featureType":"landscape","stylers":[{"color":"#ffffff"},{"visibility":"on"}]},{}],
-		};
-		this.heatmap.map = 
-			new google.maps.Map(document.getElementById("h-canvas"), myOptions);
-		this.heatmap.bounds = new google.maps.LatLngBounds();
-
-		google.maps.event.addListenerOnce(self.heatmap.map, 'idle', function(){
-			google.maps.event.trigger(self.heatmap.map, 'resize');
-			self.renderHeatmap(true,true);
-		});
-	},
-
-	renderHeatmap: function(update,center){
-		var self = this;
-		if(this.heatmap.heatmap) this.heatmap.heatmap.setMap(null);
-
-		if(update){
-			this.disableSettings();
-			var settings = this.heatmap.settings;
-			var data = this.heatmapDataProcessor.process(
-				this.boundaries, 
-				settings.dataFunction,
-				settings.distance,
-				settings.distanceUnit
-			);
-
-			this.disableMarker();
-			this.heatmap.data = [];
-			this.heatmap.markers = [];
-
-			_.each(data.data, function(item, index) {
-				var location = new google.maps.LatLng(item.lat, item.lng);
-				self.heatmap.data.push({
-					location: location, 
-					weight: item.count 
-				});
-
-				var infowindow = new google.maps.InfoWindow({
-					content: 'Latitude: ' + item.lat + '<br>Longitude: ' + item.lng + '<br>Power: ' + self.heatmapDataProcessor.denormalizeValue(item.count) + ' dBm',
-				});
-
-				var marker = new google.maps.Marker({
-					position: location,
-					map: self.heatmap.map,
-					icon: window.settings.markers.iconNormal,
-					index: index,
-				});
-
-				google.maps.event.addListener(marker, 'mouseover', function() {
-					infowindow.open(self.heatmap.map, marker);
-				});
-
-				google.maps.event.addListener(marker, 'mouseout', function() {
-					infowindow.close();
-				});
-
-				// just show one marker (current) 
-				if(index != self.heatmap.settings.currentMarkerItem) marker.setVisible(false);
-
-				self.heatmap.markers.push(marker);
-				self.heatmap.bounds.extend(marker.position);
-			});
-			
-			this.heatmap.settings.maxIntensity = this.heatmapDataProcessor.normalizeValue(
-				this.data.powerMax);
-			this.renderMaxSuggestedSlider();
-			this.renderMarkersSlider(data.data.length - 1);
-
-			if(center) this.heatmap.map.fitBounds(this.heatmap.bounds);
-		}
-
-		this.heatmap.heatmap = new google.maps.visualization.HeatmapLayer({
-			data: this.heatmap.data,
-			maxIntensity: this.heatmap.settings.maxIntensity,
-			radius: Number(self.heatmap.settings.radius),
-			opacity: self.heatmap.settings.opacity/100,
-			gradient: [
-				'RGBA(0, 0, 0, 0)',
-				'RGBA(4, 3, 5, 1)',
-				'RGBA(3, 4, 105, 1)',
-				'RGBA(11, 52, 185, 1)',
-				'RGBA(69, 233, 254, 1)',
-				'RGBA(57, 183, 0, 1)',
-				'RGBA(255, 252, 0, 1)',
-				'RGBA(255, 141, 51, 1)',
-				'RGBA(247, 26, 8, 1)'],
-		});
-
-		this.heatmap.heatmap.setMap(this.heatmap.map);
-		this.$el.find('.settings').removeClass('disable-container');
-		this.$el.find('.h-controllers').removeClass('disable-container');
-	},
-
 	renderMaxSuggestedSlider: function(){
 		this.maxIntensitySlider = this.$el.find('#h-max-intensity-slider').noUiSlider({
 			start: this.data.powerMax,
@@ -506,6 +326,150 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.find('.h-controllers').slideDown(100);
 	},
 
+	changeDataFunction: function(){
+		this.heatmap.settings.dataFunction = this.$el.find("#h-function-operate").select2("val");
+		this.updateHeatmap(true);
+	},
+
+	changeMaxIntensity: function(){
+		this.heatmap.settings.maxIntensity = 
+			this.heatmapDataProcessor.normalizeValue(this.maxIntensitySlider.val());
+		if(this.heatmap.settings.maxIntensity < 1) this.heatmap.settings.maxIntensity = 1;
+		this.updateHeatmap();
+	},
+
+	changeBand: function(evt){
+		window.settings.currBand = this.$el.find("#h-frequency-bands").select2("val");
+		this.renderRangeSlider();
+		this.changeFrequencyBy(true);
+	},
+
+	checkBands: function(evt){
+		if(window.settings.currBand.length == 1) evt.preventDefault();
+	},
+
+	changeChannelWidth: function(){
+		window.settings.currChannel = this.$el.find("#h-channel-width").select2("val");
+		var channels = [];
+		channels.push(window.settings.fixedChannels[window.settings.currChannel][0].from + '-' + window.settings.fixedChannels[window.settings.currChannel][0].to);
+		Backbone.pubSub.trigger('charts-change-channels',channels);
+		this.renderChannelInput();
+		this.changeChannelRange();
+	},
+
+	changeFrequencyRange: function(){
+		this.calBoundFrequencies();
+		this.updateHeatmap(true);
+	},
+
+	calBoundFrequencies: function(){
+		this.boundaries = [];
+		this.boundaries.push({
+			from: Number(this.rangeSlider.val()[0]),
+			to: Number(this.rangeSlider.val()[1])
+		});
+	},
+
+	checkChannelRange: function(evt){
+		if(window.settings.place.charts.channels.length == 1)
+			evt.preventDefault();
+	},
+
+	changeChannelRange: function(){
+		this.calBoundChannels();
+		this.updateHeatmap(true);
+	},
+
+	calBoundChannels: function(){
+		var self = this;
+		this.boundaries = [];
+		var channels = this.$el.find('#h-select-channels').select2("val"); 
+		Backbone.pubSub.trigger('charts-change-channels',channels);
+
+		_.each(channels, function(item){
+			var boundaries = item.split("-");
+			self.boundaries.push({
+				from: Number(boundaries[0]),
+				to: Number(boundaries[1])
+			});
+		});
+
+		this.boundaries = _.sortBy(this.boundaries, function(item) { return item.to; });
+	},
+
+	changeSpreadDistance: function(){
+		this.hideCrrMarker();
+		this.heatmap.settings.currentMarkerItem = 0;
+		this.markersSlider.val(0);
+		this.heatmap.settings.distance = this.spreadSlider.val();
+		this.heatmap.settings.distanceUnit = this.$el.find("#h-spreader-unit").select2("val");
+		this.updateHeatmap(true);
+		this.mapView.showMarkers([this.heatmap.settings.currentMarkerItem], false, false);
+	},
+
+	changeOpacity: function(){
+		this.heatmap.settings.opacity = this.opacitySlider.val();
+		this.updateHeatmap();
+	},
+
+	changeRadius: function(){
+		this.heatmap.settings.radius = this.radiusSlider.val();
+		this.updateHeatmap();
+	},
+
+	changeMarker: function(){
+		// hide crr marker
+		this.mapView.hideMarkers([this.heatmap.settings.currentMarkerItem], false, false);
+		// show new marker
+		this.heatmap.settings.currentMarkerItem = this.markersSlider.val();
+		this.mapView.showMarkers([this.heatmap.settings.currentMarkerItem], false, false);
+	},
+
+	hideCrrMarker: function(){
+		this.mapView.hideMarkers([this.heatmap.settings.currentMarkerItem], false, false);
+	},
+
+	// the parameter build4Heatmap allow the methods to build the data.data with the location for the google heatmap api
+	getHeatmapData: function(build4Heatmap){
+		var settings = this.heatmap.settings;
+		var data = this.heatmapDataProcessor.process(
+			this.boundaries, 
+			settings.dataFunction,
+			settings.distance,
+			settings.distanceUnit
+		);
+
+		if(build4Heatmap){
+			var heatmapData = [];
+			_.each(data.data, function(coord){
+				heatmapData.push({
+					location: new google.maps.LatLng(coord.lat, coord.lng),
+					weight: coord.count ? Number(coord.count) : 1,
+				});
+			});
+			data.data = heatmapData;
+		}
+
+		return data;
+	},
+
+	updateHeatmap: function(update){
+		var data = {};
+		if(update){
+			data = this.getHeatmapData(true);
+			this.heatmap.settings.maxIntensity = 
+				this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+			this.renderMarkersSlider(data.data.length - 1);
+		}
+
+		this.mapView.buildHeatmap({
+			data: data.data,
+			maxIntensity: this.heatmap.settings.maxIntensity,
+			radius: Number(this.heatmap.settings.radius),
+			opacity: this.heatmap.settings.opacity/100,
+		}, false, false);
+	},
+
 	updateDataByTab: function(){
 		this.$el.find("#h-channel-width").select2("val", window.settings.currChannel);
 		if(window.settings.place.charts.channels.length > 0)
@@ -513,6 +477,12 @@ app.view.HeatmapView = Backbone.View.extend({
 		else
 			this.$el.find('input:radio[name="h-select-frequency-by"]').filter('[value="range"]').attr('checked', true);
 		this.changeFrequencyBy(true);
+	},
+
+	enableSettings: function(){
+		this.$el.find('.settings').removeClass('disable-container');
+		this.$el.find('.h-controllers').removeClass('disable-container');
+		this.renderMaxSuggestedSlider();
 	},
 
 	disableSettings: function(){
@@ -532,7 +502,6 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.disableSettings();
-		this.$el.find('#h-canvas').html(Zebra.tmpl.waiting_component());
 
 		return this;
 	}
