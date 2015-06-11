@@ -77,7 +77,6 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		this.mapView = new app.view.MapView({
 			mapOptions: {
-				container: 'h-canvas',
 				crrMarkerShow: this.heatmap.settings.currentMarkerItem,
 				data: data.data,
 				scaleControl: true,
@@ -104,6 +103,10 @@ app.view.HeatmapView = Backbone.View.extend({
 				click: false,
 				mouseover: true
 			},
+			containerOptions: {
+				parent: '#h-canvas',
+				height: '400px'
+			}
 		});
 	},
 

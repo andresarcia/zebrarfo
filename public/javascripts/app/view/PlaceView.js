@@ -28,13 +28,15 @@ app.view.PlaceView = Backbone.View.extend({
 
 		this.mapView = new app.view.MapView({
 			mapOptions: {
-				container: 'p-map',
 				scrollwheel: false,
 				data: window.place.attributes.coordinates,
 			},
 			selectOptions: {
 				mouseover: true,
 			},
+			containerOptions: {
+				parent: '#p-map',
+			}
 		});
 
 		Backbone.pubSub.off("MapView:MarkerSelected");
@@ -188,9 +190,7 @@ app.view.PlaceView = Backbone.View.extend({
 	},
 
 	launchEditPlace: function(){
-		// window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
-
-		this.mapView.enterFullScrenn();
+		window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
 	}
 
 });
