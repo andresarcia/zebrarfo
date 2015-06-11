@@ -35,17 +35,22 @@ app.view.MapView = Backbone.View.extend({
 		this.selectOptions.click = true;
 		this.selectOptions.mouseover = false;
 		this.selectOptions.spreader = false;
+		this.containerOptions = {};
+		this.containerOptions.width = '100%';
+		this.containerOptions.height = '450px';
+		this.containerOptions.parent = '';
+		this.containerOptions.map = 'canvas-' + Date.now();
 	},
 
 	initialize: function(options){
-		if(options.mapOptions.container){
+		if(options.containerOptions.parent){
 			this.reset();
 			this.mapOptions = _.extend(this.mapOptions, options.mapOptions);
 			this.heatmapOptions = _.extend(this.heatmapOptions, options.heatmapOptions);
 			this.selectOptions = _.extend(this.selectOptions, options.selectOptions);
-
-			// render waiting screen
-			$('#'+this.mapOptions.container).html(Zebra.tmpl.waiting_component());
+			this.containerOptions = _.extend(this.containerOptions, options.containerOptions);
+			// setup canvas for map
+			this.setupCanvas();
 			// render map
 			this.render();
 
@@ -284,17 +289,15 @@ app.view.MapView = Backbone.View.extend({
 		this.map.fitBounds(this.bounds);
 	},
 
-	enterFullScrenn: function(){
-		// var width = '100%';
-		// var height = '100%';
-		// $('#'+this.mapOptions.container).css("position", 'fixed').
-		// css('z-index', 100).
-		// css('top', '0px').
-		// css('left', '0px').
-		// css("width", '100%').
-		// css("height", '100%');
-		// google.maps.event.trigger(this.map, 'resize');
-		// this.map.fitBounds(this.bounds);
+	setupCanvas: function(){
+		// append map canvas
+		$(this.containerOptions.parent).html('<div id='+this.containerOptions.map+'></div>');
+		// set size map canvas
+		$('#' + this.containerOptions.map)
+		.css("width", this.containerOptions.width)
+		.css("height", this.containerOptions.height);
+		// render waiting screen
+		$('#' + this.containerOptions.map).html(Zebra.tmpl.waiting_component());
 	},
 
 	render: function(){
@@ -320,7 +323,7 @@ app.view.MapView = Backbone.View.extend({
 		heatmapData.data = [];
 
 		this.map = new google.maps.Map(
-			document.getElementById(this.mapOptions.container), this.mapOptions);
+			document.getElementById(this.containerOptions.map), this.mapOptions);
 		this.bounds = new google.maps.LatLngBounds();
 
 		_.each(this.mapOptions.data, function(coord, index){
@@ -396,6 +399,41 @@ app.view.MapView = Backbone.View.extend({
 			this.spreader = new app.util.SpreadMarkers();
 			this.spreader.initialize(this.markers);
 		}
+
+		this._renderOverMap();
+	},
+
+	// render div for settings
+	_renderOverMap: function(){
+		var $parent = $('#'+this.containerOptions.map).parent();
+		$parent.append(Zebra.tmpl.map_over_options());
+
+		var width = $('#'+this.containerOptions.map).width();
+		$parent.find('.map-component-over')
+		.css("width", width + 'px')
+		.css("margin-left", '15px');
+
+		var self = this;
+		$(".map-component-resize-full").on( "click", function() {
+			self.enterFullScrenn();
+		});
+	},
+
+	enterFullScrenn: function(){
+		var self = this;
+		var template = Zebra.tmpl.map_modal;
+		var html = template();
+		var map = $(this.map.getDiv());
+
+		$('#z-modal').html(html);
+		$('#z-modal').find('#map-modal').modal();
+		$('#z-modal').find('.map-modal-canvas').html(this.map.getDiv());
+
+		$('#map-modal').on('hidden.bs.modal', function (e) {
+			$("#map-modal").remove();
+			$(self.containerOptions.parent).html(self.map.getDiv());
+			self._renderOverMap();
+		});
 	},
 
 	/**

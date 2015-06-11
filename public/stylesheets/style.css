@@ -668,7 +668,7 @@ hr {
 }
 /*********************************/
 /* WAITING COMPONENT *************/
-.waiting-component {  
+.waiting-component {
   position: relative;
   width: 100%;
   height: 100%;
@@ -687,6 +687,21 @@ hr {
   -webkit-animation: scaleout 1.0s infinite ease-in-out;
   -moz-animation: scaleout 1.0s infinite ease-in-out;
   animation: scaleout 1.0s infinite ease-in-out;
+}
+/*********************************/
+/* MAP COMPONENT *****************/
+.map-component-over {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 30px;
+  background-color:rgba(0,0,0,0.433);
+  z-index: 1000;
+  font-size: 18px;
+  padding: 4px 15px 3px;
+}
+.map-component-over a {
+  color: #ffffff;
 }
 /*********************************/
 /* UPLOAD ************************/
