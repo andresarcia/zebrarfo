@@ -30,6 +30,7 @@ app.view.PlaceView = Backbone.View.extend({
 			mapOptions: {
 				scrollwheel: false,
 				data: window.place.attributes.coordinates,
+				draggable: false,
 			},
 			selectOptions: {
 				mouseover: true,
