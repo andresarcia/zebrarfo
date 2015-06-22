@@ -403,7 +403,6 @@ app.view.HeatmapView = Backbone.View.extend({
 
 	changeSpreadDistance: function(){
 		this.hideCrrMarker();
-		this.heatmap.settings.currentMarkerItem = 0;
 		this.markersSlider.val(0);
 		this.heatmap.settings.distance = this.spreadSlider.val();
 		this.heatmap.settings.distanceUnit = this.$el.find("#h-spreader-unit").select2("val");
@@ -470,6 +469,12 @@ app.view.HeatmapView = Backbone.View.extend({
 			data = this.getHeatmapData(true);
 			this.heatmap.settings.maxIntensity = 
 				this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+
+			// render in the real 0
+			var _id = this.heatmap._crrData[0]._id;
+			var index = this.heatmapDataProcessor.id.map[_id];
+			this.heatmap.settings.currentMarkerItem = index;
+
 			this.renderMarkersSlider(data.data.length - 1);
 		}
 
