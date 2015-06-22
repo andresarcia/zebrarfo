@@ -400,26 +400,36 @@ app.view.MapView = Backbone.View.extend({
 			this.spreader.initialize(this.markers);
 		}
 
-		this._renderOverMap();
+		// this._renderOverMap(false);
 	},
 
 	// render div for settings
-	_renderOverMap: function(){
+	_renderOverMap: function(fullScreen){
 		var $parent = $('#'+this.containerOptions.map).parent();
 		$parent.append(Zebra.tmpl.map_over_options());
 
-		var width = $('#'+this.containerOptions.map).width();
+		var p = $parent.position();
 		$parent.find('.map-component-over')
-		.css("width", width + 'px')
-		.css("margin-left", '15px');
+		.css("width",  $parent.width() + 'px')
+		.css("top", p.top + 'px')
+		.css("left", p.left + 'px');
+
+		if(fullScreen){
+			$parent.find('.map-component-resize-small').show();
+			$parent.find('.map-component-resize-full').hide();
+
+		} else {
+			$parent.find('.map-component-resize-small').hide();
+			$parent.find('.map-component-resize-full').show();
+		}
 
 		var self = this;
-		$(".map-component-resize-full").on( "click", function() {
-			self.enterFullScrenn();
+		$(".map-component-resize-full").on("click", function() {
+			self.enterFullScreen();
 		});
 	},
 
-	enterFullScrenn: function(){
+	enterFullScreen: function(){
 		var self = this;
 		var template = Zebra.tmpl.map_modal;
 		var html = template();
@@ -427,13 +437,21 @@ app.view.MapView = Backbone.View.extend({
 
 		$('#z-modal').html(html);
 		$('#z-modal').find('#map-modal').modal();
-		$('#z-modal').find('.map-modal-canvas').html(this.map.getDiv());
+		$('#z-modal').find('.modal-body').html(this.map.getDiv());
+
+		$('#map-modal').on('shown.bs.modal', function (e) {
+			self._renderOverMap(true);
+		});
 
 		$('#map-modal').on('hidden.bs.modal', function (e) {
-			$("#map-modal").remove();
-			$(self.containerOptions.parent).html(self.map.getDiv());
-			self._renderOverMap();
+			self.exitFullScreen();
 		});
+	},
+
+	exitFullScreen: function(){
+		$("#map-modal").remove();
+		$(this.containerOptions.parent).html(this.map.getDiv());
+		this._renderOverMap(false);
 	},
 
 	/**

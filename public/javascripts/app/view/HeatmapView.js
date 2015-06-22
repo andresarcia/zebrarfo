@@ -8,7 +8,8 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.heatmap.map = null;
 		this.heatmap.bounds = null;
 		this.heatmap.heatmap = null;
-		this.heatmap.data = [];
+		// var for compare data 
+		this.heatmap._crrData = [];
 		this.heatmap.markers = [];
 		this.heatmap.settings = {};
 		this.heatmap.settings.dataFunction = "avg";
@@ -45,7 +46,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		
 		this.data = window.place.attributes;
 		this.heatmapDataProcessor = new app.util.HeatmapDataProcessor();
-		this.heatmapDataProcessor.require({
+		this.heatmapDataProcessor.initialize({
 			place: this.data,
 			data: this.data.charts
 		});
@@ -421,11 +422,16 @@ app.view.HeatmapView = Backbone.View.extend({
 	},
 
 	changeMarker: function(){
+		// check if the marker if visible by spreader
+		var value = this.markersSlider.val();
+		var _id = this.heatmap._crrData[value]._id;
+		var index = this.heatmapDataProcessor.id.map[_id];
+
 		// hide crr marker
 		this.mapView.hideMarkers([this.heatmap.settings.currentMarkerItem], false, false);
 		// show new marker
-		this.heatmap.settings.currentMarkerItem = this.markersSlider.val();
-		this.mapView.showMarkers([this.heatmap.settings.currentMarkerItem], false, false);
+		this.heatmap.settings.currentMarkerItem = index;
+		this.mapView.showMarkers([index], false, false);
 	},
 
 	hideCrrMarker: function(){
@@ -441,6 +447,8 @@ app.view.HeatmapView = Backbone.View.extend({
 			settings.distance,
 			settings.distanceUnit
 		);
+
+		this.heatmap._crrData = data.data;
 
 		if(build4Heatmap){
 			var heatmapData = [];

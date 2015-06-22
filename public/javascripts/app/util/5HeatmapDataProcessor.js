@@ -12,20 +12,22 @@ app.util.HeatmapDataProcessor.prototype = {
     normalizeMin: new app.util.Stats(),
     normalizeMax: new app.util.Stats(),
 
-    require: function(options) {
+    initialize: function(options) {
         this.place = options.place;
         this.data = options.data;
+
+        this.id = {};
+        this.id.first = true;
+        this.id.count = -1;
+        this.id.map = {};
     },
 
     process: function(boundaries, functionName, distance, unit){
         var self = this;
 
-        if(unit == "m")
-            this.spreadDistance = distance / 1000;
-        else if(unit == "km")
-            this.spreadDistance = distance;
-        else
-            this.spreadDistance = 0;
+        if(unit == "m") this.spreadDistance = distance / 1000;
+        else if(unit == "km") this.spreadDistance = distance;
+        else this.spreadDistance = 0;
 
         this.dataProcessed = {};
         this.dataProcessed.data = [];
@@ -46,8 +48,7 @@ app.util.HeatmapDataProcessor.prototype = {
             if(this.data[i].frequency / 1000 > boundaries[indexForBoundaries].to){
                 if(indexForBoundaries < boundaries.length - 1)
                     indexForBoundaries += 1;
-                else 
-                    break;
+                else break;
             }
         }
 
@@ -96,33 +97,45 @@ app.util.HeatmapDataProcessor.prototype = {
         var distance;
         var lastSaved = this.dataProcessed.data[this.dataProcessed.data.length - 1];
         if (lastSaved)
-            distance = app.util.GetDistanceFromLatLonInKm(lastSaved.lat,lastSaved.lng,item.lat,item.lng);
+            distance = app.util.GetDistanceFromLatLonInKm(
+                lastSaved.lat,lastSaved.lng,item.lat,item.lng);
         else {
             this.saveItem(item);
             return;
         }
 
-        if(distance && distance < this.spreadDistance)
-            this.distanceStat.max(item.count);
-        
+        if(distance && distance < this.spreadDistance) this.distanceStat.max(item.count);
         else {
             this.distanceStat.max(item.count);
             this.saveItem({
                 lat: item.lat,
                 lng: item.lng,
-                count: this.distanceStat.getResult()
+                count: this.distanceStat.getResult(),
             });
             this.distanceStat.reset();
         } 
     },
 
     saveItem: function(item){
+        // identify data
+        var _id = item.lat + item.lng;
+        item._id = _id;
+
+        // build map of primary data;
+        if(this.id.first){
+            this.id.count += 1;
+            this.id.map[_id] = this.id.count;
+        }
+
         this.statsMax.max(item.count);
         this.statsMin.min(item.count);
         this.dataProcessed.data.push(item);
     },
 
     normalize: function(){
+        // disable identify data mapper
+        if(this.id.first) this.id.first = false;
+
         var self = this;
         _.each(this.dataProcessed.data, function(item){
             item.count = self.normalizeValue(item.count);
