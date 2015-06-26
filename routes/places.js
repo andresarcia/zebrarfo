@@ -13,6 +13,7 @@ var coordinate = require('./coordinates');
 var outliers = require('./outliers');
 
 // == MONGO ===================================================================
+// var mongoose = require('mongoose');
 // var Place = require('../models_mongo/place.js');
 // ============================================================================
 
@@ -108,69 +109,110 @@ exports.create = function(req,res,next){
 
 
 	// == MONGO ===================================================================
-// 	if(Object.keys(req.body).length === 0){
-// 		next(httpError(404,'something blew up with your browser, try to update it'));
+	// if(Object.keys(req.body).length === 0){
+	// 	console.error('Something blew up with your browser, try to update it');
+	// 	next(httpError(404, 'Something blew up with your browser, try to update it'));
 
-// 	} else {
-// 		// ========================
-// 		var start = new Date().getTime();
-// 		// ========================
+	// } else {
+	// 	// ========================
+	// 	var start = new Date().getTime();
+	// 	// ========================
 
-// 		Place.findOne({ name: req.body.name }, function(err, o) {
-// 			if(err) next(httpError(404,err));
-// 			if(!o) createPlace();
-// 			else updatePlace(o);
-// 		});
+	// 	Place.findOne({ name: req.body.name }, function(err, o) {
+	// 		if(err) {
+	// 			console.error(err);
+	// 			next(httpError(404, err));
+	// 		}
+	// 		if(!o) createPlace();
+	// 		else updatePlace(o);
+	// 	});
 
-// 		var createPlace = function (){
-// 			console.log('* CREATING NEW PLACE *');
-// 			builder.create(req.body, null, false, function(err, n){
-// 				console.log('* SAVING NEW PLACE *');
-// 				var place = new Place(n);
-// 				saveAndResponse(place, true);
-// 			});
-// 		};
+	// 	var createPlace = function (){
+	// 		console.log('* CREATING NEW PLACE *');
+	// 		builder.create(req.body, null, false, function(err, n){
+	// 			if(err) {
+	// 				console.error(err);
+	// 				next(httpError(404, err));
+	// 			}
 
-// 		var updatePlace = function(o){
-// 			console.log('* UPDATING PLACE *');
-// 			builder.create(req.body, o, true, function(err, n){
-// 				console.log('* SAVING UPDATED PLACE *');
-// 				o.distance = n.distance;
-// 				o.power = n.power;
-// 				o.outliers = n.outliers;
-// 				o.frequencies.bands = n.frequencies.bands;
-// 				o.frequencies.width = n.frequencies.width;
-// 				o.updatedAt = Date.now();
-// 				_.each(n.newCoordinates, function(item){
-// 					o.coordinates.push(item);
-// 				});
-				
-// 				if(n.newCoordinates.length > 0) saveAndResponse(o, true);
-// 				else saveAndResponse(o, false);
-// 			});
-// 		};
+	// 			console.log('* SAVING NEW PLACE *');
+	// 			var place = new Place(n);
+	// 			// save the parent (user) model in the place model
+	// 			place._creator = mongoose.Types.ObjectId(req.user.iss);
+	// 			saveAndResponse(place, true);
+	// 		});
+	// 	};
 
-// 		var saveAndResponse = function(place, save){
-// 			if(save){
-// 				place.save(function(err){
-// 					if(err) next(httpError(err));
-// 					console.log("DONE");
-// 					// ========================
-// 					var end = new Date().getTime();
-// 					console.log("Time ms:" + (end - start));
-// 					// ========================
-// 					// res.status(200).send(n);
-// 				});
-// 			} else {
-// 				console.log("DONE");
-// 				// res.status(200).send(n);
-// 			}
-// 		};
-// 	}
+	// 	var updatePlace = function(o){
+	// 		console.log('* UPDATING PLACE *');
+	// 		builder.create(req.body, o, true, function(err, n){
+	// 			if(err) {
+	// 				console.error(err);
+	// 				next(httpError(404, err));
+	// 			}
+
+	// 			console.log('* SAVING UPDATED PLACE *');
+	// 			o.distance = n.distance;
+	// 			o.power = n.power;
+	// 			o.outliers = n.outliers;
+	// 			o.frequencies.bands = n.frequencies.bands;
+	// 			o.frequencies.width = n.frequencies.width;
+	// 			o.updatedAt = Date.now();
+
+	// 			_.each(n.newCoordinates, function(item){
+	// 				o.coordinates.push(item);
+	// 			});
+
+	// 			if(n.newCoordinates.length > 0){
+	// 				saveAndResponse(o, true);
+
+	// 			} else {
+	// 				saveAndResponse(o, false);
+	// 			} 
+	// 		});
+	// 	};
+
+	// 	var saveAndResponse = function(place, save){
+	// 		if(save){
+	// 			place.save(function(err){
+	// 				if(err) next(httpError(err));
+	// 				console.log("DONE");
+	// 				// ========================
+	// 				var end = new Date().getTime();
+	// 				console.log("Time ms:" + (end - start));
+	// 				// ========================
+	// 				// res.status(200).send(n);
+	// 			});
+	// 		} else {
+	// 			console.log("DONE");
+	// 			// res.status(200).send(n);
+	// 		}
+	// 	};
+	// }
+	// ============================================================================
 };
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
+	// == MONGO ===================================================================
+	// Place.find(
+	// { _creator: req.user.iss }, 
+	// { 
+	// 	name: 1,
+	// 	distance: 1,
+	// 	power: 1,
+	// 	frequencies: 1
+	// },
+	// function(err, places){
+	// 	if(err) {
+	// 		console.error(err);
+	// 		next(httpError(404, err));
+	// 	}
+
+	// 	res.status(200).send(places);
+	// });
+	// ============================================================================
+
 	db.Place.findAll({
 		where: {
 			UserId:req.user.iss,
