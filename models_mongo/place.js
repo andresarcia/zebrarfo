@@ -3,6 +3,11 @@ var findOrCreate = require('mongoose-findorcreate');
 var Schema = mongoose.Schema;
 
 var placeShema = new Schema({
+	_creator : { 
+		type: Schema.ObjectId, 
+		ref: 'User' 
+	},
+
 	name: {
 		type: String,
 		required: true, 
