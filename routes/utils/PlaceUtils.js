@@ -304,6 +304,9 @@ exports.toJson = function(userId,id,callback){
 		delete place.UserId;
 		delete place.createdAt;
 		delete place.updatedAt;
+		delete place.frequenciesBands;
+		delete place.frequenciesChannelWidth;
+		delete place.distanceSD;
 
 		place.coordinates = _.clone(place.Coordinates);
 		delete place.Coordinates;
@@ -321,8 +324,10 @@ exports.toJson = function(userId,id,callback){
 			item.cap = [];
 
 			_.each(item.Captures, function(cap,j){
-				if(i == 0)
+				// save the value of frequencies just once
+				if(i == 0){
 					place.frequencies.values.push(cap.frequency);
+				}
 
 				item.cap.push(cap.power);
 			});
@@ -331,8 +336,6 @@ exports.toJson = function(userId,id,callback){
 			item.lng = _.clone(item.lng);
 			item.date = _.clone(item.createdDate);
 
-			delete item.lat;
-			delete item.lng;
 			delete item.createdDate;
 			delete item.Captures;
 		});
