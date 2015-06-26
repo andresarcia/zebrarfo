@@ -40,8 +40,12 @@ exports.create = function(place, callback) {
 
 	reduceCommonGps(o,n,function(){
 		checkPlaceAttributes(n,function(err){
-			if(err) callback(err,null);
-			callback(null,n);
+			if(err){
+				console.error(err);
+				return callback(err,null);
+			}
+
+			return callback(null,n);
 		});
 	});
 };
@@ -472,43 +476,43 @@ function takePlaceStats(n){
 
 function checkPlaceAttributes(n, callback){
 	if(n.length === 0 || n.numberCoordinates === 0)
-		callback("There must be at least one sample");
+		return callback("There must be at least one sample");
 
 	if(n.powerMin === null || n.powerMin === undefined)
-		callback("We could not calculate the power min of the place");
+		return callback("We could not calculate the power min of the place");
 
 	if(n.powerMax === null || n.powerMax === undefined)
-		callback("We could not calculate the power max of the place");
+		return callback("We could not calculate the power max of the place");
 
 	if(n.powerAvg === null || n.powerAvg === undefined)
-		callback("We could not calculate the power avg of the place");
+		return callback("We could not calculate the power avg of the place");
 
 	if(n.sdPowerAvg === null || n.sdPowerAvg === undefined || n.avgPowerSD === null || n.avgPowerSD === undefined)
-		callback("We could not calculate the power standard deviation of the place");
+		return callback("We could not calculate the power standard deviation of the place");
 
 	if(n.numberPowerFrequency < 1)
-		callback("There must be at least one frequency and power in the samples");
+		return callback("There must be at least one frequency and power in the samples");
 	
 	if(n.frequencyMin === null || n.frequencyMin === undefined)
-		callback("We could not calculate the frequency min of the place");
+		return callback("We could not calculate the frequency min of the place");
 
 	if(n.frequencyMax === null || n.frequencyMax === undefined)
-		callback("We could not calculate the frequency max of the place");
+		return callback("We could not calculate the frequency max of the place");
 
 	if(n.totalDistance === null || n.totalDistance === undefined)
-		callback("We could not calculate the total distance of the place");
+		return callback("We could not calculate the total distance of the place");
 
 	if(n.distanceAvg === null || n.distanceAvg === undefined)
-		callback("We could not calculate the avg distance of the place");
+		return callback("We could not calculate the avg distance of the place");
 
 	if(n.distanceMax === null || n.distanceMax === undefined)
-		callback("We could not calculate the max distance of the place");
+		return callback("We could not calculate the max distance of the place");
 
 	if(n.distanceMin === null || n.distanceMin === undefined)
-		callback("We could not calculate the total min of the place");
+		return callback("We could not calculate the total min of the place");
 
 	if(Object.keys(n.outliers).length === 0)
-		callback("We could not calculate the outliers of the place");
+		return callback("We could not calculate the outliers of the place");
 
-	callback(null);
+	return callback(null);
 }
