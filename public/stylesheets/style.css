@@ -472,7 +472,6 @@ hr {
 }
 #login-container .content .form #login-password {
   width: 93%;
-  height:52px;
   border-right: none;
   border-top: none;
   -webkit-border-top-left-radius: 0px;
@@ -508,8 +507,8 @@ hr {
   border-bottom-right-radius: 6px;
   width: 6%;
   padding-left: 0px;
-  height:51px;
-  line-height: 50px;
+  height: 47px;
+  line-height: 15px;
   font-size: 19px;
   cursor: pointer;
   -webkit-user-select: none;
