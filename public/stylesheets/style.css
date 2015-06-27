@@ -563,7 +563,11 @@ hr {
 }
 @media (min-width: 992px) {
   #login-container .mask {
-    background: transparent url(../images/mask.png) no-repeat center;
+    background: transparent url(../images/mask.png) no-repeat center center; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
   #login-container .content .background {
     background-image: url(../images/bg_desktop.jpg);
@@ -702,6 +706,12 @@ hr {
 }
 .map-component-over a {
   color: #ffffff;
+}
+.map-component-over .map-component-resize-small {
+  display: none;
+}
+#map-modal .modal-body {
+  padding: 0;
 }
 /*********************************/
 /* UPLOAD ************************/
