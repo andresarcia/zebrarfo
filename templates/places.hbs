@@ -1,53 +1,108 @@
-<ul id="places-container" class="list-group">
-	{{#each this.models}}
-		<a href="#places/{{attributes.id}}" class="list-group-item">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<h1 class="col-md-12">{{this.attributes.name}}</h1>
-				<table class="table table-striped table-condensed">
-					<tr>
-						<td>Total number of samples</td>
-						<td>{{attributes.numberCoordinates}}</td>
-					</tr>
-					<tr>
-						<td>Total distance</td>
-						<td>{{attributes.totalDistance}} <small><b>km</b></small></td>
-					</tr>
-					<tr>
-						<td>Total number of frequencies</td>
-						<td>{{attributes.numberPowerFrequency}}</td>
-					</tr>
-					<tr>
-						<td>Range of frequencies</td>
-						<td>[{{attributes.frequencyMin}}-{{attributes.frequencyMax}}] <small><b>MHz</b></small></td>
-					</tr>
-					<tr>
-						<td>Minimum power</td>
-						<td>{{attributes.powerMin}} <small><b>dBm</b></small></td>
-					</tr>
-					<tr>
-						<td>Maximum power</td>
-						<td>{{attributes.powerMax}} <small><b>dBm</b></small></td>
-					</tr>
-					<tr>
-						<td>Average power</td>
-						<td>{{attributes.powerAvg}} <small><b>dBm</b></small></td>
-					</tr>
-					<tr>
-						<td>Standard deviation of power</td>
-						<td>{{attributes.sdPowerAvg}} <small><b>dBm</b></small></td>
-					</tr>
-					<tr>
-						<td>Average of Standard deviation power</td>
-						<td>{{attributes.avgPowerSD}} <small><b>dBm</b></small></td>
-					</tr>
-				</table>
-			</div>
-			<div class="panel-footer">
-					<h5 class="pull-right"><small>last update <b>{{this.attributes.friendlyDate}}</b></small></h5> 
-					<br>
-				</div>
-			</div>
-		</a>
-	{{/each}}
-</ul>
+<div role="tabpanel">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#places" aria-controls="panel-1" role="tab" data-toggle="tab">Places</a>
+    </li>
+  </ul>
+ 
+  <!-- Tab panels -->
+  <div class="tab-content tab-content-places">
+ 
+    <div role="tabpanel" class="tab-pane active" id="places">
+      <div class="row masonry-container">
+
+        <!-- For each place -->
+        {{#each this.models}}
+          <!-- Col container -->
+          <div class="col-md-4 col-sm-6 item">
+
+            <!-- Panel -->
+            <div class="panel panel-default panel-places"> 
+
+              <!-- Heading -->
+              <div class="panel-heading">
+                <div class="links">
+                  <a href="javascript:void(0)" class="places-delete" data-id="{{attributes.id}}" data-name="{{this.attributes.name}}">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </a>
+                </div>
+                <a href="#places/{{attributes.id}}">
+                  <h4>{{this.attributes.name}}</h4>
+                </a>
+              </div> <!-- End Panel Heading -->
+
+              <!-- Panel Body -->
+              <div class="panel-body">
+
+                <div class="tabbable-panel">
+                  <div class="tabbable-line">
+                    <ul class="nav nav-tabs ">
+                      <li class="active">
+                        <a href="#sumary_tab_{{attributes.id}}" data-toggle="tab">Summary</a>
+                      </li>
+                      <li>
+                        <a href="#frequencies_tab_{{attributes.id}}" data-toggle="tab">Frequencies</a>
+                      </li>
+                      <li>
+                        <a href="#power_tab_{{attributes.id}}" data-toggle="tab">Power</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content">
+                      <div class="tab-pane active places-sumary" id="sumary_tab_{{attributes.id}}">
+                        <div class="big-small col-md-6 col-sm-6 col-xs-6">
+                            <h3>{{attributes.numberCoordinates}}</h3>
+                            <h5><small>samples</small></h5>
+                        </div>
+                        <div class="big-small col-md-6 col-sm-6 col-xs-6">
+                          <h3>{{attributes.totalDistance}}</h3>
+                          <h6><small><b>km</b></small></h6>
+                          <h5><small>distance</small></h5>
+                        </div>
+                      </div>
+                      <div class="tab-pane places-frequencies" id="frequencies_tab_{{attributes.id}}">
+                        <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                            <h4>{{attributes.numberPowerFrequency}}</h4>
+                            <h5><small>number of frequencies</small></h5>
+                        </div>
+                        <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                          <h4>{{attributes.frequencyMin}}-{{attributes.frequencyMax}}</h4>
+                          <h6><small><b>MHz</b></small></h6>
+                          <h5><small>range</small></h5>
+                        </div>
+                      </div>
+                      <div class="tab-pane places-power" id="power_tab_{{attributes.id}}">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                          <canvas class="power-canvas" height="10"></canvas>
+                        </div>
+                        <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                          <h5 class="pull-left"><small>{{attributes.powerMin}} dBm</small></h5>
+                          <h5 class="pull-right"><small>{{attributes.powerMax}} dBm</small></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div> <!-- End Panel Body>
+
+              <!-- Panel Footer -->
+              <div class="panel-footer">
+                <h6>
+                  <small>
+                    <span class="glyphicon glyphicon-time"></span>
+                    {{this.attributes.friendlyDate}}
+                  </small>
+                </h6>
+              </div> <!-- End Panel Footer -->
+            </div> <!-- End panel -->
+
+          </div> <!-- End Col container -->
+        {{/each}} <!-- End Each -->
+ 
+      </div><!--End masonry-container  -->
+    </div><!--End tab panel-1  -->
+ 
+  </div><!--End tab-content  -->
+ 
+</div><!--End tabpanel  -->

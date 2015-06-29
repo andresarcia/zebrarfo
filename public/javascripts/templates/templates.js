@@ -199,11 +199,11 @@ this["Zebra"]["tmpl"]["main_menu_sub_upload"] = Handlebars.template({"compiler":
   },"useData":true});
 
 this["Zebra"]["tmpl"]["map_modal"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"modal fade\" id=\"map-modal\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"map-modal-canvas\">\n      </div>\n    </div>\n  </div>\n</div>";
+  return "<div class=\"modal fade\" id=\"map-modal\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-body\"></div>\n    </div>\n  </div>\n</div>";
   },"useData":true});
 
 this["Zebra"]["tmpl"]["map_over_options"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"map-component-over\">\n	<div class=\"col-md-2 col-md-offset-10\">\n		<div class=\"col-md-12\">\n			<a href=\"javascript:void(0)\" class=\"map-component-config\">\n				<span class=\"glyphicon glyphicon-cog\"></span>\n			</a>\n			<a href=\"javascript:void(0)\" class=\"pull-right map-component-resize-full\">\n				<span class=\"glyphicon glyphicon-resize-full\"></span>\n			</a>\n		</div>\n	</div>\n</div>";
+  return "<div class=\"map-component-over\">\n	<div class=\"col-md-12\">\n		<a href=\"javascript:void(0)\" class=\"map-component-config\">\n			<span class=\"glyphicon glyphicon-cog\"></span>\n		</a>\n		<a href=\"javascript:void(0)\" class=\"pull-right map-component-resize-full\">\n			<span class=\"glyphicon glyphicon-resize-full\"></span>\n		</a>\n		<a href=\"javascript:void(0)\" class=\"pull-right map-component-resize-small\">\n			<span class=\"glyphicon glyphicon-resize-small\"></span>\n		</a>\n	</div>\n</div>";
   },"useData":true});
 
 this["Zebra"]["tmpl"]["modal_parsing_measures"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -275,9 +275,9 @@ this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helper
   if (stack1 != null) { buffer += stack1; }
   stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequenciesChannelWidth : stack1), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "				</table>\n\n				<button id=\"p-edit\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h5 class=\"pull-right\"><small>last update <b>"
+  return buffer + "				</table>\n\n				<button id=\"p-edit\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h6>\n					<small>\n						<span class=\"glyphicon glyphicon-time\"></span>\n						"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.friendlyDate : stack1), depth0))
-    + "</b></small></h5> \n				<br>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"p-map\"></div>\n		<div id=\"p-selected-coord\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
+    + "\n					</small>\n				</h6>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"p-map\"></div>\n		<div id=\"p-selected-coord\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["place_coordinate_resume"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -297,38 +297,48 @@ this["Zebra"]["tmpl"]["place_coordinate_resume"] = Handlebars.template({"compile
 
 this["Zebra"]["tmpl"]["places"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "		<a href=\"#places/"
+  return "          <!-- Col container -->\n          <div class=\"col-md-4 col-sm-6 item\">\n\n            <!-- Panel -->\n            <div class=\"panel panel-default panel-places\"> \n\n              <!-- Heading -->\n              <div class=\"panel-heading\">\n                <div class=\"links\">\n                  <a href=\"javascript:void(0)\" class=\"places-delete\" data-id=\""
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\" class=\"list-group-item\">\n		<div class=\"panel panel-default\">\n			<div class=\"panel-body\">\n				<h1 class=\"col-md-12\">"
+    + "\" data-name=\""
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</h1>\n				<table class=\"table table-striped table-condensed\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
+    + "\">\n                    <span class=\"glyphicon glyphicon-trash\"></span>\n                  </a>\n                </div>\n                <a href=\"#places/"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n                  <h4>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</h4>\n                </a>\n              </div> <!-- End Panel Heading -->\n\n              <!-- Panel Body -->\n              <div class=\"panel-body\">\n\n                <div class=\"tabbable-panel\">\n                  <div class=\"tabbable-line\">\n                    <ul class=\"nav nav-tabs \">\n                      <li class=\"active\">\n                        <a href=\"#sumary_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-toggle=\"tab\">Summary</a>\n                      </li>\n                      <li>\n                        <a href=\"#frequencies_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-toggle=\"tab\">Frequencies</a>\n                      </li>\n                      <li>\n                        <a href=\"#power_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-toggle=\"tab\">Power</a>\n                      </li>\n                    </ul>\n                    <div class=\"tab-content\">\n                      <div class=\"tab-pane active places-sumary\" id=\"sumary_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n                        <div class=\"big-small col-md-6 col-sm-6 col-xs-6\">\n                            <h3>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
-    + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
+    + "</h3>\n                            <h5><small>samples</small></h5>\n                        </div>\n                        <div class=\"big-small col-md-6 col-sm-6 col-xs-6\">\n                          <h3>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.totalDistance : stack1), depth0))
-    + " <small><b>km</b></small></td>\n					</tr>\n					<tr>\n						<td>Total number of frequencies</td>\n						<td>"
+    + "</h3>\n                          <h6><small><b>km</b></small></h6>\n                          <h5><small>distance</small></h5>\n                        </div>\n                      </div>\n                      <div class=\"tab-pane places-frequencies\" id=\"frequencies_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                            <h4>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.numberPowerFrequency : stack1), depth0))
-    + "</td>\n					</tr>\n					<tr>\n						<td>Range of frequencies</td>\n						<td>["
+    + "</h4>\n                            <h5><small>number of frequencies</small></h5>\n                        </div>\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                          <h4>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencyMin : stack1), depth0))
     + "-"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencyMax : stack1), depth0))
-    + "] <small><b>MHz</b></small></td>\n					</tr>\n					<tr>\n						<td>Minimum power</td>\n						<td>"
+    + "</h4>\n                          <h6><small><b>MHz</b></small></h6>\n                          <h5><small>range</small></h5>\n                        </div>\n                      </div>\n                      <div class=\"tab-pane places-power\" id=\"power_tab_"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n                        <div class=\"col-md-12 col-sm-12 col-xs-12\">\n                          <canvas class=\"power-canvas\" height=\"10\"></canvas>\n                        </div>\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                          <h5 class=\"pull-left\"><small>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.powerMin : stack1), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Maximum power</td>\n						<td>"
+    + " dBm</small></h5>\n                          <h5 class=\"pull-right\"><small>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.powerMax : stack1), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.powerAvg : stack1), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.sdPowerAvg : stack1), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average of Standard deviation power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.avgPowerSD : stack1), depth0))
-    + " <small><b>dBm</b></small></td>\n					</tr>\n				</table>\n			</div>\n			<div class=\"panel-footer\">\n					<h5 class=\"pull-right\"><small>last update <b>"
+    + " dBm</small></h5>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n\n              </div> <!-- End Panel Body>\n\n              <!-- Panel Footer -->\n              <div class=\"panel-footer\">\n                <h6>\n                  <small>\n                    <span class=\"glyphicon glyphicon-time\"></span>\n                    "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.friendlyDate : stack1), depth0))
-    + "</b></small></h5> \n					<br>\n				</div>\n			</div>\n		</a>\n";
+    + "\n                  </small>\n                </h6>\n              </div> <!-- End Panel Footer -->\n            </div> <!-- End panel -->\n\n          </div> <!-- End Col container -->\n        ";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "<ul id=\"places-container\" class=\"list-group\">\n";
+  var stack1, buffer = "<div role=\"tabpanel\">\n  <!-- Nav tabs -->\n  <ul class=\"nav nav-tabs\" role=\"tablist\">\n    <li role=\"presentation\" class=\"active\">\n      <a href=\"#places\" aria-controls=\"panel-1\" role=\"tab\" data-toggle=\"tab\">Places</a>\n    </li>\n  </ul>\n \n  <!-- Tab panels -->\n  <div class=\"tab-content tab-content-places\">\n \n    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"places\">\n      <div class=\"row masonry-container\">\n\n        <!-- For each place -->\n";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.models : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "</ul>";
+  return buffer + " <!-- End Each -->\n \n      </div><!--End masonry-container  -->\n    </div><!--End tab panel-1  -->\n \n  </div><!--End tab-content  -->\n \n</div><!--End tabpanel  -->";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["register"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
