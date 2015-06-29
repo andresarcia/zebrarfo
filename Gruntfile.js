@@ -65,6 +65,8 @@ module.exports = function(grunt) {
       vendor: {
         src: ['public/javascripts/vendor/jquery-1.11.1.min.js',
               'public/javascripts/vendor/bootstrap.min.js',
+              'public/javascripts/vendor/masonry.pkgd.min.js',
+              'public/javascripts/vendor/imagesloaded.pkgd.min.js',
               'public/javascripts/vendor/bootstrap-filestyle.js',
               'public/javascripts/vendor/jquery.parallax.min.js',
               'public/javascripts/vendor/bootbox.min.js',
