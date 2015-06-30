@@ -19,18 +19,18 @@ exports.save = function(id,outliers,isNew,callback){
 
 		if(isNew){
 			console.log('* SAVING OUTLIERS *');
-		    db.Outlier.bulkCreate(v)
+			db.Outlier.bulkCreate(v)
 			.then(function() { 
-				callback();
+				return callback();
 			}).catch(function(err){
-				callback(err);
+				return callback(err);
 			});
 
 		} else {
 			console.log('* UPDATING OUTLIERS *');	
 
 			db.Outlier.destroy({
-	    		where: {
+				where: {
 					PlaceId: id
 				}},
 				{
@@ -39,116 +39,136 @@ exports.save = function(id,outliers,isNew,callback){
 			.then(function(){
 				db.Outlier.bulkCreate(v)
 				.then(function() { 
-					callback();
+					return callback();
 				}).catch(function(err){
-					callback(err);
+					return callback(err);
 				});
 			}).catch(function(err){
-				callback(err);
+				return callback(err);
 			});
 		}
 	} else
-		callback("ID");
+		return callback("ID");
 };
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:req.user.iss,
-				id: req.params.id,
-				visible: true
-			},
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
+
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.id,
+			visible: true
+		},
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
+	
+		place.getOutliers({
+			order: 'power DESC',
+		})	
+		.then(function(data){
+			if(data.length === 0){
+				return next(httpError(404, 'Outliers not found'));
 			}
-		
-			place.getOutliers({
-				order: 'power DESC',
-			})	
-			.then(function(data){
-				if(data.length === 0)
-					return next(httpError(404));
 
-				res.status(200).send(data);
+			res.status(200).send(data);
 
-			}).catch(function(err){
-				next(httpError(err));
-			});
-		
 		}).catch(function(err){
-			next(httpError(err));
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
-	} else
-		next(httpError(404));
+	
+	}).catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.delete = function(req,res,next){
-	if(utils.isNumber(req.params.idPlace) && utils.isNumber(req.params.id)){
-		db.Place.find({
+	if(!utils.isNumber(req.params.idPlace)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
+
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the outlier id has the wrong format specification'));
+	}
+
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.idPlace,
+			visible: true
+		},
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
+
+		place.getOutliers({
 			where: {
-				UserId:req.user.iss,
-				id: req.params.idPlace,
-				visible: true
-			},
-		}).then(function(place){
-			if(!place) return next(httpError(404));
-
-			place.getOutliers({
+				id: req.params.id
+			}
+		}).then(function(outlayer){
+			if(outlayer.length === 0) return next(httpError(404));
+			var power = Number(outlayer[0].dataValues.power.toFixed(1));
+			place.getCoordinates({
 				where: {
-					id: req.params.id
-				}
-			}).then(function(outlayer){
-				if(outlayer.length === 0) return next(httpError(404));
-				var power = Number(outlayer[0].dataValues.power.toFixed(1));
-				place.getCoordinates({
-					where: {
-						visible: true
-					},
-					include: [{ 
-						model: db.Capture,
-					}]
-				}).then(function(coordinates){
-					async.eachSeries(coordinates, function(coord, callback) {
-						var found = _.find(coord.dataValues.Captures, function(cap){ 
-							var comp = Number(cap.dataValues.power.toFixed(1));
-							return comp == power; 
-						});
-						if(found){
-							coord.dataValues.visible = false;
-							coord.save()
-							.then(function(){
-								callback();
-							})
-							.catch(function(err){
-								callback(err);
-							});
-						} else
-							callback();
-					}, function(err){
-						if(err) return next(httpError(err));
-						placeUtils.retakeStatsAndSave(req.user.iss ,req.params.idPlace, function(err, n){
-							if(err) next(httpError(err));
-							res.status(200).send(n);
-						});
+					visible: true
+				},
+				include: [{ 
+					model: db.Capture,
+				}]
+			}).then(function(coordinates){
+				async.eachSeries(coordinates, function(coord, callback) {
+					var found = _.find(coord.dataValues.Captures, function(cap){ 
+						var comp = Number(cap.dataValues.power.toFixed(1));
+						return comp == power; 
 					});
+					if(found){
+						coord.dataValues.visible = false;
+						coord.save()
+						.then(function(){
+							return callback();
+						})
+						.catch(function(err){
+							return callback(err);
+						});
+					} else
+						callback();
+				}, function(err){
+					if(err){
+						console.error("ERROR: " + err);
+						return next(httpError(500, err));
+					}
 
-				}).catch(function(err){
-					next(httpError(err));
+					placeUtils.retakeStatsAndSave(req.user.iss ,req.params.idPlace, function(err, n){
+						if(err){
+							console.error("ERROR: " + err);
+							return next(httpError(500, err));
+						}
+
+						res.status(200).send(n);
+					});
 				});
 
 			}).catch(function(err){
-				next(httpError(err));
+				console.error("ERROR: " + err);
+				return next(httpError(500, err));
 			});
 
 		}).catch(function(err){
-			next(httpError(err));
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
-		
-	} else
-		next(httpError(404));
+
+	}).catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };

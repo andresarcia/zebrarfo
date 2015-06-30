@@ -19,9 +19,14 @@ var outliers = require('./outliers');
 
 /*-------------------------------------------------------------------*/
 exports.create = function(req,res,next){
+	// check permissions to publish
+	if(req.user.role == "subscriber"){
+		return next(httpError(403, 'Sorry, you do not have permissions to publish'));
+	}
+
 	// validate place format
 	if(Object.keys(req.body).length === 0){
-		return next(httpError(400, 'The request has the wrong format specification'));
+		return next(httpError(400, 'Sorry, the request has the wrong format specification'));
 	}
 
 	// STATS ======================
@@ -31,7 +36,10 @@ exports.create = function(req,res,next){
 
 	console.log('* CREATING NEW PLACE *');
 	builder.create(req.body, function(err, place){
-		if(err) return next(httpError(404,err));
+		if(err){
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
+		}
 
 		db.Place.findOrInitialize({
 			where: {
@@ -62,11 +70,16 @@ exports.create = function(req,res,next){
 				n[0].save()
 				.then(function(){
 					coordinate.save(n[0].id,place.coordinates,function(err){
-						if(err) next(httpError(err));
+						if(err){
+							console.error("ERROR: " + err);
+							return next(httpError(500, err));
+						}
 
 						outliers.save(n[0].id,place.outliers,true,function(err){
-							if(err)
-								next(httpError(err));
+							if(err){
+								console.error("ERROR: " + err);
+								return next(httpError(500, err));
+							}
 							// ========================
 							var end = new Date().getTime();
 							console.log("Time ms:" + (end - start));
@@ -75,21 +88,29 @@ exports.create = function(req,res,next){
 						});
 					});
 				}).catch(function(err) {
-					return next(httpError(err));
+					console.error("ERROR: " + err);
+					return next(httpError(500, err));
 				});
 
 			} else {
 				console.log('* UPDATING OLD PLACE *');
 				coordinate.save(n[0].id,place.coordinates,function(err){
-					if(err) return next(httpError(err));
+					if(err){
+						console.error("ERROR: " + err);
+						return next(httpError(500, err));
+					}
 
 					outliers.save(n[0].id,place.outliers,false,function(err){
-						if(err)
-							next(httpError(err));
+						if(err){
+							console.error("ERROR: " + err);
+							return next(httpError(500, err));
+						}
 						
 						placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
-							if (err)
-								next(httpError(err));
+							if(err){
+								console.error("ERROR: " + err);
+								return next(httpError(500, err));
+							}
 							// ========================
 							var end = new Date().getTime();
 							console.log("Time ms:" + (end - start));
@@ -101,7 +122,8 @@ exports.create = function(req,res,next){
 			}
 
 		}).catch(function(err) {
-			return next(httpError(err));
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
 	});
 
@@ -109,8 +131,8 @@ exports.create = function(req,res,next){
 	// == MONGO ===================================================================
 	// Place.findOne({ name: req.body.name }, function(err, o) {
 	// 	if(err) {
-	// 		console.error(err);
-	// 		return next(httpError(404, err));
+	// 		console.error("ERROR: " + err);
+	// 		return next(httpError(500, err));
 	// 	}
 	// 	if(!o) createPlace();
 	// 	else updatePlace(o);
@@ -120,8 +142,8 @@ exports.create = function(req,res,next){
 	// 	console.log('* CREATING NEW PLACE *');
 	// 	builder.create(req.body, null, false, function(err, n){
 	// 		if(err) {
-	// 			console.error(err);
-	// 			return next(httpError(404, err));
+	// 			console.error("ERROR: " + err);
+	// 			return next(httpError(500, err));
 	// 		}
 
 	// 		console.log('* SAVING NEW PLACE *');
@@ -136,8 +158,8 @@ exports.create = function(req,res,next){
 	// 	console.log('* UPDATING PLACE *');
 	// 	builder.create(req.body, o, true, function(err, n){
 	// 		if(err) {
-	// 			console.error(err);
-	// 			return next(httpError(404, err));
+	// 			console.error("ERROR: " + err);
+	// 			return next(httpError(500, err));
 	// 		}
 
 	// 		console.log('* SAVING UPDATED PLACE *');
@@ -164,7 +186,10 @@ exports.create = function(req,res,next){
 	// var saveAndResponse = function(place, save){
 	// 	if(save){
 	// 		place.save(function(err){
-	// 			if(err) return next(httpError(err));
+	// 			if(err){
+				// 	console.error("ERROR: " + err);
+				// 	return next(httpError(500, err));
+				// }
 	// 			console.log("DONE");
 	// 			// ========================
 	// 			var end = new Date().getTime();
@@ -193,8 +218,8 @@ exports.list = function(req,res,next){
 	// },
 	// function(err, places){
 	// 	if(err) {
-	// 		console.error(err);
-	// 		next(httpError(404, err));
+	// 		console.error("ERROR: " + err);
+	// 		return next(httpError(500, err));
 	// 	}
 
 	// 	res.status(200).send(places);
@@ -209,137 +234,184 @@ exports.list = function(req,res,next){
 	}).then(function(places){
 		res.status(200).send(places);
 	}).catch(function(err) {
-		next(httpError(err));
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
 	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.get = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:req.user.iss,
-				id: req.params.id,
-				visible: true
-			},
-			include: [{ 
-				model: db.Coordinate, 
-				where: {
-					visible: true
-				} 
-			}]
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
-			}
-			place = place.toJSON();
-			place.coordinates = place.Coordinates;
-			delete place.Coordinates;
+	// check place id is a number
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
 
-			res.status(200).send(place);
-		
-		}).catch(function(err) {
-			next(httpError(err));
-		});
-	} else
-		next(httpError(404));
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.id,
+			visible: true
+		},
+		include: [{ 
+			model: db.Coordinate, 
+			where: {
+				visible: true
+			} 
+		}]
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
+
+		place = place.toJSON();
+		place.coordinates = place.Coordinates;
+		delete place.Coordinates;
+
+		res.status(200).send(place);
+	
+	}).catch(function(err) {
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.update = function(req,res,next){
-	if(utils.isNumber(req.body.id)){
+	// check permissions to update
+	if(req.user.role == "subscriber"){
+		return next(httpError(403, 'Sorry, you do not have permissions to update the place'));
+	}
 
-		if(req.body.spacing){
-			async.eachSeries(_.keys(req.body.spacing), function(key, callback) {
-				placeUtils.saveCoordinateCapturesAvg(req.user.iss,req.body.id, key, req.body.spacing[key], 
+	// check place id is a number
+	if(!utils.isNumber(req.body.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
+
+	if(req.body.spacing){
+		async.eachSeries(_.keys(req.body.spacing), function(key, callback) {
+			placeUtils.saveCoordinateCapturesAvg(req.user.iss,req.body.id, key, req.body.spacing[key], 
+			function(err){
+				if(err){
+					return callback(err);
+				}
+
+				return callback();
+			});
+
+		}, function(err){
+			if(err){
+				console.error("ERROR: " + err);
+				return next(httpError(500, err));
+			}
+
+			if(req.body.edited){
+				coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
 				function(err){
-					if(err) next(httpError(err));
-					callback();
-				});
-
-			}, function(err){
-				if(err)
-					return next(httpError(err));
-
-				if(req.body.edited){
-					coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
-					function(err){
-						if(err) next(httpError(err));
-						placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
-							if(err) next(httpError(err));
-							res.status(200).send(n);
-						});
-					});
-				} else {
+					if(err){
+						console.error("ERROR: " + err);
+						return next(httpError(500, err));
+					}
 					placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
-						if(err) next(httpError(err));
+						if(err){
+							console.error("ERROR: " + err);
+							return next(httpError(500, err));
+						}
 						res.status(200).send(n);
 					});
-				}
-			});
-		} else if(req.body.edited){
-			coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
-			function(err){
-				if(err) next(httpError(err));
-
+				});
+			} else {
 				placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
-					if(err) next(httpError(err));
+					if(err){
+						console.error("ERROR: " + err);
+						return next(httpError(500, err));
+					}
 					res.status(200).send(n);
 				});
-			});
-		}
+			}
+		});
+	} else if(req.body.edited){
+		coordinate._delete(req.user.iss, req.body.id, req.body.edited, 
+		function(err){
+			if(err){
+				console.error("ERROR: " + err);
+				return next(httpError(500, err));
+			}
 
-	} else
-		next(httpError(404));
+			placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
+				if(err){
+					console.error("ERROR: " + err);
+					return next(httpError(500, err));
+				}
+
+				res.status(200).send(n);
+			});
+		});
+	}
 };
 
 /*-------------------------------------------------------------------*/
 exports.delete = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:req.user.iss,
-				id: req.params.id,
-				visible: true
-			}
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
-			}
+	// check permissions to update
+	if(req.user.role == "subscriber"){
+		return next(httpError(403, 'Sorry, you do not have permissions to update the place'));
+	}
 
-			place.destroy()
-			.then(function() {
-				res.status(200).send({ msg:'Place '+req.params.id+ ' deleted' });
-			}).catch(function(err){
-				next(httpError(err));
-			});
+	// check place id is a number
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
 
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.id,
+			visible: true
+		}
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
+
+		place.destroy()
+		.then(function() {
+			res.status(200).send({ msg:'Place '+req.params.id+ ' deleted' });
 		}).catch(function(err){
-			next(httpError(err));
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
-	
-	} else
-		next(httpError(404));
+
+	}).catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.download = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		placeUtils.toJson(req.user.iss, req.params.id, function(err,data,name){
-			if(err) return next(httpError(err));
-			if(data === null) next(httpError(404));
-			
-			var path = '/tmp/' + name + '.json';
-			jf.writeFile(path, data, function(err) {
-				if(err) next(httpError(err));
+	// check place id is a number
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
 
-				res.cookie('fileDownload', 'true', { path: '/' });
-				res.download(path);
-			});
+	placeUtils.toJson(req.user.iss, req.params.id, function(err,data,name){
+		if(err){
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
+		}
+
+		if(data === null){
+			return next(httpError(404, 'Place not found'));
+		}
+
+		var path = '/tmp/' + name + '.json';
+		jf.writeFile(path, data, function(err) {
+			if(err){
+				console.error("ERROR: " + err);
+				return next(httpError(500, err));
+			}
+
+			res.cookie('fileDownload', 'true', { path: '/' });
+			res.download(path);
 		});
-
-	} else
-		next(httpError(404));
+	});
 };

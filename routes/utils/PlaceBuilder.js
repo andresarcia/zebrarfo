@@ -41,7 +41,6 @@ exports.create = function(place, callback) {
 	reduceCommonGps(o,n,function(){
 		checkPlaceAttributes(n,function(err){
 			if(err){
-				console.error(err);
 				return callback(err,null);
 			}
 
@@ -235,7 +234,7 @@ function reduceCommonGps(o,n,callback){
 	}
 
 	takePlaceStats(n);
-	callback(n);
+	return callback(n);
 }
 
 

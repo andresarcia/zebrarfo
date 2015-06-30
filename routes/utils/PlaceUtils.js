@@ -10,38 +10,38 @@ var capturesModel = require('../captures');
 
 /*-----------------------------------------------------------------*/
 exports.getOccupationHetmapData = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		
-		var query = 
-			'select ' +
-				'aux.id, aux.lat, aux.lng, frequency, power ' +
-			'from (' + 
-				'select ' + 
-					'Coordinates.lat as lat, Coordinates.lng as lng, Coordinates.id ' +
-				'from (' +
-					'select ' +
-						'id ' +
-					'from Places ' +
-					'where id = '+req.params.id+' and UserId = '+ req.user.iss+' and visible = 1' +
-				') as aux, Coordinates ' +
-				'where Coordinates.PlaceId = aux.id and Coordinates.visible = 1' +
-			') as aux, Captures ' +
-			'where Captures.CoordinateId = aux.id order by frequency';
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
 
-		db.sequelize
-		.query(query).then(function(response) {
-			if(response[0].length == 0){
-				next(httpError(404));
-				return;
-			}
+	var query = 
+		'select ' +
+			'aux.id, aux.lat, aux.lng, frequency, power ' +
+		'from (' + 
+			'select ' + 
+				'Coordinates.lat as lat, Coordinates.lng as lng, Coordinates.id ' +
+			'from (' +
+				'select ' +
+					'id ' +
+				'from Places ' +
+				'where id = '+req.params.id+' and UserId = '+ req.user.iss+' and visible = 1' +
+			') as aux, Coordinates ' +
+			'where Coordinates.PlaceId = aux.id and Coordinates.visible = 1' +
+		') as aux, Captures ' +
+		'where Captures.CoordinateId = aux.id order by frequency';
 
-			res.status(200).send({ data: response[0] });
-		})
-		.catch(function(err){
-			next(httpError(err));
-		});
-	} else
-		next(httpError(404));
+	db.sequelize
+	.query(query).then(function(response) {
+		if(response[0].length == 0){
+			return next(httpError(404, 'Graph data not found'));
+		}
+
+		res.status(200).send({ data: response[0] });
+	})
+	.catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 /*-----------------------------------------------------------------*/
@@ -66,7 +66,7 @@ exports.getFullPlace = function(userId,id,callback){
 		place = JSON.stringify(place);
 		place = JSON.parse(place);
 		
-		callback(null,place);
+		return callback(null,place);
 	})
 	.catch(function(err){
 		return callback(err,null);
@@ -115,14 +115,15 @@ exports.takeStatsComparingPlace = function(userId,id, n, callback){
 					o.sdPowerAvg = 0;
 
 				o.save().then(function(){
-					callback(null,o);
+					return callback(null,o);
 				})
 				.catch(function(err){
 					return callback(err,null);
 				});
 
-			} else
-	  			callback(null,o);
+			} else{
+				return callback(null,o);
+			}
 
 		})
 		.catch(function(err){
@@ -137,12 +138,13 @@ exports.takeStatsComparingPlace = function(userId,id, n, callback){
 /*--------------------------------------------------------------------------------------------------------------*/
 exports.retakeStats = function(userId, id, callback){
 	i.getFullPlace(userId, id, function(err,place){
-		if(err) 
+		if(err){
 			return callback(err,null);
+		}
 
 		builder.create(place, function(err, n){
 			delete n.coordinates;
-			callback(null,n);
+			return callback(null,n);
 		});
 	});
 };
@@ -155,8 +157,9 @@ exports.retakeStatsAndSave = function(userId,id, callback){
 		}
 
 		outliers.save(id,n.outliers,false,function(err){
-			if(err)
-				callback(err,null);
+			if(err){
+				return callback(err,null);
+			}
 			
 			db.Place.find({
 				where: {
@@ -181,13 +184,13 @@ exports.retakeStatsAndSave = function(userId,id, callback){
 
 				o.save()
 				.then(function(){
-					callback(null,n);
+					return callback(null,n);
 
 				}).catch(function(err){
-					callback(err,null);
+					return callback(err,null);
 				});
 			}).catch(function(err){
-				callback(err,null);
+				return callback(err,null);
 			});
 		});
 	});
@@ -206,8 +209,9 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 		},
 	})
 	.then(function(place){
-		if(place == null)
+		if(place == null){
 			return callback("Sorry, we cannot find that!");
+		}
 
 		var i = 0;
 		async.eachSeries(coordinates, function(coord, callbackInner) {
@@ -239,24 +243,25 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 						coord[0].save()
 						.then(function(){
 							i += 1;
-							callbackInner();
+							return callbackInner();
 						})
 						.catch(function(err){
-							callbackInner(err);
+							return callbackInner(err);
 						});
 					} else {
-						callbackInner();
+						return callbackInner();
 					}
 
 				}).catch(function(err){
-					callbackInner(err);
+					return callbackInner(err);
 				});
 			}).catch(function(err){
-				callbackInner(err);
+				return callbackInner(err);
 			});
 		}, function(err){
-			if(err)
+			if(err){
 				return callback(err);
+			}
 
 			_.each(captures, function(item){
 				item.power /= coordinates.length;
@@ -264,8 +269,11 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 
 			capturesModel.deleteAndSave(coordinates[coordinates.length - 1], captures,
 			function(err){
-				if(err) return callback(err);
-				callback();
+				if(err){
+					return callback(err);
+				}
+
+				return callback();
 			});
 		});
 
@@ -277,11 +285,13 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 
 exports.toJson = function(userId,id,callback){
 	i.getFullPlace(userId, id, function(err,place){
-		if(err) 
+		if(err){
 			return callback(err,null);
+		}
 
-		if(place == null)
+		if(place == null){
 			return callback(null,null);
+		}
 
 		place.frequencies = {};
 		place.frequencies.values = [];
@@ -345,4 +355,4 @@ exports.toJson = function(userId,id,callback){
 
 		return callback(null,place,name);
 	});
-}
+};

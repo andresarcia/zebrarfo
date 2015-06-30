@@ -29,7 +29,7 @@ exports.isAuth = function(req, res, next){
 			next();
 
 		} catch (err) {
-			console.error(err);
+			console.error("ERROR: " + err);
 			res.json(500, { 
 				message: 'There has been a server error. Please try again in a few minutes' 
 			});
@@ -46,11 +46,13 @@ exports.login = function(req, res, next) {
 	passport.authenticate('local',
 	function(err, user, info) {
 		// In case of any error return the error (the message is print on config/passport.js)
-		if (err){
-			return next(httpError(err));
+		if(err){
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
+		}
 
 		// if not user found
-		} if (!user) {
+		if (!user) {
 			console.error("No user found");
 			return res.json(403, { message: "No user found" });
 		}

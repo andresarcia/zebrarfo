@@ -26,137 +26,147 @@ exports.save = function(id,coordinates,callback){
 				coordinate[0].save()
 				.then(function(){
 					capture.save(coordinate[0].id, coord.captures, function(err){
-						if(err) asyncCallback(err);
-						asyncCallback();
+						if(err){
+							return asyncCallback(err);
+						}
+
+						return asyncCallback();
 					});
 				}).catch(function(err) {
-					asyncCallback(err);
+					return asyncCallback(err);
 				});
 			} else {
 				coordinate[0].dataValues.visible = true;
 				coordinate[0].save()
 				.then(function() {
-					asyncCallback();
+					return asyncCallback();
 				}).catch(function(err) {
-					asyncCallback(err);
+					return asyncCallback(err);
 				});
 			}
 		})
 		.catch(function(err) {
-			asyncCallback(err);
+			return asyncCallback(err);
 		});
 
 	}, function(err){
-		if( err )
-			callback(err);
-		else
-			callback();
+		if(err){
+			return callback(err);
+		}
+
+		return callback();
 	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req,res,next){
-	if(utils.isNumber(req.params.id)){
-		db.Place.find({
-			where: {
-				UserId:req.user.iss,
-				id: req.params.id,
-				visible: true
-			}
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
-			}
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
 
-			var options;
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.id,
+			visible: true
+		}
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
 
-			if(utils.isNumber(req.query.offset) && utils.isNumber(req.query.limit))
-				options = { 
-					where: { 
-						PlaceId:place.id, 
-						visible: true 
-					}, 
-					offset: req.query.offset, 
-					limit: req.query.limit 
-				};
-			else
-				options = { 
-					where: { 
-						PlaceId:place.id, 
-						visible: true 
-					}
-				};
+		var options;
 
-  			db.Coordinate.findAndCountAll(options)
-			.then(function(result) {
-				var placeObject = {};
-				placeObject.total = result.count;
-				placeObject.currentPage = result.count;
-				placeObject.coordinates = result.rows;
-				res.status(200).send(placeObject);
-				
-			}).catch(function(err){
-				next(httpError(err));
-			});
-		})
-		.catch(function(err){
-			next(httpError(err));
+		if(utils.isNumber(req.query.offset) && utils.isNumber(req.query.limit))
+			options = { 
+				where: { 
+					PlaceId:place.id, 
+					visible: true 
+				}, 
+				offset: req.query.offset, 
+				limit: req.query.limit 
+			};
+		else
+			options = { 
+				where: { 
+					PlaceId:place.id, 
+					visible: true 
+				}
+			};
+
+		db.Coordinate.findAndCountAll(options)
+		.then(function(result) {
+			var placeObject = {};
+			placeObject.total = result.count;
+			placeObject.currentPage = result.count;
+			placeObject.coordinates = result.rows;
+
+			res.status(200).send(placeObject);
+
+		}).catch(function(err){
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
-	
-	} else
-		next(httpError(404));
+	})
+	.catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 /*-------------------------------------------------------------------*/
 exports.get = function(req, res, next){
-	if(utils.isNumber(req.params.idPlace) && utils.isNumber(req.params.id)){
-		
-		db.Place.find({
+	if(!utils.isNumber(req.params.idPlace)){
+		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+	}
+
+	if(!utils.isNumber(req.params.id)){
+		return next(httpError(400, 'Sorry, the outlier id has the wrong format specification'));
+	}
+
+	db.Place.find({
+		where: {
+			UserId:req.user.iss,
+			id: req.params.idPlace,
+			visible: true
+		}
+	}).then(function(place){
+		if(!place){
+			return next(httpError(404, 'Place not found'));
+		}
+
+		place.getCoordinates({ 
 			where: {
-				UserId:req.user.iss,
-				id: req.params.idPlace,
+				id: req.params.id,
 				visible: true
 			}
-		}).then(function(place){
-			if(!place){
-				next(httpError(404));
-				return;
+		}).then(function(coord){
+			if(coord.length === 0){
+				return next(httpError(404, 'Coordinate not found'));
 			}
 
-			place.getCoordinates({ 
-				where: {
-					id: req.params.id,
-					visible: true
-				}
-			}).then(function(coord){
-				if(coord.length === 0){
-					next(httpError(404));
-					return;
+			coord[0].getCaptures({
+				attributes: ['frequency', 'power'],
+			}).then(function(data){
+				if(data.length === 0){
+					return next(httpError(404, 'Captures not found'));
 				}
 
-				coord[0].getCaptures({
-					attributes: ['frequency', 'power'],
-				}).then(function(data){
-					if(data.length === 0){
-						next(httpError(404));
-						return;
-					}
-					res.status(200).send(data);
-				}).catch(function(err){
-					next(httpError(err));
-				});
-
+				res.status(200).send(data);
 			}).catch(function(err){
-				next(httpError(err));
+				console.error("ERROR: " + err);
+				return next(httpError(500, err));
 			});
 
 		}).catch(function(err){
-			next(httpError(err));
+			console.error("ERROR: " + err);
+			return next(httpError(500, err));
 		});
 
-	} else
-		next(httpError(404));
+	}).catch(function(err){
+		console.error("ERROR: " + err);
+		return next(httpError(500, err));
+	});
 };
 
 exports._delete = function(userId, placeId, coordinates, callback){
@@ -168,8 +178,9 @@ exports._delete = function(userId, placeId, coordinates, callback){
 		},
 	})
 	.then(function(place){
-		if(place === null)
+		if(place === null){
 			return callback("Sorry, we cannot find that!");
+		}
 
 		async.each(coordinates, function(coord, callbackInner) {
 			place.getCoordinates({
@@ -177,23 +188,28 @@ exports._delete = function(userId, placeId, coordinates, callback){
 					id: coord
 				}
 			}).then(function(coordinate){
-				if(!coordinate) return callbackInner("Sorry, we cannot find that!");
+				if(!coordinate){
+					return callbackInner("Sorry, we cannot find that!");
+				}
 
 				coordinate[0].dataValues.visible = false;
 				coordinate[0].save()
 				.then(function(){
-					callbackInner();
+					return callbackInner();
 				})
 				.catch(function(err){
-					callbackInner(err);
+					return callbackInner(err);
 				});
 
 			}).catch(function(err){
-				callbackInner(err);
+				return callbackInner(err);
 			});
 		}, function(err){
-			if(err) return callback(err);
-			callback();
+			if(err){
+				return callback(err);
+			}
+
+			return callback();
 		});
 
 	}).catch(function(err){

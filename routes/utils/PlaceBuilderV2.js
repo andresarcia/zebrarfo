@@ -58,7 +58,6 @@ exports.create = function(u, o, newCoordinates, callback) {
 	reduceCommonGps(u, o, n, function(res){
 		checkPlaceAttributes(n, function(err){
 			if(err){
-				console.error(err);
 				return callback(err, null);
 			}
 
@@ -194,7 +193,7 @@ function reduceCommonGps(u, o, n, callback){
 	});
 
 	takePlaceStats(n);
-	callback(n);
+	return callback(n);
 }
 
 

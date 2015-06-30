@@ -12,7 +12,7 @@ exports.save = function(id,captures,callback){
 	
 	db.Capture.bulkCreate(captures)
 	.then(function() { 
-		callback();
+		return callback();
 	}).catch(function(err){
 		return callback(err);
 	});
@@ -28,9 +28,9 @@ exports.deleteAndSave = function(id,captures,callback){
 		})
 	.then(function(){
 		i.save(id,captures,function(){
-			callback();
+			return callback();
 		});
 	}).catch(function(err){
-		callback(err);
+		return callback(err);
 	});
 };
