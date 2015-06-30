@@ -15,6 +15,11 @@ module.exports = function(sequelize, DataTypes) {
       type:DataTypes.BOOLEAN,
     },
 
+    valid_hash: { 
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
     password: { 
       type: DataTypes.STRING 
     },
@@ -24,12 +29,18 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "contributor"
     },
 
-    // roles
+    is_active: {
+      type:DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+
+    // roles ---------------------------------
     // superadmin
     // admin
-    // contributor - normal user that can edit
-    // subscriber - this user can't edit
-
+    // editor - somebody who can write and manage their own places, unlimited (pay).
+    // contributor - somebody who can write and manage their own places but limited.
+    // subscriber - somebody who can only view shared places
+    // ---------------------------------------
   }, {
       associate: function(models) {
         User.hasMany(models.Place);      
