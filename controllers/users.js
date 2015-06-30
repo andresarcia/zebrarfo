@@ -61,7 +61,7 @@ exports.create = function(req, res, next) {
 
       db.User.create({
         email: req.body.email,
-        password: password,
+        password: hash,
         is_subscribed: req.body.subscribed,
       })
       .then(function(user) {
