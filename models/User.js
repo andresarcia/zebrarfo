@@ -15,8 +15,21 @@ module.exports = function(sequelize, DataTypes) {
       type:DataTypes.BOOLEAN,
     },
 
-    password: { type: DataTypes.STRING },
-    
+    password: { 
+      type: DataTypes.STRING 
+    },
+
+    rol: { 
+      type: DataTypes.STRING,
+      defaultValue: "contributor"
+    },
+
+    // roles
+    // superadmin
+    // admin
+    // contributor - normal user that can edit
+    // subscriber - this user can't edit
+
   }, {
       associate: function(models) {
         User.hasMany(models.Place);      
