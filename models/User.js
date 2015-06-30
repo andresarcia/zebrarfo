@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING 
     },
 
-    rol: { 
+    role: { 
       type: DataTypes.STRING,
       defaultValue: "contributor"
     },
