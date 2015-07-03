@@ -58,31 +58,11 @@ if (app.get('env') === 'development') {
 app.get('/', function (req,res){
 	if (app.get('env') === 'development') {
 		res.sendfile(__dirname + '/index_development.html');
-	
+
 	} else if (app.get('env') === 'production') {
 		res.sendfile(__dirname + '/index_production.html');
 	}
 });
-
-// ERROR HANDLERS ------------------------------------------------------------
-if (app.get('env') === 'development') {
-	app.use(function(err, req, res, next) {
-		console.log(err.message);
-
-		if(err.status == 404)
-			res.status(err.status).send(err.message || "Sorry, we cannot find that!");
-		else 
-			res.status(err.status || 500).send(err.message || "Something blew up!");
-	});
-
-} else if (app.get('env') === 'production') {
-	app.use(function(err, req, res, next) {
-		if(err.status == 404)
-			res.status(err.status).send("Sorry, we cannot find that!");
-		else 
-			res.status(err.status || 500).send("Something blew up!");
-	});
-}
 
 // --------------------------------------------------------------------------
 var routes = require('./routes/index');

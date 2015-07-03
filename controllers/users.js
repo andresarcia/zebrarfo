@@ -1,7 +1,6 @@
 // Load required packages
 var app = require('../app');
 var db = require('../models');
-var httpError = require('build-http-error');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jwt-simple');
 var moment = require('moment');
@@ -11,22 +10,27 @@ var User = require('../models_mongo/user.js');
 // ============================================================================
 
 // Create endpoint /api/users for POST
-exports.create = function(req, res, next) {
+exports.create = function(req, res) {
   // if there is not email or password, return 400 error 
   if(!req.body.email || !req.body.password) {
-    return next(httpError(400, 'Parameters email or password are missing'));
+    console.error("400, Parameters email or password are missing");
+    return res.json(400, { message: "Parameters email or password are missing" });
   }
 
   bcrypt.genSalt(5, function(err, salt) {
     if (err){
-      console.error(err);
-      return next(500, 'There has been a server error. Please try again in a few minutes');
+      console.error("ERROR: " + err);
+      return res.json(500, { 
+        message: "There has been a server error. Please try again in a few minutes" 
+      });
     }
 
     bcrypt.hash(req.body.password, salt, null, function(err, hash) {
       if (err){
-        console.error(err);
-        return next(500, 'There has been a server error. Please try again in a few minutes');
+        console.error("ERROR: " + err);
+        return res.json(500, { 
+          message: "There has been a server error. Please try again in a few minutes" 
+        });
       }
 
       // == MONGO ===================================================================
@@ -37,10 +41,12 @@ exports.create = function(req, res, next) {
       // });
 
       // user.save(function(err){
-      //     if(err){
-      //       console.error(err);
-      //       return next(httpError(err));
-      //     }
+          // if(err){
+            // console.error("ERROR: " + err);
+            // return res.json(500, { 
+            //   message: "There has been a server error. Please try again in a few minutes" 
+            // });
+          // }
 
       //     user = user.toJSON();
       //     var expires = moment().add(7, 'days').valueOf();
@@ -81,7 +87,10 @@ exports.create = function(req, res, next) {
         });
       })
       .catch(function(err){
-        next(httpError(err));
+        console.error("ERROR: " + err);
+        return res.json(500, { 
+          message: "There has been a server error. Please try again in a few minutes" 
+        });
       });
 
     });

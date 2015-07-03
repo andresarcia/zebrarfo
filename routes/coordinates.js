@@ -1,5 +1,4 @@
 var db = require('../models');
-var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
 var capture = require('./captures');
@@ -59,9 +58,10 @@ exports.save = function(id,coordinates,callback){
 };
 
 /*-------------------------------------------------------------------*/
-exports.list = function(req,res,next){
+exports.list = function(req, res){
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	db.Place.find({
@@ -72,7 +72,8 @@ exports.list = function(req,res,next){
 		}
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		var options;
@@ -105,23 +106,31 @@ exports.list = function(req,res,next){
 
 		}).catch(function(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 	})
 	.catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.get = function(req, res, next){
+exports.get = function(req, res){
 	if(!utils.isNumber(req.params.idPlace)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the outlier id has the wrong format specification'));
+		console.error("400, Sorry, the coordinate id has the wrong format specification");
+		return res.json(400, { 
+			message: "Sorry, the coordinate id has the wrong format specification" 
+		});
 	}
 
 	db.Place.find({
@@ -132,7 +141,8 @@ exports.get = function(req, res, next){
 		}
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		place.getCoordinates({ 
@@ -142,30 +152,39 @@ exports.get = function(req, res, next){
 			}
 		}).then(function(coord){
 			if(coord.length === 0){
-				return next(httpError(404, 'Coordinate not found'));
+				console.error("404, Coordinate not found");
+				return res.json(404, { message: "Coordinate not found" });
 			}
 
 			coord[0].getCaptures({
 				attributes: ['frequency', 'power'],
 			}).then(function(data){
 				if(data.length === 0){
-					return next(httpError(404, 'Captures not found'));
+					console.error("404, Captures not found");
+					return res.json(404, { message: "Captures not found" });
 				}
 
 				res.status(200).send(data);
+
 			}).catch(function(err){
 				console.error("ERROR: " + err);
-				return next(httpError(500, err));
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
 			});
 
 		}).catch(function(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 
 	}).catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 

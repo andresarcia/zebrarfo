@@ -1,6 +1,5 @@
 var db = require('../models');
 var utils = require('./utils/Utils');
-var httpError = require('build-http-error');
 var _ = require("underscore");
 var i = require('./captures');
 

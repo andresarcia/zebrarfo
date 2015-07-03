@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var db = require('../models');
-var httpError = require('build-http-error');
 var utils = require('./utils/Utils');
 var placeUtils = require('./utils/PlaceUtils');
 var async = require('async');
@@ -27,7 +26,7 @@ exports.save = function(id,outliers,isNew,callback){
 			});
 
 		} else {
-			console.log('* UPDATING OUTLIERS *');	
+			console.log('* UPDATING OUTLIERS *');
 
 			db.Outlier.destroy({
 				where: {
@@ -52,9 +51,10 @@ exports.save = function(id,outliers,isNew,callback){
 };
 
 /*-------------------------------------------------------------------*/
-exports.list = function(req,res,next){
+exports.list = function(req, res){
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	db.Place.find({
@@ -65,7 +65,8 @@ exports.list = function(req,res,next){
 		},
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 	
 		place.getOutliers({
@@ -73,30 +74,37 @@ exports.list = function(req,res,next){
 		})	
 		.then(function(data){
 			if(data.length === 0){
-				return next(httpError(404, 'Outliers not found'));
+				console.error("404, Outliers not found");
+				return res.json(404, { message: "Outliers not found" });
 			}
 
 			res.status(200).send(data);
 
 		}).catch(function(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 	
 	}).catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.delete = function(req,res,next){
+exports.delete = function(req, res){
 	if(!utils.isNumber(req.params.idPlace)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the outlier id has the wrong format specification'));
+		console.error("400, Sorry, the outlier id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the outlier id has the wrong format specification" });
 	}
 
 	db.Place.find({
@@ -107,16 +115,21 @@ exports.delete = function(req,res,next){
 		},
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		place.getOutliers({
 			where: {
 				id: req.params.id
 			}
-		}).then(function(outlayer){
-			if(outlayer.length === 0) return next(httpError(404));
-			var power = Number(outlayer[0].dataValues.power.toFixed(1));
+		}).then(function(outliers){
+			if(outliers.length === 0){
+				console.error("404, Outliers not found");
+				return res.json(404, { message: "Outliers not found" });
+			}
+
+			var power = Number(outliers[0].dataValues.power.toFixed(1));
 			place.getCoordinates({
 				where: {
 					visible: true
@@ -144,13 +157,17 @@ exports.delete = function(req,res,next){
 				}, function(err){
 					if(err){
 						console.error("ERROR: " + err);
-						return next(httpError(500, err));
+						return res.json(500, { 
+							message: "There has been a server error. Please try again in a few minutes"
+						});
 					}
 
 					placeUtils.retakeStatsAndSave(req.user.iss ,req.params.idPlace, function(err, n){
 						if(err){
 							console.error("ERROR: " + err);
-							return next(httpError(500, err));
+							return res.json(500, { 
+								message: "There has been a server error. Please try again in a few minutes"
+							});
 						}
 
 						res.status(200).send(n);
@@ -159,16 +176,22 @@ exports.delete = function(req,res,next){
 
 			}).catch(function(err){
 				console.error("ERROR: " + err);
-				return next(httpError(500, err));
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
 			});
 
 		}).catch(function(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 
 	}).catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };

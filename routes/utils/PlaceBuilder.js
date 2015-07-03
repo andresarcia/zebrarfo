@@ -6,8 +6,9 @@ exports.create = function(place, callback) {
 	var o = place;
 	var n = {};
 
-	if(o.name === null || o.name === undefined || o.name === "")
-		callback("Name of the place cannot be empty or null",null);
+	if(o.name === null || o.name === undefined || o.name === ""){
+		callback("Name of the place cannot be empty or null", null);
+	}
 
 	n.name = o.name;
 	n.coordinates = [];

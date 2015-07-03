@@ -50,8 +50,7 @@ exports.create = function(u, o, newCoordinates, callback) {
 			n.frequencyUnitFactor = 1000000;
 			break;
 		default:
-			callback("There must be a frequency unit");
-			break;
+			return callback("There must be a frequency unit");
 	}
 	/* ------------------------- */
 

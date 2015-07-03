@@ -1,6 +1,5 @@
 // Load required packages
 var app = require('../app');
-var httpError = require('build-http-error');
 var url = require('url');
 var passport = require('passport');
 var strategy = require('../config/passport');
@@ -21,7 +20,8 @@ exports.isAuth = function(req, res, next){
 
 			// check the expiration daet
 			if (decoded.exp <= Date.now()) {
-				res.json(400, { message: "Access token has expired" });
+				console.error("400, Access token has expired");
+				return res.json(400, { message: "Access token has expired" });
 			}
 
 			// save the user in the request an continue with the request
@@ -30,13 +30,14 @@ exports.isAuth = function(req, res, next){
 
 		} catch (err) {
 			console.error("ERROR: " + err);
-			res.json(500, { 
-				message: 'There has been a server error. Please try again in a few minutes' 
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
 			});
 		}
 	// if not JWT found
 	} else {
-		res.json(400, { message: "You need to be Authenticated first!" });
+		console.error("400, You need to be Authenticated first!");
+		return res.json(400, { message: "You need to be Authenticated first!" });
 	}
 };
 
@@ -48,12 +49,14 @@ exports.login = function(req, res, next) {
 		// In case of any error return the error (the message is print on config/passport.js)
 		if(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, {
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		}
 
 		// if not user found
 		if (!user) {
-			console.error("No user found");
+			console.error("403, No user found");
 			return res.json(403, { message: "No user found" });
 		}
 

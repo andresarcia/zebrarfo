@@ -1,6 +1,6 @@
 var db = require('../models');
 var async = require('async');
-var httpError = require('build-http-error');
+
 var _ = require('underscore');
 var jf = require('jsonfile');
 var utils = require('./utils/Utils');
@@ -18,15 +18,17 @@ var outliers = require('./outliers');
 // ============================================================================
 
 /*-------------------------------------------------------------------*/
-exports.create = function(req,res,next){
+exports.create = function(req,res){
 	// check permissions to publish
 	if(req.user.role == "subscriber"){
-		return next(httpError(403, 'Sorry, you do not have permissions to publish'));
+		console.error("403, Sorry, you do not have permissions to update the place");
+		return res.json(403, { message: "Sorry, you do not have permissions to update the place" });
 	}
 
 	// validate place format
 	if(Object.keys(req.body).length === 0){
-		return next(httpError(400, 'Sorry, the request has the wrong format specification'));
+		console.error("400, Sorry, the request has the wrong format specification");
+		return res.json(400, { message: "Sorry, the request has the wrong format specification" });
 	}
 
 	// STATS ======================
@@ -38,7 +40,9 @@ exports.create = function(req,res,next){
 	builder.create(req.body, function(err, place){
 		if(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		}
 
 		db.Place.findOrInitialize({
@@ -72,13 +76,17 @@ exports.create = function(req,res,next){
 					coordinate.save(n[0].id,place.coordinates,function(err){
 						if(err){
 							console.error("ERROR: " + err);
-							return next(httpError(500, err));
+							return res.json(500, { 
+								message: "There has been a server error. Please try again in a few minutes" 
+							});
 						}
 
 						outliers.save(n[0].id,place.outliers,true,function(err){
 							if(err){
 								console.error("ERROR: " + err);
-								return next(httpError(500, err));
+								return res.json(500, { 
+									message: "There has been a server error. Please try again in a few minutes" 
+								});
 							}
 							// ========================
 							var end = new Date().getTime();
@@ -89,7 +97,9 @@ exports.create = function(req,res,next){
 					});
 				}).catch(function(err) {
 					console.error("ERROR: " + err);
-					return next(httpError(500, err));
+					return res.json(500, { 
+						message: "There has been a server error. Please try again in a few minutes" 
+					});
 				});
 
 			} else {
@@ -97,19 +107,25 @@ exports.create = function(req,res,next){
 				coordinate.save(n[0].id,place.coordinates,function(err){
 					if(err){
 						console.error("ERROR: " + err);
-						return next(httpError(500, err));
+						return res.json(500, { 
+							message: "There has been a server error. Please try again in a few minutes" 
+						});
 					}
 
 					outliers.save(n[0].id,place.outliers,false,function(err){
 						if(err){
 							console.error("ERROR: " + err);
-							return next(httpError(500, err));
+							return res.json(500, { 
+								message: "There has been a server error. Please try again in a few minutes" 
+							});
 						}
 						
 						placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
 							if(err){
 								console.error("ERROR: " + err);
-								return next(httpError(500, err));
+								return res.json(500, { 
+									message: "There has been a server error. Please try again in a few minutes" 
+								});
 							}
 							// ========================
 							var end = new Date().getTime();
@@ -123,7 +139,9 @@ exports.create = function(req,res,next){
 
 		}).catch(function(err) {
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 	});
 
@@ -132,7 +150,9 @@ exports.create = function(req,res,next){
 	// Place.findOne({ name: req.body.name }, function(err, o) {
 	// 	if(err) {
 	// 		console.error("ERROR: " + err);
-	// 		return next(httpError(500, err));
+			// return res.json(500, { 
+			// 	message: "There has been a server error. Please try again in a few minutes" 
+			// });
 	// 	}
 	// 	if(!o) createPlace();
 	// 	else updatePlace(o);
@@ -143,7 +163,9 @@ exports.create = function(req,res,next){
 	// 	builder.create(req.body, null, false, function(err, n){
 	// 		if(err) {
 	// 			console.error("ERROR: " + err);
-	// 			return next(httpError(500, err));
+				// return res.json(500, { 
+				// 	message: "There has been a server error. Please try again in a few minutes" 
+				// });
 	// 		}
 
 	// 		console.log('* SAVING NEW PLACE *');
@@ -159,7 +181,9 @@ exports.create = function(req,res,next){
 	// 	builder.create(req.body, o, true, function(err, n){
 	// 		if(err) {
 	// 			console.error("ERROR: " + err);
-	// 			return next(httpError(500, err));
+				// return res.json(500, { 
+				// 	message: "There has been a server error. Please try again in a few minutes" 
+				// });
 	// 		}
 
 	// 		console.log('* SAVING UPDATED PLACE *');
@@ -188,7 +212,9 @@ exports.create = function(req,res,next){
 	// 		place.save(function(err){
 	// 			if(err){
 				// 	console.error("ERROR: " + err);
-				// 	return next(httpError(500, err));
+					// return res.json(500, { 
+					// 	message: "There has been a server error. Please try again in a few minutes" 
+					// });
 				// }
 	// 			console.log("DONE");
 	// 			// ========================
@@ -206,7 +232,7 @@ exports.create = function(req,res,next){
 };
 
 /*-------------------------------------------------------------------*/
-exports.list = function(req,res,next){
+exports.list = function(req, res){
 	// == MONGO ===================================================================
 	// Place.find(
 	// { _creator: req.user.iss }, 
@@ -219,7 +245,9 @@ exports.list = function(req,res,next){
 	// function(err, places){
 	// 	if(err) {
 	// 		console.error("ERROR: " + err);
-	// 		return next(httpError(500, err));
+			// return res.json(500, { 
+			// 	message: "There has been a server error. Please try again in a few minutes" 
+			// });
 	// 	}
 
 	// 	res.status(200).send(places);
@@ -235,15 +263,18 @@ exports.list = function(req,res,next){
 		res.status(200).send(places);
 	}).catch(function(err) {
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.get = function(req,res,next){
+exports.get = function(req, res){
 	// check place id is a number
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	db.Place.find({
@@ -260,7 +291,8 @@ exports.get = function(req,res,next){
 		}]
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		place = place.toJSON();
@@ -271,20 +303,24 @@ exports.get = function(req,res,next){
 	
 	}).catch(function(err) {
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.update = function(req,res,next){
+exports.update = function(req, res){
 	// check permissions to update
 	if(req.user.role == "subscriber"){
-		return next(httpError(403, 'Sorry, you do not have permissions to update the place'));
+		console.error("403, Sorry, you do not have permissions to update the place");
+		return res.json(403, { message: "Sorry, you do not have permissions to update the place" });
 	}
 
 	// check place id is a number
 	if(!utils.isNumber(req.body.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	if(req.body.spacing){
@@ -301,7 +337,9 @@ exports.update = function(req,res,next){
 		}, function(err){
 			if(err){
 				console.error("ERROR: " + err);
-				return next(httpError(500, err));
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
 			}
 
 			if(req.body.edited){
@@ -309,12 +347,16 @@ exports.update = function(req,res,next){
 				function(err){
 					if(err){
 						console.error("ERROR: " + err);
-						return next(httpError(500, err));
+						return res.json(500, { 
+							message: "There has been a server error. Please try again in a few minutes" 
+						});
 					}
 					placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 						if(err){
 							console.error("ERROR: " + err);
-							return next(httpError(500, err));
+							return res.json(500, { 
+								message: "There has been a server error. Please try again in a few minutes" 
+							});
 						}
 						res.status(200).send(n);
 					});
@@ -323,7 +365,9 @@ exports.update = function(req,res,next){
 				placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 					if(err){
 						console.error("ERROR: " + err);
-						return next(httpError(500, err));
+						return res.json(500, { 
+							message: "There has been a server error. Please try again in a few minutes" 
+						});
 					}
 					res.status(200).send(n);
 				});
@@ -334,13 +378,17 @@ exports.update = function(req,res,next){
 		function(err){
 			if(err){
 				console.error("ERROR: " + err);
-				return next(httpError(500, err));
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
 			}
 
 			placeUtils.retakeStatsAndSave(req.user.iss,req.body.id, function(err, n){
 				if(err){
 					console.error("ERROR: " + err);
-					return next(httpError(500, err));
+					return res.json(500, { 
+						message: "There has been a server error. Please try again in a few minutes" 
+					});
 				}
 
 				res.status(200).send(n);
@@ -350,15 +398,17 @@ exports.update = function(req,res,next){
 };
 
 /*-------------------------------------------------------------------*/
-exports.delete = function(req,res,next){
+exports.delete = function(req, res){
 	// check permissions to update
 	if(req.user.role == "subscriber"){
-		return next(httpError(403, 'Sorry, you do not have permissions to update the place'));
+		console.error("403, Sorry, you do not have permissions to update the place");
+		return res.json(403, { message: "Sorry, you do not have permissions to update the place" });
 	}
 
 	// check place id is a number
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	db.Place.find({
@@ -369,7 +419,8 @@ exports.delete = function(req,res,next){
 		}
 	}).then(function(place){
 		if(!place){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		place.destroy()
@@ -377,37 +428,47 @@ exports.delete = function(req,res,next){
 			res.status(200).send({ msg:'Place '+req.params.id+ ' deleted' });
 		}).catch(function(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		});
 
 	}).catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
 /*-------------------------------------------------------------------*/
-exports.download = function(req,res,next){
+exports.download = function(req, res){
 	// check place id is a number
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	placeUtils.toJson(req.user.iss, req.params.id, function(err,data,name){
 		if(err){
 			console.error("ERROR: " + err);
-			return next(httpError(500, err));
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
 		}
 
 		if(data === null){
-			return next(httpError(404, 'Place not found'));
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
 		}
 
 		var path = '/tmp/' + name + '.json';
 		jf.writeFile(path, data, function(err) {
 			if(err){
 				console.error("ERROR: " + err);
-				return next(httpError(500, err));
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
 			}
 
 			res.cookie('fileDownload', 'true', { path: '/' });

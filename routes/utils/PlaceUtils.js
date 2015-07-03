@@ -2,16 +2,16 @@ var i = require('./PlaceUtils');
 var db = require('../../models');
 var utils = require('./Utils');
 var builder = require('./PlaceBuilder');
-var httpError = require('build-http-error');
 var outliers = require('../outliers');
 var _ = require('underscore');
 var async = require('async');
 var capturesModel = require('../captures');
 
 /*-----------------------------------------------------------------*/
-exports.getOccupationHetmapData = function(req,res,next){
+exports.getOccupationHetmapData = function(req, res){
 	if(!utils.isNumber(req.params.id)){
-		return next(httpError(400, 'Sorry, the place id has the wrong format specification'));
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
 
 	var query = 
@@ -33,14 +33,17 @@ exports.getOccupationHetmapData = function(req,res,next){
 	db.sequelize
 	.query(query).then(function(response) {
 		if(response[0].length == 0){
-			return next(httpError(404, 'Graph data not found'));
+			console.error("404, Graph data not found");
+			return res.json(404, { message: "Graph data not found" });
 		}
 
 		res.status(200).send({ data: response[0] });
 	})
 	.catch(function(err){
 		console.error("ERROR: " + err);
-		return next(httpError(500, err));
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
 	});
 };
 
