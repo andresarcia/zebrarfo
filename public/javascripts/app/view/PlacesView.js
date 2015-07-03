@@ -36,7 +36,7 @@ app.view.PlacesView = Backbone.View.extend({
 				},
 				error: function(model, xhr, options){
 					self.waitingView.hide();
-					self.errorView.render([xhr.responseText]);
+					self.errorView.render([xhr.responseJSON.message]);
 				}
 			});
 		};

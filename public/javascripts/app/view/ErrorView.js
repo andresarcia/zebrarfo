@@ -9,7 +9,11 @@ app.view.ErrorView = Backbone.View.extend({
 	events : {
 		'click #error-button' : 'closeView'
 	},
-	
+
+	reset: function(){
+		this.message = "";
+	},
+
 	initialize: function(options){
 
 	},
@@ -17,10 +21,8 @@ app.view.ErrorView = Backbone.View.extend({
 	render: function(msg){
 		var self = this;
 		var errorTitle;
-		if (msg.length > 1) 
-			errorTitle = 'Errors:';
-		else
-			errorTitle = 'Error:';
+		if (msg.length > 1) errorTitle = 'Errors:';
+		else errorTitle = 'Error:';
 
 		this.message = msg;
 		var template = Zebra.tmpl.error;
@@ -36,7 +38,7 @@ app.view.ErrorView = Backbone.View.extend({
 	},
 
 	closeView: function(){
-		this.message= '';
+		this.reset();
 		this.$el.fadeOut(250);
 	},
 

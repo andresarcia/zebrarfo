@@ -184,7 +184,7 @@ app.view.ParsingMeasuresView = Backbone.View.extend({
 					$('.modal-footer').children().prop("disabled",false);
 					self.modal.modal('hide');
 					Backbone.pubSub.trigger('event-server-error');
-					self.errorView.render([xhr.responseText]);
+					self.errorView.render([xhr.responseJSON.message]);
 				}
 			}
 		});

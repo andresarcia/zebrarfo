@@ -826,7 +826,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 					window.location.hash = '#';
 				} else {
 					self.waitingView.hide();
-					self.errorView.render([xhr.responseText]);
+					self.errorView.render([xhr.responseJSON.message]);
 				}
 			}
 		});

@@ -102,7 +102,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				self.errorRequest(xhr.responseJSON.message);
+				callback(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -133,7 +133,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				self.errorRequest(xhr.responseJSON.message);
+				callback(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -152,7 +152,7 @@ app.router.AppRouter = Backbone.Router.extend({
 				callback();
 			},
 			error: function(model, xhr, options){
-				self.errorRequest(xhr.responseJSON.message);
+				callback(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -168,11 +168,10 @@ app.router.AppRouter = Backbone.Router.extend({
 			success: function(){
 				self.waitingView.hide();
 				window.place.attributes.charts = data.attributes.data;
-
 				callback();
 			},
 			error: function(model, xhr, options){
-				self.errorRequest(xhr.responseJSON.message);
+				callback(xhr.responseJSON.message);
 			}
 		});
 	},
@@ -216,8 +215,10 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	showPlaces: function(){
 		var self = this;
-		this.clearViews();
-		this.fetchPlaces(function(){
+		this.fetchPlaces(function(err){
+			if(err) return self.errorRequest(err);
+
+			self.clearViews();
 			self.currentView = new app.view.PlacesView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
@@ -228,8 +229,10 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	uploadPlace: function(){
 		var self = this;
-		this.clearViews();
-		this.fetchPlaces(function(){
+		this.fetchPlaces(function(err){
+			if(err) return self.errorRequest(err);
+
+			self.clearViews();
 			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
@@ -246,8 +249,10 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	showPlace: function(id){
 		var self = this;
-		this.clearViews();
-		this.fetchPlace(id,function(){
+		this.fetchPlace(id, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.clearViews();
 			self.currentView = new app.view.PlaceView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
@@ -260,15 +265,19 @@ app.router.AppRouter = Backbone.Router.extend({
 		if(this.currentView !== null && this.currentView.id == 'edit-place')
 			return;
 
-		this.clearViews();
 		var self = this;
 		var editType;
 
 		if(type === 'coordinates') editType = 0;
 		else if(type === 'outliers') editType = 1;
 
-		this.fetchPlace(id,function(){
-			self.fetchOutliers(function(){
+		this.fetchPlace(id, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.fetchOutliers(function(err){
+				if(err) return self.errorRequest(err);
+
+				self.clearViews();
 				self.currentView = new app.view.EditPlaceView({
 					waitingView: self.waitingView,
 					errorView : self.errorView,
@@ -283,7 +292,6 @@ app.router.AppRouter = Backbone.Router.extend({
 		if(this.currentView !== null && this.currentView.id == 'place-charts')
 			return;
 
-		this.clearViews();
 		var self = this;
 		var chartType;
 
@@ -291,8 +299,13 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'heatmap') chartType = 1;
 		else if(type === 'white-spaces') chartType = 2;
 
-		this.fetchPlace(id,function(){
-			self.fetchChart(function(){
+		this.fetchPlace(id, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.fetchChart(function(err){
+				if(err) return self.errorRequest(err);
+
+				self.clearViews();
 				self.currentView = new app.view.ChartsView({
 					waitingView: self.waitingView,
 					errorView : self.errorView,
@@ -305,8 +318,10 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	showPlaceUpload: function(id){
 		var self = this;
-		this.clearViews();
-		this.fetchPlace(id,function(){
+		this.fetchPlace(id, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.clearViews();
 			self.currentView = new app.view.UploadMeasuresView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
