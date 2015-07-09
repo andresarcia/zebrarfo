@@ -5,7 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var db = require('../models');
 
 // == MONGO ===================================================================
-var User = require('../models_mongo/user.js');
+// var User = require('../models_mongo/user.js');
 // ============================================================================
 
 /* LOCAL -------------------------------------------------------------*/

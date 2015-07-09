@@ -6,7 +6,7 @@ var jwt = require('jwt-simple');
 var moment = require('moment');
 
 // == MONGO ===================================================================
-var User = require('../models_mongo/user.js');
+// var User = require('../models_mongo/user.js');
 // ============================================================================
 
 // Create endpoint /api/users for POST
