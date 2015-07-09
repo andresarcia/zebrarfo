@@ -6,12 +6,13 @@ app.view.LoginView = Backbone.View.extend({
 	el: '#login-container',
 
 	events: {
-		'click #login-submit':'submit',
+		'click #login-submit':'checkSubmit',
 		'keyup #login-email': 'checkEmail',
 		'blur #login-email': 'emailFeedback',
 		'focus #login-email': 'hideEmailFeedback',
 		'keyup #login-password': 'checkPass',
-		'focus #login-password': 'hideAuthFeedback',
+		'blur #login-password': 'passwordFeedback',
+		'focus #login-password': 'hidePasswordFeedback',
 		'click #login-new-account': 'createNewAccount',
 	},
 
@@ -36,7 +37,6 @@ app.view.LoginView = Backbone.View.extend({
 			this.email = undefined;
 		}
 
-		this.checkSubmit();
 		return res;
 	},
 
@@ -52,20 +52,32 @@ app.view.LoginView = Backbone.View.extend({
 
 	checkPass: function(evt){
 		var $container = this.$el.find('#login-password');
+		var res;
 		var password = $container.val();
-		if(password.length > 0)
+		if(password.length > 0){
 			this.password = password;
-		else
+			res = true;
+			this.hidePasswordFeedback();
+		} else {
 			this.password = undefined;
+			res = false;
+		}
 
-		this.checkSubmit();
+		return res;
+	},
+
+	passwordFeedback: function(){
+		if(!this.checkPass())
+			this.$el.find('#login-password').tooltip('show');
+	},
+
+	hidePasswordFeedback: function(){
+		this.$el.find('#login-password').tooltip('hide');
+		this.hideAuthFeedback();
 	},
 
 	checkSubmit: function(){
-		if(this.email && this.password)
-			this.$el.find('#login-submit').prop("disabled",false);
-		else
-			this.$el.find('#login-submit').prop("disabled",true);
+		if(this.checkEmail() && this.checkPass()) this.submit();
 	},
 
 	enable: function(){
@@ -124,8 +136,14 @@ app.view.LoginView = Backbone.View.extend({
 		this.$el.html(html);
 
 		this.$el.find('#login-email').tooltip({
-			title: 'Enter a valid email address.',
+			title: 'Please enter a valid email address.',
 			trigger: 'manual'
+		});
+
+		this.$el.find('#login-password').tooltip({
+			title: 'Please enter password.',
+			trigger: 'manual',
+			placement: 'bottom',
 		});
 
 		this.$el.find('#login-form').tooltip({
