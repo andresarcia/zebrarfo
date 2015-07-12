@@ -47,8 +47,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.data = window.place.attributes;
 		this.heatmapDataProcessor = new app.util.HeatmapDataProcessor();
 		this.heatmapDataProcessor.initialize({
-			place: this.data,
-			data: this.data.charts
+			data: this.data.charts,
 		});
 
 		if(!window.settings.place.charts.channels)

@@ -112,7 +112,8 @@ app.view.PlaceView = Backbone.View.extend({
 	renderCoordinateResume: function(coord){
 		var self = this;
 		var template = Zebra.tmpl.place_coordinate_resume;
-		var html = template(this.coordinates[coord.index]);
+		var coorData = this.coordinates[coord.index];
+		var html = template(coorData);
 		this.$el.find('#p-selected-coord').html(html);
 
 		this.currCapture.data = new app.model.Capture({
@@ -120,10 +121,10 @@ app.view.PlaceView = Backbone.View.extend({
 			idCoord: coord.id
 		});
 
-		this.currCapture.options = {
+		var options = {
 			yAxis: {
 				plotLines:[{
-					value: this.coordinates[coord.index].powerAvg,
+					value: coorData.powerAvg,
 					color: '#ff0000',
 					width:1,
 					zIndex:4,
@@ -141,26 +142,16 @@ app.view.PlaceView = Backbone.View.extend({
 			},
 		};
 
-		this.waitingView.show();
-		this.currCapture.data.fetch({
-			success: function(){
-				self.waitingView.hide();
-				self.renderCapture();
-			},
-			error: function(model, xhr, options){
-				self.waitingView.hide();
-				self.errorView.render([xhr.responseJSON.message]);
-			}
-		});
+		this.renderCapture(JSON.parse(coorData.captures), options);
 	},
 
-	renderCapture: function(){
+	renderCapture: function(data, options){
 		var view = new app.view.CapturesView({
 			selector: '#p-selected-coord',
 			tooltipTop: 260
 		});
 
-		view.render(this.currCapture.data.attributes, this.currCapture.options);
+		view.render(data, options);
 		$('html, body').stop().animate({
 			scrollTop: $('.captures-chart').offset().top
 		}, 1000);

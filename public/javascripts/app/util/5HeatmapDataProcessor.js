@@ -13,8 +13,9 @@ app.util.HeatmapDataProcessor.prototype = {
     normalizeMax: new app.util.Stats(),
 
     initialize: function(options) {
-        this.place = options.place;
         this.data = options.data;
+
+        var self = this;
 
         this.id = {};
         this.id.first = true;
@@ -35,7 +36,7 @@ app.util.HeatmapDataProcessor.prototype = {
         this.statsMax.reset();
         this.normalizeMin.reset();
         this.normalizeMax.reset();
-        
+
         var data = [];
         var indexForBoundaries = 0;
         for (var i = 0; i < this.data.length; i++){

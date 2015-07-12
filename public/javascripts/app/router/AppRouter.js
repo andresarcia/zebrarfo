@@ -130,6 +130,23 @@ app.router.AppRouter = Backbone.Router.extend({
 					JSON.parse(window.place.attributes.frequenciesChannelWidth);
 				if(window.place.attributes.frequenciesChannelWidth) window.settings.currChannel = 0;
 
+				// charts data
+				var data = [];
+				_.each(window.place.attributes.coordinates, function(item, i){
+					var captures = [];
+					_.each(JSON.parse(item.captures), function(cap){
+						captures.push(_.extend(cap, { 
+							id: item.id, 
+							lat: item.lat,
+							lng: item.lng
+						}));
+					});
+
+					data = data.concat(captures);
+				});
+				window.place.attributes.charts = _.sortBy(data, 'frequency');
+
+
 				callback();
 			},
 			error: function(model, xhr, options){
@@ -149,25 +166,6 @@ app.router.AppRouter = Backbone.Router.extend({
 			success: function(){
 				self.waitingView.hide();
 				window.place.attributes.outliers = data.models;
-				callback();
-			},
-			error: function(model, xhr, options){
-				callback(xhr.responseJSON.message);
-			}
-		});
-	},
-
-	fetchChart: function(callback){
-		if(window.place.attributes.charts && this.checkSession())
-			return callback();
-
-		this.waitingView.show();
-		var self = this;
-		var data = new app.model.ChartsData({idPlace:window.place.id});
-		data.fetch({
-			success: function(){
-				self.waitingView.hide();
-				window.place.attributes.charts = data.attributes.data;
 				callback();
 			},
 			error: function(model, xhr, options){
@@ -302,17 +300,13 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.fetchPlace(id, function(err){
 			if(err) return self.errorRequest(err);
 
-			self.fetchChart(function(err){
-				if(err) return self.errorRequest(err);
-
-				self.clearViews();
-				self.currentView = new app.view.ChartsView({
-					waitingView: self.waitingView,
-					errorView : self.errorView,
-					type: chartType
-				});
-				self.renderMenuSinglePlace([0,2],id);
+			self.clearViews();
+			self.currentView = new app.view.ChartsView({
+				waitingView: self.waitingView,
+				errorView : self.errorView,
+				type: chartType
 			});
+			self.renderMenuSinglePlace([0,2],id);
 		});
 	},
 
