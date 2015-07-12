@@ -77,7 +77,7 @@ exports.create = function(req,res){
 						if(err){
 							console.error("ERROR: " + err);
 							return res.json(500, { 
-								message: "There has been a server error. Please try again in a few minutes" 
+								message: "There has been a server error saving the coordinates. Please try again in a few minutes" 
 							});
 						}
 
@@ -85,7 +85,7 @@ exports.create = function(req,res){
 							if(err){
 								console.error("ERROR: " + err);
 								return res.json(500, { 
-									message: "There has been a server error. Please try again in a few minutes" 
+									message: "There has been a server error saving the outliers. Please try again in a few minutes" 
 								});
 							}
 							// ========================
@@ -108,7 +108,7 @@ exports.create = function(req,res){
 					if(err){
 						console.error("ERROR: " + err);
 						return res.json(500, { 
-							message: "There has been a server error. Please try again in a few minutes" 
+							message: "There has been a server error saving the coordinates. Please try again in a few minutes"
 						});
 					}
 
@@ -116,7 +116,7 @@ exports.create = function(req,res){
 						if(err){
 							console.error("ERROR: " + err);
 							return res.json(500, { 
-								message: "There has been a server error. Please try again in a few minutes" 
+								message: "There has been a server error saving the outliers. Please try again in a few minutes" 
 							});
 						}
 						
@@ -124,7 +124,7 @@ exports.create = function(req,res){
 							if(err){
 								console.error("ERROR: " + err);
 								return res.json(500, { 
-									message: "There has been a server error. Please try again in a few minutes" 
+									message: "There has been a server error taking the stats for the place. Please try again in a few minutes" 
 								});
 							}
 							// ========================

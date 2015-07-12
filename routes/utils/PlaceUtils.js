@@ -5,47 +5,7 @@ var builder = require('./PlaceBuilder');
 var outliers = require('../outliers');
 var _ = require('underscore');
 var async = require('async');
-var capturesModel = require('../captures');
 
-/*-----------------------------------------------------------------*/
-exports.getOccupationHetmapData = function(req, res){
-	if(!utils.isNumber(req.params.id)){
-		console.error("400, Sorry, the place id has the wrong format specification");
-		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
-	}
-
-	var query = 
-		'select ' +
-			'aux.id, aux.lat, aux.lng, frequency, power ' +
-		'from (' + 
-			'select ' + 
-				'Coordinates.lat as lat, Coordinates.lng as lng, Coordinates.id ' +
-			'from (' +
-				'select ' +
-					'id ' +
-				'from Places ' +
-				'where id = '+req.params.id+' and UserId = '+ req.user.iss+' and visible = 1' +
-			') as aux, Coordinates ' +
-			'where Coordinates.PlaceId = aux.id and Coordinates.visible = 1' +
-		') as aux, Captures ' +
-		'where Captures.CoordinateId = aux.id order by frequency';
-
-	db.sequelize
-	.query(query).then(function(response) {
-		if(response[0].length == 0){
-			console.error("404, Graph data not found");
-			return res.json(404, { message: "Graph data not found" });
-		}
-
-		res.status(200).send({ data: response[0] });
-	})
-	.catch(function(err){
-		console.error("ERROR: " + err);
-		return res.json(500, { 
-			message: "There has been a server error. Please try again in a few minutes" 
-		});
-	});
-};
 
 /*-----------------------------------------------------------------*/
 exports.getFullPlace = function(userId,id,callback){
@@ -59,10 +19,7 @@ exports.getFullPlace = function(userId,id,callback){
 			model: db.Coordinate, 
 			where: {
 				visible: true
-			},
-			include: [{ 
-				model: db.Capture 
-			}] 
+			}
 		}]
 	})
 	.then(function(place){
@@ -146,6 +103,10 @@ exports.retakeStats = function(userId, id, callback){
 		}
 
 		builder.create(place, function(err, n){
+			if(err){
+				return callback(err,null);
+			}
+
 			delete n.coordinates;
 			return callback(null,n);
 		});
@@ -199,7 +160,7 @@ exports.retakeStatsAndSave = function(userId,id, callback){
 	});
 };
 
-exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, coordinates, callback){
+exports.saveCoordinateCapturesAvg = function(userId, placeId, coordinateToSave, coordinates, callback){
 	var captures = [];
 	var coordSave = null;
 
@@ -224,40 +185,32 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 					visible: true
 				}
 			}).then(function(coord){
-				coord[0].getCaptures({
-					attributes: ['frequency','power','CoordinateId'],
-				}).then(function(data){
-					data = JSON.stringify(data);
-					data = JSON.parse(data);
-
-					_.each(data, function(item,i){
-						if(!captures[i]){
-							captures[i] = {
-								frequency: item.frequency,
-								power: item.power,
-							};
-						} else {
-							captures[i].power += item.power;
-						}
-					});
-
-					if(i < coordinates.length - 1){
-						coord[0].dataValues.visible = false;
-						coord[0].save()
-						.then(function(){
-							i += 1;
-							return callbackInner();
-						})
-						.catch(function(err){
-							return callbackInner(err);
-						});
+				var data = JSON.parse(coord[0].dataValues.captures);
+				_.each(data, function(item,i){
+					if(!captures[i]){
+						captures[i] = {
+							frequency: item.frequency,
+							power: item.power,
+						};
 					} else {
-						return callbackInner();
+						captures[i].power += item.power;
 					}
-
-				}).catch(function(err){
-					return callbackInner(err);
 				});
+
+				if(i < coordinates.length - 1){
+					coord[0].dataValues.visible = false;
+					coord[0].save()
+					.then(function(){
+						i += 1;
+						return callbackInner();
+					})
+					.catch(function(err){
+						return callbackInner(err);
+					});
+				} else {
+					return callbackInner();
+				}
+
 			}).catch(function(err){
 				return callbackInner(err);
 			});
@@ -270,13 +223,23 @@ exports.saveCoordinateCapturesAvg = function(userId,placeId, coordinateToSave, c
 				item.power /= coordinates.length;
 			});
 
-			capturesModel.deleteAndSave(coordinates[coordinates.length - 1], captures,
-			function(err){
-				if(err){
-					return callback(err);
+			place.getCoordinates({ 
+				where: {
+					id: coordinateToSave,
+					visible: true
 				}
+			}).then(function(coord){
 
-				return callback();
+				coord[0].dataValues.captures = JSON.stringify(captures);
+				coord[0].save()
+				.then(function() {
+					return callback();
+				}).catch(function(err) {
+					return callback(err);
+				});
+
+			}).catch(function(err){
+				return callback(err);
 			});
 		});
 

@@ -61,13 +61,13 @@ function reduceCommonGps(o,n,callback){
 			var union = [];
 
 			_.each(samplesToReduce, function(item){
-				union = union.concat(item.Captures);
+				union = union.concat(JSON.parse(item.captures));
 			});
 
 			var groupByFrequencies = _.groupBy(union, function(item){
 				return item.frequency;
 			});
-			
+
 			var captures = [];
 			var frequencies = _.keys(groupByFrequencies);
 			_.each(frequencies, function(key){

@@ -36,9 +36,6 @@ router.get('/places/:id/outliers', isAuth, outliers.list);
 router.delete('/places/:idPlace/outliers/:id', isAuth, outliers.delete);
 
 /*-------------------------------------------------------------------*/
-router.get('/places/:id/charts', isAuth, placeUtils.getOccupationHetmapData);
-
-/*-------------------------------------------------------------------*/
 router.get('/', function(req, res) {
 	res.status(200).send({
 		message: 'Wellcome to API',

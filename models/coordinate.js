@@ -28,6 +28,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
+    captures: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     createdDate : {
       type: DataTypes.STRING,
       allowNull: true,
@@ -51,7 +55,6 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Coordinate.belongsTo(models.Place);
-      Coordinate.hasMany(models.Capture);            
     },
 
     validate: {

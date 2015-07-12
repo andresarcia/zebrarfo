@@ -45,11 +45,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
     },
     frequenciesBands: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     frequenciesChannelWidth: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     totalDistance: {

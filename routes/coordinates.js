@@ -1,7 +1,6 @@
 var db = require('../models');
 var utils = require('./utils/Utils');
 var coordinate = require('./coordinates');
-var capture = require('./captures');
 var async = require('async');
 var _ = require("underscore");
 
@@ -22,15 +21,10 @@ exports.save = function(id,coordinates,callback){
 			}
 		}).then(function(coordinate,created){
 			if(coordinate[0].isNewRecord){
+				coordinate[0].dataValues.captures = JSON.stringify(coord.captures);
 				coordinate[0].save()
-				.then(function(){
-					capture.save(coordinate[0].id, coord.captures, function(err){
-						if(err){
-							return asyncCallback(err);
-						}
-
-						return asyncCallback();
-					});
+				.then(function() {
+					return asyncCallback();
 				}).catch(function(err) {
 					return asyncCallback(err);
 				});
@@ -156,22 +150,7 @@ exports.get = function(req, res){
 				return res.json(404, { message: "Coordinate not found" });
 			}
 
-			coord[0].getCaptures({
-				attributes: ['frequency', 'power'],
-			}).then(function(data){
-				if(data.length === 0){
-					console.error("404, Captures not found");
-					return res.json(404, { message: "Captures not found" });
-				}
-
-				res.status(200).send(data);
-
-			}).catch(function(err){
-				console.error("ERROR: " + err);
-				return res.json(500, { 
-					message: "There has been a server error. Please try again in a few minutes" 
-				});
-			});
+			res.status(200).send(coord);
 
 		}).catch(function(err){
 			console.error("ERROR: " + err);
