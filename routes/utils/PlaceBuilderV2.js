@@ -53,14 +53,21 @@ exports.create = function(u, o, newCoordinates, callback) {
 			return callback("There must be a frequency unit");
 	}
 	/* ------------------------- */
+	// STATS ======================
+	var start = new Date().getTime();
+	// ============================
 
 	reduceCommonGps(u, o, n, function(res){
 		checkPlaceAttributes(n, function(err){
 			if(err){
 				return callback(err, null);
 			}
+			// ========================
+			var end = new Date().getTime();
+			console.log("builder finish time ms:" + (end - start));
+			// ========================
 
-			return callback(null, n);
+			// return callback(null, n);
 		});
 	});
 };
@@ -338,6 +345,20 @@ function takePlaceStats(n){
 		}
 	});
 
+	n.distance.sd = distancesSD(n.coordinates);
+
+	/* -- delete vars for take stats -- */
+	delete n.placePowerSD_X;
+	delete n.placePowerSD_M;
+	delete n.frequencyUnitFactor;
+	/* -------------------------------- */
+}
+
+
+function distancesSD(coordinates){
+
+	var distances = [];
+
 	// build radios
 	var range = _.range(1,10);
 	var factors = [0.001, 0.01, 0.1, 1, 10, 100];
@@ -355,44 +376,68 @@ function takePlaceStats(n){
 	});
 	radios.push(1000);
 
-	var tree = vptree.build(n.coordinates, function(a,b){
+	// build tree
+	var tree = vptree.build(coordinates, function(a,b){
 		return utils.GetDistanceFromLatLonInKm(a.lat, a.lng, b.lat, b.lng);
 	});
 
-	// build sd
+	function smartSearch(radio, element, nNearest){
+		if(!nNearest) nNearest = 1;
+
+		var sorted = tree.search(element, nNearest);
+		if(sorted[sorted.length - 1].d < radio && sorted.length < coordinates.length){
+			sol = smartSearch(radio, element, nNearest * 2);
+		} else {
+			sorted.splice(0,1);
+			return sorted;
+		}
+
+		return sol;
+	}
+
+	// flag to know when the radio is bigger than all the coordinates
+	var stillUnselected = true;
+
 	_.each(radios, function(r){
 		var SD_M 	= 0,
 			SD_X 	= 0,
 			count 	= 0;
 
-		_.each(n.coordinates, function(item){
-			if(item.selected) return;
-			var sorted = tree.search(item, n.coordinates.length);
-			sorted.splice(0,1);
+		// if still unselected markers do
+		if(stillUnselected){
+			_.each(coordinates, function(item){
+				if(item.selected) return;
 
-			_.find(sorted, function(sItem, i){
-				var marker = n.coordinates[sItem.i];
-				if(sItem.d <= r) marker.selected = true;
-				else {
-					SD_M += sItem.d;
-					SD_X += sItem.d * sItem.d;
-					return sItem;
-				}
+				var sorted = smartSearch(r, item);
+
+				_.find(sorted, function(sItem, i){
+					var marker = coordinates[sItem.i];
+
+					if(sItem.d <= r){
+						marker.selected = true;
+					} else {
+						SD_M += sItem.d;
+						SD_X += sItem.d * sItem.d;
+						return sItem;
+					}
+				});
+
+				count += 1;
 			});
-			count += 1;
-		});
+		}
 
-		if(count == 1) SD_X = 0;
+		if(count == 1 || stillUnselected === false){
+			SD_X = 0;
+			stillUnselected = false;
+		}
+
 		else SD_X = Number(Math.sqrt((SD_X - (SD_M * SD_M)/ count)/(count - 1))).toFixed(4);
-		n.distance.sd.push({ radio: r, sd: SD_X });
+		distances.push({ radio: r, sd: SD_X });
 	});
 
-	/* -- delete vars for take stats -- */
-	delete n.placePowerSD_X;
-	delete n.placePowerSD_M;
-	delete n.frequencyUnitFactor;
-	/* -------------------------------- */
+	return distances;
 }
+
 
 function checkPlaceAttributes(n, callback){
 	if(n.coordinates.length === 0)
