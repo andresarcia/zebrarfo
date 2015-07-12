@@ -299,7 +299,7 @@ exports.toJson = function(userId,id,callback){
 			delete item.updatedAt;
 			item.cap = [];
 
-			_.each(item.Captures, function(cap,j){
+			_.each(JSON.parse(item.captures), function(cap,j){
 				// save the value of frequencies just once
 				if(i == 0){
 					place.frequencies.values.push(cap.frequency);
@@ -313,7 +313,7 @@ exports.toJson = function(userId,id,callback){
 			item.date = _.clone(item.createdDate);
 
 			delete item.createdDate;
-			delete item.Captures;
+			delete item.captures;
 		});
 
 		var name = _.clone(place.name);
