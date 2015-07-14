@@ -12,16 +12,16 @@ exports.save = function(id,coordinates,callback){
 			where: {
 				lat: coord.lat,
 				lng: coord.lng,
-				powerMin: coord.powerMin,
-				powerMax : coord.powerMax,
-				powerAvg : coord.powerAvg,
-				powerSD : coord.powerSD,
-				createdDate: coord.createdDate,
+				powerMin: coord.power.min,
+				powerMax : coord.power.max,
+				powerAvg : coord.power.avg,
+				powerSD : coord.power.sd,
+				createdDate: coord.date,
 				PlaceId: id
 			}
 		}).then(function(coordinate,created){
 			if(coordinate[0].isNewRecord){
-				coordinate[0].dataValues.captures = JSON.stringify(coord.captures);
+				coordinate[0].dataValues.cap = JSON.stringify(coord.cap);
 				coordinate[0].save()
 				.then(function() {
 					return asyncCallback();

@@ -8,7 +8,7 @@ var async = require('async');
 
 
 /*-----------------------------------------------------------------*/
-exports.getFullPlace = function(userId,id,callback){
+exports.getFullPlace = function(userId, id, callback){
 	db.Place.find({
 		where: {
 			id: id,
@@ -95,25 +95,28 @@ exports.takeStatsComparingPlace = function(userId,id, n, callback){
 	});
 };
 
-/*--------------------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------*/
 exports.retakeStats = function(userId, id, callback){
 	i.getFullPlace(userId, id, function(err,place){
 		if(err){
 			return callback(err,null);
 		}
 
-		builder.create(place, function(err, n){
+		place.power = JSON.parse(place.power);
+		place.frequencies = JSON.parse(place.frequencies);
+		place.distance = JSON.parse(place.distance);
+
+		builder.create(null, place, false, function(err, n){
 			if(err){
 				return callback(err,null);
 			}
 
-			delete n.coordinates;
 			return callback(null,n);
 		});
 	});
 };
 
-/*--------------------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------*/
 exports.retakeStatsAndSave = function(userId,id, callback){
 	i.retakeStats(userId, id, function(err, n){
 		if(err) {
@@ -132,19 +135,11 @@ exports.retakeStatsAndSave = function(userId,id, callback){
 					visible: true
 				}
 			}).then(function(o){
-				o.numberCoordinates = n.numberCoordinates;
-				o.powerMin = n.powerMin;
-				o.powerMax = n.powerMax;
-				o.powerAvg = n.powerAvg;
-				o.sdPowerAvg = n.sdPowerAvg;
-				o.avgPowerSD = n.avgPowerSD;
-				o.numberPowerFrequency = n.numberPowerFrequency;
-				o.frequencyMin = n.frequencyMin;
-				o.frequencyMax = n.frequencyMax;
-				o.totalDistance = n.totalDistance;
-				o.distanceAvg = n.distanceAvg;
-				o.distanceMin = n.distanceMin;
-				o.distanceMax = n.distanceMax;
+
+				o.numberCoordinates = n.coordinates.length;
+				o.frequencies = JSON.stringify(n.frequencies);
+				o.power = JSON.stringify(n.power);
+				o.distance = JSON.stringify(n.distance);
 
 				o.save()
 				.then(function(){
@@ -185,15 +180,12 @@ exports.saveCoordinateCapturesAvg = function(userId, placeId, coordinateToSave, 
 					visible: true
 				}
 			}).then(function(coord){
-				var data = JSON.parse(coord[0].dataValues.captures);
-				_.each(data, function(item,i){
-					if(!captures[i]){
-						captures[i] = {
-							frequency: item.frequency,
-							power: item.power,
-						};
+				var data = JSON.parse(coord[0].dataValues.cap);
+				_.each(data, function(power, j){
+					if(!captures[j]){
+						captures[j] = power;
 					} else {
-						captures[i].power += item.power;
+						captures[j] += power;
 					}
 				});
 
@@ -219,8 +211,9 @@ exports.saveCoordinateCapturesAvg = function(userId, placeId, coordinateToSave, 
 				return callback(err);
 			}
 
+			var capturesAvg = [];
 			_.each(captures, function(item){
-				item.power /= coordinates.length;
+				capturesAvg.push(item / coordinates.length);
 			});
 
 			place.getCoordinates({ 
@@ -230,7 +223,7 @@ exports.saveCoordinateCapturesAvg = function(userId, placeId, coordinateToSave, 
 				}
 			}).then(function(coord){
 
-				coord[0].dataValues.captures = JSON.stringify(captures);
+				coord[0].dataValues.cap = JSON.stringify(capturesAvg);
 				coord[0].save()
 				.then(function() {
 					return callback();
@@ -259,30 +252,20 @@ exports.toJson = function(userId,id,callback){
 			return callback(null,null);
 		}
 
-		place.frequencies = {};
-		place.frequencies.values = [];
-
 		delete place.id;
 		delete place.numberCoordinates;
-		delete place.powerMin;
-		delete place.powerMax;
-		delete place.powerAvg;
-		delete place.sdPowerAvg;
-		delete place.avgPowerSD;
-		delete place.numberPowerFrequency;
-		delete place.frequencyMin;
-		delete place.frequencyMax;
-		delete place.totalDistance;
-		delete place.distanceAvg;
-		delete place.distanceMin;
-		delete place.distanceMax;
 		delete place.visible;
 		delete place.UserId;
 		delete place.createdAt;
 		delete place.updatedAt;
-		delete place.frequenciesBands;
-		delete place.frequenciesChannelWidth;
-		delete place.distanceSD;
+
+		place.power = JSON.parse(place.power);
+		place.frequencies = JSON.parse(place.frequencies);
+		delete place.frequencies.bands;
+		delete place.frequencies.width;
+
+		place.distance = JSON.parse(place.distance);
+		delete place.distance.sd;
 
 		place.coordinates = _.clone(place.Coordinates);
 		delete place.Coordinates;
@@ -297,23 +280,8 @@ exports.toJson = function(userId,id,callback){
 			delete item.PlaceId;
 			delete item.createdAt;
 			delete item.updatedAt;
-			item.cap = [];
-
-			_.each(JSON.parse(item.captures), function(cap,j){
-				// save the value of frequencies just once
-				if(i == 0){
-					place.frequencies.values.push(cap.frequency);
-				}
-
-				item.cap.push(cap.power);
-			});
-
-			item.lat = _.clone(item.lat);
-			item.lng = _.clone(item.lng);
-			item.date = _.clone(item.createdDate);
-
 			delete item.createdDate;
-			delete item.captures;
+			item.cap = JSON.parse(item.cap);
 		});
 
 		var name = _.clone(place.name);

@@ -5,9 +5,6 @@ var _ = require('underscore');
 var jf = require('jsonfile');
 var utils = require('./utils/Utils');
 var builder = require('./utils/PlaceBuilder');
-// == MONGO ===================================================================
-// var builder = require('./utils/PlaceBuilderV2');
-// ============================================================================
 var placeUtils = require('./utils/PlaceUtils');
 var coordinate = require('./coordinates');
 var outliers = require('./outliers');
@@ -35,9 +32,8 @@ exports.create = function(req,res){
 	var start = new Date().getTime();
 	// ============================
 
-
-	console.log('* CREATING NEW PLACE *');
-	builder.create(req.body, function(err, place){
+	console.log('* DATA IN SERVER *');
+	builder.create(req.body, null, false, function(err, place){
 		if(err){
 			console.error("ERROR: " + err);
 			return res.json(500, { 
@@ -54,26 +50,14 @@ exports.create = function(req,res){
 			if(n[0].isNewRecord){
 				console.log('* SAVING PLACE *');
 
-				n[0].numberCoordinates = place.numberCoordinates;
-				n[0].powerMin = place.powerMin;
-				n[0].powerMax = place.powerMax;
-				n[0].powerAvg = place.powerAvg;
-				n[0].sdPowerAvg = place.sdPowerAvg;
-				n[0].avgPowerSD = place.avgPowerSD;
-				n[0].frequencyMin = place.frequencyMin;
-				n[0].frequencyMax = place.frequencyMax;
-				n[0].numberPowerFrequency = place.numberPowerFrequency;
-				n[0].totalDistance = place.totalDistance;
-				n[0].distanceAvg = place.distanceAvg;
-				n[0].distanceMin = place.distanceMin;
-				n[0].distanceMax = place.distanceMax;
-				n[0].frequenciesBands = JSON.stringify(place.frequenciesBands);
-				n[0].frequenciesChannelWidth = JSON.stringify(place.frequenciesChannelWidth);
-				n[0].distanceSD = JSON.stringify(place.distanceSD);
+				n[0].numberCoordinates = place.coordinates.length;
+				n[0].power = JSON.stringify(place.power);
+				n[0].frequencies = JSON.stringify(place.frequencies);
+				n[0].distance = JSON.stringify(place.distance);
 
 				n[0].save()
 				.then(function(){
-					coordinate.save(n[0].id,place.coordinates,function(err){
+					coordinate.save(n[0].id, place.coordinates, function(err){
 						if(err){
 							console.error("ERROR: " + err);
 							return res.json(500, { 
@@ -81,7 +65,7 @@ exports.create = function(req,res){
 							});
 						}
 
-						outliers.save(n[0].id,place.outliers,true,function(err){
+						outliers.save(n[0].id, place.outliers, true, function(err){
 							if(err){
 								console.error("ERROR: " + err);
 								return res.json(500, { 
@@ -112,7 +96,7 @@ exports.create = function(req,res){
 						});
 					}
 
-					outliers.save(n[0].id,place.outliers,false,function(err){
+					outliers.save(n[0].id, place.outliers,false,function(err){
 						if(err){
 							console.error("ERROR: " + err);
 							return res.json(500, { 
@@ -256,7 +240,7 @@ exports.list = function(req, res){
 
 	db.Place.findAll({
 		where: {
-			UserId:req.user.iss,
+			UserId: req.user.iss,
 			visible: true
 		}
 	}).then(function(places){
@@ -306,6 +290,27 @@ exports.get = function(req, res){
 		return res.json(500, { 
 			message: "There has been a server error. Please try again in a few minutes" 
 		});
+	});
+};
+
+
+/*-------------------------------------------------------------------*/
+exports.getFull = function(req, res){
+	// check place id is a number
+	if(!utils.isNumber(req.params.id)){
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
+	}
+
+	placeUtils.getFullPlace(req.user.iss, req.params.id, function(err, place){
+		if(err){
+			console.error("ERROR: " + err);
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
+		}
+
+		res.status(200).send(JSON.stringify(place));
 	});
 };
 

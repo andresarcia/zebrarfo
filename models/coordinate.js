@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL(10,6),
       allowNull: true,
     },
-    captures: {
+    cap: {
       type: DataTypes.TEXT,
       allowNull: true,
     },

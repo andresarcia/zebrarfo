@@ -5,20 +5,17 @@ var placeUtils = require('./utils/PlaceUtils');
 var async = require('async');
 
 /*-------------------------------------------------------------------*/
-exports.save = function(id,outliers,isNew,callback){
+exports.save = function(id, outliers, isNew, callback){
 	if(utils.isNumber(id)){
-		var v = [];
-		_.each(_.keys(outliers), function(key){
-			v.push({
-				power: key,
-				frequency: outliers[key],
-				PlaceId: id
-			});
+
+		_.each(outliers, function(item){
+			item = _.extend(item, { PlaceId: id });
 		});
 
 		if(isNew){
 			console.log('* SAVING OUTLIERS *');
-			db.Outlier.bulkCreate(v)
+
+			db.Outlier.bulkCreate(outliers)
 			.then(function() { 
 				return callback();
 			}).catch(function(err){
@@ -36,7 +33,7 @@ exports.save = function(id,outliers,isNew,callback){
 					truncate: true
 				})
 			.then(function(){
-				db.Outlier.bulkCreate(v)
+				db.Outlier.bulkCreate(outliers)
 				.then(function() { 
 					return callback();
 				}).catch(function(err){
@@ -128,22 +125,31 @@ exports.delete = function(req, res){
 				console.error("404, Outliers not found");
 				return res.json(404, { message: "Outliers not found" });
 			}
+			// get the power to delete
+			var power = Number(outliers[0].dataValues.power);
+			// get the decimal length for the caps
+			var decimalLength = String(power).split(".");
+			if(decimalLength.length == 2) decimalLength = decimalLength[1].length;
+			else decimalLength = 0;
 
-			var power = Number(outliers[0].dataValues.power.toFixed(1));
 			place.getCoordinates({
 				where: {
 					visible: true
 				},
-				include: [{ 
-					model: db.Capture,
-				}]
 			}).then(function(coordinates){
+				if(coordinates.length == 1){
+					return res.json(403, { 
+						message: "You can't delete the outlier because it belows to the only sample left in the place"
+					});
+				}
+
 				async.eachSeries(coordinates, function(coord, callback) {
-					var found = _.find(coord.dataValues.Captures, function(cap){ 
-						var comp = Number(cap.dataValues.power.toFixed(1));
+					var found = _.find(JSON.parse(coord.dataValues.cap), function(cap){
+						var comp = Number(cap.toFixed(decimalLength));
 						return comp == power; 
 					});
-					if(found){
+
+					if(found !== undefined){
 						coord.dataValues.visible = false;
 						coord.save()
 						.then(function(){
@@ -152,8 +158,10 @@ exports.delete = function(req, res){
 						.catch(function(err){
 							return callback(err);
 						});
-					} else
-						callback();
+					} else {
+						return callback();
+					}
+
 				}, function(err){
 					if(err){
 						console.error("ERROR: " + err);
