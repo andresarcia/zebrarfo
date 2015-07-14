@@ -28,6 +28,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
     },
 
+    shared : {
+      type:DataTypes.BOOLEAN,
+      defaultValue: 0
+    },
+
     visible : {
       type:DataTypes.BOOLEAN,
       defaultValue: 1
