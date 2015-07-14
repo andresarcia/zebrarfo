@@ -116,12 +116,15 @@ app.view.PlaceView = Backbone.View.extend({
 		var html = template(coorData);
 		this.$el.find('#p-selected-coord').html(html);
 
-		this.currCapture.data = new app.model.Capture({
-			idPlace: window.place.id,
-			idCoord: coord.id
+		this.currCapture.data = [];
+		_.each(coorData.cap, function(cap, i){
+			self.currCapture.data.push({
+				power: cap,
+				frequency: window.place.attributes.frequencies.values[i]
+			});
 		});
 
-		var options = {
+		this.currCapture.options = {
 			yAxis: {
 				plotLines:[{
 					value: coorData.powerAvg,
@@ -142,7 +145,7 @@ app.view.PlaceView = Backbone.View.extend({
 			},
 		};
 
-		this.renderCapture(JSON.parse(coorData.captures), options);
+		this.renderCapture();
 	},
 
 	renderCapture: function(data, options){
@@ -151,7 +154,7 @@ app.view.PlaceView = Backbone.View.extend({
 			tooltipTop: 260
 		});
 
-		view.render(data, options);
+		view.render(this.currCapture.data, this.currCapture.options);
 		$('html, body').stop().animate({
 			scrollTop: $('.captures-chart').offset().top
 		}, 1000);

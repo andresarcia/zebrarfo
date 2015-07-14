@@ -203,7 +203,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 
 	renderSDGraph: function () {
 		data = [];
-		_.each(JSON.parse(window.place.attributes.distanceSD), function (item) {
+		_.each(window.place.attributes.distance.sd, function (item) {
 			data.push([Number(item.radio), Number(item.sd)]);
 		});
 

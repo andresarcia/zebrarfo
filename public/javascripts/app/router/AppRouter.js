@@ -97,7 +97,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.waitingView.show();
 		window.places = new app.collection.Places();
 		window.places.fetch({
-			success: function(){  
+			success: function(){
 				self.waitingView.hide();
 				callback();
 			},
@@ -121,31 +121,10 @@ app.router.AppRouter = Backbone.Router.extend({
 				window.settings.fixedChannels = self.setChannelsInRange(
 					window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
 
-				window.place.attributes.frequenciesBands = 
-					JSON.parse(window.place.attributes.frequenciesBands);
 				if(window.place.attributes.frequenciesBands.length > 1) window.settings.currBand = [1];
 				else window.settings.currBand = [0];
 
-				window.place.attributes.frequenciesChannelWidth = 
-					JSON.parse(window.place.attributes.frequenciesChannelWidth);
 				if(window.place.attributes.frequenciesChannelWidth) window.settings.currChannel = 0;
-
-				// charts data
-				var data = [];
-				_.each(window.place.attributes.coordinates, function(item, i){
-					var captures = [];
-					_.each(JSON.parse(item.captures), function(cap){
-						captures.push(_.extend(cap, { 
-							id: item.id, 
-							lat: item.lat,
-							lng: item.lng
-						}));
-					});
-
-					data = data.concat(captures);
-				});
-				window.place.attributes.charts = _.sortBy(data, 'frequency');
-
 
 				callback();
 			},

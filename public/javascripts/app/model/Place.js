@@ -7,16 +7,45 @@ app.model.Place = Backbone.Model.extend({
 
 	parse: function(model){
 
-		model.totalDistance = Number(model.totalDistance.toFixed(2));
+		if(typeof model.frequencies !== 'object')
+			model.frequencies = JSON.parse(model.frequencies);
+		model.frequencyMin = Number(Math.ceil(model.frequencies.values[0]/1000));
+		model.frequencyMax = 
+			Number(Math.ceil(model.frequencies.values[model.frequencies.values.length - 1]/1000));
+		model.numberPowerFrequency = model.frequencies.values.length;
+		model.frequenciesBands = model.frequencies.bands;
+		model.frequenciesChannelWidth = model.frequencies.width;
 
-		model.frequencyMin = Number(Math.ceil(model.frequencyMin/1000));
-		model.frequencyMax = Number(Math.ceil(model.frequencyMax/1000));
+		if(typeof model.power !== 'object')
+			model.power = JSON.parse(model.power);
+		model.powerAvg = Number(model.power.avg.toFixed(1));
+		model.powerMax = Number(model.power.max.toFixed(1));
+		model.powerMin = Number(model.power.min.toFixed(1));
+		model.sdPowerAvg = Number(model.power.sd.toFixed(1));
 
-		model.powerAvg = Number(model.powerAvg.toFixed(1));
-		model.powerMax = Number(model.powerMax.toFixed(1));
-		model.powerMin = Number(model.powerMin.toFixed(1));
-		model.sdPowerAvg = Number(model.sdPowerAvg.toFixed(1));
-		model.avgPowerSD = Number(model.avgPowerSD.toFixed(1));
+		if(typeof model.distance !== 'object')
+			model.distance = JSON.parse(model.distance);
+		model.totalDistance = Number(model.distance.total.toFixed(2));
+
+		// parse captures and build chart data
+		model.charts = [];
+		_.each(model.coordinates, function(item){
+			if(typeof item.cap !== 'object')
+				item.cap = JSON.parse(item.cap);
+
+			var data = [];
+			_.each(item.cap, function(cap, i){
+				data.push({
+					id: item.id, 
+					power: cap,
+					frequency: model.frequencies.values[i],
+					lat: item.lat,
+					lng: item.lng,
+				});
+			});
+			model.charts = model.charts.concat(data);
+		});
+		model.charts = _.sortBy(model.charts, 'frequency');
 
 		// model.updatedAt "2014-09-07 17:13:56"
 		var friendly = moment(model.updatedAt, "YYYY MM DD HH:mm:ss").fromNow();
