@@ -4,6 +4,7 @@ var db = require('../models');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jwt-simple');
 var moment = require('moment');
+var places = require('../routes/places');
 
 // == MONGO ===================================================================
 // var User = require('../models_mongo/user.js');
@@ -80,11 +81,36 @@ exports.create = function(req, res) {
           exp: expires
         }, app.get('jwtTokenSecret'));
 
-        res.json({
-          token : token,
-          expires: expires,
-          user: user
+        // include new data
+        db.SharedPlace.find({
+          where: {
+            id: 1,
+          },
+        }).then(function(shared){
+          if(!shared){
+            console.error("404, New data not found");
+            return res.json(404, { message: "New data not found" });
+          }
+
+          var data = JSON.parse(shared.dataValues.place);
+
+          places.savePlace(user.id, data, function(err, n){
+            // respose the new user to the client
+            res.json({
+              token : token,
+              expires: expires,
+              user: user
+            });
+          });
+
+        }).catch(function(err) {
+          console.error("ERROR: " + err);
+          return res.json(500, { 
+            message: "There has been a server error. Please try again in a few minutes" 
+          });
         });
+
+
       })
       .catch(function(err){
         console.error("ERROR: " + err);

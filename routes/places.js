@@ -1,6 +1,8 @@
 var db = require('../models');
 var async = require('async');
 
+var i = require('./places');
+
 var _ = require('underscore');
 var jf = require('jsonfile');
 var utils = require('./utils/Utils');
@@ -41,94 +43,22 @@ exports.create = function(req,res){
 			});
 		}
 
-		db.Place.findOrInitialize({
-			where: {
-				UserId:req.user.iss,
-				name: place.name,
-			},
-		}).then(function(n){
-			if(n[0].isNewRecord){
-				console.log('* SAVING PLACE *');
-
-				n[0].numberCoordinates = place.coordinates.length;
-				n[0].power = JSON.stringify(place.power);
-				n[0].frequencies = JSON.stringify(place.frequencies);
-				n[0].distance = JSON.stringify(place.distance);
-
-				n[0].save()
-				.then(function(){
-					coordinate.save(n[0].id, place.coordinates, function(err){
-						if(err){
-							console.error("ERROR: " + err);
-							return res.json(500, { 
-								message: "There has been a server error saving the coordinates. Please try again in a few minutes" 
-							});
-						}
-
-						outliers.save(n[0].id, place.outliers, true, function(err){
-							if(err){
-								console.error("ERROR: " + err);
-								return res.json(500, { 
-									message: "There has been a server error saving the outliers. Please try again in a few minutes" 
-								});
-							}
-							// ========================
-							var end = new Date().getTime();
-							console.log("Time ms:" + (end - start));
-							// ========================
-							res.status(200).send(n[0]);
-						});
-					});
-				}).catch(function(err) {
-					console.error("ERROR: " + err);
-					return res.json(500, { 
-						message: "There has been a server error. Please try again in a few minutes" 
-					});
-				});
-
-			} else {
-				console.log('* UPDATING OLD PLACE *');
-				coordinate.save(n[0].id,place.coordinates,function(err){
-					if(err){
-						console.error("ERROR: " + err);
-						return res.json(500, { 
-							message: "There has been a server error saving the coordinates. Please try again in a few minutes"
-						});
-					}
-
-					outliers.save(n[0].id, place.outliers,false,function(err){
-						if(err){
-							console.error("ERROR: " + err);
-							return res.json(500, { 
-								message: "There has been a server error saving the outliers. Please try again in a few minutes" 
-							});
-						}
-						
-						placeUtils.takeStatsComparingPlace(req.user.iss,n[0].id,place,function(err,n){
-							if(err){
-								console.error("ERROR: " + err);
-								return res.json(500, { 
-									message: "There has been a server error taking the stats for the place. Please try again in a few minutes" 
-								});
-							}
-							// ========================
-							var end = new Date().getTime();
-							console.log("Time ms:" + (end - start));
-							// ========================
-							res.status(200).send(n);
-						});
-					});
+		i.savePlace(req.user.iss, place, function(err, n){
+			if(err){
+				console.error("ERROR: " + err);
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
 				});
 			}
 
-		}).catch(function(err) {
-			console.error("ERROR: " + err);
-			return res.json(500, { 
-				message: "There has been a server error. Please try again in a few minutes" 
-			});
+			res.status(200).send(n);
 		});
-	});
 
+		// ========================
+		var end = new Date().getTime();
+		console.log("Time ms:" + (end - start));
+		// ========================
+	});
 
 	// == MONGO ===================================================================
 	// Place.findOne({ name: req.body.name }, function(err, o) {
@@ -215,6 +145,76 @@ exports.create = function(req,res){
 	// ============================================================================
 };
 
+
+
+
+exports.savePlace = function(userId, data, callback){
+	db.Place.findOrInitialize({
+		where: {
+			UserId: userId,
+			name: data.name,
+		},
+	}).then(function(n){
+
+		if(n[0].isNewRecord){
+			console.log('* SAVING PLACE *');
+
+			n[0].numberCoordinates = data.coordinates.length;
+			n[0].power = JSON.stringify(data.power);
+			n[0].frequencies = JSON.stringify(data.frequencies);
+			n[0].distance = JSON.stringify(data.distance);
+			n[0].save()
+			.then(function(){
+				coordinate.save(n[0].id, data.coordinates, function(err){
+					if(err){
+						return callback(err);
+					}
+
+					outliers.save(n[0].id, data.outliers, true, function(err){
+						if(err){
+							return callback(err);
+						}
+
+						return callback(null, n[0]);
+					});
+				});
+			}).catch(function(err) {
+				return callback(err);
+			});
+
+		} else {
+			console.log('* UPDATING OLD PLACE *');
+
+			coordinate.save(n[0].id, data.coordinates, function(err){
+				if(err){
+					return callback(err);
+				}
+
+				outliers.save(n[0].id, data.outliers, false, function(err){
+					if(err){
+						return callback(err);
+					}
+
+					placeUtils.takeStatsComparingPlace(userId ,n[0].id, data, function(err,n){
+						if(err){
+							return callback(err);
+						}
+
+						return callback(null, n);
+					});
+				});
+			});
+		}
+
+	}).catch(function(err) {
+		return callback(err);
+	});
+};
+
+
+
+
+
 /*-------------------------------------------------------------------*/
 exports.list = function(req, res){
 	// == MONGO ===================================================================
@@ -263,7 +263,7 @@ exports.get = function(req, res){
 
 	db.Place.find({
 		where: {
-			UserId:req.user.iss,
+			UserId: req.user.iss,
 			id: req.params.id,
 			visible: true
 		},
