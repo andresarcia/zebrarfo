@@ -78,7 +78,8 @@ exports.create = function(req, res) {
 
         var token = jwt.encode({
           iss: user.id,
-          exp: expires
+          exp: expires,
+          role: user.role,
         }, app.get('jwtTokenSecret'));
 
         // include new data
