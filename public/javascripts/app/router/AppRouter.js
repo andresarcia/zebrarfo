@@ -27,20 +27,18 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	initialize: function(options){
+		var backboneSync = Backbone.sync;
+		Backbone.sync = function (method, model, options) {
+			if (localStorage.token){
+				options.headers = { 'x-access-token': localStorage.token };
+				backboneSync(method, model, options);
+			} else 
+				window.location.hash = '#';
+		};
+
 		var template = Zebra.tmpl.main;
 		var html = template();
 		$("#z-body").html(html);
-
-		var token = localStorage.token;
-		var backboneSync = Backbone.sync;
-		Backbone.sync = function (method, model, options) {
-			if (token){
-				options.headers = { 'x-access-token': token };
-				backboneSync(method, model, options);
-			} 
-			else 
-				window.location.hash = '#';
-		};
 
 		new app.view.NavbarView();
 		this.menu = new app.view.MainMenuView();
@@ -162,7 +160,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			url: "api/logout",
 			type: "POST",
 			headers: {
-				"x-access-token":localStorage.token,
+				"x-access-token": localStorage.token,
 			},
 			beforeSend: function() {
 				self.waitingView.show();
@@ -174,7 +172,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			localStorage.removeItem('email');
 			delete window.places;
 			delete window.place;
-			window.settings.place = {};
+			delete window.settings.place;
 
 			new app.router.LoginRouter();
 			window.location.hash = '#';

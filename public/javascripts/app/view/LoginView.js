@@ -109,6 +109,9 @@ app.view.LoginView = Backbone.View.extend({
 		})
 		.done(function( res ) {
 			self.waitingView.hide();
+
+			localStorage.removeItem('token');
+			localStorage.removeItem('email');
 			localStorage.token = res.token;
 			localStorage.email = res.user.email;
 
