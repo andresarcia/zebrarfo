@@ -12,11 +12,13 @@ var placeShema = new Schema({
 		type: String,
 		required: true, 
 	},
+
 	frequencies: {
 		values: [{
 			type: Number,
 			min: 0
 		}],
+
 		bands: [{
 			id: {
 				type: Number,
@@ -35,6 +37,7 @@ var placeShema = new Schema({
 				required: true,
 			},
 		}],
+
 		width: [{
 			id: {
 				type: Number,
@@ -46,6 +49,7 @@ var placeShema = new Schema({
 			},
 		}],
 	},
+
 	power: {
 		min: {
 			type: Number,
@@ -97,6 +101,7 @@ var placeShema = new Schema({
 			},
 		}],
 	},
+
 	coordinates: {
 		index: true,
 		type: [{
@@ -148,6 +153,7 @@ var placeShema = new Schema({
 			},
 		}]
 	},
+
 	outliers: [{
 		power: {
 			type: Number,
@@ -159,6 +165,7 @@ var placeShema = new Schema({
 			min: 0
 		}
 	}],
+
 	createdAt: { 
 		type: Date, 
 		default: Date.now 
@@ -167,10 +174,17 @@ var placeShema = new Schema({
 		type: Date, 
 		default: Date.now 
 	},
+
 	visible: { 
 		type: Boolean,
 		required: true,
 		default: true 
+	},
+
+	shared : {
+		type: Boolean,
+		required: true,
+		default: false 
 	},
 });
 
