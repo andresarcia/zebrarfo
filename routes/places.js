@@ -50,14 +50,12 @@ exports.create = function(req,res){
 					message: "There has been a server error. Please try again in a few minutes" 
 				});
 			}
-
+			// ========================
+			var end = new Date().getTime();
+			console.log("Total time ms:" + (end - start));
+			// ========================
 			res.status(200).send(n);
 		});
-
-		// ========================
-		var end = new Date().getTime();
-		console.log("Time ms:" + (end - start));
-		// ========================
 	});
 
 	// == MONGO ===================================================================

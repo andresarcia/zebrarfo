@@ -1,125 +1,120 @@
-// Load required packages
-var app = require('../app');
+// Load required modules
+// utils module to get the hash password function
+var utils = require('./utils');
+// user mongo model
+var User = require('../models_mongo/user.js');
+// get all models of sequelize for mysql
 var db = require('../models');
-var bcrypt = require('bcrypt-nodejs');
-var jwt = require('jwt-simple');
-var moment = require('moment');
+// places modules for save new places for new users
 var places = require('../routes/places');
 
-// == MONGO ===================================================================
-// var User = require('../models_mongo/user.js');
-// ============================================================================
 
 // Create endpoint /api/users for POST
 exports.create = function(req, res) {
-  // if there is not email or password, return 400 error 
-  if(!req.body.email || !req.body.password) {
-    console.error("400, Parameters email or password are missing");
-    return res.json(400, { message: "Parameters email or password are missing" });
-  }
-
-  bcrypt.genSalt(5, function(err, salt) {
-    if (err){
-      console.error("ERROR: " + err);
-      return res.json(500, { 
-        message: "There has been a server error. Please try again in a few minutes" 
-      });
+    // if there is not email or password, return 400 error 
+    if(!req.body.email || !req.body.password) {
+        console.error("400, Parameters email or password are missing");
+        return res.json(400, { message: "Parameters email or password are missing" });
     }
 
-    bcrypt.hash(req.body.password, salt, null, function(err, hash) {
-      if (err){
-        console.error("ERROR: " + err);
-        return res.json(500, { 
-          message: "There has been a server error. Please try again in a few minutes" 
-        });
-      }
-
-      // == MONGO ===================================================================
-      // var user = new User({
-      //   email: req.body.email,
-      //   password: hash,
-      //   is_subscribed: req.body.subscribed,
-      // });
-
-      // user.save(function(err){
-          // if(err){
-            // console.error("ERROR: " + err);
-            // return res.json(500, { 
-            //   message: "There has been a server error. Please try again in a few minutes" 
-            // });
-          // }
-
-      //     user = user.toJSON();
-      //     var expires = moment().add(7, 'days').valueOf();
-      //     delete user.password;
-
-      //     var token = jwt.encode({
-      //       iss: user._id,
-      //       exp: expires
-      //     }, app.get('jwtTokenSecret'));
-
-      //     res.json({
-      //       token : token,
-      //       expires: expires,
-      //       user: user
-      //     });
-      // });
-      // ============================================================================
-
-      db.User.create({
-        email: req.body.email,
-        password: hash,
-        is_subscribed: req.body.subscribed,
-      })
-      .then(function(user) {
-        user = user.toJSON();
-        var expires = moment().add(7, 'days').valueOf();
-        delete user.password;
-
-        var token = jwt.encode({
-          iss: user.id,
-          exp: expires,
-          role: user.role,
-        }, app.get('jwtTokenSecret'));
-
-        // include new data
-        db.SharedPlace.find({
-          where: {
-            id: 1,
-          },
-        }).then(function(shared){
-          if(!shared){
-            console.error("404, New data not found");
-            return res.json(404, { message: "New data not found" });
-          }
-
-          var data = JSON.parse(shared.dataValues.place);
-
-          places.savePlace(user.id, data, function(err, n){
-            // respose the new user to the client
-            res.json({
-              token : token,
-              expires: expires,
-              user: user
+    // hash password
+    utils.hash_password(req.body.password, function(err, hash){
+        if(err){
+            console.error("ERROR: " + err);
+            return res.json(500, { 
+                message: "There has been a server error. Please try again in a few minutes" 
             });
-          });
+        }
 
-        }).catch(function(err) {
-          console.error("ERROR: " + err);
-          return res.json(500, { 
-            message: "There has been a server error. Please try again in a few minutes" 
-          });
-        });
+        // create users for mongo
+        // create_mongo_user(req.body.email, hash, req.body.subscribed, function(err, user){
+        //     if(err){
+        //         console.error("ERROR: " + err);
+        //         return res.json(500, { 
+        //             message: "There has been a server error. Please try again in a few minutes" 
+        //         });
+        //     }
 
+            // var jwt = utils.generate_jwt({iss: user._id, role: user.role});
+            // res.json({
+            //   token : jwt,
+            //   user: {email: user.email}
+            // });
+        // }); /* end create_mongo_user */
 
-      })
-      .catch(function(err){
-        console.error("ERROR: " + err);
-        return res.json(500, { 
-          message: "There has been a server error. Please try again in a few minutes" 
-        });
-      });
+        // create users for MySQL
+        create_mysql_user(req.body.email, hash, req.body.subscribed, function(err, user){
+            if(err){
+                console.error("ERROR: " + err);
+                return res.json(500, { 
+                    message: "There has been a server error. Please try again in a few minutes" 
+                });
+            }
 
-    });
-  });
+            var jwt = utils.generate_jwt({iss: user.id, role: user.role});
+            db.SharedPlace.find({
+                where: {
+                    id: 1,
+                },
+            }).then(function(shared){
+                if(!shared){
+                    console.error("404, New data not found");
+                    return res.json(404, { message: "New data not found" });
+                }
+
+                var data = JSON.parse(shared.dataValues.place);
+                places.savePlace(user.id, data, function(err, n){
+                    res.json({
+                        token : jwt,
+                        user: {email: user.email}
+                    });
+                }); /* end save place */
+
+            })
+            .catch(function(err) {
+                console.error("ERROR: " + err);
+                return res.json(500, { 
+                    message: "There has been a server error. Please try again in a few minutes" 
+                });
+            }); /* end find shared place */
+            
+        }); /* end create_mysql_user */
+
+    }); /* end hash_password */
 };
+
+
+function create_mongo_user(username, password, is_subscribed, callback){
+    // create user from model
+    var user = new User({
+        email: username,
+        password: password,
+        is_subscribed: is_subscribed,
+    });
+
+    // save the user model into DB
+    user.save(function(err){
+        if(err){
+            return callback(err);
+        }
+
+        return callback(null, user);
+    });
+}
+
+
+function create_mysql_user(username, password, is_subscribed, callback){
+    // create and save model
+    db.User.create({
+        email: username,
+        password: password,
+        is_subscribed: is_subscribed,
+    })
+    .then(function(user) {
+        user = user.toJSON();
+        return callback(null, user);
+    })
+    .catch(function(err){
+        return callback(err);
+    });
+}

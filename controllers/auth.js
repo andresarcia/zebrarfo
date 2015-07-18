@@ -1,10 +1,11 @@
-// Load required packages
-var app = require('../app');
+// Load required modules
+// module for parse peticion and get the jwt
 var url = require('url');
+// utils module for JWT
+var utils = require('./utils');
+// modules for authentication with the strategy
 var passport = require('passport');
 var strategy = require('../config/passport');
-var jwt = require('jwt-simple');
-var moment = require('moment');
 
 
 exports.isAuth = function(req, res, next){ 
@@ -13,32 +14,23 @@ exports.isAuth = function(req, res, next){
 	var token = (req.body && req.body.access_token) || parsed_url.query.access_token || req.headers["x-access-token"];
 
 	// if JWT
-	if(token) {
-		try {
-			// decoded the JWT
-			var decoded = jwt.decode(token, app.get('jwtTokenSecret'));
-
-			// check the expiration daet
-			if (decoded.exp <= Date.now()) {
-				console.error("400, Access token has expired");
-				return res.json(400, { message: "Access token has expired" });
-			}
-
-			// save the user in the request an continue with the request
-			req.user = decoded;
-			next();
-
-		} catch (err) {
-			console.error("ERROR: " + err);
-			return res.json(500, { 
-				message: "There has been a server error. Please try again in a few minutes" 
-			});
-		}
-	// if not JWT found
-	} else {
+	if(!token){
 		console.error("400, You need to be Authenticated first!");
 		return res.json(400, { message: "You need to be Authenticated first!" });
 	}
+
+	// decoded the JWT
+	var decoded = utils.decode_jwt(token);
+
+	// check the expiration daet
+	if (decoded.exp <= Date.now()) {
+		console.error("400, Access token has expired");
+		return res.json(400, { message: "Access token has expired" });
+	}
+
+	// save the user in the request an continue with the request
+	req.user = decoded;
+	next();
 };
 
 // Create endpoint /api/login for POST
@@ -60,39 +52,25 @@ exports.login = function(req, res, next) {
 			return res.json(403, { message: "No user found" });
 		}
 
-		// add the expire time for the JWT
-		var expires = moment().add(7, 'days').valueOf();
-		// var expires = moment().add(1, 'm').valueOf();
-
-		// create the JWT
-		var token = jwt.encode({
-			// == MONGO ===================================================================
-			// iss: user._id,
-			// ============================================================================
-			iss: user.id,
-			// ============================================================================
-			role: user.role,
-			exp: expires
-		}, app.get('jwtTokenSecret'));
-
-		// delete the password from the model
-		delete user.password;
+		// == MONGO ===================================================================
+		// var jwt = utils.generate_jwt({iss: user._id, role: user.role});
+		// ============================================================================
+		var jwt = utils.generate_jwt({iss: user.id, role: user.role});
 
 		// set the header for not compress
 		res.set('x-no-compression', 'true');
 
 		// return the JWT to the client
 		res.json({
-			token : token,
-			expires: expires,
-			user: user
+			token : jwt,
+			user: {email: user.email}
 		});
 
 	})(req, res, next);
 };
 
+// TODO: the jwt should be disable
 // Create endpoint /api/logot for POST
 exports.logout = function(req, res) {
-	// in this point the jwt should be disable
 	res.send(200); 
 };
