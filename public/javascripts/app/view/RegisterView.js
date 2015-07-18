@@ -91,10 +91,10 @@ app.view.RegisterView = Backbone.View.extend({
 		var password = $container.val();
 		var res;
 
-		if(this.password == password){
+		if(password !== ""){
 			res = true;
 			this.repeatPassword = password;
-			this.$el.find('#reg-repeat-password').tooltip('hide');
+			this.blurRepeatPassword();
 		} else {
 			res = false;
 			this.repeatPassword = undefined;
@@ -105,16 +105,18 @@ app.view.RegisterView = Backbone.View.extend({
 	},
 
 	blurRepeatPassword: function(){
-		if(!this.checkRepeatPassword()){
+		if(this.password != this.repeatPassword){
 			if(!this.password)
 				this.$el.find('#reg-password').tooltip('show');
 			else
 				this.$el.find('#reg-repeat-password').tooltip('show');
-		}
+		} else
+			this.$el.find('#reg-repeat-password').tooltip('hide');
 	},
 
 	focusRepeatPassword: function(){
 		this.$el.find('#reg-password').tooltip('hide');
+		this.blurRepeatPassword();
 	},
 
 	checkSubmit: function(){
