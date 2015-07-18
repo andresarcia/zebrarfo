@@ -12,8 +12,8 @@ var coordinate = require('./coordinates');
 var outliers = require('./outliers');
 
 // == MONGO ===================================================================
-// var mongoose = require('mongoose');
-// var Place = require('../models_mongo/place.js');
+var mongoose = require('mongoose');
+var Place = require('../models_mongo/place.js');
 // ============================================================================
 
 /*-------------------------------------------------------------------*/
@@ -31,10 +31,10 @@ exports.create = function(req,res){
 	}
 
 	// STATS ======================
+	console.log('* DATA IN SERVER *');
 	var start = new Date().getTime();
 	// ============================
 
-	console.log('* DATA IN SERVER *');
 	builder.create(req.body, null, false, function(err, place){
 		if(err){
 			console.error("ERROR: " + err);
@@ -62,84 +62,84 @@ exports.create = function(req,res){
 	// Place.findOne({ name: req.body.name }, function(err, o) {
 	// 	if(err) {
 	// 		console.error("ERROR: " + err);
-			// return res.json(500, { 
-			// 	message: "There has been a server error. Please try again in a few minutes" 
-			// });
+	// 		return res.json(500, { 
+	// 			message: "There has been a server error. Please try again in a few minutes" 
+	// 		});
 	// 	}
 	// 	if(!o) createPlace();
 	// 	else updatePlace(o);
 	// });
 
-	// var createPlace = function (){
-	// 	console.log('* CREATING NEW PLACE *');
-	// 	builder.create(req.body, null, false, function(err, n){
-	// 		if(err) {
-	// 			console.error("ERROR: " + err);
-				// return res.json(500, { 
-				// 	message: "There has been a server error. Please try again in a few minutes" 
-				// });
-	// 		}
+	var createPlace = function (){
+		console.log('* CREATING NEW PLACE *');
+		builder.create(req.body, null, false, function(err, n){
+			if(err) {
+				console.error("ERROR: " + err);
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
+			}
 
-	// 		console.log('* SAVING NEW PLACE *');
-	// 		var place = new Place(n);
-	// 		// save the parent (user) model in the place model
-	// 		place._creator = mongoose.Types.ObjectId(req.user.iss);
-	// 		saveAndResponse(place, true);
-	// 	});
-	// };
+			console.log('* SAVING NEW PLACE *');
+			var place = new Place(n);
+			// save the parent (user) model in the place model
+			place._creator = mongoose.Types.ObjectId(req.user.iss);
+			saveAndResponse(place, true);
+		});
+	};
 
-	// var updatePlace = function(o){
-	// 	console.log('* UPDATING PLACE *');
-	// 	builder.create(req.body, o, true, function(err, n){
-	// 		if(err) {
-	// 			console.error("ERROR: " + err);
-				// return res.json(500, { 
-				// 	message: "There has been a server error. Please try again in a few minutes" 
-				// });
-	// 		}
+	var updatePlace = function(o){
+		console.log('* UPDATING PLACE *');
+		builder.create(req.body, o, true, function(err, n){
+			if(err) {
+				console.error("ERROR: " + err);
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
+			}
 
-	// 		console.log('* SAVING UPDATED PLACE *');
-	// 		o.distance = n.distance;
-	// 		o.power = n.power;
-	// 		o.outliers = n.outliers;
-	// 		o.frequencies.bands = n.frequencies.bands;
-	// 		o.frequencies.width = n.frequencies.width;
-	// 		o.updatedAt = Date.now();
+			console.log('* SAVING UPDATED PLACE *');
+			o.distance = n.distance;
+			o.power = n.power;
+			o.outliers = n.outliers;
+			o.frequencies.bands = n.frequencies.bands;
+			o.frequencies.width = n.frequencies.width;
+			o.updatedAt = Date.now();
 
-	// 		_.each(n.newCoordinates, function(item){
-	// 			o.coordinates.push(item);
-	// 		});
+			_.each(n.newCoordinates, function(item){
+				o.coordinates.push(item);
+			});
 
-	// 		if(n.newCoordinates.length > 0){
-	// 			saveAndResponse(o, true);
+			if(n.newCoordinates.length > 0){
+				saveAndResponse(o, true);
 
-	// 		} else {
-	// 			saveAndResponse(o, false);
-	// 		} 
-	// 	});
-	// };
+			} else {
+				saveAndResponse(o, false);
+			} 
+		});
+	};
 
-	// var saveAndResponse = function(place, save){
-	// 	if(save){
-	// 		place.save(function(err){
-	// 			if(err){
-				// 	console.error("ERROR: " + err);
-					// return res.json(500, { 
-					// 	message: "There has been a server error. Please try again in a few minutes" 
-					// });
-				// }
-	// 			console.log("DONE");
-	// 			// ========================
-	// 			var end = new Date().getTime();
-	// 			console.log("Time ms:" + (end - start));
-	// 			// ========================
-	// 			// res.status(200).send(n);
-	// 		});
-	// 	} else {
-	// 		console.log("DONE");
-	// 		// res.status(200).send(n);
-	// 	}
-	// };
+	var saveAndResponse = function(place, save){
+		if(save){
+			place.save(function(err){
+				if(err){
+					console.error("ERROR: " + err);
+					return res.json(500, { 
+						message: "There has been a server error. Please try again in a few minutes" 
+					});
+				}
+				console.log("DONE");
+				// ========================
+				var end = new Date().getTime();
+				console.log("Time ms:" + (end - start));
+				// ========================
+				// res.status(200).send(n);
+			});
+		} else {
+			console.log("DONE");
+			// res.status(200).send(n);
+		}
+	};
 	// ============================================================================
 };
 
@@ -215,9 +215,15 @@ exports.savePlace = function(userId, data, callback){
 
 /*-------------------------------------------------------------------*/
 exports.list = function(req, res){
+	// STATS ======================
+	// var start = new Date().getTime();
+	// ============================
+
 	// == MONGO ===================================================================
 	// Place.find(
-	// { _creator: req.user.iss }, 
+	// { 
+	// 	// _creator: req.user.iss 
+	// }, 
 	// { 
 	// 	name: 1,
 	// 	distance: 1,
@@ -227,12 +233,17 @@ exports.list = function(req, res){
 	// function(err, places){
 	// 	if(err) {
 	// 		console.error("ERROR: " + err);
-			// return res.json(500, { 
-			// 	message: "There has been a server error. Please try again in a few minutes" 
-			// });
+	// 		return res.json(500, { 
+	// 			message: "There has been a server error. Please try again in a few minutes" 
+	// 		});
 	// 	}
 
-	// 	res.status(200).send(places);
+	// 	// ========================
+	// 	var end = new Date().getTime();
+	// 	console.log("Time ms:" + (end - start));
+	// 	// ========================
+
+	// // 	res.status(200).send(places);
 	// });
 	// ============================================================================
 
@@ -242,6 +253,10 @@ exports.list = function(req, res){
 			visible: true
 		}
 	}).then(function(places){
+		// ========================
+		// var end = new Date().getTime();
+		// console.log("Time ms:" + (end - start));
+		// ========================
 		res.status(200).send(places);
 	}).catch(function(err) {
 		console.error("ERROR: " + err);
@@ -258,6 +273,33 @@ exports.get = function(req, res){
 		console.error("400, Sorry, the place id has the wrong format specification");
 		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
 	}
+
+	// STATS ======================
+	// var start = new Date().getTime();
+	// ============================
+
+	// == MONGO ===================================================================
+	// Place.find(
+	// { 
+	// 	// _creator: req.user.iss 
+	// 	_id: "55aa7affd7d6e06e98c35bf1"
+	// }, 
+	// function(err, place){
+	// 	if(err) {
+	// 		console.error("ERROR: " + err);
+	// 		return res.json(500, { 
+	// 			message: "There has been a server error. Please try again in a few minutes" 
+	// 		});
+	// 	}
+
+	// 	// ========================
+	// 	var end = new Date().getTime();
+	// 	console.log("Time ms:" + (end - start));
+	// 	// ========================
+
+	// // 	res.status(200).send(places);
+	// });
+	// ============================================================================
 
 	db.Place.find({
 		where: {
@@ -280,6 +322,11 @@ exports.get = function(req, res){
 		place = place.toJSON();
 		place.coordinates = place.Coordinates;
 		delete place.Coordinates;
+
+		// ========================
+		// var end = new Date().getTime();
+		// console.log("Time ms:" + (end - start));
+		// ========================
 
 		res.status(200).send(place);
 	
