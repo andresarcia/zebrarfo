@@ -164,18 +164,18 @@ app.view.PlaceView = Backbone.View.extend({
 		var template = Zebra.tmpl.place;
 		var html = template({
 			place: window.place.attributes, 
-			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+			bands: window.place.attributes.frequencies.bands.length > 1 ? true: false
 		});
 		this.$el.html(html);
 
 		this.$el.find("#p-channel-width").select2({ 
-			data: window.place.attributes.frequenciesChannelWidth 
+			data: window.place.attributes.frequencies.width 
 		});
 		this.$el.find("#p-channel-width").select2("val", window.settings.currChannel);
 
-		if(window.place.attributes.frequenciesBands.length > 1){
+		if(window.place.attributes.frequencies.bands.length > 1){
 			this.$el.find("#p-frequency-bands").select2({ 
-				data: window.place.attributes.frequenciesBands,
+				data: window.place.attributes.frequencies.bands,
 				multiple: true,
 			});
 			this.$el.find("#p-frequency-bands").select2("val", window.settings.currBand);

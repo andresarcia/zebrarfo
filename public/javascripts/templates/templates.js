@@ -255,21 +255,21 @@ this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helper
     + "</h3>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
     + "</td>\n					</tr>\n					<tr>\n						<td>Total distance</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.totalDistance : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.distance : stack1)) != null ? stack1.total : stack1), depth0))
     + " <small><b>km</b></small></td>\n					</tr>\n					<tr>\n						<td>Total number of frequencies</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberPowerFrequency : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.values : stack1)) != null ? stack1.length : stack1), depth0))
     + "</td>\n					</tr>\n					<tr>\n						<td>Range of frequencies</td>\n						<td>["
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencyMin : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.min : stack1), depth0))
     + "-"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencyMax : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.max : stack1), depth0))
     + "] <small><b>MHz</b></small></td>\n					</tr>\n					<tr>\n						<td>Minimum power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerMin : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.power : stack1)) != null ? stack1.min : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Maximum power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerMax : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.power : stack1)) != null ? stack1.max : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Average power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.powerAvg : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.power : stack1)) != null ? stack1.avg : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.sdPowerAvg : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.power : stack1)) != null ? stack1.sd : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
@@ -316,21 +316,21 @@ this["Zebra"]["tmpl"]["places"] = Handlebars.template({"1":function(depth0,helpe
     + "\">\n                        <div class=\"big-small col-md-6 col-sm-6 col-xs-6\">\n                            <h3>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
     + "</h3>\n                            <h5><small>samples</small></h5>\n                        </div>\n                        <div class=\"big-small col-md-6 col-sm-6 col-xs-6\">\n                          <h3>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.totalDistance : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.distance : stack1)) != null ? stack1.total : stack1), depth0))
     + "</h3>\n                          <h6><small><b>km</b></small></h6>\n                          <h5><small>distance</small></h5>\n                        </div>\n                      </div>\n                      <div class=\"tab-pane places-frequencies\" id=\"frequencies_tab_"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                            <h4>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.numberPowerFrequency : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.values : stack1)) != null ? stack1.length : stack1), depth0))
     + "</h4>\n                            <h5><small>number of frequencies</small></h5>\n                        </div>\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                          <h4>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencyMin : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.min : stack1), depth0))
     + "-"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencyMax : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequencies : stack1)) != null ? stack1.max : stack1), depth0))
     + "</h4>\n                          <h6><small><b>MHz</b></small></h6>\n                          <h5><small>range</small></h5>\n                        </div>\n                      </div>\n                      <div class=\"tab-pane places-power\" id=\"power_tab_"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">\n                        <div class=\"col-md-12 col-sm-12 col-xs-12\">\n                          <canvas class=\"power-canvas\" height=\"10\"></canvas>\n                        </div>\n                        <div class=\"big-small col-md-12 col-sm-12 col-xs-12\">\n                          <h5 class=\"pull-left\"><small>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.powerMin : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.power : stack1)) != null ? stack1.min : stack1), depth0))
     + " dBm</small></h5>\n                          <h5 class=\"pull-right\"><small>"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.powerMax : stack1), depth0))
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.power : stack1)) != null ? stack1.max : stack1), depth0))
     + " dBm</small></h5>\n                        </div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n\n              </div> <!-- End Panel Body>\n\n              <!-- Panel Footer -->\n              <div class=\"panel-footer\">\n                <h6>\n                  <small>\n                    <span class=\"glyphicon glyphicon-time\"></span>\n                    "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.friendlyDate : stack1), depth0))
     + "\n                  </small>\n                </h6>\n              </div> <!-- End Panel Footer -->\n            </div> <!-- End panel -->\n\n          </div> <!-- End Col container -->\n        ";

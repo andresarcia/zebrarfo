@@ -9,23 +9,32 @@ app.model.Place = Backbone.Model.extend({
 
 		if(typeof model.frequencies !== 'object')
 			model.frequencies = JSON.parse(model.frequencies);
-		model.frequencyMin = Number(Math.ceil(model.frequencies.values[0]/1000));
-		model.frequencyMax = 
-			Number(Math.ceil(model.frequencies.values[model.frequencies.values.length - 1]/1000));
-		model.numberPowerFrequency = model.frequencies.values.length;
-		model.frequenciesBands = model.frequencies.bands;
-		model.frequenciesChannelWidth = model.frequencies.width;
+
+		// frequencies values to MHz for better visualization
+		model.frequencies.values = _.map(model.frequencies.values, function(fq){
+			return fq / 1000;
+		});
+		model.frequencies.bands = _.map(model.frequencies.bands, function(band){
+			band.from /= 1000;
+			band.to /= 1000;
+			return band;
+		});
+		model.frequencies.min = Math.ceil(model.frequencies.values[0]);
+		model.frequencies.max = Math.ceil(
+			model.frequencies.values[model.frequencies.values.length - 1]);
 
 		if(typeof model.power !== 'object')
 			model.power = JSON.parse(model.power);
-		model.powerAvg = Number(model.power.avg.toFixed(1));
-		model.powerMax = Number(model.power.max.toFixed(1));
-		model.powerMin = Number(model.power.min.toFixed(1));
-		model.sdPowerAvg = Number(model.power.sd.toFixed(1));
+
+		model.power.avg = Number(model.power.avg.toFixed(1));
+		model.power.max = Number(model.power.max.toFixed(1));
+		model.power.min = Number(model.power.min.toFixed(1));
+		model.power.sd = Number(model.power.sd.toFixed(1));
 
 		if(typeof model.distance !== 'object')
 			model.distance = JSON.parse(model.distance);
-		model.totalDistance = Number(model.distance.total.toFixed(2));
+
+		model.distance.total = Number(model.distance.total.toFixed(2));
 
 		// parse captures and build chart data
 		model.charts = [];

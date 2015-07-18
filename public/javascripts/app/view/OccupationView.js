@@ -19,7 +19,7 @@ app.view.OccupationView = Backbone.View.extend({
 		this.waitingView = options.waitingView;
 
 		this.data = window.place.attributes;
-		this.threshold = this.data.powerAvg;
+		this.threshold = this.data.power.avg;
 
 		this.chart = new app.view.CapturesView({
 			selector: '#o-chart',
@@ -147,11 +147,11 @@ app.view.OccupationView = Backbone.View.extend({
 		var self = this;
 
 		this.thresholdSlider = this.$el.find('#o-threshold-slider').noUiSlider({
-			start: this.data.powerAvg,
+			start: this.data.power.avg,
 			step: 1,
 			range: {
-				'min': self.data.powerMin,
-				'max': self.data.powerMax
+				'min': self.data.power.min,
+				'max': self.data.power.max,
 			},
 			format: wNumb({
 				decimals: 0
@@ -197,7 +197,10 @@ app.view.OccupationView = Backbone.View.extend({
 			_.each(itemSameFrequency, function(item){
 				if(item.power >= self.threshold) passed += 1;
 			});
-			data.push({ frequency:itemSameFrequency[0].frequency, power:(passed/itemSameFrequency.length)*100 });
+			data.push({ 
+				frequency: itemSameFrequency[0].frequency, 
+				power: (passed/itemSameFrequency.length) * 100 
+			});
 		});
 
 		this.chart.render(data,this.chartOptions);
@@ -211,18 +214,18 @@ app.view.OccupationView = Backbone.View.extend({
 		var template = Zebra.tmpl.occupation;
 		var html = template({
 			place: window.place.attributes, 
-			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+			bands: window.place.attributes.frequencies.bands.length > 1 ? true: false
 		});
 		this.$el.html(html);
 
 		this.$el.find("#o-channel-width").select2({ 
-			data: window.place.attributes.frequenciesChannelWidth 
+			data: window.place.attributes.frequencies.width 
 		});
 		this.$el.find("#o-channel-width").select2("val", window.settings.currChannel);
 
-		if(window.place.attributes.frequenciesBands.length > 1){
+		if(window.place.attributes.frequencies.bands.length > 1){
 			this.$el.find("#o-frequency-bands").select2({ 
-				data: window.place.attributes.frequenciesBands,
+				data: window.place.attributes.frequencies.bands,
 				multiple: true,
 			});
 			this.$el.find("#o-frequency-bands").select2("val", window.settings.currBand);

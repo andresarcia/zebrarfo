@@ -82,7 +82,7 @@ app.util.alphanum = function(a,b) {
 };
 
 app.util.isWifi = function(){
-  var isWifi = _.filter(window.place.attributes.frequenciesBands, function(item){
+  var isWifi = _.filter(window.place.attributes.frequencies.bands, function(item){
     return item.text == "2.4 GHz" || item.text == "5 GHz";
   });
 

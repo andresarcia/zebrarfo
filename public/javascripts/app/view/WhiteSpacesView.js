@@ -28,10 +28,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.occupation.dmax = 100;
 		this.settings.occupation.max = 100;
 		this.settings.threshold = {};
-		this.settings.threshold.dmin = window.place.attributes.powerMin;
-		this.settings.threshold.dmax = window.place.attributes.powerMax;
-		this.settings.threshold.min = window.place.attributes.powerMin;
-		this.settings.threshold.max = window.place.attributes.powerMax;
+		this.settings.threshold.dmin = window.place.attributes.power.min;
+		this.settings.threshold.dmax = window.place.attributes.power.max;
+		this.settings.threshold.min = window.place.attributes.power.min;
+		this.settings.threshold.max = window.place.attributes.power.max;
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
 		this.cameraPosition.vertical = 0.5;
@@ -144,9 +144,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		});
 
 		// bands
-		if(window.place.attributes.frequenciesBands.length > 1){
+		if(window.place.attributes.frequencies.bands.length > 1){
 			this.$el.find("#ws-frequency-bands").select2({ 
-				data: window.place.attributes.frequenciesBands,
+				data: window.place.attributes.frequencies.bands,
 				multiple: true,
 			});
 			this.$el.find("#ws-frequency-bands").select2("val", window.settings.currBand);
@@ -154,7 +154,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		// channels width
 		this.$el.find("#ws-channel-width").select2({ 
-			data: window.place.attributes.frequenciesChannelWidth 
+			data: window.place.attributes.frequencies.width 
 		});
 		this.$el.find("#ws-channel-width").select2("val", window.settings.currChannel);
 
@@ -168,11 +168,11 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			to;
 
 		if(Number(bands[0]) === 0){
-			from = this.data.frequencyMin;
-			to = this.data.frequencyMax;
+			from = this.data.frequencies.min;
+			to = this.data.frequencies.max;
 		} else {
-			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
-			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
+			from = window.place.attributes.frequencies.bands[bands[0]].from;
+			to = window.place.attributes.frequencies.bands[bands[bands.length - 1]].to;
 		}
 
 		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
@@ -350,7 +350,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			fq;
 
 		for (var i = 0; i < this.data.charts.length; i++){
-			fq = this.data.charts[i].frequency / 1000;
+			fq = this.data.charts[i].frequency;
 			if(fq >= this.boundaries[index].from && fq <= this.boundaries[index].to)
 				data.push(this.data.charts[i]);
 
@@ -362,13 +362,13 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 
 		data = _.groupBy(data, function(sample){ return sample.frequency; });
 
-		for (var j = this.data.powerMax - 1; j >= this.data.powerMin; j -= this.settings.quality.crr) {
+		for (var j = this.data.power.max - 1; j >= this.data.power.min; j -= this.settings.quality.crr) {
 			_.each(data, function(itemSameFrequency){
 				var passed = 0;
 				_.each(itemSameFrequency, function(item){
 					if(item.power >= j) passed += 1;
 				});
-				var x = itemSameFrequency[0].frequency / 1000;
+				var x = itemSameFrequency[0].frequency;
 				// occupation
 				var occupation = (passed/itemSameFrequency.length)*100;
 				if(occupation <= self.settings.occupation.max) y = occupation;
@@ -444,7 +444,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		var template = Zebra.tmpl.white_spaces;
 		var html = template({
 			place: window.place.attributes, 
-			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+			bands: window.place.attributes.frequencies.bands.length > 1 ? true: false
 		});
 		this.$el.html(html);
 

@@ -68,7 +68,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		this.disableSettings();
 		var data = this.getHeatmapData(false);
 		this.heatmap.settings.maxIntensity = 
-			this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+			this.heatmapDataProcessor.normalizeValue(this.data.power.max);
 		this.renderMarkersSlider(data.data.length - 1);
 
 		// var infowindow = new google.maps.InfoWindow({
@@ -153,9 +153,9 @@ app.view.HeatmapView = Backbone.View.extend({
 		});
 
 		// bands
-		if(window.place.attributes.frequenciesBands.length > 1){
+		if(window.place.attributes.frequencies.bands.length > 1){
 			this.$el.find("#h-frequency-bands").select2({ 
-				data: window.place.attributes.frequenciesBands,
+				data: window.place.attributes.frequencies.bands,
 				multiple: true,
 			});
 			this.$el.find("#h-frequency-bands").select2("val", window.settings.currBand);
@@ -163,7 +163,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 		// channels width
 		this.$el.find("#h-channel-width").select2({ 
-			data: window.place.attributes.frequenciesChannelWidth 
+			data: window.place.attributes.frequencies.width 
 		});
 		this.$el.find("#h-channel-width").select2("val", window.settings.currChannel);
 
@@ -225,11 +225,11 @@ app.view.HeatmapView = Backbone.View.extend({
 			to;
 
 		if(Number(bands[0]) === 0){
-			from = this.data.frequencyMin;
-			to = this.data.frequencyMax;
+			from = this.data.frequencies.min;
+			to = this.data.frequencies.max;
 		} else {
-			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
-			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
+			from = window.place.attributes.frequencies.bands[bands[0]].from;
+			to = window.place.attributes.frequencies.bands[bands[bands.length - 1]].to;
 		}
 		var tail = Math.round((to - from) * 0.10),
 			start = [from + tail, to - tail];
@@ -291,7 +291,7 @@ app.view.HeatmapView = Backbone.View.extend({
 
 	renderMaxSuggestedSlider: function(){
 		this.maxIntensitySlider = this.$el.find('#h-max-intensity-slider').noUiSlider({
-			start: this.data.powerMax,
+			start: this.data.power.max,
 			step: 1,
 			format: wNumb({
 				decimals: 0
@@ -302,7 +302,7 @@ app.view.HeatmapView = Backbone.View.extend({
 			}
 		}, true);
 
-		this.maxIntensitySlider.val(this.data.powerMax);
+		this.maxIntensitySlider.val(this.data.power.max);
 		this.$el.find('#h-max-intensity-slider')
 		.Link('lower')
 		.to('-inline-<div class="nouislider-tooltip bottom"></div>', function(value){
@@ -467,7 +467,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		if(update){
 			data = this.getHeatmapData(true);
 			this.heatmap.settings.maxIntensity = 
-				this.heatmapDataProcessor.normalizeValue(this.data.powerMax);
+				this.heatmapDataProcessor.normalizeValue(this.data.power.max);
 
 			// render in the real 0
 			var _id = this.heatmap._crrData[0]._id;
@@ -512,7 +512,7 @@ app.view.HeatmapView = Backbone.View.extend({
 		var template = Zebra.tmpl.heatmap;
 		var html = template({
 			place: window.place.attributes, 
-			bands: window.place.attributes.frequenciesBands.length > 1 ? true: false
+			bands: window.place.attributes.frequencies.bands.length > 1 ? true: false
 		});
 		this.$el.html(html);
 

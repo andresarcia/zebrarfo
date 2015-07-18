@@ -197,18 +197,18 @@ app.view.CapturesView = Backbone.View.extend({
 		// if all ([0]) in bands, then all bands
 		if(Number(bands[0]) === 0){
 			_.each(data,function(item){
-				if(item.frequency) dataPlot.push([Math.round(item.frequency/1000),item.power]);
+				if(item.frequency) dataPlot.push([Math.round(item.frequency),item.power]);
 			});
 		// else apply filter
 		} else {
 			var index = 0;
 			var boundIndex = bands[index];
 			_.find(data, function(item){
-				var from = window.place.attributes.frequenciesBands[boundIndex].from;
-				var to = window.place.attributes.frequenciesBands[boundIndex].to;
+				var from = window.place.attributes.frequencies.bands[boundIndex].from;
+				var to = window.place.attributes.frequencies.bands[boundIndex].to;
 				var fq = item.frequency;
 
-				if(fq >= from && fq <= to) dataPlot.push([Math.round(fq/1000),item.power]);
+				if(fq >= from && fq <= to) dataPlot.push([Math.round(fq),item.power]);
 				if(fq > to) {
 					if(index < bands.length - 1){
 						index += 1;

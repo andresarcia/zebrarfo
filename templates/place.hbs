@@ -28,31 +28,31 @@
 					</tr>
 					<tr>
 						<td>Total distance</td>
-						<td>{{place.totalDistance}} <small><b>km</b></small></td>
+						<td>{{place.distance.total}} <small><b>km</b></small></td>
 					</tr>
 					<tr>
 						<td>Total number of frequencies</td>
-						<td>{{place.numberPowerFrequency}}</td>
+						<td>{{place.frequencies.values.length}}</td>
 					</tr>
 					<tr>
 						<td>Range of frequencies</td>
-						<td>[{{place.frequencyMin}}-{{place.frequencyMax}}] <small><b>MHz</b></small></td>
+						<td>[{{place.frequencies.min}}-{{place.frequencies.max}}] <small><b>MHz</b></small></td>
 					</tr>
 					<tr>
 						<td>Minimum power</td>
-						<td>{{place.powerMin}} <small><b>dBm</b></small></td>
+						<td>{{place.power.min}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Maximum power</td>
-						<td>{{place.powerMax}} <small><b>dBm</b></small></td>
+						<td>{{place.power.max}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Average power</td>
-						<td>{{place.powerAvg}} <small><b>dBm</b></small></td>
+						<td>{{place.power.avg}} <small><b>dBm</b></small></td>
 					</tr>
 					<tr>
 						<td>Standard deviation of power</td>
-						<td>{{place.sdPowerAvg}} <small><b>dBm</b></small></td>
+						<td>{{place.power.sd}} <small><b>dBm</b></small></td>
 					</tr>
 					{{#if bands }}
 						<tr>

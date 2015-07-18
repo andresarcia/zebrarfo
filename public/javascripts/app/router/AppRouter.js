@@ -53,7 +53,7 @@ app.router.AppRouter = Backbone.Router.extend({
 	},
 
 	/*-------------------------------------------------------------------*/
-	setChannelsInRange: function(frequencyMin,frequencyMax){
+	setChannelsInRange: function(frequencyMin, frequencyMax){
 		var data = [];
 		_.each(window.settings.channels, function(item){
 			var aux = [];
@@ -117,12 +117,13 @@ app.router.AppRouter = Backbone.Router.extend({
 			success: function(){  
 				self.waitingView.hide();
 				window.settings.fixedChannels = self.setChannelsInRange(
-					window.place.attributes.frequencyMin, window.place.attributes.frequencyMax);
+					window.place.attributes.frequencies.min, window.place.attributes.frequencies.max);
 
-				if(window.place.attributes.frequenciesBands.length > 1) window.settings.currBand = [1];
+				if(window.place.attributes.frequencies.bands.length > 1) 
+					window.settings.currBand = [1];
 				else window.settings.currBand = [0];
 
-				if(window.place.attributes.frequenciesChannelWidth) window.settings.currChannel = 0;
+				if(window.place.attributes.frequencies.width) window.settings.currChannel = 0;
 
 				callback();
 			},
