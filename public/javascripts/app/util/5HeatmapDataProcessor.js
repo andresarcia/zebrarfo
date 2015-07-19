@@ -40,13 +40,14 @@ app.util.HeatmapDataProcessor.prototype = {
         var data = [];
         var indexForBoundaries = 0;
         for (var i = 0; i < this.data.length; i++){
-            if( this.data[i].frequency >= boundaries[indexForBoundaries].from && 
-                this.data[i].frequency <= boundaries[indexForBoundaries].to){
+            var fq = this.data[i].frequency / 1000;
+            if(fq >= boundaries[indexForBoundaries].from && 
+                fq <= boundaries[indexForBoundaries].to){
 
                 data.push(this.data[i]);
             }
 
-            if(this.data[i].frequency > boundaries[indexForBoundaries].to){
+            if(fq > boundaries[indexForBoundaries].to){
                 if(indexForBoundaries < boundaries.length - 1)
                     indexForBoundaries += 1;
                 else break;

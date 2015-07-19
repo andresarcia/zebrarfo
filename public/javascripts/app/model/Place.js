@@ -10,18 +10,10 @@ app.model.Place = Backbone.Model.extend({
 		if(typeof model.frequencies !== 'object')
 			model.frequencies = JSON.parse(model.frequencies);
 
-		// frequencies values to MHz for better visualization
-		model.frequencies.values = _.map(model.frequencies.values, function(fq){
-			return fq / 1000;
-		});
-		model.frequencies.bands = _.map(model.frequencies.bands, function(band){
-			band.from /= 1000;
-			band.to /= 1000;
-			return band;
-		});
-		model.frequencies.min = Math.ceil(model.frequencies.values[0]);
-		model.frequencies.max = Math.ceil(
-			model.frequencies.values[model.frequencies.values.length - 1]);
+		// divided by 1000 for better visualization
+		model.frequencies.min = Number(Math.ceil(model.frequencies.values[0]/1000));
+		model.frequencies.max = Number(
+			Math.ceil(model.frequencies.values[model.frequencies.values.length - 1]/1000));
 
 		if(typeof model.power !== 'object')
 			model.power = JSON.parse(model.power);

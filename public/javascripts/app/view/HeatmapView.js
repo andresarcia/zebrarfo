@@ -228,8 +228,8 @@ app.view.HeatmapView = Backbone.View.extend({
 			from = this.data.frequencies.min;
 			to = this.data.frequencies.max;
 		} else {
-			from = window.place.attributes.frequencies.bands[bands[0]].from;
-			to = window.place.attributes.frequencies.bands[bands[bands.length - 1]].to;
+			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
+			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
 		}
 		var tail = Math.round((to - from) * 0.10),
 			start = [from + tail, to - tail];

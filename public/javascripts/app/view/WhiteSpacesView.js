@@ -171,8 +171,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			from = this.data.frequencies.min;
 			to = this.data.frequencies.max;
 		} else {
-			from = window.place.attributes.frequencies.bands[bands[0]].from;
-			to = window.place.attributes.frequencies.bands[bands[bands.length - 1]].to;
+			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
+			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
 		}
 
 		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
@@ -350,7 +350,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			fq;
 
 		for (var i = 0; i < this.data.charts.length; i++){
-			fq = this.data.charts[i].frequency;
+			fq = this.data.charts[i].frequency / 1000;
 			if(fq >= this.boundaries[index].from && fq <= this.boundaries[index].to)
 				data.push(this.data.charts[i]);
 
@@ -368,7 +368,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 				_.each(itemSameFrequency, function(item){
 					if(item.power >= j) passed += 1;
 				});
-				var x = itemSameFrequency[0].frequency;
+				var x = itemSameFrequency[0].frequency / 1000;
 				// occupation
 				var occupation = (passed/itemSameFrequency.length)*100;
 				if(occupation <= self.settings.occupation.max) y = occupation;

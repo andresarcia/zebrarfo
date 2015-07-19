@@ -203,7 +203,7 @@ app.view.OccupationView = Backbone.View.extend({
 			});
 		});
 
-		this.chart.render(data,this.chartOptions);
+		this.chart.render(data, this.chartOptions);
 
 		_.each(window.settings.place.charts.channels,function(item){
 			Backbone.pubSub.trigger('event-occupation-channel-select',item);
