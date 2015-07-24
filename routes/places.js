@@ -3,6 +3,7 @@ var async = require('async');
 
 var i = require('./places');
 
+var moment = require('moment');
 var _ = require('underscore');
 var jf = require('jsonfile');
 var utils = require('./utils/Utils');
@@ -444,7 +445,42 @@ exports.update = function(req, res){
 				res.status(200).send(n);
 			});
 		});
+
+	} else {
+		db.Place.find({
+		where: {
+			UserId: req.user.iss,
+			id: req.params.id,
+			visible: true
+		},
+		}).then(function(place){
+			if(!place){
+				console.error("404, Place not found");
+				return res.json(404, { message: "Place not found" });
+			}
+
+			place.dataValues.name = req.body.name;
+			place.dataValues.shared = req.body.shared;
+			place.dataValues.updatedAt = moment().format();
+
+			place.save()
+			.then(function(n){
+				res.status(200).send(n);
+			}).catch(function(err) {
+				console.error("ERROR: " + err);
+				return res.json(500, { 
+					message: "There has been a server error. Please try again in a few minutes" 
+				});
+			});
+		
+		}).catch(function(err) {
+			console.error("ERROR: " + err);
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
+		});
 	}
+
 };
 
 /*-------------------------------------------------------------------*/
