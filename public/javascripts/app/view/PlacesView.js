@@ -52,7 +52,6 @@ app.view.PlacesView = Backbone.View.extend({
 		}
 	},
 
-
 	renderMyPlaces: function(){
 		window.settings.places.views.my = new app.view.MyPlacesView({
 			waitingView: this.waitingView,
@@ -64,12 +63,17 @@ app.view.PlacesView = Backbone.View.extend({
 	},
 
 	renderSharedPlaces: function(){
+		var self = this;
+
 		window.settings.places.views.shared = new app.view.SharedPlacesView({
 			waitingView: this.waitingView,
 			errorView : this.errorView,
 		});
 
-		this.$el.find('#shared-tab').html(window.settings.places.views.shared.render().el);
+		window.settings.places.views.shared.fetch(function(){
+			self.$el.find('#shared-tab').html(window.settings.places.views.shared.render().el);
+			window.settings.places.views.shared.renderComponents();
+		});
 	},
 
 	render: function(){

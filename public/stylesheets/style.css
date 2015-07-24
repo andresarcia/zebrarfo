@@ -806,6 +806,10 @@ hr {
   text-align: center;
   color: #ffffff;
 }
+.panel-places-shared > .panel-heading {
+  /*background-color: #00CEB9;*/
+  background-color: #EB3A6E;
+}
 .panel-places > .panel-heading a {
   color: #ffffff;
   text-decoration: none;
@@ -828,6 +832,11 @@ hr {
 }
 .panel-places > .panel-heading > .links > .not-shared {
   color: #DDDDDD !important;
+}
+.panel-places > .panel-footer {
+  font-size: 9px;
+  color: #737373;
+  background-color: #ffffff;
 }
 .panel-places > .panel-body {
   font-family: 'Helvetica Neue','Helvetica','ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ','Meiryo','ＭＳ Ｐゴシック',arial,sans-serif;
@@ -878,13 +887,6 @@ hr {
 .power-canvas {
   max-width: 100%;
   width: 100%;
-}
-.panel-places .panel-footer {
-  text-align: right;
-  background-color: #ffffff;
-}
-.panel-places .panel-footer h6 {
-  margin: 0px;
 }
 /*********************************/
 /* PLACE *************************/

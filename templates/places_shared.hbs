@@ -1,2 +1,86 @@
 <div class="row masonry-container">
+
+    {{#each this.models}}<!-- For each place -->
+
+    <div class="col-md-4 col-sm-6 item"> <!-- Col container -->
+      <div class="panel panel-default panel-places panel-places-shared"><!-- Panel -->
+        <div class="panel-heading"><!-- Heading -->
+          <a href="#places/{{attributes.id}}">
+            <h4>{{this.attributes.name}}</h4>
+          </a>
+        </div> <!-- End Panel Heading -->
+
+        <div class="panel-body"><!-- Panel Body -->
+
+          <div class="tabbable-panel"><!-- tabs de cards-->
+            <div class="tabbable-line">
+              <ul class="nav nav-tabs ">
+                <li class="active">
+                  <a href="#sumary_tab_{{attributes.id}}" data-toggle="tab">Summary</a>
+                </li>
+                <li>
+                  <a href="#frequencies_tab_{{attributes.id}}" data-toggle="tab">Frequencies</a>
+                </li>
+                <li>
+                  <a href="#power_tab_{{attributes.id}}" data-toggle="tab">Power</a>
+                </li>
+              </ul>
+
+              <div class="tab-content">
+                <div class="tab-pane active places-sumary" id="sumary_tab_{{attributes.id}}">
+                  <div class="big-small col-md-6 col-sm-6 col-xs-6">
+                    <h3>{{attributes.numberCoordinates}}</h3>
+                    <h5><small>samples</small></h5>
+                  </div>
+                  <div class="big-small col-md-6 col-sm-6 col-xs-6">
+                    <h3>{{attributes.distance.total}}</h3>
+                    <h6><small><b>km</b></small></h6>
+                    <h5><small>distance</small></h5>
+                  </div>
+                </div>
+
+                <div class="tab-pane places-frequencies" id="frequencies_tab_{{attributes.id}}">
+                  <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                    <h4>{{attributes.frequencies.values.length}}</h4>
+                    <h5><small>number of frequencies</small></h5>
+                  </div>
+                  <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                    <h4>{{attributes.frequencies.min}}-{{attributes.frequencies.max}}</h4>
+                    <h6><small><b>MHz</b></small></h6>
+                    <h5><small>range</small></h5>
+                  </div>
+                </div>
+
+                <div class="tab-pane places-power" id="power_tab_{{attributes.id}}">
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <canvas class="power-canvas" height="10"></canvas>
+                  </div>
+                  <div class="big-small col-md-12 col-sm-12 col-xs-12">
+                    <h5 class="pull-left"><small>{{attributes.power.min}} dBm</small></h5>
+                    <h5 class="pull-right"><small>{{attributes.power.max}} dBm</small></h5>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div> <!-- End tabs cards> -->
+
+        </div> <!-- End Panel Body> -->
+
+        <div class="panel-footer"><!-- Panel Footer -->
+            <div class="pull-left">
+                <b>by</b> {{this.attributes.User.email}}
+            </div>
+            <div class="pull-right">
+                <span class="glyphicon glyphicon-time"></span>
+                {{this.attributes.friendlyDate}}
+            </div>
+            <br>
+        </div> <!-- End Panel Footer -->
+
+      </div> <!-- End panel -->
+
+    </div> <!-- End Col container -->
+  {{/each}} <!-- End Each -->
+
 </div><!--End masonry-container  -->

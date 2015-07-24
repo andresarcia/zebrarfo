@@ -35,18 +35,18 @@
             <div class="tabbable-line">
               <ul class="nav nav-tabs ">
                 <li class="active">
-                  <a href="#sumary_tab_{{attributes.id}}" data-toggle="tab">Summary</a>
+                  <a href="#sumary_tab_shared_{{attributes.id}}" data-toggle="tab">Summary</a>
                 </li>
                 <li>
-                  <a href="#frequencies_tab_{{attributes.id}}" data-toggle="tab">Frequencies</a>
+                  <a href="#frequencies_tab_shared_{{attributes.id}}" data-toggle="tab">Frequencies</a>
                 </li>
                 <li>
-                  <a href="#power_tab_{{attributes.id}}" data-toggle="tab">Power</a>
+                  <a href="#power_tab_shared_{{attributes.id}}" data-toggle="tab">Power</a>
                 </li>
               </ul>
 
               <div class="tab-content">
-                <div class="tab-pane active places-sumary" id="sumary_tab_{{attributes.id}}">
+                <div class="tab-pane active places-sumary" id="sumary_tab_shared_{{attributes.id}}">
                   <div class="big-small col-md-6 col-sm-6 col-xs-6">
                     <h3>{{attributes.numberCoordinates}}</h3>
                     <h5><small>samples</small></h5>
@@ -58,7 +58,7 @@
                   </div>
                 </div>
 
-                <div class="tab-pane places-frequencies" id="frequencies_tab_{{attributes.id}}">
+                <div class="tab-pane places-frequencies" id="frequencies_tab_shared_{{attributes.id}}">
                   <div class="big-small col-md-12 col-sm-12 col-xs-12">
                     <h4>{{attributes.frequencies.values.length}}</h4>
                     <h5><small>number of frequencies</small></h5>
@@ -70,7 +70,7 @@
                   </div>
                 </div>
 
-                <div class="tab-pane places-power" id="power_tab_{{attributes.id}}">
+                <div class="tab-pane places-power" id="power_tab_shared_{{attributes.id}}">
                   <div class="col-md-12 col-sm-12 col-xs-12">
                     <canvas class="power-canvas" height="10"></canvas>
                   </div>
@@ -87,12 +87,11 @@
         </div> <!-- End Panel Body> -->
 
         <div class="panel-footer"><!-- Panel Footer -->
-          <h6>
-            <small>
-              <span class="glyphicon glyphicon-time"></span>
-              {{this.attributes.friendlyDate}}
-            </small>
-          </h6>
+          <div class="pull-right">
+            <span class="glyphicon glyphicon-time"></span>
+            {{this.attributes.friendlyDate}}
+          </div>
+          <br>
         </div> <!-- End Panel Footer -->
 
       </div> <!-- End panel -->
