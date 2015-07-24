@@ -13,7 +13,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		'': 'showPlaces',
 		'logout': 'logout',
 
-		'places': 'showPlaces',
+		'places?type=:type': 'showPlaces',
 		'places/upload': 'uploadPlace',
 
 		'places/:id' : 'showPlace',
@@ -189,7 +189,14 @@ app.router.AppRouter = Backbone.Router.extend({
 		this.menu.changeActive(index);
 	},
 
-	showPlaces: function(){
+	showPlaces: function(type){
+		if(this.currentView !== null && this.currentView.id == 'places') return;
+
+		var placeType;
+
+		if(type === 'my') placeType = 0;
+		else if(type === 'shared') placeType = 1;
+
 		var self = this;
 		this.fetchPlaces(function(err){
 			if(err) return self.errorRequest(err);
@@ -198,6 +205,7 @@ app.router.AppRouter = Backbone.Router.extend({
 			self.currentView = new app.view.PlacesView({
 				waitingView: self.waitingView,
 				errorView : self.errorView,
+				type: placeType
 			});
 			self.renderMenuPlaces([0]);
 		});
@@ -237,9 +245,8 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showEditPlace: function(id,type){
-		if(this.currentView !== null && this.currentView.id == 'edit-place')
-			return;
+	showEditPlace: function(id, type){
+		if(this.currentView !== null && this.currentView.id == 'edit-place') return;
 
 		var self = this;
 		var editType;
@@ -264,7 +271,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	showChartsOfPlace: function(id,type){
+	showChartsOfPlace: function(id, type){
 		if(this.currentView !== null && this.currentView.id == 'place-charts')
 			return;
 

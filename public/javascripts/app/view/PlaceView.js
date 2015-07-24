@@ -66,12 +66,12 @@ app.view.PlaceView = Backbone.View.extend({
 		var self = this;
 		var deleteFunction = function(){
 			self.waitingView.show();
-			var place = new app.model.Place({ id: window.place.id });
-			place.destroy({
+
+			window.place.destroy({
 				success: function() {
 					self.waitingView.hide();
 					delete window.places;
-					window.location.hash = '#places';
+					window.location.hash = '#';
 				},
 				error: function(model, xhr, options){
 					self.waitingView.hide();

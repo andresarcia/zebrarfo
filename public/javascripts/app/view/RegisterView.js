@@ -162,7 +162,7 @@ app.view.RegisterView = Backbone.View.extend({
 			self.$el.find('#reg-modal').modal('hide');
 			self.$el.find('#reg-modal').on('hidden.bs.modal', function (e) {
 				new app.router.AppRouter();
-				window.location.hash = '#places';
+				window.location.hash = '#';
 			});
 		})
 		.fail(function(err) {

@@ -25,12 +25,9 @@ app.view.ChartsView = Backbone.View.extend({
 		this.render();
 		this.waitingView.hide();
 
-		if(window.settings.place.charts.tab)
-			this.change(null,window.settings.place.charts.tab);
-		else if(options.type !== undefined)
-			this.change(null,options.type);
-		else
-			this.change(null,0);
+		if(window.settings.place.charts.tab) this.change(null,window.settings.place.charts.tab);
+		else if(options.type !== undefined) this.change(null,options.type);
+		else this.change(null,0);
 
 		Backbone.pubSub.off('charts-change-to-heatmap');
 		Backbone.pubSub.on('charts-change-to-heatmap', function(){
@@ -44,8 +41,6 @@ app.view.ChartsView = Backbone.View.extend({
 	},
 
 	change: function(evt,index){
-		var self = this;
-
 		if(index === undefined)
 			index = $('a[data-toggle="tab"]').index(evt.currentTarget);
 		else 
@@ -53,34 +48,23 @@ app.view.ChartsView = Backbone.View.extend({
 
 		window.settings.place.charts.tab = index;
 
-		var isEmpty;
 		switch (index) {
 			case 0:
 				window.location.hash = '#places/'+window.place.id+'/charts?type=occupation';
-				isEmpty = this.$el.find('#occupation-tab').is(':empty');
-
-				if(isEmpty)
-					self.renderOccupation();
-				else 
-					window.settings.place.charts.occupation.view.updateDataByTab();
+				if(this.$el.find('#occupation-tab').is(':empty')) this.renderOccupation();
+				else window.settings.place.charts.occupation.view.updateDataByTab();
 				break;
 				
 			case 1:
 				window.location.hash = '#places/'+window.place.id+'/charts?type=heatmap';
-				isEmpty = this.$el.find('#heatmap-tab').is(':empty');
-				if(isEmpty)
-					self.renderHeatmap();
-				else
-					window.settings.place.charts.heatmap.view.updateDataByTab();
+				if(this.$el.find('#heatmap-tab').is(':empty')) this.renderHeatmap();
+				else window.settings.place.charts.heatmap.view.updateDataByTab();
 				break;
 
 			case 2:
 				window.location.hash = '#places/'+window.place.id+'/charts?type=white-spaces';
-				isEmpty = this.$el.find('#white-spaces-tab').is(':empty');
-				if(isEmpty)
-					self.renderWhiteSpaces();
-				else
-					window.settings.place.charts.whiteSpaces.view.updateDataByTab();
+				if(this.$el.find('#white-spaces-tab').is(':empty')) this.renderWhiteSpaces();
+				else window.settings.place.charts.whiteSpaces.view.updateDataByTab();
 				break;
 		}
 	},

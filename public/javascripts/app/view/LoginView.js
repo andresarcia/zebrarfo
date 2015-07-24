@@ -116,7 +116,7 @@ app.view.LoginView = Backbone.View.extend({
 			localStorage.email = res.user.email;
 
 			new app.router.AppRouter();
-			window.location.hash = '#places';
+			window.location.hash = '#';
 		})
 		.fail(function(err) {
 			self.enable();

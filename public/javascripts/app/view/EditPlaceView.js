@@ -32,8 +32,6 @@ app.view.EditPlaceView = Backbone.View.extend({
 	},
 
 	change: function(evt,index){
-		var self = this;
-
 		if(index === undefined)
 			index = $('a[data-toggle="tab"]').index(evt.currentTarget);
 		else 
@@ -41,21 +39,14 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		window.settings.place.editPlace.tab = index;
 
-		var isEmpty;
 		switch (index) {
 			case 0:
 				window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
-				isEmpty = this.$el.find('#edit-coord-tab').is(':empty');
-				if(isEmpty)
-					self.renderEditCoordinates();
-
+				if(this.$el.find('#edit-coord-tab').is(':empty')) this.renderEditCoordinates();
 				break;
 			case 1:
 				window.location.hash = '#places/'+window.place.id+'/edit?type=outliers';
-				isEmpty = this.$el.find('#edit-outliers-tab').is(':empty');
-				if(isEmpty)
-					self.renderEditOutliers();
-
+				if(this.$el.find('#edit-outliers-tab').is(':empty')) this.renderEditOutliers();
 				break;
 		}
 	},
