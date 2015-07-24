@@ -4,101 +4,78 @@ app.view = app.view || {};
 app.view.PlacesView = Backbone.View.extend({
 
 	el: '#ws-containter',
-	places: null,
 
 	events: {
-		'click .places-delete': 'deletePlace',
+		'click a[data-toggle="tab"]': 'change'
 	},
-	
+
 	initialize: function(options){
 		var self = this;
+		// var for be read from router
+		this.id = "places";
+		// delete the place in memory for select new one
 		delete window.place;
+
+		window.settings.places = window.settings.places || {};
+		window.settings.places.views = window.settings.places.views || {};
+
 		this.errorView = options.errorView;
 		this.waitingView = options.waitingView;
 		this.render();
+
+		if(window.settings.places.tab) this.change(null, window.settings.places.tab);
+		else if(options.type !== undefined) this.change(null, options.type);
+		else this.change(null, 0);
 	},
 
-	deletePlace: function(evt){
-		var id = $(evt.currentTarget).data("id"),
-			name = $(evt.currentTarget).data("name"),
-			index = this.$el.find('.places-delete').index(evt.currentTarget);
-			self = this;
+	change: function(evt, index){
+		if(index === undefined)
+			index = $('a[data-toggle="tab"]').index(evt.currentTarget);
+		else 
+			$('#places-tabs li:eq('+index+') a').tab('show');
 
-		var deleteFunction = function(){
-			self.waitingView.show();
-			var place = new app.model.Place({ id: id });
-			place.destroy({
-				success: function() {
-					self.waitingView.hide();
-					// delete from local the place
-					window.places.models.splice(index, 1);
-					self.render();
-				},
-				error: function(model, xhr, options){
-					self.waitingView.hide();
-					self.errorView.render([xhr.responseJSON.message]);
-				}
-			});
-		};
+		window.settings.places.tab = index;
 
-		bootbox.dialog({
-			message: '<h4>Are you sure to delete <b>' + name + '</b>?</h4>',
-			buttons: {
-				main: {
-					label: "Cancel",
-				},
-				danger: {
-					label: "Delete!",
-					className: "btn-danger",
-					callback: deleteFunction
-				},
-			}
+		var isEmpty;
+		switch (index) {
+			case 0:
+				window.location.hash = '#places?type=me';
+				if(this.$el.find('#me-tab').is(':empty')) this.renderMyPlaces();
+				else window.settings.places.views.my.updateDataByTab();
+				break;
+				
+			case 1:
+				window.location.hash = '#places?type=shared';
+				if(this.$el.find('#shared-tab').is(':empty')) this.renderSharedPlaces();
+				else window.settings.places.views.shared.updateDataByTab();
+				break;
+		}
+	},
+
+
+	renderMyPlaces: function(){
+		window.settings.places.views.my = new app.view.MyPlacesView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
 		});
+
+		this.$el.find('#me-tab').html(window.settings.places.views.my.render().el);
+		window.settings.places.views.my.renderComponents();
+	},
+
+	renderSharedPlaces: function(){
+		window.settings.places.views.shared = new app.view.SharedPlacesView({
+			waitingView: this.waitingView,
+			errorView : this.errorView,
+		});
+
+		this.$el.find('#shared-tab').html(window.settings.places.views.shared.render().el);
 	},
 
 	render: function(){
 		var template = Zebra.tmpl.places;
-		var html = template(window.places);
+		var html = template();
 		this.$el.html(html);
-
-		this.$el.find('.masonry-container').masonry({
-			itemSelector: '.grid-item',
-			columnWidth: 200
-		});
-
-		// activate masonry in all tabs
-		var $container = this.$el.find('.masonry-container');
-		this.$el.find('a[data-toggle=tab]').each(function() {
-			var $this = $(this);
-			// listen the event tab show
-			$this.on('shown.bs.tab', function () {
-				// when images load
-				$container.imagesLoaded( function () {
-					// init masonry
-					$container.masonry({
-						columnWidth: '.item',
-						itemSelector: '.item'
-					});
-				});
-			});
-		});
-
-		// draw gradient canvas
-		_.each(document.getElementsByClassName('power-canvas'), function(canvas){
-			var context = canvas.getContext('2d');
-			context.rect(0, 0, canvas.width, canvas.height);
-			var grd = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-			grd.addColorStop(0, 'RGBA(4, 3, 5, 1)');
-			grd.addColorStop(0.142, 'RGBA(3, 4, 105, 1)');
-			grd.addColorStop(0.284, 'RGBA(11, 52, 185, 1)');
-			grd.addColorStop(0.426, 'RGBA(69, 233, 254, 1)');
-			grd.addColorStop(0.568, 'RGBA(57, 183, 0, 1)');
-			grd.addColorStop(0.710, 'RGBA(255, 252, 0, 1)');
-			grd.addColorStop(0.852, 'RGBA(255, 141, 51, 1)');
-			grd.addColorStop(1, 'RGBA(247, 26, 8, 1)');
-			context.fillStyle = grd;
-			context.fill();
-		});
 
 		return this;
 	},
