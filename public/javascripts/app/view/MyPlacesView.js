@@ -5,6 +5,7 @@ app.view.MyPlacesView = Backbone.View.extend({
 
     events: {
         'click .places-delete': 'deletePlace',
+        'click .places-share': 'toggleSharePlace',
     },
 
     initialize: function(options){
@@ -51,6 +52,26 @@ app.view.MyPlacesView = Backbone.View.extend({
                     className: "btn-danger",
                     callback: deleteFunction
                 },
+            }
+        });
+    },
+
+    toggleSharePlace: function(evt){
+        var id = $(evt.currentTarget).data("id"),
+            name = $(evt.currentTarget).data("name"),
+            index = this.$el.find('.places-share').index(evt.currentTarget);
+            self = this;
+
+        var place = window.places.get(id);
+        var shared = !place.get("shared");
+        place.set("shared", shared);
+        place.save(place.attributes, {
+            success: function(model){
+                self.render();
+            },
+            error: function(model, xhr, options){
+                self.waitingView.hide();
+                self.errorView.render([xhr.responseJSON.message]);
             }
         });
     },
