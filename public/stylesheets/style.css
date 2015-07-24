@@ -811,11 +811,23 @@ hr {
   text-decoration: none;
 }
 .panel-places > .panel-heading > .links {
-  text-align: right;
+  padding-bottom: 20px;
 }
 .panel-places > .panel-heading > .links a {
   font-size: 12px;
   color: #ffffff;
+}
+.panel-places > .panel-heading > .links > .places-share {
+  margin-top: -2px;
+  font-size: 14px !important;
+}
+.panel-places > .panel-heading > .links > .places-share > .share-message {
+  font-size: 10px;
+  float: left;
+  margin: 2px 5px 0px;
+}
+.panel-places > .panel-heading > .links > .not-shared {
+  color: #DDDDDD !important;
 }
 .panel-places > .panel-body {
   font-family: 'Helvetica Neue','Helvetica','ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ','Meiryo','ＭＳ Ｐゴシック',arial,sans-serif;
