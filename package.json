@@ -18,7 +18,7 @@
     "jsonfile": "^2.0.0",
     "jwt-simple": "^0.2.0",
     "line-reader": "^0.2.4",
-    "moment": "^2.9.0",
+    "moment": "^2.10.3",
     "mongoose": "^4.0.2",
     "mongoose-findorcreate": "^0.1.2",
     "morgan": "~1.0.0",
