@@ -267,6 +267,29 @@ exports.list = function(req, res){
 	});
 };
 
+
+/*-------------------------------------------------------------------*/
+exports.sharedList = function(req, res){
+	db.Place.findAll({
+		where: {
+			shared: true,
+			visible: true
+		}, 
+		include: [{ 
+			model: db.User,
+			attributes: ["email"]
+		}]
+	}).then(function(places){
+		res.status(200).send(places);
+	}).catch(function(err) {
+		console.error("ERROR: " + err);
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
+	});
+};
+
+
 /*-------------------------------------------------------------------*/
 exports.get = function(req, res){
 	// check place id is a number
@@ -313,6 +336,55 @@ exports.get = function(req, res){
 			where: {
 				visible: true
 			} 
+		}]
+	}).then(function(place){
+		if(!place){
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
+		}
+
+		place = place.toJSON();
+		place.coordinates = place.Coordinates;
+		delete place.Coordinates;
+
+		// ========================
+		// var end = new Date().getTime();
+		// console.log("Time ms:" + (end - start));
+		// ========================
+
+		res.status(200).send(place);
+	
+	}).catch(function(err) {
+		console.error("ERROR: " + err);
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
+	});
+};
+
+
+/*-------------------------------------------------------------------*/
+exports.getShared = function(req, res){
+	// check place id is a number
+	if(!utils.isNumber(req.params.id)){
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
+	}
+
+	db.Place.find({
+		where: {
+			id: req.params.id,
+			visible: true,
+			shared: true
+		},
+		include: [{ 
+			model: db.Coordinate, 
+			where: {
+				visible: true
+			}
+		}, {
+			model: db.User,
+			attributes: ["email"]
 		}]
 	}).then(function(place){
 		if(!place){

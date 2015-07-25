@@ -19,7 +19,9 @@ router.post('/users', users.create);
 
 /* PLACES ------------------------------------------------------------*/
 router.get('/places', isAuth, places.list);
+router.get('/places/shared', isAuth, places.sharedList);
 router.get('/places/:id', isAuth, places.get);
+router.get('/places/shared/:id', isAuth, places.getShared);
 router.put('/places/:id', isAuth, places.update);
 router.post('/places', isAuth, places.create);
 router.delete('/places/:id', isAuth, places.delete);
@@ -33,6 +35,7 @@ router.get('/places/:idPlace/coordinates/:id', isAuth, coordinates.get);
 
 /*-------------------------------------------------------------------*/
 router.get('/places/:id/outliers', isAuth, outliers.list);
+router.get('/places/shared/:id/outliers', isAuth, outliers.sharedList);
 router.delete('/places/:idPlace/outliers/:id', isAuth, outliers.delete);
 
 /*-------------------------------------------------------------------*/

@@ -47,6 +47,7 @@ exports.save = function(id, outliers, isNew, callback){
 		return callback("ID");
 };
 
+
 /*-------------------------------------------------------------------*/
 exports.list = function(req, res){
 	if(!utils.isNumber(req.params.id)){
@@ -91,6 +92,53 @@ exports.list = function(req, res){
 		});
 	});
 };
+
+
+/*-------------------------------------------------------------------*/
+exports.sharedList = function(req, res){
+	if(!utils.isNumber(req.params.id)){
+		console.error("400, Sorry, the place id has the wrong format specification");
+		return res.json(400, { message: "Sorry, the place id has the wrong format specification" });
+	}
+
+	db.Place.find({
+		where: {
+			id: req.params.id,
+			visible: true,
+			shared: true,
+		},
+	}).then(function(place){
+		if(!place){
+			console.error("404, Place not found");
+			return res.json(404, { message: "Place not found" });
+		}
+	
+		place.getOutliers({
+			order: 'power DESC',
+		})	
+		.then(function(data){
+			if(data.length === 0){
+				console.error("404, Outliers not found");
+				return res.json(404, { message: "Outliers not found" });
+			}
+
+			res.status(200).send(data);
+
+		}).catch(function(err){
+			console.error("ERROR: " + err);
+			return res.json(500, { 
+				message: "There has been a server error. Please try again in a few minutes" 
+			});
+		});
+	
+	}).catch(function(err){
+		console.error("ERROR: " + err);
+		return res.json(500, { 
+			message: "There has been a server error. Please try again in a few minutes" 
+		});
+	});
+};
+
 
 /*-------------------------------------------------------------------*/
 exports.delete = function(req, res){
