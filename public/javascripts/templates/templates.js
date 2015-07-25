@@ -1,13 +1,27 @@
 this["Zebra"] = this["Zebra"] || {};
 this["Zebra"]["tmpl"] = this["Zebra"]["tmpl"] || {};
 
-this["Zebra"]["tmpl"]["charts"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+this["Zebra"]["tmpl"]["charts"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<ol class=\"breadcrumb\">\n	<li><a href=\"#\">Places</a></li>\n	<li><a href=\"#places/"
+  return "    <li><a href=\"#places/shared/"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></li>\n	<li class=\"active\">Charts</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"charts-tabs\">\n	<li class=\"active\"><a href=\"#occupation-tab\" role=\"tab\" data-toggle=\"tab\">Occupation</a></li>\n	<li><a href=\"#heatmap-tab\" role=\"tab\" data-toggle=\"tab\">Heatmap</a></li>\n	<li><a href=\"#white-spaces-tab\" role=\"tab\" data-toggle=\"tab\">White Spaces</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"occupation-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"heatmap-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"white-spaces-tab\"></div>\n</div>";
+    + "</a></li>\n";
+},"3":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "    <li><a href=\"#places/"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</a></li>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#\">Places</a></li>\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.shared : stack1), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  stack1 = helpers.unless.call(depth0, ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.shared : stack1), {"name":"unless","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "	<li class=\"active\">Charts</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"charts-tabs\">\n	<li class=\"active\"><a href=\"#occupation-tab\" role=\"tab\" data-toggle=\"tab\">Occupation</a></li>\n	<li><a href=\"#heatmap-tab\" role=\"tab\" data-toggle=\"tab\">Heatmap</a></li>\n	<li><a href=\"#white-spaces-tab\" role=\"tab\" data-toggle=\"tab\">White Spaces</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"occupation-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"heatmap-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"white-spaces-tab\"></div>\n</div>";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["edit_coordinates"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -23,7 +37,10 @@ this["Zebra"]["tmpl"]["edit_coordinates_list"] = Handlebars.template({"1":functi
   if (stack1 != null) { buffer += stack1; }
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.create : depth0), {"name":"if","hash":{},"fn":this.program(16, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn\" id=\"ed-coord-save\">Save</button>\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn\" id=\"ed-coord-save-as\">Save as</button>\n";
+  buffer += "\n";
+  stack1 = helpers.unless.call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.shared : stack1), {"name":"unless","hash":{},"fn":this.program(18, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\n";
 },"2":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "		<br>\n		<div class=\"ws-blue pull-right\">\n			<small>Hidden restore stack</small>\n			<span class=\"ws-dark-gray\"><small>"
@@ -92,37 +109,62 @@ this["Zebra"]["tmpl"]["edit_coordinates_list"] = Handlebars.template({"1":functi
 },"16":function(depth0,helpers,partials,data) {
   return "		<a href=\"javascript:void(0)\" class=\"ws-dark-gray\" id=\"ed-coord-new-edition\">\n			<h3>Click <small>to create a new edition range</small></h3>\n		</a>\n";
   },"18":function(depth0,helpers,partials,data) {
+  return "    <button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn\" id=\"ed-coord-save\">Save</button>\n	<button type=\"button\" class=\"btn btn-default btn-sm btn-block save-btn\" id=\"ed-coord-save-as\">Save as</button>\n";
+  },"20":function(depth0,helpers,partials,data) {
   return "	<div class=\"page-header\">\n		<h1>Click <small>on any marker or drag slider to start editing</small></h1>\n	</div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"unless","hash":{},"fn":this.program(18, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.data : depth0), {"name":"unless","hash":{},"fn":this.program(20, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer;
 },"useData":true});
 
 this["Zebra"]["tmpl"]["edit_outliers"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "				<tr>\n					<td>"
+  return "			        <th class=\"text-center\">Remove</th>\n";
+  },"3":function(depth0,helpers,partials,data,depths) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "				<tr>\n					<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.power : stack1), depth0))
     + "</td>\n					<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.frequency : stack1), depth0))
-    + "</td>\n					<td>\n						<button class=\"btn btn-danger btn-xs btn-delete-outlier\">\n							<span class=\"glyphicon glyphicon-trash\"></span>\n						</button>\n					</td>\n				</tr>\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-12 text-center\">\n		<table class=\"table table-striped table-hover table-condensed table-bordered\">\n			<thead>\n			    <tr>\n			        <th class=\"text-center\">Power (dBm)</th>\n			        <th class=\"text-center\">Occurrence frequency</th>\n			        <th class=\"text-center\">Remove</th>\n			    </tr>\n		    </thead>\n		    <tbody>\n";
-  stack1 = helpers.each.call(depth0, depth0, {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+    + "</td>\n";
+  stack1 = helpers.unless.call(depth0, (depths[1] != null ? depths[1].shared : depths[1]), {"name":"unless","hash":{},"fn":this.program(4, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "				</tr>\n";
+},"4":function(depth0,helpers,partials,data) {
+  return "					<td>\n						<button class=\"btn btn-danger btn-xs btn-delete-outlier\">\n							<span class=\"glyphicon glyphicon-trash\"></span>\n						</button>\n					</td>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,depths) {
+  var stack1, buffer = "<br>\n<div class=\"row\">\n	<div class=\"col-md-12 text-center\">\n		<table class=\"table table-striped table-hover table-condensed table-bordered\">\n			<thead>\n			    <tr>\n			        <th class=\"text-center\">Power (dBm)</th>\n			        <th class=\"text-center\">Occurrence frequency</th>\n";
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.shared : depth0), {"name":"unless","hash":{},"fn":this.program(1, data, depths),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "			    </tr>\n		    </thead>\n		    <tbody>\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.outliers : depth0), {"name":"each","hash":{},"fn":this.program(3, data, depths),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "			</tbody>\n		</table>\n	</div>\n</div>";
-},"useData":true});
+},"useData":true,"useDepths":true});
 
-this["Zebra"]["tmpl"]["edit_place"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+this["Zebra"]["tmpl"]["edit_place"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<ol class=\"breadcrumb\">\n	<li><a href=\"#\">Places</a></li>\n	<li><a href=\"#places/"
+  return "    <li><a href=\"#places/shared/"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></li>\n	<li class=\"active\">Edit place</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"edit-tabs\">\n	<li class=\"active\"><a href=\"#edit-coord-tab\" role=\"tab\" data-toggle=\"tab\">Coordinates</a></li>\n	<li><a href=\"#edit-outliers-tab\" role=\"tab\" data-toggle=\"tab\">Outliers</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"edit-coord-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"edit-outliers-tab\"></div>\n</div>";
+    + "</a></li>\n";
+},"3":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "    <li><a href=\"#places/"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</a></li>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#\">Places</a></li>\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.shared : stack1), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  stack1 = helpers.unless.call(depth0, ((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.shared : stack1), {"name":"unless","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "	<li class=\"active\">Edit place</li>\n</ol>\n<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"edit-tabs\">\n	<li class=\"active\"><a href=\"#edit-coord-tab\" role=\"tab\" data-toggle=\"tab\">Coordinates</a></li>\n	<li><a href=\"#edit-outliers-tab\" role=\"tab\" data-toggle=\"tab\">Outliers</a></li>\n</ul>\n<div class=\"tab-content\">\n	<div class=\"tab-pane fade in active\" id=\"edit-coord-tab\"></div>\n	<div class=\"tab-pane fade\" id=\"edit-outliers-tab\"></div>\n</div>";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["error"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -242,15 +284,31 @@ this["Zebra"]["tmpl"]["password_requirements"] = Handlebars.template({"compiler"
   },"useData":true});
 
 this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "					<a href=\"#places/"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.id : stack1), depth0))
+    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n";
+},"3":function(depth0,helpers,partials,data) {
+  return "					<br>\n					<a href=\"javascript:void(0)\" id=\"p-delete\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n";
+  },"5":function(depth0,helpers,partials,data) {
   return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"p-frequency-bands\">Frequency bands</label>\n								<input class=\"form-control\" id=\"p-frequency-bands\" type=\"hidden\" />\n							</td>\n						</tr>\n";
-  },"3":function(depth0,helpers,partials,data) {
+  },"7":function(depth0,helpers,partials,data) {
   return "						<tr>\n							<td colspan=\"2\">\n								<label for=\"p-channel-width\">Channel width</label>\n								<input class=\"form-control\" id=\"p-channel-width\" type=\"hidden\" />\n							</td>\n						</tr>\n";
-  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  },"9":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "				<div class=\"pull-left\">\n	                <b>by</b> "
+    + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.User : stack1)) != null ? stack1.email : stack1), depth0))
+    + "\n	            </div>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<ol class=\"breadcrumb\">\n	<li><a href=\"#\">Places</a></li>\n	<li class=\"active\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default\" id=\"place-info\">\n			<div class=\"panel-body\">\n				<div class=\"links\">\n					<a href=\"#places/"
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.id : stack1), depth0))
-    + "/upload\" class=\"pull-right ws-blue\">\n						<small>upload more samples</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"p-download\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n					<br>\n					<a href=\"javascript:void(0)\" id=\"p-delete\" class=\"pull-right ws-red\">\n						<small>delete</small>\n					</a>\n				</div>\n				<h3 class=\"col-md-12 name\">"
+    + "</li>\n</ol>\n\n<div class=\"row\">\n	<div class=\"col-md-4\">\n		<div class=\"panel panel-default\" id=\"place-info\">\n			<div class=\"panel-body\">\n				<div class=\"links\">\n";
+  stack1 = helpers.unless.call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.isShared : stack1), {"name":"unless","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "					<a href=\"javascript:void(0)\" id=\"p-download\" class=\"pull-right ws-blue\">\n						<small>download place</small>\n					</a>\n";
+  stack1 = helpers.unless.call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.isShared : stack1), {"name":"unless","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "				</div>\n				<h3 class=\"col-md-12 name\">"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.name : stack1), depth0))
     + "</h3>\n				<table class=\"table table-striped\">\n					<tr>\n						<td>Total number of samples</td>\n						<td>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.numberCoordinates : stack1), depth0))
@@ -271,13 +329,16 @@ this["Zebra"]["tmpl"]["place"] = Handlebars.template({"1":function(depth0,helper
     + " <small><b>dBm</b></small></td>\n					</tr>\n					<tr>\n						<td>Standard deviation of power</td>\n						<td>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.power : stack1)) != null ? stack1.sd : stack1), depth0))
     + " <small><b>dBm</b></small></td>\n					</tr>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.bands : depth0), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequenciesChannelWidth : stack1), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.frequenciesChannelWidth : stack1), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "				</table>\n\n				<button id=\"p-edit\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n				<h6>\n					<small>\n						<span class=\"glyphicon glyphicon-time\"></span>\n						"
+  buffer += "				</table>\n\n				<button id=\"p-edit\" class=\"btn btn-success btn-xs btn-block btn-without-corners\" type=\"button\">\n					Edit place\n				</button>\n			</div>\n			<div class=\"panel-footer\">\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.isShared : stack1), {"name":"if","hash":{},"fn":this.program(9, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "	            <div class=\"pull-right\">\n	                <span class=\"glyphicon glyphicon-time\"></span>\n	                "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.place : depth0)) != null ? stack1.friendlyDate : stack1), depth0))
-    + "\n					</small>\n				</h6>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"p-map\"></div>\n		<div id=\"p-selected-coord\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
+    + "\n	            </div>\n	            <br>\n			</div>\n		</div>\n	</div>\n\n	<div class=\"col-md-8\">\n		<div id=\"p-map\"></div>\n		<div id=\"p-selected-coord\">\n			<div class=\"page-header\" style=\"text-align:center\">\n					<h1>Click <small>on any marker will get info of the sample</small></h1>\n			</div>\n		</div>\n	</div>\n</div>";
 },"useData":true});
 
 this["Zebra"]["tmpl"]["place_coordinate_resume"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -366,7 +427,7 @@ this["Zebra"]["tmpl"]["places_my"] = Handlebars.template({"1":function(depth0,he
 
 this["Zebra"]["tmpl"]["places_shared"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
-  return "<!-- For each place -->\n\n    <div class=\"col-md-4 col-sm-6 item\"> <!-- Col container -->\n      <div class=\"panel panel-default panel-places panel-places-shared\"><!-- Panel -->\n        <div class=\"panel-heading\"><!-- Heading -->\n          <a href=\"#places/"
+  return "<!-- For each place -->\n\n    <div class=\"col-md-4 col-sm-6 item\"> <!-- Col container -->\n      <div class=\"panel panel-default panel-places panel-places-shared\"><!-- Panel -->\n        <div class=\"panel-heading\"><!-- Heading -->\n          <a href=\"#places/shared/"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">\n            <h4>"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.attributes : depth0)) != null ? stack1.name : stack1), depth0))

@@ -17,6 +17,7 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/upload': 'uploadPlace',
 
 		'places/:id' : 'showPlace',
+		'places/shared/:id' : 'showSharedPlace',
 		'places/:id/edit?type=:type' : 'showEditPlace',
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
 		'places/:id/upload' : 'showPlaceUpload',
@@ -105,14 +106,16 @@ app.router.AppRouter = Backbone.Router.extend({
 		});
 	},
 
-	fetchPlace: function(id,callback){
+	fetchPlace: function(id, shared, callback){
 		if(window.place && this.checkSession())
 			return callback();
 
 		var self = this;
 		this.waitingView.show();
 		window.settings.place = {};
-		window.place = new app.model.Place({id:id});
+		if(!shared) window.place = new app.model.Place({id:id});
+		else window.place = new app.model.SharedPlace({id:id});
+
 		window.place.fetch({
 			success: function(){  
 				self.waitingView.hide();
@@ -124,6 +127,8 @@ app.router.AppRouter = Backbone.Router.extend({
 				else window.settings.currBand = [0];
 
 				if(window.place.attributes.frequencies.width) window.settings.currChannel = 0;
+
+				if(shared) window.place.attributes.isShared = true;
 
 				callback();
 			},
@@ -233,7 +238,24 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	showPlace: function(id){
 		var self = this;
-		this.fetchPlace(id, function(err){
+		this.fetchPlace(id, false, function(err){
+			if(err) return self.errorRequest(err);
+
+			if(window.place.get("isShared")) 
+				window.location.hash = '#place/shared/' + id;
+
+			self.clearViews();
+			self.currentView = new app.view.PlaceView({
+				waitingView: self.waitingView,
+				errorView : self.errorView,
+			});
+			self.renderMenuSinglePlace([0,0],id);
+		});
+	},
+
+	showSharedPlace: function(id){
+		var self = this;
+		this.fetchPlace(id, true, function(err){
 			if(err) return self.errorRequest(err);
 
 			self.clearViews();

@@ -8,17 +8,21 @@
 		<div class="panel panel-default" id="place-info">
 			<div class="panel-body">
 				<div class="links">
+					{{#unless place.isShared}}
 					<a href="#places/{{place.id}}/upload" class="pull-right ws-blue">
 						<small>upload more samples</small>
 					</a>
 					<br>
+					{{/unless}}
 					<a href="javascript:void(0)" id="p-download" class="pull-right ws-blue">
 						<small>download place</small>
 					</a>
+					{{#unless place.isShared}}
 					<br>
 					<a href="javascript:void(0)" id="p-delete" class="pull-right ws-red">
 						<small>delete</small>
 					</a>
+					{{/unless}}
 				</div>
 				<h3 class="col-md-12 name">{{place.name}}</h3>
 				<table class="table table-striped">
@@ -77,12 +81,16 @@
 				</button>
 			</div>
 			<div class="panel-footer">
-				<h6>
-					<small>
-						<span class="glyphicon glyphicon-time"></span>
-						{{place.friendlyDate}}
-					</small>
-				</h6>
+				{{#if place.isShared}}
+				<div class="pull-left">
+	                <b>by</b> {{place.User.email}}
+	            </div>
+	            {{/if}}
+	            <div class="pull-right">
+	                <span class="glyphicon glyphicon-time"></span>
+	                {{place.friendlyDate}}
+	            </div>
+	            <br>
 			</div>
 		</div>
 	</div>

@@ -907,11 +907,10 @@ hr {
   margin-top: 50px;
   padding-left: 2px;
 }
-#place-info .panel-footer {
-  text-align: right;
-}
-#place-info .panel-footer h6 {
-  margin: 0px;
+#place-info > .panel-footer {
+  font-size: 9px;
+  color: #737373;
+  background-color: #ffffff;
 }
 /* PLACE MAP ***************/
 #p-map {
