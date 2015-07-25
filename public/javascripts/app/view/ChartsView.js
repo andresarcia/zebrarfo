@@ -50,19 +50,28 @@ app.view.ChartsView = Backbone.View.extend({
 
 		switch (index) {
 			case 0:
-				window.location.hash = '#places/'+window.place.id+'/charts?type=occupation';
+				if(window.place.get("isShared")) 
+					window.location.hash = '#places/shared/'+window.place.id+'/charts?type=occupation';
+				else
+					window.location.hash = '#places/'+window.place.id+'/charts?type=occupation';
 				if(this.$el.find('#occupation-tab').is(':empty')) this.renderOccupation();
 				else window.settings.place.charts.occupation.view.updateDataByTab();
 				break;
 				
 			case 1:
-				window.location.hash = '#places/'+window.place.id+'/charts?type=heatmap';
+				if(window.place.get("isShared")) 
+					window.location.hash = '#places/shared/'+window.place.id+'/charts?type=heatmap';
+				else
+					window.location.hash = '#places/'+window.place.id+'/charts?type=heatmap';
 				if(this.$el.find('#heatmap-tab').is(':empty')) this.renderHeatmap();
 				else window.settings.place.charts.heatmap.view.updateDataByTab();
 				break;
 
 			case 2:
-				window.location.hash = '#places/'+window.place.id+'/charts?type=white-spaces';
+				if(window.place.get("isShared")) 
+					window.location.hash = '#places/shared/'+window.place.id+'/charts?type=white-spaces';
+				else
+					window.location.hash = '#places/'+window.place.id+'/charts?type=white-spaces';
 				if(this.$el.find('#white-spaces-tab').is(':empty')) this.renderWhiteSpaces();
 				else window.settings.place.charts.whiteSpaces.view.updateDataByTab();
 				break;
@@ -77,8 +86,7 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.$el.find('#occupation-tab').html(window.settings.place.charts.occupation.view.render().el);
-		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=occupation'))
-			window.settings.place.charts.occupation.view.renderComponents();
+		window.settings.place.charts.occupation.view.renderComponents();
 	},
 
 	renderHeatmap: function(){
@@ -89,8 +97,7 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.$el.find('#heatmap-tab').html(window.settings.place.charts.heatmap.view.render().el);
-		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=heatmap'))
-			window.settings.place.charts.heatmap.view.renderComponents();
+		window.settings.place.charts.heatmap.view.renderComponents();
 	},
 
 	renderWhiteSpaces: function(){
@@ -101,8 +108,7 @@ app.view.ChartsView = Backbone.View.extend({
 		});
 
 		this.$el.find('#white-spaces-tab').html(window.settings.place.charts.whiteSpaces.view.render().el);
-		if(app.util.CkeckUrl('#places/'+window.place.id+'/charts?type=white-spaces'))
-			window.settings.place.charts.whiteSpaces.view.renderComponents();
+		window.settings.place.charts.whiteSpaces.view.renderComponents();
 	},
 
 	render: function(){

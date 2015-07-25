@@ -6,19 +6,23 @@
 			    <tr>
 			        <th class="text-center">Power (dBm)</th>
 			        <th class="text-center">Occurrence frequency</th>
+			        {{#unless shared}}
 			        <th class="text-center">Remove</th>
+			        {{/unless}}
 			    </tr>
 		    </thead>
 		    <tbody>
-			{{#each this}}
+			{{#each outliers}}
 				<tr>
-					<td>{{attributes.power}}</td>
-					<td>{{attributes.frequency}}</td>
+					<td>{{ attributes.power}}</td>
+					<td>{{ attributes.frequency}}</td>
+					{{#unless ../shared}}
 					<td>
 						<button class="btn btn-danger btn-xs btn-delete-outlier">
 							<span class="glyphicon glyphicon-trash"></span>
 						</button>
 					</td>
+					{{/unless}}
 				</tr>
 			{{/each}}
 			</tbody>

@@ -56,7 +56,10 @@ app.view.EditOutliersView = Backbone.View.extend({
 
 	render: function(){
 		var template = Zebra.tmpl.edit_outliers;
-		var html = template(window.place.attributes.outliers);
+		var html = template({
+			outliers: window.place.attributes.outliers,
+			shared: window.place.attributes.shared,
+		});
 		this.$el.html(html);
 		this.waitingView.hide();
 

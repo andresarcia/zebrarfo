@@ -1,6 +1,11 @@
 <ol class="breadcrumb">
 	<li><a href="#">Places</a></li>
-	<li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+    {{#if attributes.shared }}
+    <li><a href="#places/shared/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+    {{/if}}
+    {{#unless attributes.shared }}
+    <li><a href="#places/{{this.attributes.id}}">{{this.attributes.name}}</a></li>
+    {{/unless}}
 	<li class="active">Charts</li>
 </ol>
 <ul class="nav nav-tabs" role="tablist" id="charts-tabs">

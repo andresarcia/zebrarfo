@@ -19,7 +19,9 @@ app.router.AppRouter = Backbone.Router.extend({
 		'places/:id' : 'showPlace',
 		'places/shared/:id' : 'showSharedPlace',
 		'places/:id/edit?type=:type' : 'showEditPlace',
+		'places/shared/:id/edit?type=:type' : 'showSharedEditPlace',
 		'places/:id/charts?type=:type' : 'showChartsOfPlace',
+		'places/shared/:id/charts?type=:type' : 'showSharedChartsOfPlace',
 		'places/:id/upload' : 'showPlaceUpload',
 		
 		'help': 'showHelp',
@@ -276,7 +278,33 @@ app.router.AppRouter = Backbone.Router.extend({
 		if(type === 'coordinates') editType = 0;
 		else if(type === 'outliers') editType = 1;
 
-		this.fetchPlace(id, function(err){
+		this.fetchPlace(id, false, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.fetchOutliers(function(err){
+				if(err) return self.errorRequest(err);
+
+				self.clearViews();
+				self.currentView = new app.view.EditPlaceView({
+					waitingView: self.waitingView,
+					errorView : self.errorView,
+					type: editType
+				});
+				self.renderMenuSinglePlace([0,1],id);
+			});
+		});
+	},
+
+	showSharedEditPlace: function(id, type){
+		if(this.currentView !== null && this.currentView.id == 'edit-place') return;
+
+		var self = this;
+		var editType;
+
+		if(type === 'coordinates') editType = 0;
+		else if(type === 'outliers') editType = 1;
+
+		this.fetchPlace(id, true, function(err){
 			if(err) return self.errorRequest(err);
 
 			self.fetchOutliers(function(err){
@@ -304,7 +332,31 @@ app.router.AppRouter = Backbone.Router.extend({
 		else if(type === 'heatmap') chartType = 1;
 		else if(type === 'white-spaces') chartType = 2;
 
-		this.fetchPlace(id, function(err){
+		this.fetchPlace(id, false, function(err){
+			if(err) return self.errorRequest(err);
+
+			self.clearViews();
+			self.currentView = new app.view.ChartsView({
+				waitingView: self.waitingView,
+				errorView : self.errorView,
+				type: chartType
+			});
+			self.renderMenuSinglePlace([0,2],id);
+		});
+	},
+
+	showSharedChartsOfPlace: function(id, type){
+		if(this.currentView !== null && this.currentView.id == 'place-charts')
+			return;
+
+		var self = this;
+		var chartType;
+
+		if(type === 'occupation') chartType = 0;
+		else if(type === 'heatmap') chartType = 1;
+		else if(type === 'white-spaces') chartType = 2;
+
+		this.fetchPlace(id, true, function(err){
 			if(err) return self.errorRequest(err);
 
 			self.clearViews();
@@ -319,7 +371,7 @@ app.router.AppRouter = Backbone.Router.extend({
 
 	showPlaceUpload: function(id){
 		var self = this;
-		this.fetchPlace(id, function(err){
+		this.fetchPlace(id, false, function(err){
 			if(err) return self.errorRequest(err);
 
 			self.clearViews();

@@ -140,13 +140,15 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 					data: data, 
 					create: true, 
 					hidden: hidden, 
-					hiddenNumber: this.editMarkers.length - data.length 
+					hiddenNumber: this.editMarkers.length - data.length,
+					place: window.place.attributes
 				});
 			else
 				html = template({
 					data: data,
 					hidden: hidden, 
-					hiddenNumber: this.editMarkers.length - data.length 
+					hiddenNumber: this.editMarkers.length - data.length,
+					place: window.place.attributes
 				});
 			
 			this.$el.find('#su-list-coord-to-edit').html(html);
@@ -161,7 +163,7 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 			});
 
 		} else {
-			html = template();
+			html = template({place: window.place.attributes});
 			this.$el.find('#su-list-coord-to-edit').html(html);
 			this.$el.find('.action-btn').prop('disabled', true);
 		}

@@ -41,11 +41,19 @@ app.view.EditPlaceView = Backbone.View.extend({
 
 		switch (index) {
 			case 0:
-				window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
+				if(window.place.get("isShared")) 
+					window.location.hash = '#places/shared/'+ window.place.id +'/edit?type=coordinates';
+				else
+					window.location.hash = '#places/'+window.place.id+'/edit?type=coordinates';
+
 				if(this.$el.find('#edit-coord-tab').is(':empty')) this.renderEditCoordinates();
 				break;
 			case 1:
-				window.location.hash = '#places/'+window.place.id+'/edit?type=outliers';
+				if(window.place.get("isShared")) 
+					window.location.hash = '#places/shared/'+ window.place.id +'/edit?type=outliers';
+				else
+					window.location.hash = '#places/'+window.place.id+'/edit?type=outliers';
+
 				if(this.$el.find('#edit-outliers-tab').is(':empty')) this.renderEditOutliers();
 				break;
 		}
