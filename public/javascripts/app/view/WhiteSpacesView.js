@@ -171,8 +171,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			from = this.data.frequencies.min;
 			to = this.data.frequencies.max;
 		} else {
-			from = window.place.attributes.frequenciesBands[bands[0]].from / 1000;
-			to = window.place.attributes.frequenciesBands[bands[bands.length - 1]].to / 1000;
+			from = window.place.get("frequencies").bands[bands[0]].from / 1000;
+			to = window.place.get("frequencies").bands[bands[bands.length - 1]].to / 1000;
 		}
 
 		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
