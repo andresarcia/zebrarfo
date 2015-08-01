@@ -32,6 +32,7 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		this.settings.threshold.dmax = window.place.attributes.power.max;
 		this.settings.threshold.min = window.place.attributes.power.min;
 		this.settings.threshold.max = window.place.attributes.power.max;
+		this.settings.frequencies = {};
 		this.cameraPosition = {};
 		this.cameraPosition.horizontal = 5.4;
 		this.cameraPosition.vertical = 0.5;
@@ -144,6 +145,10 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		});
 
 		// bands
+		var bounds = window.place.attributes.frequencies.bands[window.settings.currBand];
+		this.settings.frequencies.dmin = bounds.from / 1000;
+		this.settings.frequencies.dmax = bounds.to / 1000;
+
 		if(window.place.attributes.frequencies.bands.length > 1){
 			this.$el.find("#ws-frequency-bands").select2({ 
 				data: window.place.attributes.frequencies.bands,
@@ -174,6 +179,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			from = window.place.get("frequencies").bands[bands[0]].from / 1000;
 			to = window.place.get("frequencies").bands[bands[bands.length - 1]].to / 1000;
 		}
+
+		this.settings.frequencies.dmin = from;
+		this.settings.frequencies.dmax = to;
 
 		this.rangeSlider = this.$el.find('#ws-range-slider').noUiSlider({
 			start: [from, to],
@@ -283,8 +291,9 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 		_.each(channels, function(item){
 			var boundaries = item.split("-");
 			self.boundaries.push({
-				from: Number(boundaries[0]),
-				to: Number(boundaries[1])
+				// if wifi limit the channel width 
+				from: app.util.isWifi() ? Number(boundaries[0]) + 11 : Number(boundaries[0]),
+				to: app.util.isWifi() ? Number(boundaries[1]) - 11 : Number(boundaries[1]),
 			});
 		});
 
@@ -403,6 +412,8 @@ app.view.WhiteSpacesView = Backbone.View.extend({
 			zMax: this.settings.occupation.dmax,
 			xMin: this.settings.threshold.dmin,
 			xMax: this.settings.threshold.dmax,
+			yMin: this.settings.frequencies.dmin,
+			yMax: this.settings.frequencies.dmax,
 		};
 
 		var self = this;
