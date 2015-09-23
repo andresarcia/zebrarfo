@@ -609,24 +609,19 @@ hr {
   display: inline-block;
   overflow: hidden;
 }
-#login-container .content .form .login-footer .logo-left {
-  width: 40%;
-  margin-right: 5px;
-  background: transparent url(../images/cambridge.png) no-repeat center;
-  -webkit-background-size: contain;
-  -moz-background-size: contain;
-  -o-background-size: contain;
-  background-size: contain;
+#login-container .content .form .login-footer .logo-left > a > img {
+  width: 130px;
+  margin-bottom: -45px;
 }
-
-#login-container .content .login-footer .logo-right {
-  width: 40%;
-  margin-left: 5px;
-  background: transparent url(../images/rife.png) no-repeat right;
-  -webkit-background-size: contain;
-  -moz-background-size: contain;
-  -o-background-size: contain;
-  background-size: contain;
+#login-container .content .form .login-footer .logo-center > a > img {
+  width: 45px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: -42px;
+}
+#login-container .content .form .login-footer .logo-right > a > img {
+  width: 115px;
+  margin-bottom: -45px;
 }
 #reg-modal .modal-body {
   padding: 70px 70px;
