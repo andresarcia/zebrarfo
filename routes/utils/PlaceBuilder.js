@@ -88,147 +88,163 @@ exports.create = function(u, o, newCoordinates, callback) {
 
 
 function reduceCommonGps(u, o, n, callback){
-	var uploadedByCoords = {};
-	var otherByCoords = {};
-	var coords = {};
+	// save the frequencies
+	// transform the frequency to kHerz
+	var fq = [];
+	if(u) fq = u.frequencies.values;
+	else fq = o.frequencies.values;
+	n.frequencies.values = _.map(fq, function(num){
+		return num * n.frequencyUnitFactor;
+	});
 
-	// if there uploaded place, grouped by coordinate
-	if(u) {
-		uploadedByCoords = _.groupBy(u.coordinates, function(sample){
-			return sample.lat + sample.lng;
+	if(n.gpsFunction == 'all' && u){
+		console.log("a");
+		_.each(u.coordinates, function(coord){
+			if(coord.cap.length != n.frequencies.values.length) return;
+			_.each(coord.cap, function(cap){
+				var outlier = cap.toFixed(1);
+				if(n.outliers[outlier])
+					n.outliers[outlier] += 1;
+				else
+					n.outliers[outlier] = 1;
+			});
+			var coordinate = takeCoordStats(coord.cap);
+			coordinate = _.extend(coordinate, coord);
+			saveCoord(coordinate, n);
+		});
+
+	} else {
+		var uploadedByCoords = {};
+		var otherByCoords = {};
+		var coords = {};
+
+		// if there uploaded place, grouped by coordinate
+		if(u) {
+			uploadedByCoords = _.groupBy(u.coordinates, function(sample){
+				return sample.lat + sample.lng;
+			});
+		}
+
+		// if there other place, grouped by coordinate
+		if(o) {
+			if(o.coordinates){
+				otherByCoords = _.groupBy(o.coordinates, function(sample){
+					return sample.lat + sample.lng;
+				});
+
+			} else if(o.Coordinates){
+				otherByCoords = _.groupBy(o.Coordinates, function(sample){
+					return sample.lat + sample.lng;
+				});
+			}
+		}
+
+		// replace the common coordinates in the uploaded place by the other place
+		_.extend(coords, uploadedByCoords);
+		_.extend(coords, otherByCoords);
+
+		// check if there new coordinates
+		// var difference = _.difference(_.keys(coords), _.keys(otherByCoords));
+		// if(difference.length === 0){
+		// 	return callback(o);
+		// }
+
+		_.each(_.keys(coords), function(key, index){
+			var item = coords[key];
+
+			var lat = item[0].lat;
+			var lng = item[0].lng;
+			// check if lat and lng are valid else next()
+			if(!lat || !lng || lat === 0 || lng === 0) return;
+
+			var cap = [];
+			// if caps is not parse to JSON
+			if(typeof item[0].cap !== 'object'){
+				item[0].cap = JSON.parse(item[0].cap);
+			}
+
+			for (var i = 0; i < item[0].cap.length; i++) {
+				var operation;
+				switch (n.gpsFunction) {
+					case 'avg':
+						operation = _.reduce(item, function(memo, item){ 
+							return memo + item.cap[i]; 
+						}, 0);
+						operation /= item.length;
+						break;
+
+					case 'max':
+						operation = _.reduce(item, function(memo, item){ 
+							if(memo < item.cap[i])
+								return item.cap[i];
+							else
+								return memo;
+						}, item[0].cap[i]);
+						break;
+
+					case 'min':
+						operation = _.reduce(item, function(memo, item){ 
+							if(memo > item.cap[i])
+								return item.cap[i];
+							else
+								return memo;
+						}, item[0].cap[i]);
+						break;
+
+					case 'first':
+						operation = item[0].cap[i];
+				 		break;
+
+					case 'last':
+						operation = item[item.length - 1].cap[i];
+						break;
+
+					default:
+						operation = item[0].cap[i];
+						break;
+				}
+
+				// save outliers with one presition
+				var outlier = operation.toFixed(1);
+				if(n.outliers[outlier])
+					n.outliers[outlier] += 1;
+				else
+					n.outliers[outlier] = 1;
+
+				// save the captures
+				cap.push(operation);
+			}
+
+			// if the # of frequencies are not equals to # of captures, continue to next index
+			if(cap.length != n.frequencies.values.length) return;
+
+			var coordinate = {};
+			// if new coordinate, take stats and build object
+			if(!item[0]._id) {
+				coordinate = takeCoordStats(cap);
+				coordinate = _.extend(coordinate, {
+					lat: item[0].lat,
+					lng: item[0].lng,
+					cap: cap,
+					date: item[0].date
+				});
+
+				if(n.newCoordinates) n.newCoordinates.push(coordinate);
+
+			// else copy his properties
+			} else {
+				coordinate = _.extend(coordinate, item[0]);
+				
+				// check if the coordinate inside other[] if also present on uploaded[]
+				// if true, then put visible property to true
+				if(uploadedByCoords[key]) {
+					coordinate.visible = true;
+				}
+			}
+
+			saveCoord(coordinate, n);
 		});
 	}
-
-	// if there other place, grouped by coordinate
-	if(o) {
-		if(o.coordinates){
-			otherByCoords = _.groupBy(o.coordinates, function(sample){
-				return sample.lat + sample.lng;
-			});
-
-		} else if(o.Coordinates){
-			otherByCoords = _.groupBy(o.Coordinates, function(sample){
-				return sample.lat + sample.lng;
-			});
-		}
-	}
-
-	// replace the common coordinates in the uploaded place by the other place
-	_.extend(coords, uploadedByCoords);
-	_.extend(coords, otherByCoords);
-
-	// check if there new coordinates
-	// var difference = _.difference(_.keys(coords), _.keys(otherByCoords));
-	// if(difference.length === 0){
-	// 	return callback(o);
-	// }
-
-	_.each(_.keys(coords), function(key, index){
-		var item = coords[key];
-
-		var lat = item[0].lat;
-		var lng = item[0].lng;
-		// check if lat and lng are valid else next()
-		if(!lat || !lng || lat === 0 || lng === 0) return;
-
-		var cap = [];
-		// if caps is not parse to JSON
-		if(typeof item[0].cap !== 'object'){
-			item[0].cap = JSON.parse(item[0].cap);
-		}
-
-		for (var i = 0; i < item[0].cap.length; i++) {
-			var operation;
-			switch (n.gpsFunction) {
-				case 'avg':
-					operation = _.reduce(item, function(memo, item){ 
-						return memo + item.cap[i]; 
-					}, 0);
-					operation /= item.length;
-					break;
-
-				case 'max':
-					operation = _.reduce(item, function(memo, item){ 
-						if(memo < item.cap[i])
-							return item.cap[i];
-						else
-							return memo;
-					}, item[0].cap[i]);
-					break;
-
-				case 'min':
-					operation = _.reduce(item, function(memo, item){ 
-						if(memo > item.cap[i])
-							return item.cap[i];
-						else
-							return memo;
-					}, item[0].cap[i]);
-					break;
-
-				case 'first':
-					operation = item[0].cap[i];
-			 		break;
-
-				case 'last':
-					operation = item[item.length - 1].cap[i];
-					break;
-
-				default:
-					operation = item[0].cap[i];
-					break;
-			}
-
-			// transform the frequency to kHerz
-			var fq;
-			if(u){
-				fq = u.frequencies.values[i] * n.frequencyUnitFactor;
-			} else {
-				fq = o.frequencies.values[i] * n.frequencyUnitFactor;
-			}
-			
-			// save the frequencies values just once
-			if(index === 0) n.frequencies.values.push(fq);
-
-			// save outliers with one presition
-			var outlier = operation.toFixed(1);
-			if(n.outliers[outlier])
-				n.outliers[outlier] += 1;
-			else
-				n.outliers[outlier] = 1;
-
-			// save the captures
-			cap.push(operation);
-		}
-
-		// if the # of frequencies are not equals to # of captures, continue to next index
-		if(cap.length != n.frequencies.values.length) return;
-
-		var coordinate = {};
-		// if new coordinate take stats and build object
-		if(!item[0]._id) {
-			coordinate = takeCoordStats(cap);
-			coordinate = _.extend(coordinate, {
-				lat: item[0].lat,
-				lng: item[0].lng,
-				cap: cap,
-				date: item[0].date
-			});
-
-			if(n.newCoordinates) n.newCoordinates.push(coordinate);
-
-		// else copy his properties
-		} else {
-			coordinate = _.extend(coordinate, item[0]);
-			
-			// check if the coordinate inside other[] if also present on uploaded[]
-			// if true, then put visible property to true
-			if(uploadedByCoords[key]) {
-				coordinate.visible = true;
-			}
-		}
-
-		saveCoord(coordinate, n);
-	});
 
 	takePlaceStats(n);
 	return callback();
