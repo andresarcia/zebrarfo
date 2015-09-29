@@ -14,6 +14,7 @@ app.view.LoginView = Backbone.View.extend({
 		'blur #login-password': 'passwordFeedback',
 		'focus #login-password': 'hidePasswordFeedback',
 		'click #login-new-account': 'createNewAccount',
+		'click #get-in-touch': 'showContactPane',
 	},
 
 	initialize: function(options){
@@ -129,6 +130,12 @@ app.view.LoginView = Backbone.View.extend({
 		this.hideEmailFeedback();
 		this.hideAuthFeedback();
 		new app.view.RegisterView({
+			waitingView: this.waitingView,
+		});
+	},
+
+	showContactPane: function(){
+		new app.view.ContactView({
 			waitingView: this.waitingView,
 		});
 	},

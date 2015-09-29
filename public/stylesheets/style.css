@@ -626,12 +626,50 @@ hr {
 #reg-modal .modal-body {
   padding: 70px 70px;
 }
+#login-container .about-footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+#login-container .about-footer .contact-info {
+  position: absolute;
+  right: 30px;
+  bottom: 32px;
+}
+#login-container .about-footer .contact-info > a {
+  /*color: #696A6C;*/
+  text-decoration: underline;
+  font-size: 1.35em;
+  font-weight: 300;
+  color: #1a1a1a;
+  letter-spacing: 0.8px;
+}
+/*#login-container .about-footer .contact-info > a:hover {
+  color: #000000;
+}*/
+#login-container #contact-pane {
+  background: #000000;
+  width: 100%;
+  height: 200px;
+}
+#contact-modal #contact-info {
+  text-align: center;
+}
+#contact-modal #contact-info .contact-card {
+  display: inline-block;
+  padding: 10px;
+}
+
 @media (max-width: 767px) {
   #login-container {
     overflow: scroll;
   }
   #login-container .content .background {
     background-image: url(../images/bg_mobile.jpg);
+  }
+  #login-container .about-footer .contact-info > a {
+    color: #ffffff;
   }
 }
 @media (max-width: 767px) and (orientation: portrait) { 
@@ -647,9 +685,12 @@ hr {
     margin-top: 0px; 
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 991px) {
   #login-container .content .background {
     background-image: url(../images/bg_tablet.jpg);
+  }
+  #login-container .about-footer .contact-info > a {
+    color: #ffffff;
   }
 }
 @media (min-width: 992px) {
