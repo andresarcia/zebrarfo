@@ -628,7 +628,6 @@ exports.download = function(req, res){
 					message: "There has been a server error. Please try again in a few minutes" 
 				});
 			}
-
 			res.cookie('fileDownload', 'true', { path: '/' });
 			res.download(path);
 		});

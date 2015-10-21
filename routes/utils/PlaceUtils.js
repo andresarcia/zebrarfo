@@ -280,7 +280,6 @@ exports.toJson = function(userId,id,callback){
 			delete item.PlaceId;
 			delete item.createdAt;
 			delete item.updatedAt;
-			delete item.createdDate;
 			item.cap = JSON.parse(item.cap);
 		});
 
