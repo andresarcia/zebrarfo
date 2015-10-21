@@ -12,13 +12,13 @@ exports.getFullPlace = function(userId, id, callback){
 	db.Place.find({
 		where: {
 			id: id,
-			UserId: userId,
-			visible: true
+			visible: true,
+			$or: [{UserId: userId}, {shared: true}]
 		},
 		include: [{ 
 			model: db.Coordinate, 
 			where: {
-				visible: true
+				visible: true 
 			}
 		}]
 	})
