@@ -205,7 +205,7 @@ function loadGoogleApi() {
     var l = new app.util.Loader();
     l.require(['http://www.google.com/jsapi'], function(){
         google.load("maps", "3", { 
-            other_params:'sensor=false&libraries=visualization', 
+            other_params:'libraries=visualization', 
             callback: loadGoogleMapHeatmapPlugin 
         });
 
