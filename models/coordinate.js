@@ -29,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
     },
     cap: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
       allowNull: true,
     },
     createdDate : {
