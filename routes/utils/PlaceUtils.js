@@ -261,25 +261,27 @@ exports.toJson = function(userId,id,callback){
 
 		place.power = JSON.parse(place.power);
 		place.frequencies = JSON.parse(place.frequencies);
-		delete place.frequencies.bands;
-		delete place.frequencies.width;
+		// delete place.frequencies.bands;
+		// delete place.frequencies.width;
 
 		place.distance = JSON.parse(place.distance);
-		delete place.distance.sd;
+		// delete place.distance.sd;
 
 		place.coordinates = _.clone(place.Coordinates);
 		delete place.Coordinates;
 
 		_.each(place.coordinates, function(item, i){
 			delete item.id;
-			delete item.powerMin;
-			delete item.powerMax;
-			delete item.powerAvg;
-			delete item.powerSD;
+			// delete item.powerMin;
+			// delete item.powerMax;
+			// delete item.powerAvg;
+			// delete item.powerSD;
 			delete item.visible;
 			delete item.PlaceId;
 			delete item.createdAt;
 			delete item.updatedAt;
+			item.date = item.createdDate;
+			delete item.createdDate;
 			item.cap = JSON.parse(item.cap);
 		});
 
