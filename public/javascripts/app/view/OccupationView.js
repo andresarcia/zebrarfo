@@ -203,6 +203,8 @@ app.view.OccupationView = Backbone.View.extend({
 			});
 		});
 
+		data = _.sortBy(data, function(item){ return item.frequency; });
+
 		this.chart.render(data, this.chartOptions);
 
 		_.each(window.settings.place.charts.channels,function(item){
