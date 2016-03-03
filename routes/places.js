@@ -619,6 +619,8 @@ exports.download = function(req, res){
 			console.error("404, Place not found");
 			return res.json(404, { message: "Place not found" });
 		}
+		// fix chrome bug downloading files with stranges characters 
+		name = name.replace(/[^a-zA-Z ]/g, "");
 
 		var path = '/tmp/' + name + '.json';
 		jf.writeFile(path, data, function(err) {
