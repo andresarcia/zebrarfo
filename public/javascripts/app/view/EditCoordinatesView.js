@@ -217,7 +217,14 @@ app.view.EditCoordinatesView = Backbone.View.extend({
 				marginTop: -8,
 			},
 			exporting: {
-				enabled: false
+				buttons: {
+					contextButton: {
+						menuItems: null,
+						onclick: function () {
+							this.downloadCSV();
+						}
+					}
+				}
 			},
 			title: {
 				text: '',
