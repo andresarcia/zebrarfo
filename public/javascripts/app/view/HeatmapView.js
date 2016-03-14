@@ -298,7 +298,7 @@ app.view.HeatmapView = Backbone.View.extend({
             }),
             range: {
                 'min': -120,
-                'max': 0
+                'max': +this.data.power.max < 0 ? 0 : +this.data.power.max
             }
         }, true);
 
